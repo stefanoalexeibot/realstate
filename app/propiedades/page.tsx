@@ -1,14 +1,21 @@
 import Link from "next/link";
-import { Building2, SlidersHorizontal } from "lucide-react";
+import { Building2, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import PropertyCard from "@/components/landing/property-card";
 import type { Property } from "@/lib/types";
+import dynamicImport from "next/dynamic";
+
+const PropertiesMap = dynamicImport(() => import("@/components/landing/properties-map"), {
+  ssr: false,
+  loading: () => <div className="h-[520px] rounded-xl bg-cima-card border border-cima-border animate-pulse" />,
+});
 
 interface SearchParams {
   tipo?: string;
   operacion?: string;
   zona?: string;
   precio?: string;
+  vista?: string;
 }
 
 const PRICE_PRESETS = [
@@ -91,12 +98,37 @@ export default async function PropiedadesPage({
 
       <div className="mx-auto max-w-6xl px-6 py-10">
         {/* Header */}
-        <div className="mb-8">
-          <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-1">Catálogo</p>
-          <h1 className="font-heading font-bold text-3xl text-cima-text mb-1">
-            {isFiltered ? "Resultados filtrados" : "Todas las propiedades"}
-          </h1>
-          <p className="text-sm text-cima-text-muted">{properties.length} propiedad{properties.length !== 1 ? "es" : ""} encontrada{properties.length !== 1 ? "s" : ""}</p>
+        <div className="mb-8 flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-1">Catálogo</p>
+            <h1 className="font-heading font-bold text-3xl text-cima-text mb-1">
+              {isFiltered ? "Resultados filtrados" : "Todas las propiedades"}
+            </h1>
+            <p className="text-sm text-cima-text-muted">{properties.length} propiedad{properties.length !== 1 ? "es" : ""} encontrada{properties.length !== 1 ? "s" : ""}</p>
+          </div>
+          {/* Vista toggle */}
+          <div className="flex items-center gap-1 rounded-lg border border-cima-border bg-cima-card p-1">
+            <Link
+              href={buildUrl({ ...searchParams, vista: undefined })}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
+                searchParams.vista !== "mapa"
+                  ? "bg-cima-gold text-cima-bg font-semibold"
+                  : "text-cima-text-muted hover:text-cima-text"
+              }`}
+            >
+              <LayoutGrid className="h-3 w-3" /> Lista
+            </Link>
+            <Link
+              href={buildUrl({ ...searchParams, vista: "mapa" })}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
+                searchParams.vista === "mapa"
+                  ? "bg-cima-gold text-cima-bg font-semibold"
+                  : "text-cima-text-muted hover:text-cima-text"
+              }`}
+            >
+              <Map className="h-3 w-3" /> Mapa
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}
@@ -187,13 +219,15 @@ export default async function PropiedadesPage({
           )}
         </div>
 
-        {/* Grid */}
+        {/* Grid / Map */}
         {properties.length === 0 ? (
           <div className="rounded-xl border border-cima-border bg-cima-card p-16 text-center">
             <Building2 className="h-8 w-8 text-cima-text-dim mx-auto mb-3" />
             <p className="text-cima-text-muted">No hay propiedades con estos filtros.</p>
             <Link href="/propiedades" className="text-xs text-cima-gold mt-2 block hover:underline">Ver todas</Link>
           </div>
+        ) : searchParams.vista === "mapa" ? (
+          <PropertiesMap properties={properties as (Property & { lat: number | null; lng: number | null })[]} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map((p) => (

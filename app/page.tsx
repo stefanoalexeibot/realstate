@@ -23,6 +23,10 @@ import ScrollProgress from "@/components/landing/scroll-progress";
 import ExitIntent from "@/components/landing/exit-intent";
 import BeforeAfterSlider from "@/components/landing/before-after-slider";
 import LandingNav from "@/components/landing/landing-nav";
+import RotatingZone from "@/components/landing/rotating-zone";
+import AuroraHero from "@/components/landing/aurora-hero";
+import StickyMobileCta from "@/components/landing/sticky-mobile-cta";
+import PriceEstimator from "@/components/landing/price-estimator";
 import type { Property } from "@/lib/types";
 
 const PROCESS_STEPS = [
@@ -127,6 +131,7 @@ export default async function HomePage() {
       <ScrollProgress />
       <CursorGlow />
       <ExitIntent />
+      <StickyMobileCta />
 
       {/* ── NAVBAR ─────────────────────────────── */}
       <LandingNav />
@@ -137,8 +142,8 @@ export default async function HomePage() {
       {/* ── HERO ───────────────────────────────── */}
       <section className="relative pt-28 pb-20 px-6 overflow-hidden min-h-[90vh] flex items-center">
         {/* Background FX */}
+        <AuroraHero />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-cima-gold/[0.04] rounded-full blur-[140px]" />
           <div
             className="absolute inset-0 opacity-[0.018]"
             style={{
@@ -163,7 +168,8 @@ export default async function HomePage() {
               {/* Tag */}
               <div className="inline-flex items-center gap-2 rounded-full border border-cima-gold/25 bg-cima-gold/5 px-4 py-1.5 mb-7">
                 <span className="h-1.5 w-1.5 rounded-full bg-cima-gold animate-pulse" />
-                <span className="font-mono text-xs text-cima-gold tracking-widest uppercase">Garantía de venta · Monterrey N.L.</span>
+                <span className="font-mono text-xs text-cima-gold tracking-widest uppercase">Garantía de venta · </span>
+                <RotatingZone />
               </div>
 
               {/* Headline */}
@@ -269,6 +275,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── PRICE ESTIMATOR ─────────────────────── */}
+      <PriceEstimator />
 
       {/* ── PROFIT CALCULATOR ───────────────────── */}
       <section id="calculadora" className="px-6 py-16 border-t border-cima-border/50">
