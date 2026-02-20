@@ -38,8 +38,16 @@ export async function middleware(request: NextRequest) {
   if (path.startsWith("/portal") && path !== "/portal/login") {
     if (!user) return NextResponse.redirect(new URL("/portal/login", request.url));
   }
+  // /portal/login: only redirect to /portal if user is actually a propietario.
+  // If they're an admin or unlinked user, let them see the login form so they
+  // can sign in with propietario credentials (layout will sign them out first).
   if (path === "/portal/login" && user) {
-    return NextResponse.redirect(new URL("/portal", request.url));
+    const { data: prop } = await supabase
+      .from("re_propietarios")
+      .select("id")
+      .eq("auth_id", user.id)
+      .maybeSingle();
+    if (prop) return NextResponse.redirect(new URL("/portal", request.url));
   }
 
   return supabaseResponse;

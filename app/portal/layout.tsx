@@ -18,8 +18,10 @@ export default async function PortalLayout({ children }: { children: React.React
     .single();
 
   if (!prop) {
-    // Authenticated but not a propietario (likely an admin) → send to admin
-    redirect("/admin");
+    // Authenticated but not a propietario — sign out and send to portal login.
+    // This prevents admin sessions from leaking into the portal or vice versa.
+    await supabase.auth.signOut();
+    redirect("/portal/login");
   }
 
   return (
