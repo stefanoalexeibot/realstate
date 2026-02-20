@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { KanbanSquare, Phone, Loader2 } from "lucide-react";
 import type { SellerLead, PipelineStage } from "@/lib/types";
@@ -30,6 +30,10 @@ export default function PipelinePage() {
   const [loading, setLoading] = useState(true);
   const [moving, setMoving] = useState<string | null>(null);
 
+  // Drag & drop state
+  const draggingLead = useRef<SellerLead | null>(null);
+  const [dragOverStage, setDragOverStage] = useState<PipelineStage | null>(null);
+
   const load = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
@@ -54,6 +58,28 @@ export default function PipelinePage() {
     } finally {
       setMoving(null);
     }
+  }
+
+  function onCardDragStart(lead: SellerLead) {
+    draggingLead.current = lead;
+  }
+
+  function onColumnDragOver(e: React.DragEvent, stage: PipelineStage) {
+    e.preventDefault();
+    setDragOverStage(stage);
+  }
+
+  function onColumnDrop(stage: PipelineStage) {
+    setDragOverStage(null);
+    const lead = draggingLead.current;
+    draggingLead.current = null;
+    if (!lead || lead.pipeline_stage === stage) return;
+    moveStage(lead, stage);
+  }
+
+  function onDragEnd() {
+    draggingLead.current = null;
+    setDragOverStage(null);
   }
 
   const grouped = STAGES.reduce<Record<PipelineStage, SellerLead[]>>((acc, s) => {
@@ -97,17 +123,29 @@ export default function PipelinePage() {
                 <span className="font-mono text-[10px] text-cima-text-dim">{cards.length}</span>
               </div>
 
-              {/* Cards */}
-              <div className={`rounded-b-xl border border-t-0 ${stage.color} min-h-32 space-y-2 p-2`}>
+              {/* Cards — drop zone */}
+              <div
+                className={`rounded-b-xl border border-t-0 ${stage.color} min-h-32 space-y-2 p-2 transition-all ${
+                  dragOverStage === stage.key ? "ring-2 ring-cima-gold/50 bg-cima-gold/5" : ""
+                }`}
+                onDragOver={(e) => onColumnDragOver(e, stage.key)}
+                onDragLeave={() => setDragOverStage(null)}
+                onDrop={() => onColumnDrop(stage.key)}
+              >
                 {cards.length === 0 ? (
                   <div className="py-6 text-center">
-                    <p className="text-[10px] text-cima-text-dim font-mono">Vacío</p>
+                    <p className="text-[10px] text-cima-text-dim font-mono">
+                      {dragOverStage === stage.key ? "Soltar aquí" : "Vacío"}
+                    </p>
                   </div>
                 ) : (
                   cards.map((lead) => (
                     <div
                       key={lead.id}
-                      className="rounded-lg border border-cima-border bg-cima-card p-3 space-y-2.5"
+                      draggable
+                      onDragStart={() => onCardDragStart(lead)}
+                      onDragEnd={onDragEnd}
+                      className="rounded-lg border border-cima-border bg-cima-card p-3 space-y-2.5 cursor-grab active:cursor-grabbing active:opacity-60 active:scale-[0.98] transition-all"
                     >
                       {/* Name + time */}
                       <div className="flex items-start justify-between gap-1">

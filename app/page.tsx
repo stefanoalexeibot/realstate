@@ -19,6 +19,9 @@ import AsistenteDemo from "@/components/landing/asistente-demo";
 import TiltCard from "@/components/landing/tilt-card";
 import SocialProofToast from "@/components/landing/social-proof-toast";
 import ProcessLine from "@/components/landing/process-line";
+import ScrollProgress from "@/components/landing/scroll-progress";
+import ExitIntent from "@/components/landing/exit-intent";
+import BeforeAfterSlider from "@/components/landing/before-after-slider";
 import type { Property } from "@/lib/types";
 
 const PROCESS_STEPS = [
@@ -120,7 +123,9 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-cima-bg">
+      <ScrollProgress />
       <CursorGlow />
+      <ExitIntent />
 
       {/* ── NAVBAR ─────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-cima-border/50 bg-cima-bg/90 backdrop-blur-md">
@@ -405,6 +410,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── BEFORE / AFTER SLIDER ──────────────── */}
+      <BeforeAfterSlider />
 
       {/* ── ASISTENTE VIRTUAL ───────────────────── */}
       <AsistenteDemo />

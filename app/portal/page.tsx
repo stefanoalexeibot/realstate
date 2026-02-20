@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
+import ViewsChart from "@/components/portal/views-chart";
 import type { Property, VisitStatus } from "@/lib/types";
 
 const VISIT_STATUS_LABELS: Record<VisitStatus, { label: string; color: string }> = {
@@ -203,6 +204,25 @@ export default async function PortalDashboard() {
         .order("created_at", { ascending: false })
     : { data: [] };
 
+  // Daily views for the chart (last 30 days)
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const { data: rawDailyViews } = property
+    ? await supabase
+        .from("re_property_views_daily")
+        .select("date, count")
+        .eq("property_id", property.id)
+        .gte("date", thirtyDaysAgo)
+        .order("date")
+    : { data: [] };
+
+  // Fill missing days with 0 so the chart shows a complete 30-day range
+  const dailyViews: { date: string; count: number }[] = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const found = (rawDailyViews ?? []).find((r) => r.date === d);
+    dailyViews.push({ date: d, count: found?.count ?? 0 });
+  }
+
   const photoCount = property?.re_photos?.length ?? 0;
   const totalVisits = visits?.length ?? 0;
   const pendingVisits = visits?.filter((v) => v.status === "pending").length ?? 0;
@@ -310,6 +330,9 @@ export default async function PortalDashboard() {
               </div>
             ))}
           </div>
+
+          {/* Daily views chart */}
+          <ViewsChart data={dailyViews} />
 
           {/* Views context — only show if has views */}
           {views > 0 && (

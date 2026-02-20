@@ -50,11 +50,12 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
   const photos = (property.re_photos ?? []).sort((a, b) => a.order - b.order);
   const isRenta = property.operation_type === "renta";
 
-  // Increment views
-  await supabase
-    .from("re_properties")
-    .update({ views: (property.views ?? 0) + 1 })
-    .eq("id", property.id);
+  // Increment views (total + daily)
+  const today = new Date().toISOString().slice(0, 10);
+  await supabase.rpc("increment_property_view", {
+    p_property_id: property.id,
+    p_date: today,
+  });
 
   // Related properties
   const { data: related } = await supabase
