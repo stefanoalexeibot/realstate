@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import {
   Building2, Camera, Calendar, Phone, MapPin, Home,
-  Eye, Clock, CheckCircle2, Circle, ChevronRight, MessageSquare, Percent,
+  Eye, Clock, CheckCircle2, Circle, ChevronRight, MessageSquare, Percent, BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
@@ -231,6 +231,41 @@ export default async function PortalDashboard() {
 
   const propStatus = property ? (PROP_STATUS_LABELS[property.status] ?? PROP_STATUS_LABELS.inactive) : null;
 
+  // Price comparison — comparables in same neighborhood, fallback to city
+  const { data: neighborhoodComps } = (property?.area_m2 && property.neighborhood)
+    ? await supabase
+        .from("re_properties")
+        .select("price, area_m2")
+        .eq("status", "active")
+        .eq("operation_type", property.operation_type)
+        .eq("neighborhood", property.neighborhood)
+        .neq("id", property.id)
+        .not("area_m2", "is", null)
+    : { data: null };
+
+  const hasNeighborhoodComps = (neighborhoodComps?.length ?? 0) >= 2;
+
+  const { data: cityComps } = (!hasNeighborhoodComps && property?.area_m2)
+    ? await supabase
+        .from("re_properties")
+        .select("price, area_m2")
+        .eq("status", "active")
+        .eq("operation_type", property.operation_type)
+        .eq("city", property.city)
+        .neq("id", property.id)
+        .not("area_m2", "is", null)
+    : { data: null };
+
+  const compScope = hasNeighborhoodComps ? (property?.neighborhood ?? "") : (property?.city ?? "");
+  const allComps = hasNeighborhoodComps ? (neighborhoodComps ?? []) : (cityComps ?? []);
+  const validComps = allComps.filter(
+    (c): c is { price: number; area_m2: number } => !!c.area_m2 && c.price > 0,
+  );
+  const myPricePerM2 = property?.area_m2 ? property.price / property.area_m2 : null;
+  const avgMarketPricePerM2 = validComps.length >= 2
+    ? validComps.reduce((sum, c) => sum + c.price / c.area_m2, 0) / validComps.length
+    : null;
+
   return (
     <div className="space-y-6">
       {/* Welcome */}
@@ -430,6 +465,121 @@ export default async function PortalDashboard() {
                 </div>
                 <p className="text-[10px] text-cima-text-dim mt-3">
                   Rango {comm.label} · pagadera al escriturar · el porcentaje puede negociarse con tu agente.
+                </p>
+              </div>
+            );
+          })()}
+
+          {/* Price comparison */}
+          {myPricePerM2 !== null && avgMarketPricePerM2 !== null && (() => {
+            const diff = ((myPricePerM2 - avgMarketPricePerM2) / avgMarketPricePerM2) * 100;
+            const absDiff = Math.abs(diff);
+            const isAbove = diff > 0;
+
+            let posLabel: string;
+            let posColor: string;
+            let posBg: string;
+            if (absDiff <= 10) {
+              posLabel = "En línea con el mercado";
+              posColor = "text-emerald-400";
+              posBg = "bg-emerald-500/10 border-emerald-500/20";
+            } else if (isAbove && diff <= 20) {
+              posLabel = "Ligeramente por encima";
+              posColor = "text-amber-400";
+              posBg = "bg-amber-500/10 border-amber-500/20";
+            } else if (isAbove) {
+              posLabel = "Por encima del mercado";
+              posColor = "text-red-400";
+              posBg = "bg-red-500/10 border-red-500/20";
+            } else {
+              posLabel = "Por debajo del mercado";
+              posColor = "text-blue-400";
+              posBg = "bg-blue-500/10 border-blue-500/20";
+            }
+
+            const minComp = Math.min(...validComps.map((c) => c.price / c.area_m2));
+            const maxComp = Math.max(...validComps.map((c) => c.price / c.area_m2));
+            const rangePad = (maxComp - minComp) * 0.15 || maxComp * 0.1;
+            const rangeMin = minComp - rangePad;
+            const rangeMax = maxComp + rangePad;
+            const range = rangeMax - rangeMin;
+            const toPos = (v: number) =>
+              `${Math.min(100, Math.max(0, ((v - rangeMin) / range) * 100)).toFixed(1)}%`;
+
+            return (
+              <div className="rounded-2xl border border-cima-border bg-cima-card p-5">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4 text-cima-gold" />
+                    <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Comparativa de precio</p>
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-full border text-[10px] font-mono ${posBg} ${posColor}`}>
+                    {posLabel}
+                  </span>
+                </div>
+
+                {/* Numbers */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <div className="rounded-xl bg-cima-gold/5 border border-cima-gold/20 p-3 text-center">
+                    <p className="font-heading font-bold text-xl text-cima-gold">
+                      {formatPrice(Math.round(myPricePerM2))}
+                    </p>
+                    <p className="text-[10px] text-cima-text-dim font-mono uppercase mt-0.5">Tu precio / m²</p>
+                  </div>
+                  <div className="rounded-xl bg-cima-surface border border-cima-border p-3 text-center">
+                    <p className="font-heading font-bold text-xl text-cima-text">
+                      {formatPrice(Math.round(avgMarketPricePerM2))}
+                    </p>
+                    <p className="text-[10px] text-cima-text-dim font-mono uppercase mt-0.5">Promedio {compScope}</p>
+                  </div>
+                </div>
+
+                {/* Visual bar */}
+                <div className="mb-4">
+                  <div className="relative h-5 rounded-full overflow-hidden bg-gradient-to-r from-blue-500/25 via-emerald-500/25 to-red-500/25 border border-cima-border">
+                    {/* Market avg marker */}
+                    <div
+                      className="absolute top-0 bottom-0 w-0.5 bg-cima-text-muted/60"
+                      style={{ left: toPos(avgMarketPricePerM2) }}
+                    />
+                    {/* My price marker */}
+                    <div
+                      className="absolute top-0.5 bottom-0.5 w-1 rounded-full bg-cima-gold shadow-[0_0_8px_rgba(200,169,110,0.7)]"
+                      style={{ left: toPos(myPricePerM2) }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2.5 w-0.5 bg-cima-text-muted/60 rounded-full" />
+                      <span className="text-[9px] text-cima-text-dim font-mono">Promedio mercado</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2.5 w-1 bg-cima-gold rounded-full" />
+                      <span className="text-[9px] text-cima-gold font-mono">Tu precio</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommendation */}
+                <div className={`rounded-lg border px-3 py-2.5 ${posBg}`}>
+                  <p className={`text-xs leading-relaxed ${posColor}`}>
+                    {absDiff <= 10 && (
+                      <>Tu precio está dentro del rango de mercado ({isAbove ? "+" : ""}{diff.toFixed(1)}%). Posicionamiento óptimo para captar compradores.</>
+                    )}
+                    {isAbove && diff > 10 && diff <= 20 && (
+                      <>Tu precio está un {diff.toFixed(1)}% por encima del promedio en {compScope}. Sigue siendo competitivo, pero si no llegan visitas pronto habla con tu agente sobre ajustarlo.</>
+                    )}
+                    {isAbove && diff > 20 && (
+                      <>Tu precio está un {diff.toFixed(1)}% sobre el promedio en {compScope}. Esto puede limitar el interés de los compradores. Revisa la estrategia de precio con tu agente.</>
+                    )}
+                    {!isAbove && absDiff > 10 && (
+                      <>Tu precio está un {absDiff.toFixed(1)}% por debajo del promedio en {compScope}. Buena posición para generar interés rápido — confirma con tu agente que es la estrategia correcta.</>
+                    )}
+                  </p>
+                </div>
+
+                <p className="text-[10px] text-cima-text-dim mt-2.5">
+                  Basado en {validComps.length} propiedad{validComps.length !== 1 ? "es" : ""} activa{validComps.length !== 1 ? "s" : ""} en {compScope} · {property.operation_type}.
                 </p>
               </div>
             );
