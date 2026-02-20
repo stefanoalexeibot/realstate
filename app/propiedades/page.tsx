@@ -5,6 +5,8 @@ import PropertyCard from "@/components/landing/property-card";
 import type { Property } from "@/lib/types";
 import dynamicImport from "next/dynamic";
 import CompareBar from "@/components/landing/compare-bar";
+import { Suspense } from "react";
+import SearchInput from "@/components/landing/search-input";
 
 const PropertiesMap = dynamicImport(() => import("@/components/landing/properties-map"), {
   ssr: false,
@@ -17,6 +19,7 @@ interface SearchParams {
   zona?: string;
   precio?: string;
   vista?: string;
+  q?: string;
 }
 
 const PRICE_PRESETS = [
@@ -69,11 +72,15 @@ export default async function PropiedadesPage({
     if (rawMin) query = query.gte("price", Number(rawMin));
     if (rawMax) query = query.lte("price", Number(rawMax));
   }
+  if (searchParams.q) {
+    const q = `%${searchParams.q}%`;
+    query = query.or(`title.ilike.${q},neighborhood.ilike.${q},description.ilike.${q}`);
+  }
 
   const { data } = await query;
   const properties = (data ?? []) as Property[];
 
-  const isFiltered = searchParams.operacion || searchParams.tipo || searchParams.zona || searchParams.precio;
+  const isFiltered = searchParams.operacion || searchParams.tipo || searchParams.zona || searchParams.precio || searchParams.q;
 
   return (
     <div className="min-h-screen bg-cima-bg">
@@ -107,7 +114,12 @@ export default async function PropiedadesPage({
             </h1>
             <p className="text-sm text-cima-text-muted">{properties.length} propiedad{properties.length !== 1 ? "es" : ""} encontrada{properties.length !== 1 ? "s" : ""}</p>
           </div>
-          {/* Vista toggle */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Search */}
+            <Suspense>
+              <SearchInput />
+            </Suspense>
+            {/* Vista toggle */}
           <div className="flex items-center gap-1 rounded-lg border border-cima-border bg-cima-card p-1">
             <Link
               href={buildUrl({ ...searchParams, vista: undefined })}
@@ -129,6 +141,7 @@ export default async function PropiedadesPage({
             >
               <Map className="h-3 w-3" /> Mapa
             </Link>
+          </div>
           </div>
         </div>
 

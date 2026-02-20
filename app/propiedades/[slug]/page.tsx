@@ -15,15 +15,28 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const supabase = createClient();
   const { data } = await supabase
     .from("re_properties")
-    .select("title, neighborhood, price, operation_type")
+    .select("title, neighborhood, price, operation_type, cover_photo")
     .eq("slug", params.slug)
     .single();
 
   if (!data) return { title: "Propiedad no encontrada" };
 
+  const desc = `${data.title} en ${data.neighborhood ?? "Monterrey"}. ${formatPrice(data.price)}${data.operation_type === "renta" ? "/mes" : ""} en ${data.operation_type}.`;
+
   return {
     title: `${data.title} | Cima Propiedades`,
-    description: `${data.title} en ${data.neighborhood ?? "Monterrey"}. ${formatPrice(data.price)}${data.operation_type === "renta" ? "/mes" : ""} en ${data.operation_type}.`,
+    description: desc,
+    openGraph: {
+      title: `${data.title} | Cima Propiedades`,
+      description: desc,
+      ...(data.cover_photo ? { images: [{ url: data.cover_photo, width: 1200, height: 630, alt: data.title }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${data.title} | Cima Propiedades`,
+      description: desc,
+      ...(data.cover_photo ? { images: [data.cover_photo] } : {}),
+    },
   };
 }
 
