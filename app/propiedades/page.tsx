@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import PropertyCard from "@/components/landing/property-card";
 import type { Property } from "@/lib/types";
 import dynamicImport from "next/dynamic";
+import CompareBar from "@/components/landing/compare-bar";
 
 const PropertiesMap = dynamicImport(() => import("@/components/landing/properties-map"), {
   ssr: false,
@@ -236,6 +237,7 @@ export default async function PropiedadesPage({
           </div>
         )}
       </div>
+      <CompareBar />
     </div>
   );
 }

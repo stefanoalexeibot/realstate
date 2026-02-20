@@ -3,6 +3,7 @@ import { Building2, Eye, Plus, Pencil } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
+import GeocodeButton from "@/components/admin/geocode-button";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString("es-MX", {
@@ -36,6 +37,7 @@ export default async function PropiedadesAdmin() {
         </div>
         <div className="flex items-center gap-3">
           <p className="text-xs text-cima-text-muted">{properties.length} propiedades</p>
+          <GeocodeButton />
           <Link
             href="/admin/propiedades/nueva"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cima-gold text-cima-bg text-xs font-semibold hover:bg-cima-gold-light transition-colors"

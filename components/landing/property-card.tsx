@@ -6,6 +6,7 @@ import { BedDouble, Bath, Maximize2, Car, MapPin } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 import FavoriteButton from "@/components/landing/favorite-button";
+import CompareButton from "@/components/landing/compare-button";
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
   casa: "Casa",
@@ -77,8 +78,9 @@ export default function PropertyCard({ property, className }: PropertyCardProps)
           </div>
         )}
 
-        {/* Favorite button */}
+        {/* Favorite & Compare buttons */}
         <FavoriteButton propertyId={property.id} />
+        <CompareButton propertyId={property.id} />
       </div>
 
       {/* Content */}

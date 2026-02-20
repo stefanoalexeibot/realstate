@@ -28,6 +28,7 @@ import AuroraHero from "@/components/landing/aurora-hero";
 import StickyMobileCta from "@/components/landing/sticky-mobile-cta";
 import PriceEstimator from "@/components/landing/price-estimator";
 import type { Property } from "@/lib/types";
+import { ZONES } from "@/lib/zones";
 
 const PROCESS_STEPS = [
   {
@@ -98,14 +99,6 @@ const GUARANTEES = [
   },
 ];
 
-const ZONES = [
-  { name: "San Pedro Garza García", tag: "Premium" },
-  { name: "Valle Oriente",          tag: "Ejecutivo" },
-  { name: "Cumbres",                tag: "Familiar" },
-  { name: "Obispado",               tag: "Histórico" },
-  { name: "San Jerónimo",           tag: "Residencial" },
-  { name: "Monterrey Centro",       tag: "Inversión" },
-];
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -534,7 +527,7 @@ export default async function HomePage() {
             {ZONES.map((zone) => (
               <Link
                 key={zone.name}
-                href={`/propiedades?zona=${encodeURIComponent(zone.name)}`}
+                href={`/propiedades/en/${zone.slug}`}
                 className="group rounded-xl border border-cima-border bg-cima-card px-5 py-4 hover:border-cima-gold/40 hover:bg-cima-surface transition-all duration-200"
               >
                 <div className="flex items-start justify-between gap-2">
