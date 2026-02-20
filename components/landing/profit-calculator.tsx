@@ -16,11 +16,20 @@ function fmtFull(n: number) {
   return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(n);
 }
 
+function getCommissionPct(v: number): number {
+  if (v <= 1_000_000)  return 6;
+  if (v <= 3_000_000)  return 5;
+  if (v <= 6_000_000)  return 4.5;
+  if (v <= 10_000_000) return 4;
+  return 3.5;
+}
+
 export default function ProfitCalculator() {
   const [value, setValue] = useState(DEFAULT);
 
-  const cimaComm    = value * 0.05;
-  const cimaNet     = value * 0.95;
+  const commPct     = getCommissionPct(value) / 100;
+  const cimaComm    = value * commPct;
+  const cimaNet     = value - cimaComm;
   const tradComm    = value * 0.07;
   const tradNet     = value * 0.93;
   const savings     = tradComm - cimaComm;
@@ -59,7 +68,7 @@ export default function ProfitCalculator() {
         {/* Cima */}
         <div className="rounded-xl border border-cima-gold/30 bg-cima-gold/5 p-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="font-mono text-[10px] tracking-widest text-cima-gold uppercase">Con Cima · 5%</span>
+            <span className="font-mono text-[10px] tracking-widest text-cima-gold uppercase">Con Cima · {getCommissionPct(value)}%</span>
             <TrendingUp className="h-4 w-4 text-cima-gold" />
           </div>
           <p className="font-heading font-bold text-2xl text-cima-text tabular-nums leading-none">

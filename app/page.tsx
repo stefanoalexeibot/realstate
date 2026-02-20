@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import {
   Building2, MapPin, Phone, Star, ArrowRight,
@@ -10,6 +11,11 @@ import SellForm from "@/components/landing/sell-form";
 import HeroCaptureForm from "@/components/landing/hero-capture-form";
 import ProfitCalculator from "@/components/landing/profit-calculator";
 import GuaranteeFaq from "@/components/landing/guarantee-faq";
+import CursorGlow from "@/components/landing/cursor-glow";
+import StatsMarquee from "@/components/landing/stats-marquee";
+import FadeIn from "@/components/landing/fade-in";
+import AnimatedCounter from "@/components/landing/animated-counter";
+import AsistenteDemo from "@/components/landing/asistente-demo";
 import type { Property } from "@/lib/types";
 
 const PROCESS_STEPS = [
@@ -111,6 +117,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-cima-bg">
+      <CursorGlow />
 
       {/* ── NAVBAR ─────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-cima-border/50 bg-cima-bg/90 backdrop-blur-md">
@@ -143,6 +150,9 @@ export default async function HomePage() {
         </div>
       </header>
 
+      {/* ── STATS MARQUEE ──────────────────────── */}
+      <StatsMarquee />
+
       {/* ── HERO ───────────────────────────────── */}
       <section className="relative pt-28 pb-20 px-6 overflow-hidden min-h-[90vh] flex items-center">
         {/* Background FX */}
@@ -167,6 +177,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 items-center">
 
             {/* Left — copy */}
+            <FadeIn>
             <div>
               {/* Tag */}
               <div className="inline-flex items-center gap-2 rounded-full border border-cima-gold/25 bg-cima-gold/5 px-4 py-1.5 mb-7">
@@ -195,14 +206,26 @@ export default async function HomePage() {
 
               {/* Stats chips */}
               <div className="flex flex-wrap gap-2.5 mb-10">
-                {[
-                  { val: soldCount > 0 ? `${soldCount}+` : "85+", label: "casas vendidas" },
-                  { val: `${avgDays} días`,                        label: "tiempo promedio" },
-                  { val: "Desde 3%",                               label: "de comisión" },
-                  { val: activeProps ? `${activeProps}` : "5",     label: "disponibles hoy" },
-                ].map((s) => (
+                {([
+                  {
+                    val: <AnimatedCounter to={soldCount > 0 ? soldCount : 85} suffix="+" className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
+                    label: "casas vendidas",
+                  },
+                  {
+                    val: <AnimatedCounter to={avgDays} suffix=" días" className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
+                    label: "tiempo promedio",
+                  },
+                  {
+                    val: <span className="font-heading font-bold text-lg text-cima-gold leading-none">Desde 3%</span>,
+                    label: "de comisión",
+                  },
+                  {
+                    val: <AnimatedCounter to={activeProps ?? 5} className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
+                    label: "disponibles hoy",
+                  },
+                ] as { val: React.ReactNode; label: string }[]).map((s) => (
                   <div key={s.label} className="flex flex-col items-center rounded-xl border border-cima-border bg-cima-card px-4 py-2.5 min-w-[80px]">
-                    <span className="font-heading font-bold text-lg text-cima-gold leading-none">{s.val}</span>
+                    {s.val}
                     <span className="font-mono text-[9px] text-cima-text-dim uppercase tracking-widest mt-0.5">{s.label}</span>
                   </div>
                 ))}
@@ -224,11 +247,12 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
+            </FadeIn>
 
             {/* Right — hero form */}
-            <div className="hidden xl:block">
+            <FadeIn direction="left" delay={0.15} className="hidden xl:block">
               <HeroCaptureForm />
-            </div>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -236,18 +260,20 @@ export default async function HomePage() {
       {/* ── GUARANTEES ──────────────────────────── */}
       <section id="garantia" className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-5xl">
+          <FadeIn>
           <div className="text-center mb-10">
             <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Lo que nos diferencia</p>
             <h2 className="font-heading font-bold text-2xl sm:text-3xl text-cima-text">
               Sin letras chiquitas. Sin sorpresas.
             </h2>
           </div>
+          </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {GUARANTEES.map((g) => (
+            {GUARANTEES.map((g, i) => (
+              <FadeIn key={g.title} delay={i * 0.1}>
               <div
-                key={g.title}
-                className="group rounded-2xl border border-cima-border bg-cima-card p-7 hover:border-cima-gold/30 hover:bg-cima-surface/50 transition-all duration-300"
+                className="group rounded-2xl border border-cima-border bg-cima-card p-7 hover:border-cima-gold/30 hover:bg-cima-surface/50 transition-all duration-300 h-full"
               >
                 <div className="h-11 w-11 rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center mb-5 group-hover:bg-cima-gold/15 transition-colors">
                   <g.icon className="h-5 w-5 text-cima-gold" />
@@ -255,6 +281,7 @@ export default async function HomePage() {
                 <h3 className="font-heading font-bold text-base text-cima-text mb-2">{g.title}</h3>
                 <p className="text-sm text-cima-text-muted leading-relaxed">{g.desc}</p>
               </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -265,6 +292,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-5xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             {/* Left copy */}
+            <FadeIn>
             <div>
               <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-3">Calculadora</p>
               <h2 className="font-heading font-bold text-3xl sm:text-4xl text-cima-text mb-4 leading-tight">
@@ -276,9 +304,9 @@ export default async function HomePage() {
               </p>
               <div className="space-y-3">
                 {[
-                  "El 5% incluye fotos y video profesional",
+                  "Comisión desde 3%, pagadera al escriturar",
+                  "Fotos y video profesional incluidos",
                   "Publicidad digital pagada desde el día 1",
-                  "Comisión de abogado y trámites notariales",
                   "Solo pagas si vendemos. Cero riesgo.",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2.5">
@@ -290,9 +318,12 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
+            </FadeIn>
 
             {/* Right — calculator */}
-            <ProfitCalculator />
+            <FadeIn direction="left" delay={0.15}>
+              <ProfitCalculator />
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -300,6 +331,7 @@ export default async function HomePage() {
       {/* ── PROCESS TIMELINE ────────────────────── */}
       <section className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-5xl">
+          <FadeIn>
           <div className="text-center mb-12">
             <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Proceso</p>
             <h2 className="font-heading font-bold text-2xl sm:text-3xl text-cima-text">
@@ -307,6 +339,7 @@ export default async function HomePage() {
             </h2>
             <p className="text-sm text-cima-text-muted mt-2">Todo en menos de 30 días.</p>
           </div>
+          </FadeIn>
 
           {/* Desktop horizontal timeline */}
           <div className="hidden md:block relative">
@@ -368,21 +401,26 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── ASISTENTE VIRTUAL ───────────────────── */}
+      <AsistenteDemo />
+
       {/* ── TESTIMONIALS ────────────────────────── */}
       <section className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-5xl">
+          <FadeIn>
           <div className="text-center mb-10">
             <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Resultados reales</p>
             <h2 className="font-heading font-bold text-2xl sm:text-3xl text-cima-text">
               Lo que dicen quienes ya vendieron
             </h2>
           </div>
+          </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {TESTIMONIALS.map((t) => (
+            {TESTIMONIALS.map((t, i) => (
+              <FadeIn key={t.name} delay={i * 0.1}>
               <div
-                key={t.name}
-                className="rounded-2xl border border-cima-border bg-cima-card p-6 flex flex-col"
+                className="rounded-2xl border border-cima-border bg-cima-card p-6 flex flex-col h-full"
               >
                 {/* Days chip — most important metric */}
                 <div className="inline-flex items-center gap-1.5 rounded-full bg-cima-gold/10 border border-cima-gold/25 px-3 py-1 mb-5 w-fit">
@@ -413,6 +451,7 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
+              </FadeIn>
             ))}
           </div>
         </div>
@@ -488,10 +527,12 @@ export default async function HomePage() {
       {/* ── ZONES ───────────────────────────────── */}
       <section className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-6xl">
+          <FadeIn>
           <div className="text-center mb-10">
             <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Cobertura</p>
             <h2 className="font-heading font-bold text-2xl text-cima-text">Zonas donde vendemos</h2>
           </div>
+          </FadeIn>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {ZONES.map((zone) => (
               <Link
