@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { notifyNewVisit } from "@/lib/notify";
 
 export async function POST(req: Request) {
   try {
@@ -11,6 +12,14 @@ export async function POST(req: Request) {
     }
 
     const supabase = createServiceClient();
+
+    // Get property title for notification
+    const { data: property } = await supabase
+      .from("re_properties")
+      .select("title")
+      .eq("id", property_id)
+      .single();
+
     const { error } = await supabase.from("re_visits").insert({
       property_id,
       name,
@@ -21,6 +30,10 @@ export async function POST(req: Request) {
     });
 
     if (error) throw error;
+
+    // Non-blocking notification
+    notifyNewVisit({ name, phone, email, propertyTitle: property?.title ?? "Propiedad", preferred_date, message });
+
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Error al guardar" }, { status: 500 });

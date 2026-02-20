@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import VisitForm from "@/components/landing/visit-form";
+import PhotoGallery from "@/components/landing/photo-gallery";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 
@@ -35,14 +36,15 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
 
   const { data } = await supabase
     .from("re_properties")
-    .select("*")
+    .select("*, re_photos(id, url, order, is_cover)")
     .eq("slug", params.slug)
     .eq("status", "active")
     .single();
 
   if (!data) notFound();
 
-  const property = data as Property;
+  const property = data as Property & { re_photos: { id: string; url: string; order: number; is_cover: boolean }[] };
+  const photos = (property.re_photos ?? []).sort((a, b) => a.order - b.order);
   const isRenta = property.operation_type === "renta";
 
   // Increment views
@@ -73,25 +75,18 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
           {/* Left */}
           <div>
-            {/* Image */}
-            <div className="rounded-xl overflow-hidden border border-cima-border mb-6 h-[320px] sm:h-[420px] property-placeholder relative">
-              {property.cover_photo ? (
-                <img src={property.cover_photo} alt={property.title} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <Building2 className="h-12 w-12 text-cima-gold/30 mx-auto mb-2" />
-                    <p className="text-xs text-cima-text-dim font-mono">Sin fotos disponibles</p>
-                  </div>
-                  <div
-                    className="absolute inset-0 opacity-[0.04]"
-                    style={{
-                      backgroundImage: "repeating-linear-gradient(0deg, #C8A96E 0px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #C8A96E 0px, transparent 1px, transparent 40px)",
-                    }}
-                  />
+            {/* Photo gallery */}
+            {photos.length > 0 ? (
+              <PhotoGallery photos={photos} title={property.title} />
+            ) : (
+              <div className="rounded-xl overflow-hidden border border-cima-border mb-6 h-[300px] property-placeholder relative flex items-center justify-center">
+                <div className="text-center">
+                  <Building2 className="h-12 w-12 text-cima-gold/30 mx-auto mb-2" />
+                  <p className="text-xs text-cima-text-dim font-mono">Sin fotos disponibles</p>
                 </div>
-              )}
-            </div>
+                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(0deg, #C8A96E 0px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #C8A96E 0px, transparent 1px, transparent 40px)" }} />
+              </div>
+            )}
 
             {/* Badges + price */}
             <div className="flex items-center gap-3 flex-wrap mb-4">

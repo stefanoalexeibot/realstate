@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Building2, Home, ImageIcon, LogOut } from "lucide-react";
+import { Building2, Home, ImageIcon, LogOut, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PortalNavProps {
@@ -21,8 +21,10 @@ export default function PortalNav({ propName }: PortalNavProps) {
   }
 
   const links = [
-    { href: "/portal",       label: "Mi propiedad", icon: Home },
-    { href: "/portal/fotos", label: "Fotos",         icon: ImageIcon },
+    { href: "/portal",              label: "Mi propiedad", icon: Home },
+    { href: "/portal/fotos",        label: "Fotos",         icon: ImageIcon },
+    { href: "/portal/documentos",   label: "Documentos",    icon: FileText },
+    { href: "/portal/settings",     label: "Cuenta",        icon: Settings },
   ];
 
   return (

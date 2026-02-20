@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Building2, Eye, Plus } from "lucide-react";
+import { Building2, Eye, Plus, Pencil } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
@@ -54,8 +54,8 @@ export default async function PropiedadesAdmin() {
       ) : (
         <div className="rounded-xl border border-cima-border bg-cima-card overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_120px_100px_100px_80px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
-            {["Propiedad", "Precio", "Tipo", "Estado", ""].map((h) => (
+          <div className="grid grid-cols-[1fr_110px_80px_90px_50px_110px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
+            {["Propiedad", "Precio", "Vistas", "Tipo", "Estado", ""].map((h) => (
               <p key={h} className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">{h}</p>
             ))}
           </div>
@@ -65,7 +65,7 @@ export default async function PropiedadesAdmin() {
             {properties.map((p) => {
               const st = STATUS_LABELS[p.status] ?? STATUS_LABELS.inactive;
               return (
-                <div key={p.id} className="grid grid-cols-[1fr_120px_100px_100px_80px] gap-4 px-5 py-4 items-center hover:bg-cima-surface/30 transition-colors">
+                <div key={p.id} className="grid grid-cols-[1fr_110px_80px_90px_50px_110px] gap-4 px-5 py-4 items-center hover:bg-cima-surface/30 transition-colors">
                   {/* Title + neighborhood */}
                   <div className="min-w-0">
                     <p className="font-medium text-sm text-cima-text truncate">{p.title}</p>
@@ -77,6 +77,9 @@ export default async function PropiedadesAdmin() {
                     {formatPrice(p.price)}{p.operation_type === "renta" ? "/mes" : ""}
                   </p>
 
+                  {/* Views */}
+                  <p className="text-xs text-cima-text-muted font-mono">{p.views ?? 0} vistas</p>
+
                   {/* Type */}
                   <p className="text-xs text-cima-text-muted capitalize">{p.property_type}</p>
 
@@ -86,14 +89,23 @@ export default async function PropiedadesAdmin() {
                   </span>
 
                   {/* Actions */}
-                  <Link
-                    href={`/propiedades/${p.slug}`}
-                    target="_blank"
-                    className="flex items-center gap-1 text-xs text-cima-text-muted hover:text-cima-gold transition-colors"
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                    Ver
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/admin/propiedades/${p.id}/editar`}
+                      className="flex items-center gap-1 text-xs text-cima-text-muted hover:text-cima-gold transition-colors"
+                    >
+                      <Pencil className="h-3 w-3" />
+                      Editar
+                    </Link>
+                    <Link
+                      href={`/propiedades/${p.slug}`}
+                      target="_blank"
+                      className="flex items-center gap-1 text-xs text-cima-text-muted hover:text-cima-gold transition-colors"
+                    >
+                      <Eye className="h-3 w-3" />
+                      Ver
+                    </Link>
+                  </div>
                 </div>
               );
             })}

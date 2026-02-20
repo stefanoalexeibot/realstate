@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { notifyNewLead } from "@/lib/notify";
 
 export async function POST(req: Request) {
   try {
@@ -23,6 +24,10 @@ export async function POST(req: Request) {
     });
 
     if (error) throw error;
+
+    // Non-blocking notification
+    notifyNewLead({ name, phone, email, neighborhood, operation_type, estimated_price, message });
+
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Error al guardar" }, { status: 500 });
