@@ -1,6 +1,14 @@
+import { headers } from "next/headers";
 import AdminSidebar from "@/components/admin/sidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = headers().get("x-pathname") ?? "";
+  const isLogin = pathname === "/admin/login";
+
+  if (isLogin) {
+    return <div className="min-h-screen bg-cima-bg">{children}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-cima-bg">
       <AdminSidebar />
