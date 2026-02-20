@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import PortalNav from "@/components/portal/nav";
+import PortalRealtimeToasts from "@/components/portal/realtime-toasts";
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -49,6 +50,7 @@ export default async function PortalLayout({ children }: { children: React.React
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {children}
       </main>
+      <PortalRealtimeToasts propertyId={property?.id ?? ""} />
     </div>
   );
 }

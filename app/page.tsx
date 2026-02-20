@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import {
-  Building2, MapPin, Phone, Star, ArrowRight,
+  Building2, MapPin, Star, ArrowRight,
   ChevronRight, Shield, Clock, Percent, Camera,
   Users, FileCheck, CheckCircle2,
 } from "lucide-react";
@@ -22,6 +22,7 @@ import ProcessLine from "@/components/landing/process-line";
 import ScrollProgress from "@/components/landing/scroll-progress";
 import ExitIntent from "@/components/landing/exit-intent";
 import BeforeAfterSlider from "@/components/landing/before-after-slider";
+import LandingNav from "@/components/landing/landing-nav";
 import type { Property } from "@/lib/types";
 
 const PROCESS_STEPS = [
@@ -128,35 +129,7 @@ export default async function HomePage() {
       <ExitIntent />
 
       {/* ── NAVBAR ─────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-cima-border/50 bg-cima-bg/90 backdrop-blur-md">
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center">
-              <Building2 className="h-4 w-4 text-cima-gold" />
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="font-heading font-bold text-sm text-cima-text">Cima</span>
-              <span className="font-mono text-[9px] tracking-[0.2em] text-cima-text-muted uppercase">Propiedades</span>
-            </div>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="#garantia" className="text-sm text-cima-text-muted hover:text-cima-text transition-colors">Garantía</Link>
-            <Link href="#calculadora" className="text-sm text-cima-text-muted hover:text-cima-text transition-colors">Calculadora</Link>
-            <Link href="/propiedades" className="text-sm text-cima-text-muted hover:text-cima-text transition-colors">Propiedades</Link>
-          </nav>
-
-          <a
-            href={`https://wa.me/${process.env.NEXT_PUBLIC_CIMA_WA}?text=Hola,%20quiero%20vender%20mi%20casa%20con%20Cima`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1.5 rounded-lg bg-cima-gold/10 border border-cima-gold/30 px-3 py-1.5 text-xs font-mono text-cima-gold hover:bg-cima-gold/20 transition-colors"
-          >
-            <Phone className="h-3 w-3" />
-            WhatsApp
-          </a>
-        </div>
-      </header>
+      <LandingNav />
 
       {/* ── STATS MARQUEE ──────────────────────── */}
       <StatsMarquee />

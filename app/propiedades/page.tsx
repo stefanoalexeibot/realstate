@@ -8,7 +8,15 @@ interface SearchParams {
   tipo?: string;
   operacion?: string;
   zona?: string;
+  precio?: string;
 }
+
+const PRICE_PRESETS = [
+  { label: "Hasta $2M",   value: "-2000000" },
+  { label: "$2M–$5M",     value: "2000000-5000000" },
+  { label: "$5M–$10M",    value: "5000000-10000000" },
+  { label: "+$10M",       value: "10000000-" },
+];
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +31,14 @@ export default async function PropiedadesPage({
   searchParams: SearchParams;
 }) {
   const supabase = createClient();
+
+  // Fetch distinct neighborhoods for zona pills
+  const { data: zonaRows } = await supabase
+    .from("re_properties")
+    .select("neighborhood")
+    .eq("status", "active")
+    .not("neighborhood", "is", null);
+  const zonas = Array.from(new Set((zonaRows ?? []).map((r) => r.neighborhood as string))).sort();
 
   let query = supabase
     .from("re_properties")
@@ -40,11 +56,16 @@ export default async function PropiedadesPage({
   if (searchParams.zona) {
     query = query.ilike("neighborhood", `%${searchParams.zona}%`);
   }
+  if (searchParams.precio) {
+    const [rawMin, rawMax] = searchParams.precio.split("-");
+    if (rawMin) query = query.gte("price", Number(rawMin));
+    if (rawMax) query = query.lte("price", Number(rawMax));
+  }
 
   const { data } = await query;
   const properties = (data ?? []) as Property[];
 
-  const isFiltered = searchParams.operacion || searchParams.tipo || searchParams.zona;
+  const isFiltered = searchParams.operacion || searchParams.tipo || searchParams.zona || searchParams.precio;
 
   return (
     <div className="min-h-screen bg-cima-bg">
@@ -114,6 +135,42 @@ export default async function PropiedadesPage({
               }`}
             >
               {t === "" ? "Tipo" : t === "departamento" ? "Depto" : t.charAt(0).toUpperCase() + t.slice(1)}
+            </Link>
+          ))}
+
+          {/* Zona */}
+          {zonas.length > 0 && (
+            <>
+              <div className="w-px h-6 bg-cima-border self-center mx-1" />
+              {zonas.map((z) => (
+                <Link
+                  key={z}
+                  href={buildUrl({ ...searchParams, zona: searchParams.zona === z ? undefined : z })}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                    searchParams.zona === z
+                      ? "bg-cima-gold text-cima-bg font-semibold"
+                      : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
+                  }`}
+                >
+                  {z.length > 14 ? z.split(" ")[0] : z}
+                </Link>
+              ))}
+            </>
+          )}
+
+          {/* Precio */}
+          <div className="w-px h-6 bg-cima-border self-center mx-1" />
+          {PRICE_PRESETS.map((p) => (
+            <Link
+              key={p.value}
+              href={buildUrl({ ...searchParams, precio: searchParams.precio === p.value ? undefined : p.value })}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                searchParams.precio === p.value
+                  ? "bg-cima-gold text-cima-bg font-semibold"
+                  : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
+              }`}
+            >
+              {p.label}
             </Link>
           ))}
 
