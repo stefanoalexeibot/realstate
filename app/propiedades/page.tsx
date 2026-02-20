@@ -10,6 +10,8 @@ interface SearchParams {
   zona?: string;
 }
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Propiedades en Monterrey | Cima Propiedades",
   description: "Explora nuestro catálogo de casas, departamentos y terrenos en venta y renta en Monterrey, N.L.",

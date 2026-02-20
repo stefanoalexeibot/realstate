@@ -190,19 +190,18 @@ export default function EditarPropiedad() {
     try {
       const supabase = createClient();
 
-      // Upload new photos
+      // Upload new photos via server route (service client — bypasses RLS)
       if (newPhotos.length > 0) {
         const maxOrder = existingPhotos.length ? Math.max(...existingPhotos.map((p) => p.order)) + 1 : 0;
         for (let i = 0; i < newPhotos.length; i++) {
           setUploadProgress(`Subiendo foto ${i + 1} de ${newPhotos.length}…`);
           const { file } = newPhotos[i];
-          const ext = file.name.split(".").pop();
-          const path = `properties/${params.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-          const { data: uploaded, error: uploadErr } = await supabase.storage
-            .from("cima-photos")
-            .upload(path, file, { cacheControl: "3600", upsert: false });
-          if (uploadErr) throw uploadErr;
-          const { data: { publicUrl } } = supabase.storage.from("cima-photos").getPublicUrl(uploaded.path);
+          const fd = new FormData();
+          fd.append("file", file);
+          const uploadRes = await fetch("/api/photos/upload", { method: "POST", body: fd });
+          const uploadJson = await uploadRes.json();
+          if (!uploadRes.ok) throw new Error(uploadJson.error ?? "Error al subir foto");
+          const publicUrl = uploadJson.url;
           const isCover = existingPhotos.length === 0 && i === 0;
           await supabase.from("re_photos").insert({ property_id: params.id, url: publicUrl, order: maxOrder + i, is_cover: isCover });
           if (isCover) await supabase.from("re_properties").update({ cover_photo: publicUrl }).eq("id", params.id);

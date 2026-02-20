@@ -8,7 +8,8 @@ export async function POST(req: Request) {
     const {
       title, description, price, operation_type, property_type,
       bedrooms, bathrooms, area_m2, parking, neighborhood, city,
-      state, features, status, featured, photos, propietario_id, agent_notes,
+      state, features, status, featured, photos, propietario_id,
+      agent_notes, agent_id, address, construction_year,
     } = body;
 
     if (!title || !price || !operation_type || !property_type) {
@@ -40,6 +41,9 @@ export async function POST(req: Request) {
         slug,
         propietario_id: propietario_id || null,
         agent_notes: agent_notes || null,
+        agent_id: agent_id || null,
+        address: address || null,
+        construction_year: construction_year ? Number(construction_year) : null,
       })
       .select()
       .single();
