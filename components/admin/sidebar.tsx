@@ -5,14 +5,23 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
-import { Building2, LayoutDashboard, Home, Calendar, Users, LogOut, Menu, X, KanbanSquare } from "lucide-react";
+import {
+  Building2, LayoutDashboard, Home, Calendar, Users, LogOut, Menu, X,
+  KanbanSquare, Users2, BarChart2, Calculator, FileText, BookOpen, TrendingUp,
+} from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard",   href: "/admin",              icon: LayoutDashboard },
-  { label: "Propiedades", href: "/admin/propiedades",  icon: Home },
-  { label: "Pipeline",    href: "/admin/pipeline",     icon: KanbanSquare },
-  { label: "Visitas",     href: "/admin/visitas",      icon: Calendar },
-  { label: "Leads",       href: "/admin/leads",        icon: Users },
+  { label: "Dashboard",    href: "/admin",              icon: LayoutDashboard },
+  { label: "Propiedades",  href: "/admin/propiedades",  icon: Home },
+  { label: "Pipeline",     href: "/admin/pipeline",     icon: KanbanSquare },
+  { label: "Visitas",      href: "/admin/visitas",      icon: Calendar },
+  { label: "Leads",        href: "/admin/leads",        icon: Users },
+  { label: "Agentes",      href: "/admin/agentes",      icon: Users2 },
+  { label: "Analizador",   href: "/admin/analizador",   icon: BarChart2 },
+  { label: "Cotizador",    href: "/admin/cotizador",    icon: Calculator },
+  { label: "Documentos",   href: "/admin/documentos",   icon: FileText },
+  { label: "Ventas",       href: "/admin/ventas",       icon: BookOpen },
+  { label: "Reportes",     href: "/admin/reportes",     icon: TrendingUp },
 ];
 
 export default function AdminSidebar() {
@@ -49,23 +58,26 @@ export default function AdminSidebar() {
         </button>
       </div>
 
-      <nav className="flex-1 space-y-0.5 px-2 py-4">
-        {navItems.map((item) => {
+      <nav className="flex-1 overflow-y-auto space-y-0.5 px-2 py-4">
+        {navItems.map((item, i) => {
           const isActive = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
+          const showDivider = i === 5 || i === 8;
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-cima-gold/10 text-cima-gold"
-                  : "text-cima-text-muted hover:bg-cima-surface hover:text-cima-text"
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
+            <div key={item.href}>
+              {showDivider && <div className="h-px bg-cima-border/50 mx-2 my-2" />}
+              <Link
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-cima-gold/10 text-cima-gold"
+                    : "text-cima-text-muted hover:bg-cima-surface hover:text-cima-text"
+                )}
+              >
+                <item.icon className="h-4 w-4 shrink-0" />
+                {item.label}
+              </Link>
+            </div>
           );
         })}
       </nav>
