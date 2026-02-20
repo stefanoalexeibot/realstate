@@ -65,7 +65,7 @@ const TEMPLATES: Template[] = [
       { key: "precio",          label: "Precio de lista (MXN)",      type: "number",   placeholder: "3500000" },
       { key: "operacion",       label: "Tipo de operación",          type: "select",   options: ["Venta", "Renta"] },
       { key: "vigencia",        label: "Vigencia (días)",            type: "select",   options: ["90", "120", "180"] },
-      { key: "comision",        label: "Comisión (%)",               type: "select",   options: ["3", "3.5", "4", "5"] },
+      { key: "comision",        label: "Comisión (%)",               type: "select",   options: ["3", "3.5", "4", "4.5", "5", "6"] },
       { key: "agente",          label: "Nombre del agente",          type: "text",     placeholder: "Tu nombre completo" },
     ],
   },

@@ -71,13 +71,13 @@ const GUARANTEES = [
   },
   {
     icon: Percent,
-    title: "Solo 5% de comisión",
-    desc: "Sin cuotas iniciales, sin mensualidades, sin cargos ocultos. Solo cobras cuando vendemos.",
+    title: "Comisión desde 3%",
+    desc: "Sin cuotas iniciales, sin mensualidades, sin cargos ocultos. La comisión varía según el valor de tu propiedad y se paga al escriturar.",
   },
   {
     icon: Shield,
-    title: "Sin exclusividad",
-    desc: "Puedes trabajar con otras opciones. Nuestra confianza está en resultados, no en encerrarte.",
+    title: "Exclusiva de 60 días",
+    desc: "Trabajamos en exclusiva para darte dedicación total: marketing pagado, calificación de compradores y negociación profesional.",
   },
 ];
 
@@ -188,8 +188,8 @@ export default async function HomePage() {
               </h1>
 
               <p className="text-base sm:text-lg text-cima-text-muted leading-relaxed mb-8 max-w-xl">
-                Solo <span className="text-cima-text font-medium">5% de comisión</span> cuando vendemos.
-                Sin exclusividades. Sin mensualidades.{" "}
+                Comisión <span className="text-cima-text font-medium">desde 3%</span>, pagadera al escriturar.
+                Exclusiva de 60 días con dedicación total.{" "}
                 <span className="text-cima-text font-medium">Si no vendemos en 30 días, no cobramos.</span>
               </p>
 
@@ -198,7 +198,7 @@ export default async function HomePage() {
                 {[
                   { val: soldCount > 0 ? `${soldCount}+` : "85+", label: "casas vendidas" },
                   { val: `${avgDays} días`,                        label: "tiempo promedio" },
-                  { val: "5%",                                     label: "comisión fija" },
+                  { val: "Desde 3%",                               label: "de comisión" },
                   { val: activeProps ? `${activeProps}` : "5",     label: "disponibles hoy" },
                 ].map((s) => (
                   <div key={s.label} className="flex flex-col items-center rounded-xl border border-cima-border bg-cima-card px-4 py-2.5 min-w-[80px]">

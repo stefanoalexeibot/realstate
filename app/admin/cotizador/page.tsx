@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Calculator, Copy, Phone, Check } from "lucide-react";
+import { Calculator, Copy, Phone, Check, TrendingDown, Clock } from "lucide-react";
 
 const IVA = 0.16;
 
@@ -9,19 +9,45 @@ function fmt(n: number) {
   return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(n);
 }
 
+// ─── Commission tiers ────────────────────────────────────────────────────────
+
+const PRICE_TIERS = [
+  { label: "Hasta $1,000,000",         max: 1_000_000,             pct: 6   },
+  { label: "$1,000,001 – $3,000,000",  max: 3_000_000,             pct: 5   },
+  { label: "$3,000,001 – $6,000,000",  max: 6_000_000,             pct: 4.5 },
+  { label: "$6,000,001 – $10,000,000", max: 10_000_000,            pct: 4   },
+  { label: "Más de $10,000,000",       max: Infinity,              pct: 3.5 }, // midpoint of 3-4%
+];
+
+const TIME_TIERS = [
+  { label: "Menos de 30 días",  days: 30, pct: 5,   color: "text-emerald-400" },
+  { label: "Menos de 60 días",  days: 60, pct: 4,   color: "text-blue-400"    },
+  { label: "Menos de 90 días",  days: 90, pct: 3,   color: "text-cima-gold"   },
+];
+
+function suggestedPct(price: number): number {
+  const tier = PRICE_TIERS.find((t) => price <= t.max);
+  return tier?.pct ?? 3.5;
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export default function CotizadorPage() {
   const [price, setPrice] = useState("");
-  const [commPct, setCommPct] = useState("3");
+  const [commPct, setCommPct] = useState("5");
   const [opType, setOpType] = useState<"venta" | "renta">("venta");
   const [ivaEnabled, setIvaEnabled] = useState(true);
   const [splitEnabled, setSplitEnabled] = useState(false);
   const [captadorPct, setCaptadorPct] = useState("50");
   const [copied, setCopied] = useState(false);
 
+  const priceNum = Number(price.replace(/,/g, "")) || 0;
+  const suggested = priceNum > 0 ? suggestedPct(priceNum) : null;
+
   const nums = useMemo(() => {
-    const p = Number(price.replace(/,/g, "")) || 0;
+    const p = priceNum;
     const pct = Number(commPct) / 100;
-    const gross = opType === "venta" ? p * pct : p; // renta = 1 mes
+    const gross = opType === "venta" ? p * pct : p;
     const iva = ivaEnabled ? gross * IVA : 0;
     const net = gross + iva;
     const captador = splitEnabled ? gross * (Number(captadorPct) / 100) : 0;
@@ -29,23 +55,20 @@ export default function CotizadorPage() {
     const captadorNet = splitEnabled ? captador + (ivaEnabled ? captador * IVA : 0) : 0;
     const vendedorNet = splitEnabled ? vendedor + (ivaEnabled ? vendedor * IVA : 0) : 0;
     return { p, gross, iva, net, captador, vendedor, captadorNet, vendedorNet };
-  }, [price, commPct, opType, ivaEnabled, splitEnabled, captadorPct]);
+  }, [priceNum, commPct, opType, ivaEnabled, splitEnabled, captadorPct]);
 
   function buildText() {
     const lines = [
       `🏠 Cotización Cima Propiedades`,
       ``,
       `Operación: ${opType === "venta" ? "Venta" : "Renta"}`,
-      opType === "venta"
-        ? `Precio de venta: ${fmt(nums.p)}`
-        : `Renta mensual: ${fmt(nums.p)}`,
-      opType === "venta"
-        ? `Comisión (${commPct}%): ${fmt(nums.gross)}`
-        : `Comisión (1 mes): ${fmt(nums.gross)}`,
+      opType === "venta" ? `Precio de venta: ${fmt(nums.p)}` : `Renta mensual: ${fmt(nums.p)}`,
+      opType === "venta" ? `Comisión (${commPct}%): ${fmt(nums.gross)}` : `Comisión (1 mes): ${fmt(nums.gross)}`,
       ivaEnabled ? `IVA (16%): ${fmt(nums.iva)}` : null,
       `Total comisión: ${fmt(nums.net)}`,
+      ``,
+      `* Comisión pagadera al momento de escriturar.`,
     ].filter(Boolean);
-
     if (splitEnabled) {
       lines.push(``, `División:`);
       lines.push(`  Captador (${captadorPct}%): ${fmt(nums.captadorNet)}`);
@@ -65,7 +88,7 @@ export default function CotizadorPage() {
   }
 
   return (
-    <div className="p-6 sm:p-8 max-w-3xl mx-auto space-y-6">
+    <div className="p-6 sm:p-8 max-w-4xl mx-auto space-y-8">
 
       {/* Header */}
       <div>
@@ -74,14 +97,64 @@ export default function CotizadorPage() {
           <Calculator className="h-5 w-5 text-cima-gold" />
           Cotizador de comisiones
         </h1>
-        <p className="text-sm text-cima-text-muted mt-1">Calcula la comisión estimada de cualquier operación al instante.</p>
+        <p className="text-sm text-cima-text-muted mt-1">Calcula la comisión estimada de cualquier operación. Comisión pagadera al escriturar.</p>
       </div>
 
+      {/* Reference tables */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        {/* By price */}
+        <div className="rounded-xl border border-cima-border bg-cima-card p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingDown className="h-3.5 w-3.5 text-cima-gold" />
+            <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Comisión por valor de venta</p>
+          </div>
+          <div className="space-y-2">
+            {PRICE_TIERS.map((t) => (
+              <div key={t.label} className="flex items-center justify-between gap-2">
+                <span className="text-xs text-cima-text-muted">{t.label}</span>
+                <span className={`font-mono font-bold text-sm shrink-0 ${
+                  suggested === t.pct && priceNum > 0 ? "text-cima-gold" : "text-cima-text"
+                }`}>
+                  {t.pct}%
+                  {suggested === t.pct && priceNum > 0 && (
+                    <span className="ml-1 text-[9px] font-normal text-cima-gold/70">← sugerida</span>
+                  )}
+                </span>
+              </div>
+            ))}
+            <p className="text-[10px] text-cima-text-dim pt-1 border-t border-cima-border">Todo % es negociable. Pagadero al escriturar.</p>
+          </div>
+        </div>
+
+        {/* By time */}
+        <div className="rounded-xl border border-cima-border bg-cima-card p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="h-3.5 w-3.5 text-cima-gold" />
+            <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Comisión por tiempo de venta</p>
+          </div>
+          <div className="space-y-2">
+            {TIME_TIERS.map((t) => (
+              <div key={t.days} className="flex items-center justify-between gap-2">
+                <span className="text-xs text-cima-text-muted">{t.label}</span>
+                <span className={`font-mono font-bold text-sm ${t.color}`}>{t.pct}%</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 rounded-lg bg-cima-surface border border-cima-border px-3 py-2">
+            <p className="text-[10px] text-cima-text-dim leading-relaxed">
+              Aplica el <span className="text-cima-text">menor</span> entre el % por valor y el % por tiempo, salvo acuerdo distinto.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Calculator */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
         {/* Inputs */}
         <div className="rounded-xl border border-cima-border bg-cima-card p-5 space-y-4">
-          <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Parámetros</p>
+          <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Calculadora</p>
 
           {/* Operation type */}
           <div>
@@ -90,11 +163,9 @@ export default function CotizadorPage() {
               {(["venta", "renta"] as const).map((t) => (
                 <button
                   key={t}
-                  onClick={() => { setOpType(t); if (t === "renta") setCommPct("100"); else setCommPct("3"); }}
+                  onClick={() => { setOpType(t); if (t === "renta") setCommPct("100"); else setCommPct("5"); }}
                   className={`flex-1 py-2 text-xs font-medium transition-colors ${
-                    opType === t
-                      ? "bg-cima-gold text-cima-bg"
-                      : "bg-cima-surface text-cima-text-muted hover:text-cima-text"
+                    opType === t ? "bg-cima-gold text-cima-bg" : "bg-cima-surface text-cima-text-muted hover:text-cima-text"
                   }`}
                 >
                   {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -116,13 +187,22 @@ export default function CotizadorPage() {
                 className="w-full rounded-lg bg-cima-surface border border-cima-border pl-6 pr-3 py-2.5 text-sm text-cima-text focus:outline-none focus:border-cima-gold/50 transition-colors"
               />
             </div>
+            {/* Auto-suggest */}
+            {suggested !== null && opType === "venta" && (
+              <button
+                onClick={() => setCommPct(suggested.toString())}
+                className="mt-1.5 text-[11px] text-cima-gold hover:underline"
+              >
+                Usar comisión sugerida: {suggested}%
+              </button>
+            )}
           </div>
 
           {/* Commission % (only for venta) */}
           {opType === "venta" && (
             <div>
               <label className="block text-xs font-medium text-cima-text-muted mb-1.5">
-                Comisión (%) — {commPct}%
+                Comisión (%) — <span className="text-cima-gold font-bold">{commPct}%</span>
               </label>
               <input
                 type="range" min="1" max="10" step="0.5" value={commPct}
@@ -173,7 +253,6 @@ export default function CotizadorPage() {
         <div className="space-y-4">
           <div className="rounded-xl border border-cima-gold/20 bg-cima-gold/5 p-5 space-y-3">
             <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Desglose</p>
-
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-cima-text-muted">
@@ -191,6 +270,7 @@ export default function CotizadorPage() {
                 <span className="font-medium text-cima-text">Total comisión</span>
                 <span className="font-heading font-bold text-xl text-cima-gold">{fmt(nums.net)}</span>
               </div>
+              <p className="text-[10px] text-cima-text-dim pt-1">Pagadero al escriturar.</p>
             </div>
           </div>
 
@@ -232,22 +312,6 @@ export default function CotizadorPage() {
               <Phone className="h-4 w-4" />
               WhatsApp
             </button>
-          </div>
-
-          {/* Quick reference */}
-          <div className="rounded-xl border border-cima-border bg-cima-card p-4">
-            <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase mb-3">Referencia rápida — 3%</p>
-            <div className="space-y-1.5">
-              {[500000, 1000000, 2000000, 3500000, 5000000].map((p) => (
-                <div key={p} className="flex justify-between items-center">
-                  <span className="text-xs text-cima-text-muted">{fmt(p)}</span>
-                  <span className="font-mono text-xs text-cima-gold font-bold">
-                    {fmt(p * 0.03 * (ivaEnabled ? 1.16 : 1))}
-                    {ivaEnabled && <span className="text-cima-text-dim font-normal"> c/IVA</span>}
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>

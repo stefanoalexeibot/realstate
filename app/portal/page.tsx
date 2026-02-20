@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import {
   Building2, Camera, Calendar, Phone, MapPin, Home,
-  Eye, Clock, CheckCircle2, Circle, ChevronRight, MessageSquare,
+  Eye, Clock, CheckCircle2, Circle, ChevronRight, MessageSquare, Percent,
 } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
@@ -32,6 +32,14 @@ function formatDate(iso: string) {
 function getDaysListed(createdAt: string) {
   const diff = Date.now() - new Date(createdAt).getTime();
   return Math.max(1, Math.floor(diff / (1000 * 60 * 60 * 24)));
+}
+
+function getCommissionInfo(price: number): { pct: number; label: string } {
+  if (price <= 1_000_000)  return { pct: 6,   label: "hasta $1M" };
+  if (price <= 3_000_000)  return { pct: 5,   label: "$1M – $3M" };
+  if (price <= 6_000_000)  return { pct: 4.5, label: "$3M – $6M" };
+  if (price <= 10_000_000) return { pct: 4,   label: "$6M – $10M" };
+  return                          { pct: 3.5, label: "más de $10M" };
 }
 
 // ─── Timeline ────────────────────────────────────────────────────────────────
@@ -371,6 +379,38 @@ export default async function PortalDashboard() {
               </div>
             </div>
           )}
+
+          {/* Commission estimate */}
+          {property.price && property.operation_type === "venta" && (() => {
+            const comm = getCommissionInfo(Number(property.price));
+            const gross = Number(property.price) * (comm.pct / 100);
+            const net = gross * 1.16;
+            return (
+              <div className="rounded-2xl border border-cima-border bg-cima-card p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Percent className="h-4 w-4 text-cima-gold" />
+                  <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Comisión estimada de venta</p>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="rounded-xl bg-cima-surface border border-cima-border p-3 text-center">
+                    <p className="font-heading font-bold text-lg text-cima-gold">{comm.pct}%</p>
+                    <p className="text-[10px] text-cima-text-dim font-mono uppercase">Tasa</p>
+                  </div>
+                  <div className="rounded-xl bg-cima-surface border border-cima-border p-3 text-center">
+                    <p className="font-heading font-bold text-base text-cima-text">{formatPrice(gross)}</p>
+                    <p className="text-[10px] text-cima-text-dim font-mono uppercase">Sin IVA</p>
+                  </div>
+                  <div className="rounded-xl bg-cima-surface border border-cima-border p-3 text-center">
+                    <p className="font-heading font-bold text-base text-cima-text">{formatPrice(net)}</p>
+                    <p className="text-[10px] text-cima-text-dim font-mono uppercase">Con IVA</p>
+                  </div>
+                </div>
+                <p className="text-[10px] text-cima-text-dim mt-3">
+                  Rango {comm.label} · pagadera al escriturar · el porcentaje puede negociarse con tu agente.
+                </p>
+              </div>
+            );
+          })()}
 
           {/* Contact agent */}
           <div className="rounded-2xl border border-cima-border bg-cima-card p-5 flex items-center justify-between gap-4">
