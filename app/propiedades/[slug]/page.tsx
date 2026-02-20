@@ -123,9 +123,20 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
             <h1 className="font-heading font-bold text-2xl sm:text-3xl text-cima-text mb-2">{property.title}</h1>
 
             {property.neighborhood && (
-              <div className="flex items-center gap-1.5 mb-5">
-                <MapPin className="h-3.5 w-3.5 text-cima-gold" />
-                <span className="text-sm text-cima-text-muted">{property.neighborhood}, {property.city}</span>
+              <div className="flex items-center gap-2 mb-5 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-cima-gold" />
+                  <span className="text-sm text-cima-text-muted">{property.neighborhood}, {property.city}</span>
+                </div>
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent(`${property.neighborhood}, ${property.city}, Nuevo León, México`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-cima-border bg-cima-card text-[10px] font-mono text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-gold transition-colors"
+                >
+                  <MapPin className="h-2.5 w-2.5" />
+                  Ver en mapa
+                </a>
               </div>
             )}
 

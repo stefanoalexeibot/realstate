@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/sidebar";
+import AdminRealtimeToasts from "@/components/admin/realtime-toasts";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -28,6 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <main className="lg:pl-60 pt-14 lg:pt-0">
         {children}
       </main>
+      <AdminRealtimeToasts />
     </div>
   );
 }
