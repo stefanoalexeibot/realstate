@@ -26,21 +26,25 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
-  // Protect /admin routes (except login)
+  // ── Admin routes ──────────────────────────────────
   if (path.startsWith("/admin") && path !== "/admin/login") {
-    if (!user) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
-    }
+    if (!user) return NextResponse.redirect(new URL("/admin/login", request.url));
   }
-
-  // Redirect logged-in users away from login
   if (path === "/admin/login" && user) {
     return NextResponse.redirect(new URL("/admin", request.url));
+  }
+
+  // ── Portal routes (propietarios) ─────────────────
+  if (path.startsWith("/portal") && path !== "/portal/login") {
+    if (!user) return NextResponse.redirect(new URL("/portal/login", request.url));
+  }
+  if (path === "/portal/login" && user) {
+    return NextResponse.redirect(new URL("/portal", request.url));
   }
 
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/portal/:path*"],
 };

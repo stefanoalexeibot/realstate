@@ -5,11 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
-import { Building2, LayoutDashboard, Home, Calendar, Users, LogOut, Menu, X } from "lucide-react";
+import { Building2, LayoutDashboard, Home, Calendar, Users, LogOut, Menu, X, KanbanSquare } from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard",   href: "/admin",             icon: LayoutDashboard },
+  { label: "Dashboard",   href: "/admin",              icon: LayoutDashboard },
   { label: "Propiedades", href: "/admin/propiedades",  icon: Home },
+  { label: "Pipeline",    href: "/admin/pipeline",     icon: KanbanSquare },
   { label: "Visitas",     href: "/admin/visitas",      icon: Calendar },
   { label: "Leads",       href: "/admin/leads",        icon: Users },
 ];

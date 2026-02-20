@@ -1,8 +1,8 @@
-export type OperationType = "venta" | "renta";
-export type PropertyType = "casa" | "departamento" | "terreno" | "local" | "oficina";
-export type PropertyStatus = "active" | "sold" | "rented" | "inactive";
-export type LeadStatus = "new" | "contacted" | "visiting" | "listed" | "closed" | "lost";
-export type VisitStatus = "pending" | "confirmed" | "done" | "cancelled";
+export type OperationType   = "venta" | "renta";
+export type PropertyType    = "casa" | "departamento" | "terreno" | "local" | "oficina";
+export type PropertyStatus  = "active" | "sold" | "rented" | "inactive";
+export type VisitStatus     = "pending" | "confirmed" | "done" | "cancelled";
+export type PipelineStage   = "prospecto" | "contactado" | "valuacion" | "publicado" | "negociacion" | "vendido" | "perdido";
 
 export interface Property {
   id: string;
@@ -26,6 +26,10 @@ export interface Property {
   slug: string;
   featured: boolean;
   views: number;
+  sold_at: string | null;
+  days_to_sell: number | null;
+  propietario_id: string | null;
+  agent_notes: string | null;
 }
 
 export interface PropertyPhoto {
@@ -47,7 +51,8 @@ export interface SellerLead {
   operation_type: string;
   estimated_price: number | null;
   message: string | null;
-  status: LeadStatus;
+  status: string;
+  pipeline_stage: PipelineStage;
 }
 
 export interface Visit {
@@ -61,4 +66,14 @@ export interface Visit {
   preferred_date: string | null;
   message: string | null;
   status: VisitStatus;
+}
+
+export interface Propietario {
+  id: string;
+  created_at: string;
+  auth_id: string | null;
+  name: string;
+  phone: string | null;
+  email: string;
+  notes: string | null;
 }

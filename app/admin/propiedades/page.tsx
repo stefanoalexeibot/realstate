@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Building2, Eye } from "lucide-react";
+import { Building2, Eye, Plus } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
@@ -34,8 +34,15 @@ export default async function PropiedadesAdmin() {
           <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-1">Catálogo</p>
           <h1 className="font-heading font-bold text-2xl text-cima-text">Propiedades</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <p className="text-xs text-cima-text-muted">{properties.length} propiedades</p>
+          <Link
+            href="/admin/propiedades/nueva"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cima-gold text-cima-bg text-xs font-semibold hover:bg-cima-gold-light transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Nueva
+          </Link>
         </div>
       </div>
 
