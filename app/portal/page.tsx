@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import {
   Building2, Camera, Calendar, Phone, MapPin, Home,
-  TrendingUp, Eye, Clock, CheckCircle2, Circle, ChevronRight,
+  Eye, Clock, CheckCircle2, Circle, ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
@@ -91,7 +91,6 @@ function SaleTimeline({ status, visitCount }: TimelineProps) {
           {TIMELINE_STEPS.map((step, idx) => {
             const done = idx < currentIdx;
             const active = idx === currentIdx;
-            const pending = idx > currentIdx;
 
             return (
               <div key={step.id} className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-2 sm:flex-1 sm:text-center relative">
