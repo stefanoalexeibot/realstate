@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import {
   Building2, Calendar, Users, Eye, Plus,
-  TrendingUp, AlertCircle, Phone, Home, MapPin,
+  AlertCircle, Phone, Home, MapPin,
   CheckCircle2, Clock,
 } from "lucide-react";
 import MiniBarChart from "@/components/admin/charts/mini-bar-chart";
@@ -433,7 +433,7 @@ export default async function AdminDashboard() {
                 <p className="text-sm text-cima-text-muted">Sin visitas aún</p>
               </div>
             ) : (
-              (recentVisits as VisitRow[]).map((v) => {
+              (recentVisits as unknown as VisitRow[]).map((v) => {
                 const st = VISIT_STATUS[v.status] ?? VISIT_STATUS.pending;
                 return (
                   <div key={v.id} className="px-5 py-3 flex items-start justify-between gap-3 hover:bg-cima-surface/20 transition-colors">
