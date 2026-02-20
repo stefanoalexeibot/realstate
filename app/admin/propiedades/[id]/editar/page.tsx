@@ -3,21 +3,31 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ArrowLeft, X, Loader2, Building2, ImagePlus, Trash2, Check } from "lucide-react";
+import { ArrowLeft, X, Loader2, Building2, ImagePlus, Trash2, Check, FileUp, FileText, Download } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 const PROP_TYPES = ["casa", "departamento", "terreno", "local", "oficina"] as const;
 const STATUS_OPTS = ["active", "sold", "rented", "inactive"] as const;
 const STATUS_LABELS: Record<string, string> = { active: "Activa", sold: "Vendida", rented: "Rentada", inactive: "Inactiva" };
+const DOC_TYPE_LABELS: Record<string, string> = { contract: "Contrato", deed: "Escritura", id: "Identificación", other: "Otro" };
+const DOC_TYPE_COLORS: Record<string, string> = {
+  contract: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  deed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  id: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  other: "bg-cima-surface text-cima-text-muted border-cima-border",
+};
 
 type ExistingPhoto = { id: string; url: string; order: number; is_cover: boolean };
 type NewPhoto = { file: File; previewUrl: string };
+type Propietario = { id: string; name: string; email: string };
+type DocItem = { id: string; name: string; url: string; type: string; created_at: string };
 
 export default function EditarPropiedad() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const docFileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -26,6 +36,9 @@ export default function EditarPropiedad() {
   const [newPhotos, setNewPhotos] = useState<NewPhoto[]>([]);
   const [deletingPhoto, setDeletingPhoto] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+  const [propietarios, setPropietarios] = useState<Propietario[]>([]);
+  const [docs, setDocs] = useState<DocItem[]>([]);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
 
   const [form, setForm] = useState({
     title: "", description: "", price: "",
@@ -35,14 +48,16 @@ export default function EditarPropiedad() {
     neighborhood: "", city: "Monterrey", state: "Nuevo León",
     features: "", status: "active" as typeof STATUS_OPTS[number],
     featured: false, agent_notes: "",
+    propietario_id: "",
   });
 
   useEffect(() => {
     async function loadProperty() {
       const supabase = createClient();
-      const [{ data: prop }, { data: photos }] = await Promise.all([
+      const [{ data: prop }, { data: photos }, { data: propietariosData }] = await Promise.all([
         supabase.from("re_properties").select("*").eq("id", params.id).single(),
         supabase.from("re_photos").select("*").eq("property_id", params.id).order("order"),
+        supabase.from("re_propietarios").select("id, name, email").order("name"),
       ]);
 
       if (!prop) { router.push("/admin/propiedades"); return; }
@@ -64,15 +79,39 @@ export default function EditarPropiedad() {
         status: prop.status ?? "active",
         featured: prop.featured ?? false,
         agent_notes: prop.agent_notes ?? "",
+        propietario_id: prop.propietario_id ?? "",
       });
       setExistingPhotos((photos ?? []) as ExistingPhoto[]);
+      setPropietarios((propietariosData ?? []) as Propietario[]);
+
+      if (prop.propietario_id) {
+        loadDocs(prop.propietario_id);
+      }
+
       setLoading(false);
     }
     loadProperty();
   }, [params.id, router]);
 
+  async function loadDocs(propietarioId: string) {
+    const res = await fetch(`/api/portal/docs?propietario_id=${propietarioId}`);
+    if (res.ok) {
+      const json = await res.json();
+      setDocs(json.docs ?? []);
+    }
+  }
+
   function set(key: string, value: string | boolean) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function handlePropietarioChange(value: string) {
+    setForm((f) => ({ ...f, propietario_id: value }));
+    if (value) {
+      loadDocs(value);
+    } else {
+      setDocs([]);
+    }
   }
 
   function handleFiles(files: FileList | null) {
@@ -109,6 +148,38 @@ export default function EditarPropiedad() {
     await supabase.from("re_photos").update({ is_cover: true }).eq("id", photo.id);
     await supabase.from("re_properties").update({ cover_photo: photo.url }).eq("id", params.id);
     setExistingPhotos((prev) => prev.map((p) => ({ ...p, is_cover: p.id === photo.id })));
+  }
+
+  async function handleDocUpload(files: FileList | null) {
+    if (!files || !form.propietario_id) return;
+    setUploadingDoc(true);
+    try {
+      const supabase = createClient();
+      for (const file of Array.from(files)) {
+        const ext = file.name.split(".").pop();
+        const path = `${form.propietario_id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { data: uploaded, error: uploadErr } = await supabase.storage
+          .from("cima-docs")
+          .upload(path, file, { cacheControl: "3600", upsert: false });
+        if (uploadErr) throw uploadErr;
+        const { data: { publicUrl } } = supabase.storage.from("cima-docs").getPublicUrl(uploaded.path);
+        const type = file.name.toLowerCase().includes("contrato") ? "contract"
+          : file.name.toLowerCase().includes("escritura") ? "deed"
+          : file.name.toLowerCase().includes("ine") || file.name.toLowerCase().includes("id") ? "id"
+          : "other";
+        await fetch("/api/portal/docs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ propietario_id: form.propietario_id, name: file.name, url: publicUrl, type }),
+        });
+      }
+      await loadDocs(form.propietario_id);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error al subir documento");
+    } finally {
+      setUploadingDoc(false);
+      if (docFileInputRef.current) docFileInputRef.current.value = "";
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -268,6 +339,24 @@ export default function EditarPropiedad() {
           </div>
         </div>
 
+        {/* Propietario */}
+        <div className="rounded-xl border border-cima-border bg-cima-card p-6 space-y-4">
+          <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Propietario</p>
+          <div>
+            <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Vincular propietario</label>
+            <select
+              value={form.propietario_id}
+              onChange={(e) => handlePropietarioChange(e.target.value)}
+              className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2.5 text-sm text-cima-text focus:outline-none focus:border-cima-gold/50 transition-colors"
+            >
+              <option value="">Sin asignar</option>
+              {propietarios.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}{p.email ? ` — ${p.email}` : ""}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {/* Status */}
         <div className="rounded-xl border border-cima-border bg-cima-card p-6 space-y-4">
           <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Estado</p>
@@ -359,6 +448,44 @@ export default function EditarPropiedad() {
             </div>
           )}
         </div>
+
+        {/* Documents — only shown when a propietario is assigned */}
+        {form.propietario_id && (
+          <div className="rounded-xl border border-cima-border bg-cima-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Documentos del propietario</p>
+              <span className="text-[10px] text-cima-text-dim font-mono">{docs.length} docs</span>
+            </div>
+
+            {docs.length > 0 && (
+              <div className="space-y-2">
+                {docs.map((doc) => (
+                  <div key={doc.id} className="flex items-center gap-3 rounded-lg border border-cima-border bg-cima-surface px-3 py-2.5">
+                    <FileText className="h-4 w-4 text-cima-text-dim shrink-0" />
+                    <p className="text-sm text-cima-text truncate flex-1">{doc.name}</p>
+                    <span className={`inline-flex px-1.5 py-0.5 rounded text-[9px] font-mono border shrink-0 ${DOC_TYPE_COLORS[doc.type] ?? DOC_TYPE_COLORS.other}`}>
+                      {DOC_TYPE_LABELS[doc.type] ?? doc.type}
+                    </span>
+                    <a href={doc.url} target="_blank" rel="noreferrer"
+                      className="p-1 rounded text-cima-text-dim hover:text-cima-gold transition-colors shrink-0" title="Descargar">
+                      <Download className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button type="button" onClick={() => docFileInputRef.current?.click()} disabled={uploadingDoc}
+              className="w-full rounded-xl border-2 border-dashed border-cima-border hover:border-cima-gold/40 bg-cima-surface/30 hover:bg-cima-gold/5 transition-colors py-5 flex flex-col items-center gap-2 disabled:opacity-50">
+              {uploadingDoc
+                ? <><Loader2 className="h-5 w-5 animate-spin text-cima-gold" /><p className="text-xs font-medium text-cima-text">Subiendo documento…</p></>
+                : <><FileUp className="h-5 w-5 text-cima-gold" /><p className="text-xs font-medium text-cima-text">Subir documento (PDF, DOCX, etc.)</p></>
+              }
+            </button>
+            <input ref={docFileInputRef} type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" multiple className="hidden"
+              onChange={(e) => handleDocUpload(e.target.files)} />
+          </div>
+        )}
 
         {error && (
           <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div>

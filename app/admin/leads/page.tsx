@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Users, Phone, Key, X, Loader2, Check } from "lucide-react";
+import { Users, Phone, Key, X, Loader2, Check, Download } from "lucide-react";
 import type { PipelineStage } from "@/lib/types";
 
 function formatDate(iso: string) {
@@ -38,9 +38,11 @@ type LeadRow = {
   phone: string;
   email: string | null;
   neighborhood: string | null;
+  property_type: string | null;
   operation_type: string;
   estimated_price: number | null;
   pipeline_stage: PipelineStage;
+  message: string | null;
   created_at: string;
 };
 
@@ -127,6 +129,32 @@ export default function LeadsAdmin() {
     }
   }
 
+  function exportCsv() {
+    const columns = ["Nombre", "Teléfono", "Email", "Colonia", "Tipo propiedad", "Operación", "Precio estimado", "Pipeline", "Mensaje", "Fecha"];
+    const escape = (v: string | null | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const rows = leads.map((l) => [
+      escape(l.name),
+      escape(l.phone),
+      escape(l.email),
+      escape(l.neighborhood),
+      escape(l.property_type),
+      escape(l.operation_type),
+      escape(l.estimated_price != null ? String(l.estimated_price) : ""),
+      escape(PIPELINE_LABELS[l.pipeline_stage]?.label ?? l.pipeline_stage),
+      escape(l.message),
+      escape(new Date(l.created_at).toLocaleString("es-MX", { timeZone: "America/Monterrey" })),
+    ].join(","));
+    const csv = [columns.map((c) => `"${c}"`).join(","), ...rows].join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `leads-cima-${date}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   const total    = leads.length;
   const thisWeek = leads.filter((l) => Date.now() - new Date(l.created_at).getTime() < 7 * 24 * 60 * 60 * 1000).length;
   const newLeads = leads.filter((l) => l.pipeline_stage === "prospecto").length;
@@ -141,12 +169,23 @@ export default function LeadsAdmin() {
 
   return (
     <div className="p-6 sm:p-8 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <div className="flex items-center gap-2.5 mb-1">
-          <Users className="h-5 w-5 text-cima-gold" />
-          <h1 className="font-heading font-bold text-2xl text-cima-text">Propietarios / Leads</h1>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2.5 mb-1">
+            <Users className="h-5 w-5 text-cima-gold" />
+            <h1 className="font-heading font-bold text-2xl text-cima-text">Propietarios / Leads</h1>
+          </div>
+          <p className="text-sm text-cima-text-muted">Personas que quieren vender o rentar su propiedad.</p>
         </div>
-        <p className="text-sm text-cima-text-muted">Personas que quieren vender o rentar su propiedad.</p>
+        {leads.length > 0 && (
+          <button
+            onClick={exportCsv}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-cima-border bg-cima-surface text-xs text-cima-text-muted hover:text-cima-text hover:border-cima-gold/40 transition-colors shrink-0"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Exportar CSV
+          </button>
+        )}
       </div>
 
       {/* Stats */}

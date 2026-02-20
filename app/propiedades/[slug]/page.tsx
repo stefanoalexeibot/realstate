@@ -6,6 +6,7 @@ import VisitForm from "@/components/landing/visit-form";
 import PhotoGallery from "@/components/landing/photo-gallery";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
+import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const supabase = createClient();
@@ -52,6 +53,15 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
     .from("re_properties")
     .update({ views: (property.views ?? 0) + 1 })
     .eq("id", property.id);
+
+  // Related properties
+  const { data: related } = await supabase
+    .from("re_properties")
+    .select("id, title, slug, price, neighborhood, property_type, operation_type, cover_photo")
+    .eq("status", "active")
+    .neq("id", property.id)
+    .or(`property_type.eq.${property.property_type},neighborhood.eq.${property.neighborhood ?? ""}`)
+    .limit(3);
 
   return (
     <div className="min-h-screen bg-cima-bg">
@@ -172,6 +182,48 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
                       {f}
                     </span>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Related properties */}
+            {related && related.length > 0 && (
+              <div className="mt-10">
+                <h2 className="font-heading font-semibold text-lg text-cima-text mb-4">Propiedades similares</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {related.map((rel) => {
+                    const relIsRenta = rel.operation_type === "renta";
+                    return (
+                      <Link key={rel.id} href={`/propiedades/${rel.slug}`}
+                        className="rounded-xl border border-cima-border bg-cima-card overflow-hidden hover:border-cima-gold/40 transition-colors group">
+                        <div className="relative aspect-[4/3] bg-cima-surface">
+                          {rel.cover_photo ? (
+                            <Image src={rel.cover_photo} alt={rel.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Building2 className="h-8 w-8 text-cima-gold/20" />
+                            </div>
+                          )}
+                          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-mono font-semibold tracking-widest uppercase ${
+                            relIsRenta
+                              ? "bg-blue-500/80 text-blue-100"
+                              : "bg-cima-gold/90 text-cima-bg"
+                          }`}>
+                            {relIsRenta ? "Renta" : "Venta"}
+                          </span>
+                        </div>
+                        <div className="p-3">
+                          <p className="text-sm font-medium text-cima-text leading-snug line-clamp-2 mb-1">{rel.title}</p>
+                          {rel.neighborhood && (
+                            <p className="text-[11px] text-cima-text-dim mb-2 flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />{rel.neighborhood}
+                            </p>
+                          )}
+                          <p className="text-sm font-bold text-cima-gold">{formatPrice(rel.price)}{relIsRenta ? "/mes" : ""}</p>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             )}

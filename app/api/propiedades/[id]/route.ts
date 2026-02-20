@@ -7,7 +7,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const {
       title, description, price, operation_type, property_type,
       bedrooms, bathrooms, area_m2, parking, neighborhood, city,
-      state, features, status, featured, agent_notes,
+      state, features, status, featured, agent_notes, propietario_id,
     } = body;
 
     if (!title || !price || !operation_type || !property_type) {
@@ -35,6 +35,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         status: status || "active",
         featured: featured || false,
         agent_notes: agent_notes || null,
+        propietario_id: propietario_id || null,
       })
       .eq("id", params.id);
 
