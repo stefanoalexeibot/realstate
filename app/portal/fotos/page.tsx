@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Camera, ImagePlus, X, Loader2, Trash2, Check, GripVertical } from "lucide-react";
+import { Camera, ImagePlus, X, Loader2, Trash2, Check, GripVertical, ChevronLeft, ChevronRight, Expand } from "lucide-react";
 import Image from "next/image";
 
 type Photo = { id: string; url: string; order: number; is_cover: boolean };
@@ -22,6 +22,9 @@ export default function PortalFotos() {
   // Drag state
   const dragIndex = useRef<number | null>(null);
   const [dragOver, setDragOver] = useState<number | null>(null);
+
+  // Lightbox state
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -56,6 +59,18 @@ export default function PortalFotos() {
   }, [supabase]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setLightboxIdx(null);
+      if (e.key === "ArrowRight") setLightboxIdx((prev) => prev !== null ? Math.min(prev + 1, photos.length - 1) : null);
+      if (e.key === "ArrowLeft")  setLightboxIdx((prev) => prev !== null ? Math.max(prev - 1, 0) : null);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIdx, photos.length]);
 
   async function handleFiles(files: FileList | null) {
     if (!files || !propertyId) return;
@@ -287,9 +302,18 @@ export default function PortalFotos() {
               >
                 <Image src={photo.url} alt="" fill className="object-cover pointer-events-none" />
 
-                {/* Drag handle */}
-                <div className="absolute top-2 right-2 p-1 rounded bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                  <GripVertical className="h-3.5 w-3.5 text-white" />
+                {/* Top-right controls: expand + drag handle */}
+                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setLightboxIdx(idx); }}
+                    className="p-1 rounded bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors"
+                    title="Ver pantalla completa"
+                  >
+                    <Expand className="h-3.5 w-3.5 text-white" />
+                  </button>
+                  <div className="p-1 rounded bg-black/40 backdrop-blur-sm cursor-grab active:cursor-grabbing">
+                    <GripVertical className="h-3.5 w-3.5 text-white" />
+                  </div>
                 </div>
 
                 {/* Cover badge */}
@@ -334,6 +358,61 @@ export default function PortalFotos() {
           <Camera className="h-8 w-8 text-cima-text-dim mx-auto mb-3" />
           <p className="font-medium text-cima-text mb-1">Sin fotos aún</p>
           <p className="text-sm text-cima-text-muted">Las propiedades con fotos reciben 3× más solicitudes de visita.</p>
+        </div>
+      )}
+
+      {/* ── LIGHTBOX ─────────────────────────── */}
+      {lightboxIdx !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-black/92 backdrop-blur-sm flex items-center justify-center"
+          onClick={() => setLightboxIdx(null)}
+        >
+          {/* Image */}
+          <div
+            className="relative w-full h-full max-w-5xl mx-6 my-16"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={photos[lightboxIdx].url}
+              alt=""
+              fill
+              className="object-contain"
+              sizes="100vw"
+            />
+          </div>
+
+          {/* Close */}
+          <button
+            onClick={() => setLightboxIdx(null)}
+            className="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <X className="h-5 w-5 text-white" />
+          </button>
+
+          {/* Prev */}
+          {lightboxIdx > 0 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIdx(lightboxIdx - 1); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <ChevronLeft className="h-5 w-5 text-white" />
+            </button>
+          )}
+
+          {/* Next */}
+          {lightboxIdx < photos.length - 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIdx(lightboxIdx + 1); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <ChevronRight className="h-5 w-5 text-white" />
+            </button>
+          )}
+
+          {/* Counter */}
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-xs text-white/50">
+            {lightboxIdx + 1} / {photos.length}
+          </div>
         </div>
       )}
     </div>

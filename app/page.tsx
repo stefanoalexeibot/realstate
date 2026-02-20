@@ -16,6 +16,9 @@ import StatsMarquee from "@/components/landing/stats-marquee";
 import FadeIn from "@/components/landing/fade-in";
 import AnimatedCounter from "@/components/landing/animated-counter";
 import AsistenteDemo from "@/components/landing/asistente-demo";
+import TiltCard from "@/components/landing/tilt-card";
+import SocialProofToast from "@/components/landing/social-proof-toast";
+import ProcessLine from "@/components/landing/process-line";
 import type { Property } from "@/lib/types";
 
 const PROCESS_STEPS = [
@@ -271,7 +274,8 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {GUARANTEES.map((g, i) => (
-              <FadeIn key={g.title} delay={i * 0.1}>
+              <FadeIn key={g.title} delay={i * 0.1} className="h-full">
+              <TiltCard className="h-full">
               <div
                 className="group rounded-2xl border border-cima-border bg-cima-card p-7 hover:border-cima-gold/30 hover:bg-cima-surface/50 transition-all duration-300 h-full"
               >
@@ -281,6 +285,7 @@ export default async function HomePage() {
                 <h3 className="font-heading font-bold text-base text-cima-text mb-2">{g.title}</h3>
                 <p className="text-sm text-cima-text-muted leading-relaxed">{g.desc}</p>
               </div>
+              </TiltCard>
               </FadeIn>
             ))}
           </div>
@@ -343,8 +348,8 @@ export default async function HomePage() {
 
           {/* Desktop horizontal timeline */}
           <div className="hidden md:block relative">
-            {/* Connector line */}
-            <div className="absolute top-[22px] left-[10%] right-[10%] h-px bg-gradient-to-r from-cima-border via-cima-gold/40 to-cima-border" />
+            {/* Connector line — animates on scroll */}
+            <ProcessLine />
 
             <div className="grid grid-cols-4 gap-4 relative">
               {PROCESS_STEPS.map((step, i) => (
@@ -418,7 +423,8 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {TESTIMONIALS.map((t, i) => (
-              <FadeIn key={t.name} delay={i * 0.1}>
+              <FadeIn key={t.name} delay={i * 0.1} className="h-full">
+              <TiltCard className="h-full">
               <div
                 className="rounded-2xl border border-cima-border bg-cima-card p-6 flex flex-col h-full"
               >
@@ -451,6 +457,7 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
+              </TiltCard>
               </FadeIn>
             ))}
           </div>
@@ -589,6 +596,9 @@ export default async function HomePage() {
           </p>
         </div>
       </footer>
+
+      {/* ── SOCIAL PROOF TOAST ─────────────────── */}
+      <SocialProofToast />
 
       {/* ── WA FLOATING BUTTON ─────────────────── */}
       <a
