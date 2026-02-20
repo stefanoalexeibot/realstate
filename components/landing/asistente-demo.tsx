@@ -114,7 +114,7 @@ export default function AsistenteDemo() {
   const [showCTA, setShowCTA] = useState(false);
   const [started, setStarted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   // Start demo when visible
   useEffect(() => {
@@ -135,9 +135,10 @@ export default function AsistenteDemo() {
     return () => observer.disconnect();
   }, [started]);
 
-  // Scroll to bottom on new messages
+  // Scroll chat container to bottom on new messages (not the whole page)
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, typing]);
 
   function ask(id: string, label: string) {
@@ -198,7 +199,7 @@ export default function AsistenteDemo() {
           </div>
 
           {/* Messages */}
-          <div className="h-80 overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin">
+          <div ref={messagesRef} className="h-80 overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin">
             {messages.map((msg, i) => (
               <div key={i} className={`flex gap-3 ${msg.from === "user" ? "flex-row-reverse" : ""}`}>
                 {/* Avatar */}
@@ -239,7 +240,6 @@ export default function AsistenteDemo() {
               </div>
             )}
 
-            <div ref={bottomRef} />
           </div>
 
           {/* Suggestion chips + input area */}
