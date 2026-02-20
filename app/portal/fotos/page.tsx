@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Camera, ImagePlus, X, Loader2, Trash2, Check } from "lucide-react";
+import { Camera, ImagePlus, X, Loader2, Trash2, Check, GripVertical } from "lucide-react";
 import Image from "next/image";
 
 type Photo = { id: string; url: string; order: number; is_cover: boolean };
@@ -17,13 +17,17 @@ export default function PortalFotos() {
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
+
+  // Drag state
+  const dragIndex = useRef<number | null>(null);
+  const [dragOver, setDragOver] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setLoading(false); return; }
 
-    // Get propietario → property
     const { data: prop } = await supabase
       .from("re_propietarios")
       .select("id")
@@ -82,7 +86,6 @@ export default function PortalFotos() {
         if (insertErr) throw insertErr;
         newPhotos.push(photoRow as Photo);
 
-        // Update cover_photo on property if first photo
         if (isCover) {
           await supabase.from("re_properties").update({ cover_photo: publicUrl }).eq("id", propertyId);
         }
@@ -101,7 +104,6 @@ export default function PortalFotos() {
     if (!confirm("¿Eliminar esta foto?")) return;
     setDeleting(photo.id);
     try {
-      // Extract storage path from URL
       const url = new URL(photo.url);
       const storagePath = url.pathname.split("/object/public/cima-photos/")[1];
       if (storagePath) {
@@ -111,7 +113,6 @@ export default function PortalFotos() {
       const remaining = photos.filter((p) => p.id !== photo.id);
       setPhotos(remaining);
 
-      // If deleted cover, set new cover
       if (photo.is_cover && remaining.length > 0 && propertyId) {
         const newCover = remaining[0];
         await supabase.from("re_photos").update({ is_cover: true }).eq("id", newCover.id);
@@ -128,7 +129,6 @@ export default function PortalFotos() {
   async function setCover(photo: Photo) {
     if (!propertyId || photo.is_cover) return;
     try {
-      // Unset all covers
       await supabase.from("re_photos").update({ is_cover: false }).eq("property_id", propertyId);
       await supabase.from("re_photos").update({ is_cover: true }).eq("id", photo.id);
       await supabase.from("re_properties").update({ cover_photo: photo.url }).eq("id", propertyId);
@@ -137,6 +137,58 @@ export default function PortalFotos() {
       setError("Error al actualizar portada");
     }
   }
+
+  // ─── Drag & drop handlers ──────────────────────────────────────────────────
+
+  function onDragStart(idx: number) {
+    dragIndex.current = idx;
+  }
+
+  function onDragOver(e: React.DragEvent, idx: number) {
+    e.preventDefault();
+    setDragOver(idx);
+  }
+
+  function onDragLeave() {
+    setDragOver(null);
+  }
+
+  async function onDrop(dropIdx: number) {
+    setDragOver(null);
+    const fromIdx = dragIndex.current;
+    if (fromIdx === null || fromIdx === dropIdx) { dragIndex.current = null; return; }
+
+    const reordered = [...photos];
+    const [moved] = reordered.splice(fromIdx, 1);
+    reordered.splice(dropIdx, 0, moved);
+
+    // Assign new sequential order values
+    const updated = reordered.map((p, i) => ({ ...p, order: i }));
+    setPhotos(updated);
+    dragIndex.current = null;
+
+    // Persist to DB
+    setSavingOrder(true);
+    try {
+      await Promise.all(
+        updated.map((p) =>
+          supabase.from("re_photos").update({ order: p.order }).eq("id", p.id)
+        )
+      );
+      // Update cover_photo on property to match the first photo (order 0)
+      const coverPhoto = updated.find((p) => p.is_cover) ?? updated[0];
+      if (propertyId && coverPhoto) {
+        await supabase.from("re_properties").update({ cover_photo: coverPhoto.url }).eq("id", propertyId);
+      }
+    } catch {
+      setError("Error al guardar el orden");
+      load(); // reload original order on error
+    } finally {
+      setSavingOrder(false);
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
 
   if (loading) {
     return (
@@ -206,14 +258,39 @@ export default function PortalFotos() {
 
       {/* Photo grid */}
       {photos.length > 0 && (
-        <div className="space-y-4">
-          <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">
-            Haz clic en una foto para establecerla como portada
-          </p>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">
+              Arrastra para reordenar · Clic en ✓ para portada
+            </p>
+            {savingOrder && (
+              <span className="flex items-center gap-1.5 text-[10px] text-cima-text-dim">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Guardando orden…
+              </span>
+            )}
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {photos.map((photo) => (
-              <div key={photo.id} className="relative group rounded-xl overflow-hidden border border-cima-border aspect-video bg-cima-surface">
-                <Image src={photo.url} alt="" fill className="object-cover" />
+            {photos.map((photo, idx) => (
+              <div
+                key={photo.id}
+                draggable
+                onDragStart={() => onDragStart(idx)}
+                onDragOver={(e) => onDragOver(e, idx)}
+                onDragLeave={onDragLeave}
+                onDrop={() => onDrop(idx)}
+                className={`relative group rounded-xl overflow-hidden border aspect-video bg-cima-surface cursor-grab active:cursor-grabbing transition-all ${
+                  dragOver === idx
+                    ? "border-cima-gold/60 scale-[0.97] ring-2 ring-cima-gold/30"
+                    : "border-cima-border"
+                }`}
+              >
+                <Image src={photo.url} alt="" fill className="object-cover pointer-events-none" />
+
+                {/* Drag handle */}
+                <div className="absolute top-2 right-2 p-1 rounded bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GripVertical className="h-3.5 w-3.5 text-white" />
+                </div>
 
                 {/* Cover badge */}
                 {photo.is_cover && (

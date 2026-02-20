@@ -8,9 +8,10 @@ import { cn } from "@/lib/utils";
 
 interface PortalNavProps {
   propName: string;
+  pendingVisits: number;
 }
 
-export default function PortalNav({ propName }: PortalNavProps) {
+export default function PortalNav({ propName, pendingVisits }: PortalNavProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -21,10 +22,10 @@ export default function PortalNav({ propName }: PortalNavProps) {
   }
 
   const links = [
-    { href: "/portal",              label: "Mi propiedad", icon: Home },
-    { href: "/portal/fotos",        label: "Fotos",         icon: ImageIcon },
-    { href: "/portal/documentos",   label: "Documentos",    icon: FileText },
-    { href: "/portal/settings",     label: "Cuenta",        icon: Settings },
+    { href: "/portal",            label: "Mi propiedad", icon: Home,      badge: pendingVisits },
+    { href: "/portal/fotos",      label: "Fotos",         icon: ImageIcon, badge: 0 },
+    { href: "/portal/documentos", label: "Documentos",    icon: FileText,  badge: 0 },
+    { href: "/portal/settings",   label: "Cuenta",        icon: Settings,  badge: 0 },
   ];
 
   return (
@@ -43,12 +44,12 @@ export default function PortalNav({ propName }: PortalNavProps) {
 
         {/* Nav links */}
         <nav className="hidden sm:flex items-center gap-1">
-          {links.map(({ href, label, icon: Icon }) => (
+          {links.map(({ href, label, icon: Icon, badge }) => (
             <Link
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                "relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
                 pathname === href
                   ? "bg-cima-gold/10 text-cima-gold"
                   : "text-cima-text-muted hover:bg-cima-surface hover:text-cima-text"
@@ -56,6 +57,11 @@ export default function PortalNav({ propName }: PortalNavProps) {
             >
               <Icon className="h-3.5 w-3.5" />
               {label}
+              {badge > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-400 text-[9px] font-bold text-cima-bg flex items-center justify-center">
+                  {badge > 9 ? "9+" : badge}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
@@ -78,16 +84,23 @@ export default function PortalNav({ propName }: PortalNavProps) {
 
       {/* Mobile nav */}
       <nav className="sm:hidden flex border-t border-cima-border">
-        {links.map(({ href, label, icon: Icon }) => (
+        {links.map(({ href, label, icon: Icon, badge }) => (
           <Link
             key={href}
             href={href}
             className={cn(
-              "flex-1 flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors",
+              "relative flex-1 flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors",
               pathname === href ? "text-cima-gold" : "text-cima-text-muted"
             )}
           >
-            <Icon className="h-4 w-4" />
+            <span className="relative">
+              <Icon className="h-4 w-4" />
+              {badge > 0 && (
+                <span className="absolute -top-1 -right-1.5 h-3.5 w-3.5 rounded-full bg-amber-400 text-[8px] font-bold text-cima-bg flex items-center justify-center">
+                  {badge > 9 ? "9+" : badge}
+                </span>
+              )}
+            </span>
             {label}
           </Link>
         ))}

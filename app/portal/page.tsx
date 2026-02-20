@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import {
   Building2, Camera, Calendar, Phone, MapPin, Home,
-  Eye, Clock, CheckCircle2, Circle, ChevronRight,
+  Eye, Clock, CheckCircle2, Circle, ChevronRight, MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
@@ -190,7 +190,7 @@ export default async function PortalDashboard() {
   const { data: visits } = property
     ? await supabase
         .from("re_visits")
-        .select("id, name, phone, status, preferred_date, created_at")
+        .select("id, name, phone, status, preferred_date, created_at, agent_notes")
         .eq("property_id", property.id)
         .order("created_at", { ascending: false })
     : { data: [] };
@@ -345,15 +345,26 @@ export default async function PortalDashboard() {
                 {visits.map((v) => {
                   const vs = VISIT_STATUS_LABELS[v.status as VisitStatus] ?? VISIT_STATUS_LABELS.pending;
                   return (
-                    <div key={v.id} className="px-5 py-3.5 flex items-center justify-between gap-4">
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-cima-text">{v.name}</p>
-                        {v.preferred_date && (
-                          <p className="text-xs text-cima-text-muted mt-0.5">Fecha preferida: {v.preferred_date}</p>
-                        )}
-                        <p className="text-[10px] text-cima-text-dim mt-0.5">{formatDate(v.created_at)}</p>
+                    <div key={v.id} className="px-5 py-3.5">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-cima-text">{v.name}</p>
+                          {v.preferred_date && (
+                            <p className="text-xs text-cima-text-muted mt-0.5">Fecha preferida: {v.preferred_date}</p>
+                          )}
+                          <p className="text-[10px] text-cima-text-dim mt-0.5">{formatDate(v.created_at)}</p>
+                        </div>
+                        <span className={`text-xs font-mono shrink-0 ${vs.color}`}>{vs.label}</span>
                       </div>
-                      <span className={`text-xs font-mono shrink-0 ${vs.color}`}>{vs.label}</span>
+                      {v.agent_notes && (
+                        <div className="mt-2 flex items-start gap-2 rounded-lg bg-cima-surface border border-cima-border px-3 py-2">
+                          <MessageSquare className="h-3 w-3 text-cima-gold mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-[9px] font-mono uppercase text-cima-gold mb-0.5">Nota de tu agente</p>
+                            <p className="text-xs text-cima-text-muted">{v.agent_notes}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

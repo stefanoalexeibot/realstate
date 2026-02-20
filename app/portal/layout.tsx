@@ -24,9 +24,28 @@ export default async function PortalLayout({ children }: { children: React.React
     redirect("/portal/login");
   }
 
+  // Pending visits badge — get the propietario's property then count pending visits
+  const { data: property } = await supabase
+    .from("re_properties")
+    .select("id")
+    .eq("propietario_id", prop.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let pendingVisits = 0;
+  if (property) {
+    const { count } = await supabase
+      .from("re_visits")
+      .select("id", { count: "exact", head: true })
+      .eq("property_id", property.id)
+      .eq("status", "pending");
+    pendingVisits = count ?? 0;
+  }
+
   return (
     <div className="min-h-screen bg-cima-bg">
-      <PortalNav propName={prop.name} />
+      <PortalNav propName={prop.name} pendingVisits={pendingVisits} />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {children}
       </main>
