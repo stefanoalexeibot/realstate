@@ -2,13 +2,14 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar } from "lucide-react";
+import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar, Share2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import VisitForm from "@/components/landing/visit-form";
 import PhotoGallery from "@/components/landing/photo-gallery";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 import Image from "next/image";
+import MortgageCalculator from "@/components/landing/mortgage-calculator";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const supabase = createClient();
@@ -66,8 +67,35 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
     .or(`property_type.eq.${property.property_type},neighborhood.eq.${property.neighborhood ?? ""}`)
     .limit(3);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: property.title,
+    description: property.description ?? `${property.title} en ${property.neighborhood ?? property.city}`,
+    url: `https://propiedades-mty.vercel.app/propiedades/${params.slug}`,
+    numberOfRooms: property.bedrooms || undefined,
+    floorSize: property.area_m2 ? { "@type": "QuantitativeValue", value: property.area_m2, unitCode: "MTK" } : undefined,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: property.neighborhood ?? property.city,
+      addressRegion: "Nuevo León",
+      addressCountry: "MX",
+    },
+    offers: {
+      "@type": "Offer",
+      price: property.price,
+      priceCurrency: "MXN",
+      availability: "https://schema.org/InStock",
+    },
+    image: property.cover_photo ?? undefined,
+  };
+
   return (
     <div className="min-h-screen bg-cima-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <header className="border-b border-cima-border/50 bg-cima-bg/90 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
@@ -262,6 +290,22 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
               <Phone className="h-4 w-4" />
               Preguntar por WhatsApp
             </a>
+
+            {/* Share */}
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`Mira esta propiedad en Cima Propiedades:\n${property.title} — ${formatPrice(property.price)}\nhttps://propiedades-mty.vercel.app/propiedades/${params.slug}`)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 w-full rounded-xl border border-cima-border bg-cima-card px-4 py-3 text-sm text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text transition-colors"
+            >
+              <Share2 className="h-4 w-4" />
+              Compartir propiedad
+            </a>
+
+            {/* Mortgage calculator */}
+            {property.operation_type === "venta" && (
+              <MortgageCalculator price={property.price} />
+            )}
           </div>
         </div>
       </div>

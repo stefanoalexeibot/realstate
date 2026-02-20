@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { BedDouble, Bath, Maximize2, Car, MapPin } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
+import FavoriteButton from "@/components/landing/favorite-button";
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
   casa: "Casa",
@@ -33,10 +35,12 @@ export default function PropertyCard({ property, className }: PropertyCardProps)
       {/* Image */}
       <div className="relative h-52 overflow-hidden property-placeholder">
         {property.cover_photo ? (
-          <img
+          <Image
             src={property.cover_photo}
             alt={property.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full flex items-end p-4">
@@ -72,6 +76,9 @@ export default function PropertyCard({ property, className }: PropertyCardProps)
             </span>
           </div>
         )}
+
+        {/* Favorite button */}
+        <FavoriteButton propertyId={property.id} />
       </div>
 
       {/* Content */}
