@@ -42,8 +42,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/portal", request.url));
   }
 
-  // Pass pathname to layouts so they can conditionally render UI
-  supabaseResponse.headers.set("x-pathname", path);
   return supabaseResponse;
 }
 
