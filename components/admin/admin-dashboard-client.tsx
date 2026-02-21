@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import MiniBarChart from "@/components/admin/charts/mini-bar-chart";
 
+import { type AdminDashboardData } from "@/types/admin";
+
 const PIPELINE_STAGES = [
     { key: "prospecto", label: "Prospecto", dot: "bg-amber-400", seg: "bg-amber-500/70" },
     { key: "contactado", label: "Contactado", dot: "bg-blue-400", seg: "bg-blue-500/70" },
@@ -24,33 +26,6 @@ const VISIT_STATUS: Record<string, { label: string; color: string }> = {
     done: { label: "Realizada", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
     cancelled: { label: "Cancelada", color: "bg-cima-surface text-cima-text-dim border-cima-border" },
 };
-
-type VisitRow = {
-    id: string; name: string; phone: string; status: string; created_at: string;
-    re_properties: { title: string; neighborhood: string | null } | null;
-};
-type LeadRow = {
-    id: string; name: string; phone: string; neighborhood: string | null;
-    operation_type: string; pipeline_stage: string; created_at: string;
-};
-
-export interface AdminDashboardData {
-    activeProps: number;
-    soldProps: number;
-    totalProps: number;
-    totalViews: number;
-    leadsThisWeek: number;
-    pendingVisits: number;
-    pipelineCounts: Record<string, number>;
-    pipelineTotal: number;
-    uncontacted: number;
-    typeCounts: Record<string, number>;
-    leadsChart: { label: string; value: number }[];
-    visitsChart: { label: string; value: number }[];
-    todayStr: string;
-    recentVisits: VisitRow[];
-    recentLeads: LeadRow[];
-}
 
 const typeLabels: Record<string, string> = {
     casa: "Casas", departamento: "Deptos", terreno: "Terrenos", local: "Locales", oficina: "Oficinas",

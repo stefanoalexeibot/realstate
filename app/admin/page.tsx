@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import AdminDashboardClient, { type AdminDashboardData } from "@/components/admin/admin-dashboard-client";
+import AdminDashboardClient from "@/components/admin/admin-dashboard-client";
+import { type AdminDashboardData, type VisitRow, type LeadRow } from "@/types/admin";
 
 const PIPELINE_STAGES_KEYS = [
   "prospecto", "contactado", "valuacion", "publicado", "negociacion", "vendido", "perdido",
@@ -45,8 +46,14 @@ export default async function AdminDashboard() {
     const leadsThisWeek = results[2].count ?? 0;
     const pendingVisits = results[3].count ?? 0;
     const pipelineData = results[4].data ?? [];
-    const recentVisits = (results[5].data ?? []) as AdminDashboardData["recentVisits"];
-    const recentLeads = (results[6].data ?? []) as AdminDashboardData["recentLeads"];
+
+    // Explicitly handle re_properties array vs object from Supabase join
+    const recentVisits = (results[5].data ?? []).map((v: any) => ({
+      ...v,
+      re_properties: Array.isArray(v.re_properties) ? v.re_properties[0] : v.re_properties,
+    })) as VisitRow[];
+
+    const recentLeads = (results[6].data ?? []) as LeadRow[];
     const leadsHistory = results[7].data ?? [];
     const visitsHistory = results[8].data ?? [];
     const propsByType = results[9].data ?? [];
@@ -57,7 +64,7 @@ export default async function AdminDashboard() {
     const totalProps = propsByStatus.length;
     const totalViews = allViews.reduce((s, p) => s + ((p as { views: number }).views ?? 0), 0);
 
-    // Pipeline
+    // Pipeline counts
     const pipelineCounts: Record<string, number> = Object.fromEntries(
       PIPELINE_STAGES_KEYS.map((s) => [s, 0])
     );
@@ -75,7 +82,7 @@ export default async function AdminDashboard() {
       typeCounts[type] = (typeCounts[type] ?? 0) + 1;
     });
 
-    // Monthly charts (last 6 months)
+    // Monthly charts aggregation
     const months = Array.from({ length: 6 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
       return {
@@ -84,7 +91,7 @@ export default async function AdminDashboard() {
       };
     });
 
-    function agg(items: { created_at: string }[]) {
+    const agg = (items: { created_at: string }[]) => {
       const counts: Record<string, number> = Object.fromEntries(months.map((m) => [m.key, 0]));
       items.forEach((item) => {
         const d = new Date(item.created_at);
@@ -92,7 +99,7 @@ export default async function AdminDashboard() {
         if (key in counts) counts[key]++;
       });
       return months.map((m) => ({ label: m.label, value: counts[m.key] }));
-    }
+    };
 
     const leadsChart = agg(leadsHistory as { created_at: string }[]);
     const visitsChart = agg(visitsHistory as { created_at: string }[]);
