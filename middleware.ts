@@ -2,55 +2,66 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  try {
+    let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return request.cookies.getAll(); },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("Missing Supabase env vars in middleware");
+      return supabaseResponse;
     }
-  );
 
-  const { data: { user } } = await supabase.auth.getUser();
-  const path = request.nextUrl.pathname;
+    const supabase = createServerClient(
+      supabaseUrl,
+      supabaseKey,
+      {
+        cookies: {
+          getAll() { return request.cookies.getAll(); },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) =>
+              request.cookies.set(name, value)
+            );
+            supabaseResponse = NextResponse.next({ request });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              supabaseResponse.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
 
-  // ── Admin routes ──────────────────────────────────
-  if (path.startsWith("/admin") && path !== "/admin/login") {
-    if (!user) return NextResponse.redirect(new URL("/admin/login", request.url));
-  }
-  if (path === "/admin/login" && user) {
-    return NextResponse.redirect(new URL("/admin", request.url));
-  }
+    const { data: { user } } = await supabase.auth.getUser();
+    const path = request.nextUrl.pathname;
 
-  // ── Portal routes (propietarios) ─────────────────
-  if (path.startsWith("/portal") && path !== "/portal/login") {
-    if (!user) return NextResponse.redirect(new URL("/portal/login", request.url));
-  }
-  // /portal/login: only redirect to /portal if user is actually a propietario.
-  // If they're an admin or unlinked user, let them see the login form so they
-  // can sign in with propietario credentials (layout will sign them out first).
-  if (path === "/portal/login" && user) {
-    const { data: prop } = await supabase
-      .from("re_propietarios")
-      .select("id")
-      .eq("auth_id", user.id)
-      .maybeSingle();
-    if (prop) return NextResponse.redirect(new URL("/portal", request.url));
-  }
+    // ── Admin routes ──────────────────────────────────
+    if (path.startsWith("/admin") && path !== "/admin/login") {
+      if (!user) return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    if (path === "/admin/login" && user) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
 
-  return supabaseResponse;
+    // ── Portal routes (propietarios) ─────────────────
+    if (path.startsWith("/portal") && path !== "/portal/login") {
+      if (!user) return NextResponse.redirect(new URL("/portal/login", request.url));
+    }
+    if (path === "/portal/login" && user) {
+      const { data: prop } = await supabase
+        .from("re_propietarios")
+        .select("id")
+        .eq("auth_id", user.id)
+        .maybeSingle();
+      if (prop) return NextResponse.redirect(new URL("/portal", request.url));
+    }
+
+    return supabaseResponse;
+  } catch (error) {
+    console.error("Middleware error:", error);
+    // On error, let the request through rather than crashing
+    return NextResponse.next({ request });
+  }
 }
 
 export const config = {
