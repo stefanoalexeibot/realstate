@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts loaded via next/font in layout.tsx — no render-blocking @import */
 
 @layer base {
   :root {
@@ -11,7 +11,14 @@
     --radius: 0.75rem;
   }
 
-  * { @apply border-cima-border; }
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    @apply border-cima-border;
+  }
+
   body {
     background-color: #090A0D;
     color: #F0EDE8;
@@ -20,10 +27,22 @@
   }
 }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #090A0D; }
-::-webkit-scrollbar-thumb { background: #23252F; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #7A6240; }
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090A0D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #23252F;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7A6240;
+}
 
 /* Property image placeholder gradient */
 .property-placeholder {
@@ -36,7 +55,9 @@
 }
 
 /* Marquee pause on hover */
-.animate-marquee:hover { animation-play-state: paused; }
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
 
 /* Gold range slider (profit calculator) */
 input.np-slider {
@@ -44,6 +65,7 @@ input.np-slider {
   appearance: none;
   outline: none;
 }
+
 input.np-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -56,9 +78,11 @@ input.np-slider::-webkit-slider-thumb {
   box-shadow: 0 0 0 4px rgba(200, 169, 110, 0.18);
   transition: box-shadow 0.15s ease;
 }
+
 input.np-slider::-webkit-slider-thumb:hover {
   box-shadow: 0 0 0 7px rgba(200, 169, 110, 0.25);
 }
+
 input.np-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
@@ -70,5 +94,8 @@ input.np-slider::-moz-range-thumb {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [class*="animate-"] { animation: none !important; transition: none !important; }
+  [class*="animate-"] {
+    animation: none !important;
+    transition: none !important;
+  }
 }

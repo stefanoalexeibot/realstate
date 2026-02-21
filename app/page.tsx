@@ -11,7 +11,7 @@ import SellForm from "@/components/landing/sell-form";
 import HeroCaptureForm from "@/components/landing/hero-capture-form";
 import ProfitCalculator from "@/components/landing/profit-calculator";
 import GuaranteeFaq from "@/components/landing/guarantee-faq";
-import CursorGlow from "@/components/landing/cursor-glow";
+import SectionHeader from "@/components/landing/section-header";
 import StatsMarquee from "@/components/landing/stats-marquee";
 import FadeIn from "@/components/landing/fade-in";
 import AnimatedCounter from "@/components/landing/animated-counter";
@@ -122,7 +122,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-cima-bg">
       <ScrollProgress />
-      <CursorGlow />
+
       <ExitIntent />
       <StickyMobileCta />
 
@@ -146,9 +146,9 @@ export default async function HomePage() {
           />
           {/* Diagonal architectural lines */}
           <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="100%" x2="40%" y2="0" stroke="#C8A96E" strokeWidth="1"/>
-            <line x1="100%" y1="100%" x2="60%" y2="0" stroke="#C8A96E" strokeWidth="1"/>
-            <line x1="50%" y1="100%" x2="50%" y2="0" stroke="#C8A96E" strokeWidth="1"/>
+            <line x1="0" y1="100%" x2="40%" y2="0" stroke="#C8A96E" strokeWidth="1" />
+            <line x1="100%" y1="100%" x2="60%" y2="0" stroke="#C8A96E" strokeWidth="1" />
+            <line x1="50%" y1="100%" x2="50%" y2="0" stroke="#C8A96E" strokeWidth="1" />
           </svg>
         </div>
 
@@ -157,76 +157,76 @@ export default async function HomePage() {
 
             {/* Left — copy */}
             <FadeIn>
-            <div>
-              {/* Tag */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-cima-gold/25 bg-cima-gold/5 px-4 py-1.5 mb-7">
-                <span className="h-1.5 w-1.5 rounded-full bg-cima-gold animate-pulse" />
-                <span className="font-mono text-xs text-cima-gold tracking-widest uppercase">Garantía de venta · </span>
-                <RotatingZone />
+              <div>
+                {/* Tag */}
+                <div className="inline-flex items-center gap-2 rounded-full border border-cima-gold/25 bg-cima-gold/5 px-4 py-1.5 mb-7">
+                  <span className="h-1.5 w-1.5 rounded-full bg-cima-gold animate-pulse" />
+                  <span className="font-mono text-xs text-cima-gold tracking-widest uppercase">Garantía de venta · </span>
+                  <RotatingZone />
+                </div>
+
+                {/* Headline */}
+                <h1 className="font-heading font-bold leading-[1.04] mb-6">
+                  <span className="text-cima-text block text-5xl sm:text-6xl lg:text-7xl">
+                    Vendemos tu casa
+                  </span>
+                  <span className="text-cima-gold block text-5xl sm:text-6xl lg:text-7xl">
+                    en menos de 30 días.
+                  </span>
+                  <span className="text-cima-text-muted block text-3xl sm:text-4xl lg:text-5xl mt-1">
+                    Garantizado.
+                  </span>
+                </h1>
+
+                <p className="text-base sm:text-lg text-cima-text-muted leading-relaxed mb-8 max-w-xl">
+                  Comisión <span className="text-cima-text font-medium">desde 3%</span>, pagadera al escriturar.
+                  Exclusiva de 60 días con dedicación total.{" "}
+                  <span className="text-cima-text font-medium">Si no vendemos en 30 días, no cobramos.</span>
+                </p>
+
+                {/* Stats chips */}
+                <div className="flex flex-wrap gap-2.5 mb-10">
+                  {([
+                    {
+                      val: <AnimatedCounter to={soldCount > 0 ? soldCount : 85} suffix="+" className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
+                      label: "casas vendidas",
+                    },
+                    {
+                      val: <AnimatedCounter to={avgDays} suffix=" días" className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
+                      label: "tiempo promedio",
+                    },
+                    {
+                      val: <span className="font-heading font-bold text-lg text-cima-gold leading-none">Desde 3%</span>,
+                      label: "de comisión",
+                    },
+                    {
+                      val: <AnimatedCounter to={activeProps ?? 5} className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
+                      label: "disponibles hoy",
+                    },
+                  ] as { val: React.ReactNode; label: string }[]).map((s) => (
+                    <div key={s.label} className="flex flex-col items-center rounded-xl border border-cima-border bg-cima-card px-4 py-2.5 min-w-[80px]">
+                      {s.val}
+                      <span className="font-mono text-[9px] text-cima-text-dim uppercase tracking-widest mt-0.5">{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Mobile CTA */}
+                <div className="flex gap-3 xl:hidden">
+                  <a
+                    href="#vender"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-cima-gold px-5 py-3 font-heading font-bold text-sm text-cima-bg hover:bg-cima-gold-light transition-colors"
+                  >
+                    Vender mi casa <ArrowRight className="h-4 w-4" />
+                  </a>
+                  <Link
+                    href="/propiedades"
+                    className="flex items-center gap-2 rounded-xl border border-cima-border px-5 py-3 font-heading font-semibold text-sm text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text transition-colors"
+                  >
+                    Ver catálogo
+                  </Link>
+                </div>
               </div>
-
-              {/* Headline */}
-              <h1 className="font-heading font-bold leading-[1.04] mb-6">
-                <span className="text-cima-text block text-5xl sm:text-6xl lg:text-7xl">
-                  Vendemos tu casa
-                </span>
-                <span className="text-cima-gold block text-5xl sm:text-6xl lg:text-7xl">
-                  en menos de 30 días.
-                </span>
-                <span className="text-cima-text-muted block text-3xl sm:text-4xl lg:text-5xl mt-1">
-                  Garantizado.
-                </span>
-              </h1>
-
-              <p className="text-base sm:text-lg text-cima-text-muted leading-relaxed mb-8 max-w-xl">
-                Comisión <span className="text-cima-text font-medium">desde 3%</span>, pagadera al escriturar.
-                Exclusiva de 60 días con dedicación total.{" "}
-                <span className="text-cima-text font-medium">Si no vendemos en 30 días, no cobramos.</span>
-              </p>
-
-              {/* Stats chips */}
-              <div className="flex flex-wrap gap-2.5 mb-10">
-                {([
-                  {
-                    val: <AnimatedCounter to={soldCount > 0 ? soldCount : 85} suffix="+" className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
-                    label: "casas vendidas",
-                  },
-                  {
-                    val: <AnimatedCounter to={avgDays} suffix=" días" className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
-                    label: "tiempo promedio",
-                  },
-                  {
-                    val: <span className="font-heading font-bold text-lg text-cima-gold leading-none">Desde 3%</span>,
-                    label: "de comisión",
-                  },
-                  {
-                    val: <AnimatedCounter to={activeProps ?? 5} className="font-heading font-bold text-lg text-cima-gold leading-none tabular-nums" />,
-                    label: "disponibles hoy",
-                  },
-                ] as { val: React.ReactNode; label: string }[]).map((s) => (
-                  <div key={s.label} className="flex flex-col items-center rounded-xl border border-cima-border bg-cima-card px-4 py-2.5 min-w-[80px]">
-                    {s.val}
-                    <span className="font-mono text-[9px] text-cima-text-dim uppercase tracking-widest mt-0.5">{s.label}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Mobile CTA */}
-              <div className="flex gap-3 xl:hidden">
-                <a
-                  href="#vender"
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-cima-gold px-5 py-3 font-heading font-bold text-sm text-cima-bg hover:bg-cima-gold-light transition-colors"
-                >
-                  Vender mi casa <ArrowRight className="h-4 w-4" />
-                </a>
-                <Link
-                  href="/propiedades"
-                  className="flex items-center gap-2 rounded-xl border border-cima-border px-5 py-3 font-heading font-semibold text-sm text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text transition-colors"
-                >
-                  Ver catálogo
-                </Link>
-              </div>
-            </div>
             </FadeIn>
 
             {/* Right — hero form */}
@@ -240,29 +240,22 @@ export default async function HomePage() {
       {/* ── GUARANTEES ──────────────────────────── */}
       <section id="garantia" className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-5xl">
-          <FadeIn>
-          <div className="text-center mb-10">
-            <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Lo que nos diferencia</p>
-            <h2 className="font-heading font-bold text-2xl sm:text-3xl text-cima-text">
-              Sin letras chiquitas. Sin sorpresas.
-            </h2>
-          </div>
-          </FadeIn>
+          <SectionHeader tag="Lo que nos diferencia" title="Sin letras chiquitas. Sin sorpresas." />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {GUARANTEES.map((g, i) => (
               <FadeIn key={g.title} delay={i * 0.1} className="h-full">
-              <TiltCard className="h-full">
-              <div
-                className="group rounded-2xl border border-cima-border bg-cima-card p-7 hover:border-cima-gold/30 hover:bg-cima-surface/50 transition-all duration-300 h-full"
-              >
-                <div className="h-11 w-11 rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center mb-5 group-hover:bg-cima-gold/15 transition-colors">
-                  <g.icon className="h-5 w-5 text-cima-gold" />
-                </div>
-                <h3 className="font-heading font-bold text-base text-cima-text mb-2">{g.title}</h3>
-                <p className="text-sm text-cima-text-muted leading-relaxed">{g.desc}</p>
-              </div>
-              </TiltCard>
+                <TiltCard className="h-full">
+                  <div
+                    className="group rounded-2xl border border-cima-border bg-cima-card p-7 hover:border-cima-gold/30 hover:bg-cima-surface/50 transition-all duration-300 h-full"
+                  >
+                    <div className="h-11 w-11 rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center mb-5 group-hover:bg-cima-gold/15 transition-colors">
+                      <g.icon className="h-5 w-5 text-cima-gold" />
+                    </div>
+                    <h3 className="font-heading font-bold text-base text-cima-text mb-2">{g.title}</h3>
+                    <p className="text-sm text-cima-text-muted leading-relaxed">{g.desc}</p>
+                  </div>
+                </TiltCard>
               </FadeIn>
             ))}
           </div>
@@ -278,31 +271,31 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             {/* Left copy */}
             <FadeIn>
-            <div>
-              <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-3">Calculadora</p>
-              <h2 className="font-heading font-bold text-3xl sm:text-4xl text-cima-text mb-4 leading-tight">
-                ¿Cuánto recibirías por tu casa?
-              </h2>
-              <p className="text-sm text-cima-text-muted leading-relaxed mb-6">
-                Mueve el slider y ve en tiempo real cuánto te queda a ti y cuánto
-                ahorras vs. una agencia tradicional que cobra el 7% o más.
-              </p>
-              <div className="space-y-3">
-                {[
-                  "Comisión desde 3%, pagadera al escriturar",
-                  "Fotos y video profesional incluidos",
-                  "Publicidad digital pagada desde el día 1",
-                  "Solo pagas si vendemos. Cero riesgo.",
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-2.5">
-                    <div className="h-4 w-4 rounded-full bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center shrink-0 mt-0.5">
-                      <div className="h-1.5 w-1.5 rounded-full bg-cima-gold" />
+              <div>
+                <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-3">Calculadora</p>
+                <h2 className="font-heading font-bold text-3xl sm:text-4xl text-cima-text mb-4 leading-tight">
+                  ¿Cuánto recibirías por tu casa?
+                </h2>
+                <p className="text-sm text-cima-text-muted leading-relaxed mb-6">
+                  Mueve el slider y ve en tiempo real cuánto te queda a ti y cuánto
+                  ahorras vs. una agencia tradicional que cobra el 7% o más.
+                </p>
+                <div className="space-y-3">
+                  {[
+                    "Comisión desde 3%, pagadera al escriturar",
+                    "Fotos y video profesional incluidos",
+                    "Publicidad digital pagada desde el día 1",
+                    "Solo pagas si vendemos. Cero riesgo.",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-2.5">
+                      <div className="h-4 w-4 rounded-full bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="h-1.5 w-1.5 rounded-full bg-cima-gold" />
+                      </div>
+                      <p className="text-sm text-cima-text-muted">{item}</p>
                     </div>
-                    <p className="text-sm text-cima-text-muted">{item}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
             </FadeIn>
 
             {/* Right — calculator */}
@@ -316,15 +309,7 @@ export default async function HomePage() {
       {/* ── PROCESS TIMELINE ────────────────────── */}
       <section className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-5xl">
-          <FadeIn>
-          <div className="text-center mb-12">
-            <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Proceso</p>
-            <h2 className="font-heading font-bold text-2xl sm:text-3xl text-cima-text">
-              De valuación a llave en mano
-            </h2>
-            <p className="text-sm text-cima-text-muted mt-2">Todo en menos de 30 días.</p>
-          </div>
-          </FadeIn>
+          <SectionHeader tag="Proceso" title="De valuación a llave en mano" subtitle="Todo en menos de 30 días." className="mb-12" />
 
           {/* Desktop horizontal timeline */}
           <div className="hidden md:block relative">
@@ -335,11 +320,10 @@ export default async function HomePage() {
               {PROCESS_STEPS.map((step, i) => (
                 <div key={step.title} className="flex flex-col items-center text-center">
                   {/* Circle */}
-                  <div className={`relative z-10 h-11 w-11 rounded-full border-2 flex items-center justify-center mb-5 ${
-                    i === 3
+                  <div className={`relative z-10 h-11 w-11 rounded-full border-2 flex items-center justify-center mb-5 ${i === 3
                       ? "border-cima-gold bg-cima-gold"
                       : "border-cima-gold/50 bg-cima-bg"
-                  }`}>
+                    }`}>
                     <step.icon className={`h-4 w-4 ${i === 3 ? "text-cima-bg" : "text-cima-gold"}`} />
                   </div>
 
@@ -362,11 +346,10 @@ export default async function HomePage() {
               <div key={step.title} className="flex gap-4">
                 {/* Left: circle + line */}
                 <div className="flex flex-col items-center">
-                  <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                    i === 3
+                  <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center shrink-0 ${i === 3
                       ? "border-cima-gold bg-cima-gold"
                       : "border-cima-gold/50 bg-cima-bg"
-                  }`}>
+                    }`}>
                     <step.icon className={`h-4 w-4 ${i === 3 ? "text-cima-bg" : "text-cima-gold"}`} />
                   </div>
                   {i < PROCESS_STEPS.length - 1 && (
@@ -395,52 +378,45 @@ export default async function HomePage() {
       {/* ── TESTIMONIALS ────────────────────────── */}
       <section className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-5xl">
-          <FadeIn>
-          <div className="text-center mb-10">
-            <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Resultados reales</p>
-            <h2 className="font-heading font-bold text-2xl sm:text-3xl text-cima-text">
-              Lo que dicen quienes ya vendieron
-            </h2>
-          </div>
-          </FadeIn>
+          <SectionHeader tag="Resultados reales" title="Lo que dicen quienes ya vendieron" />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {TESTIMONIALS.map((t, i) => (
               <FadeIn key={t.name} delay={i * 0.1} className="h-full">
-              <TiltCard className="h-full">
-              <div
-                className="rounded-2xl border border-cima-border bg-cima-card p-6 flex flex-col h-full"
-              >
-                {/* Days chip — most important metric */}
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-cima-gold/10 border border-cima-gold/25 px-3 py-1 mb-5 w-fit">
-                  <Clock className="h-3 w-3 text-cima-gold" />
-                  <span className="font-mono text-xs text-cima-gold font-semibold">Vendida en {t.days} días</span>
-                </div>
+                <TiltCard className="h-full">
+                  <div
+                    className="rounded-2xl border border-cima-border bg-cima-card p-6 flex flex-col h-full"
+                  >
+                    {/* Days chip — most important metric */}
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-cima-gold/10 border border-cima-gold/25 px-3 py-1 mb-5 w-fit">
+                      <Clock className="h-3 w-3 text-cima-gold" />
+                      <span className="font-mono text-xs text-cima-gold font-semibold">Vendida en {t.days} días</span>
+                    </div>
 
-                {/* Stars */}
-                <div className="flex gap-0.5 mb-3">
-                  {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="h-3 w-3 fill-cima-gold text-cima-gold" />
-                  ))}
-                </div>
+                    {/* Stars */}
+                    <div className="flex gap-0.5 mb-3">
+                      {Array.from({ length: t.stars }).map((_, i) => (
+                        <Star key={i} className="h-3 w-3 fill-cima-gold text-cima-gold" />
+                      ))}
+                    </div>
 
-                {/* Quote */}
-                <p className="text-sm text-cima-text-muted leading-relaxed flex-1 mb-5">
-                  &ldquo;{t.text}&rdquo;
-                </p>
+                    {/* Quote */}
+                    <p className="text-sm text-cima-text-muted leading-relaxed flex-1 mb-5">
+                      &ldquo;{t.text}&rdquo;
+                    </p>
 
-                {/* Person */}
-                <div className="flex items-center gap-2.5 pt-4 border-t border-cima-border">
-                  <div className="h-8 w-8 rounded-full bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
-                    <span className="font-bold text-xs text-cima-gold">{t.name[0]}</span>
+                    {/* Person */}
+                    <div className="flex items-center gap-2.5 pt-4 border-t border-cima-border">
+                      <div className="h-8 w-8 rounded-full bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
+                        <span className="font-bold text-xs text-cima-gold">{t.name[0]}</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-xs text-cima-text">{t.name}</p>
+                        <p className="font-mono text-[10px] text-cima-text-dim">{t.zone}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-xs text-cima-text">{t.name}</p>
-                    <p className="font-mono text-[10px] text-cima-text-dim">{t.zone}</p>
-                  </div>
-                </div>
-              </div>
-              </TiltCard>
+                </TiltCard>
               </FadeIn>
             ))}
           </div>
@@ -467,10 +443,10 @@ export default async function HomePage() {
                 <div className="space-y-3">
                   {[
                     { icon: CheckCircle2, text: "Valuación comparativa de mercado gratuita" },
-                    { icon: Camera,       text: "Sesión de fotos y video profesional" },
-                    { icon: Users,        text: "Solo compradores pre-calificados" },
-                    { icon: FileCheck,    text: "Asesoría legal incluida hasta notaría" },
-                    { icon: Shield,       text: "Si no vendemos en 30 días, no cobramos" },
+                    { icon: Camera, text: "Sesión de fotos y video profesional" },
+                    { icon: Users, text: "Solo compradores pre-calificados" },
+                    { icon: FileCheck, text: "Asesoría legal incluida hasta notaría" },
+                    { icon: Shield, text: "Si no vendemos en 30 días, no cobramos" },
                   ].map(({ icon: Icon, text }) => (
                     <div key={text} className="flex items-center gap-3">
                       <div className="h-5 w-5 rounded-full bg-cima-gold/10 border border-cima-gold/25 flex items-center justify-center shrink-0">
@@ -517,12 +493,7 @@ export default async function HomePage() {
       {/* ── ZONES ───────────────────────────────── */}
       <section className="px-6 py-16 border-t border-cima-border/50">
         <div className="mx-auto max-w-6xl">
-          <FadeIn>
-          <div className="text-center mb-10">
-            <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-2">Cobertura</p>
-            <h2 className="font-heading font-bold text-2xl text-cima-text">Zonas donde vendemos</h2>
-          </div>
-          </FadeIn>
+          <SectionHeader tag="Cobertura" title="Zonas donde vendemos" />
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {ZONES.map((zone) => (
               <Link
@@ -593,7 +564,7 @@ export default async function HomePage() {
         aria-label="WhatsApp"
       >
         <svg viewBox="0 0 24 24" fill="white" width="27" height="27">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
         </svg>
       </a>
     </div>

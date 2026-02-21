@@ -7,20 +7,21 @@ import {
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import ViewsChart from "@/components/portal/views-chart";
+import AnimatedStat from "@/components/portal/animated-stat";
 import type { Property, VisitStatus } from "@/lib/types";
 
 const VISIT_STATUS_LABELS: Record<VisitStatus, { label: string; color: string }> = {
-  pending:   { label: "Pendiente",  color: "text-amber-400" },
+  pending: { label: "Pendiente", color: "text-amber-400" },
   confirmed: { label: "Confirmada", color: "text-blue-400" },
-  done:      { label: "Realizada",  color: "text-emerald-400" },
-  cancelled: { label: "Cancelada",  color: "text-red-400" },
+  done: { label: "Realizada", color: "text-emerald-400" },
+  cancelled: { label: "Cancelada", color: "text-red-400" },
 };
 
 const PROP_STATUS_LABELS: Record<string, { label: string; color: string; dot: string }> = {
-  active:   { label: "Activa — en publicación",   color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "bg-emerald-400" },
-  sold:     { label: "Vendida",                   color: "bg-red-500/10 text-red-400 border-red-500/20",             dot: "bg-red-400" },
-  rented:   { label: "Rentada",                   color: "bg-purple-500/10 text-purple-400 border-purple-500/20",    dot: "bg-purple-400" },
-  inactive: { label: "Sin publicar",              color: "bg-cima-surface text-cima-text-dim border-cima-border",    dot: "bg-cima-text-dim" },
+  active: { label: "Activa — en publicación", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "bg-emerald-400" },
+  sold: { label: "Vendida", color: "bg-red-500/10 text-red-400 border-red-500/20", dot: "bg-red-400" },
+  rented: { label: "Rentada", color: "bg-purple-500/10 text-purple-400 border-purple-500/20", dot: "bg-purple-400" },
+  inactive: { label: "Sin publicar", color: "bg-cima-surface text-cima-text-dim border-cima-border", dot: "bg-cima-text-dim" },
 };
 
 function formatDate(iso: string) {
@@ -36,11 +37,11 @@ function getDaysListed(createdAt: string) {
 }
 
 function getCommissionInfo(price: number): { pct: number; label: string } {
-  if (price <= 1_000_000)  return { pct: 6,   label: "hasta $1M" };
-  if (price <= 3_000_000)  return { pct: 5,   label: "$1M – $3M" };
-  if (price <= 6_000_000)  return { pct: 4.5, label: "$3M – $6M" };
-  if (price <= 10_000_000) return { pct: 4,   label: "$6M – $10M" };
-  return                          { pct: 3.5, label: "más de $10M" };
+  if (price <= 1_000_000) return { pct: 6, label: "hasta $1M" };
+  if (price <= 3_000_000) return { pct: 5, label: "$1M – $3M" };
+  if (price <= 6_000_000) return { pct: 4.5, label: "$3M – $6M" };
+  if (price <= 10_000_000) return { pct: 4, label: "$6M – $10M" };
+  return { pct: 3.5, label: "más de $10M" };
 }
 
 // ─── Timeline ────────────────────────────────────────────────────────────────
@@ -54,10 +55,10 @@ interface TimelineStep {
 }
 
 const TIMELINE_STEPS: TimelineStep[] = [
-  { id: "captacion",  label: "Captación",        description: "Propiedad registrada en Cima" },
-  { id: "publicacion", label: "Publicación",      description: "Listada en el sitio web" },
-  { id: "visitas",    label: "Visitas",           description: "Compradores interesados" },
-  { id: "cierre",     label: "Cierre",            description: "Operación completada" },
+  { id: "captacion", label: "Captación", description: "Propiedad registrada en Cima" },
+  { id: "publicacion", label: "Publicación", description: "Listada en el sitio web" },
+  { id: "visitas", label: "Visitas", description: "Compradores interesados" },
+  { id: "cierre", label: "Cierre", description: "Operación completada" },
 ];
 
 function getSaleStage(status: string, visitCount: number): SaleStage {
@@ -81,7 +82,7 @@ function SaleTimeline({ status, visitCount }: TimelineProps) {
   const currentIdx = getStageIndex(currentStage);
 
   return (
-    <div className="rounded-2xl border border-cima-border bg-cima-card p-5 sm:p-6">
+    <div className="rounded-2xl border border-cima-border bg-cima-card p-5 sm:p-6 hover:border-cima-gold/20 transition-colors duration-300">
       <div className="mb-5">
         <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-0.5">Proceso</p>
         <h2 className="font-heading font-bold text-base text-cima-text">Etapa de tu venta</h2>
@@ -109,11 +110,10 @@ function SaleTimeline({ status, visitCount }: TimelineProps) {
                 )}
 
                 {/* Circle */}
-                <div className={`relative z-10 shrink-0 h-8 w-8 rounded-full border-2 flex items-center justify-center transition-colors ${
-                  done   ? "border-cima-gold bg-cima-gold" :
-                  active ? "border-cima-gold bg-cima-gold/15" :
-                           "border-cima-border bg-cima-bg"
-                }`}>
+                <div className={`relative z-10 shrink-0 h-8 w-8 rounded-full border-2 flex items-center justify-center transition-colors ${done ? "border-cima-gold bg-cima-gold" :
+                    active ? "border-cima-gold bg-cima-gold/15" :
+                      "border-cima-border bg-cima-bg"
+                  }`}>
                   {done ? (
                     <CheckCircle2 className="h-4 w-4 text-cima-bg" />
                   ) : active ? (
@@ -125,14 +125,12 @@ function SaleTimeline({ status, visitCount }: TimelineProps) {
 
                 {/* Text */}
                 <div className="min-w-0 sm:mt-1">
-                  <p className={`text-xs font-semibold leading-tight ${
-                    done || active ? "text-cima-text" : "text-cima-text-dim"
-                  }`}>
+                  <p className={`text-xs font-semibold leading-tight ${done || active ? "text-cima-text" : "text-cima-text-dim"
+                    }`}>
                     {step.label}
                   </p>
-                  <p className={`text-[10px] leading-tight mt-0.5 hidden sm:block ${
-                    active ? "text-cima-gold" : "text-cima-text-dim"
-                  }`}>
+                  <p className={`text-[10px] leading-tight mt-0.5 hidden sm:block ${active ? "text-cima-gold" : "text-cima-text-dim"
+                    }`}>
                     {active ? "← Etapa actual" : step.description}
                   </p>
                   {/* Mobile: show description only for active */}
@@ -198,21 +196,21 @@ export default async function PortalDashboard() {
 
   const { data: visits } = property
     ? await supabase
-        .from("re_visits")
-        .select("id, name, phone, status, preferred_date, created_at, agent_notes")
-        .eq("property_id", property.id)
-        .order("created_at", { ascending: false })
+      .from("re_visits")
+      .select("id, name, phone, status, preferred_date, created_at, agent_notes")
+      .eq("property_id", property.id)
+      .order("created_at", { ascending: false })
     : { data: [] };
 
   // Daily views for the chart (last 30 days)
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   const { data: rawDailyViews } = property
     ? await supabase
-        .from("re_property_views_daily")
-        .select("date, count")
-        .eq("property_id", property.id)
-        .gte("date", thirtyDaysAgo)
-        .order("date")
+      .from("re_property_views_daily")
+      .select("date, count")
+      .eq("property_id", property.id)
+      .gte("date", thirtyDaysAgo)
+      .order("date")
     : { data: [] };
 
   // Fill missing days with 0 so the chart shows a complete 30-day range
@@ -234,26 +232,26 @@ export default async function PortalDashboard() {
   // Price comparison — comparables in same neighborhood, fallback to city
   const { data: neighborhoodComps } = (property?.area_m2 && property.neighborhood)
     ? await supabase
-        .from("re_properties")
-        .select("price, area_m2")
-        .eq("status", "active")
-        .eq("operation_type", property.operation_type)
-        .eq("neighborhood", property.neighborhood)
-        .neq("id", property.id)
-        .not("area_m2", "is", null)
+      .from("re_properties")
+      .select("price, area_m2")
+      .eq("status", "active")
+      .eq("operation_type", property.operation_type)
+      .eq("neighborhood", property.neighborhood)
+      .neq("id", property.id)
+      .not("area_m2", "is", null)
     : { data: null };
 
   const hasNeighborhoodComps = (neighborhoodComps?.length ?? 0) >= 2;
 
   const { data: cityComps } = (!hasNeighborhoodComps && property?.area_m2)
     ? await supabase
-        .from("re_properties")
-        .select("price, area_m2")
-        .eq("status", "active")
-        .eq("operation_type", property.operation_type)
-        .eq("city", property.city)
-        .neq("id", property.id)
-        .not("area_m2", "is", null)
+      .from("re_properties")
+      .select("price, area_m2")
+      .eq("status", "active")
+      .eq("operation_type", property.operation_type)
+      .eq("city", property.city)
+      .neq("id", property.id)
+      .not("area_m2", "is", null)
     : { data: null };
 
   const compScope = hasNeighborhoodComps ? (property?.neighborhood ?? "") : (property?.city ?? "");
@@ -293,7 +291,7 @@ export default async function PortalDashboard() {
       ) : (
         <>
           {/* Property card */}
-          <div className="rounded-2xl border border-cima-border bg-cima-card p-6">
+          <div className="rounded-2xl border border-cima-border bg-cima-card p-6 hover:border-cima-gold/20 hover:shadow-[0_0_24px_rgba(200,169,110,0.06)] transition-all duration-300">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="min-w-0">
                 <h2 className="font-heading font-bold text-lg text-cima-text leading-tight">{property.title}</h2>
@@ -350,19 +348,20 @@ export default async function PortalDashboard() {
           {/* Stats row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { icon: Eye,        label: "Vistas al anuncio",   value: views,        color: "text-cima-gold",  sub: "en el sitio web" },
-              { icon: Calendar,   label: "Visitas recibidas",   value: totalVisits,  color: "text-cima-text",  sub: `${pendingVisits} pendientes` },
-              { icon: Clock,      label: "Días en proceso",     value: daysListed,   color: "text-blue-400",   sub: "desde el registro" },
-              { icon: Camera,     label: "Fotos subidas",       value: photoCount,   color: "text-cima-text-muted", sub: "en la galería" },
-            ].map(({ icon: Icon, label, value, color, sub }) => (
-              <div key={label} className="rounded-xl border border-cima-border bg-cima-card p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Icon className={`h-3.5 w-3.5 ${color}`} />
-                  <p className="text-[10px] text-cima-text-dim font-mono uppercase leading-tight">{label}</p>
-                </div>
-                <p className={`font-heading font-bold text-2xl leading-none mb-1 ${color}`}>{value}</p>
-                <p className="text-[10px] text-cima-text-dim">{sub}</p>
-              </div>
+              { icon: Eye, label: "Vistas al anuncio", value: views, color: "text-cima-gold", sub: "en el sitio web" },
+              { icon: Calendar, label: "Visitas recibidas", value: totalVisits, color: "text-cima-text", sub: `${pendingVisits} pendientes` },
+              { icon: Clock, label: "Días en proceso", value: daysListed, color: "text-blue-400", sub: "desde el registro" },
+              { icon: Camera, label: "Fotos subidas", value: photoCount, color: "text-cima-text-muted", sub: "en la galería" },
+            ].map(({ icon, label, value, color, sub }, i) => (
+              <AnimatedStat
+                key={label}
+                icon={icon}
+                label={label}
+                value={value}
+                color={color}
+                sub={sub}
+                index={i}
+              />
             ))}
           </div>
 

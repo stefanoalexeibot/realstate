@@ -1,5 +1,30 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#090A0D",
+};
 
 export const metadata: Metadata = {
   title: { default: "Cima Propiedades | Monterrey", template: "%s | Cima Propiedades" },
@@ -21,11 +46,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
+    <html lang="es" className={`${syne.variable} ${dmSans.variable} ${jetbrains.variable}`}>
       <body className="bg-cima-bg text-cima-text font-sans antialiased">
         {children}
       </body>

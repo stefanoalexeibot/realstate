@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Photo = { id: string; url: string; order: number };
 
@@ -13,6 +14,26 @@ export default function PhotoGallery({ photos, title }: { photos: Photo[]; title
 
   const prev = useCallback(() => setActive((i) => Math.max(0, i - 1)), []);
   const next = useCallback(() => setActive((i) => Math.min(photos.length - 1, i + 1)), [photos.length]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!lightbox) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+      else if (e.key === "Escape") setLightbox(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightbox, prev, next]);
+
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (lightbox) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [lightbox]);
 
   if (photos.length === 0) return null;
 
@@ -80,74 +101,97 @@ export default function PhotoGallery({ photos, title }: { photos: Photo[]; title
       )}
 
       {/* Lightbox */}
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
-          onClick={() => setLightbox(false)}
-        >
-          {/* Close */}
-          <button
+      <AnimatePresence>
+        {lightbox && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
             onClick={() => setLightbox(false)}
-            className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Galería de fotos"
           >
-            <X className="h-4 w-4" />
-          </button>
-
-          {/* Counter */}
-          <span className="absolute top-4 left-1/2 -translate-x-1/2 text-white/70 text-xs font-mono">
-            {active + 1} / {photos.length}
-          </span>
-
-          {/* Prev */}
-          {active > 0 && (
+            {/* Close */}
             <button
-              onClick={(e) => { e.stopPropagation(); prev(); }}
-              className="absolute left-4 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+              onClick={() => setLightbox(false)}
+              className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+              aria-label="Cerrar galería"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <X className="h-4 w-4" />
             </button>
-          )}
 
-          {/* Image */}
-          <div className="relative max-w-5xl max-h-[85vh] w-full px-16" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={photos[active].url}
-              alt={title}
-              width={1200}
-              height={800}
-              className="w-full h-full object-contain max-h-[85vh]"
-            />
-          </div>
+            {/* Counter */}
+            <span className="absolute top-4 left-1/2 -translate-x-1/2 text-white/70 text-xs font-mono">
+              {active + 1} / {photos.length}
+            </span>
 
-          {/* Next */}
-          {active < photos.length - 1 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); next(); }}
-              className="absolute right-4 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          )}
-
-          {/* Thumbnail strip in lightbox */}
-          {photos.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 overflow-x-auto max-w-sm px-2" onClick={(e) => e.stopPropagation()}>
-              {photos.map((p, i) => (
-                <button
-                  key={p.id}
-                  onClick={() => setActive(i)}
-                  className={cn(
-                    "shrink-0 h-10 w-14 rounded overflow-hidden border transition-all",
-                    i === active ? "border-cima-gold opacity-100" : "border-white/20 opacity-50 hover:opacity-80"
-                  )}
-                >
-                  <Image src={p.url} alt="" width={56} height={40} className="object-cover w-full h-full" />
-                </button>
-              ))}
+            {/* Keyboard hint */}
+            <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 text-white/30 text-[10px] font-mono hidden sm:flex items-center gap-3">
+              <span>← → navegar</span>
+              <span>ESC cerrar</span>
             </div>
-          )}
-        </div>
-      )}
+
+            {/* Prev */}
+            {active > 0 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); prev(); }}
+                className="absolute left-4 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+            )}
+
+            {/* Image */}
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.25 }}
+              className="relative max-w-5xl max-h-[85vh] w-full px-16"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={photos[active].url}
+                alt={title}
+                width={1200}
+                height={800}
+                className="w-full h-full object-contain max-h-[85vh]"
+              />
+            </motion.div>
+
+            {/* Next */}
+            {active < photos.length - 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); next(); }}
+                className="absolute right-4 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            )}
+
+            {/* Thumbnail strip in lightbox */}
+            {photos.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 overflow-x-auto max-w-sm px-2" onClick={(e) => e.stopPropagation()}>
+                {photos.map((p, i) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setActive(i)}
+                    className={cn(
+                      "shrink-0 h-10 w-14 rounded overflow-hidden border transition-all",
+                      i === active ? "border-cima-gold opacity-100" : "border-white/20 opacity-50 hover:opacity-80"
+                    )}
+                  >
+                    <Image src={p.url} alt="" width={56} height={40} className="object-cover w-full h-full" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

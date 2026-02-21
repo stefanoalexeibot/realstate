@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar, Share2 } from "lucide-react";
+import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import VisitForm from "@/components/landing/visit-form";
 import PhotoGallery from "@/components/landing/photo-gallery";
@@ -10,6 +10,7 @@ import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 import Image from "next/image";
 import MortgageCalculator from "@/components/landing/mortgage-calculator";
+import ShareProperty from "@/components/landing/share-property";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const supabase = createClient();
@@ -144,11 +145,10 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
 
             {/* Badges + price */}
             <div className="flex items-center gap-3 flex-wrap mb-4">
-              <span className={`px-3 py-1 rounded-md text-[10px] font-mono font-semibold tracking-widest uppercase ${
-                isRenta
+              <span className={`px-3 py-1 rounded-md text-[10px] font-mono font-semibold tracking-widest uppercase ${isRenta
                   ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
                   : "bg-cima-gold/20 text-cima-gold border border-cima-gold/30"
-              }`}>
+                }`}>
                 {isRenta ? "Renta" : "Venta"}
               </span>
               <span className="px-3 py-1 rounded-md text-[10px] font-mono tracking-widest uppercase bg-cima-surface text-cima-text-muted border border-cima-border">
@@ -259,11 +259,10 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
                               <Building2 className="h-8 w-8 text-cima-gold/20" />
                             </div>
                           )}
-                          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-mono font-semibold tracking-widest uppercase ${
-                            relIsRenta
+                          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-mono font-semibold tracking-widest uppercase ${relIsRenta
                               ? "bg-blue-500/80 text-blue-100"
                               : "bg-cima-gold/90 text-cima-bg"
-                          }`}>
+                            }`}>
                             {relIsRenta ? "Renta" : "Venta"}
                           </span>
                         </div>
@@ -305,15 +304,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
             </a>
 
             {/* Share */}
-            <a
-              href={`https://wa.me/?text=${encodeURIComponent(`Mira esta propiedad en Cima Propiedades:\n${property.title} — ${formatPrice(property.price)}\nhttps://propiedades-mty.vercel.app/propiedades/${params.slug}`)}`}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full rounded-xl border border-cima-border bg-cima-card px-4 py-3 text-sm text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text transition-colors"
-            >
-              <Share2 className="h-4 w-4" />
-              Compartir propiedad
-            </a>
+            <ShareProperty title={property.title} price={formatPrice(property.price)} slug={params.slug} />
 
             {/* Mortgage calculator */}
             {property.operation_type === "venta" && (
