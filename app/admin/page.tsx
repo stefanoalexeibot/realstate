@@ -227,62 +227,57 @@ export default async function AdminDashboard() {
 
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          {
-            label: "Propiedades activas",
-            value: activeProps,
-            sub: `${totalProps} total · ${soldProps} vendidas`,
-            icon: Building2,
-            color: "text-cima-gold",
-            border: "border-cima-gold/20",
-            bg: "bg-cima-gold/5",
-          },
-          {
-            label: "Visitas pendientes",
-            value: pendingVisits ?? 0,
-            sub: "esperan confirmación",
-            icon: Calendar,
-            color: (pendingVisits ?? 0) > 0 ? "text-amber-400" : "text-cima-text-muted",
-            border: (pendingVisits ?? 0) > 0 ? "border-amber-500/20" : "border-cima-border",
-            bg: (pendingVisits ?? 0) > 0 ? "bg-amber-500/5" : "bg-cima-card",
-            href: "/admin/visitas",
-          },
-          {
-            label: "Leads esta semana",
-            value: leadsThisWeek ?? 0,
-            sub: `${pipelineTotal} en pipeline`,
-            icon: Users,
-            color: "text-emerald-400",
-            border: "border-emerald-500/20",
-            bg: "bg-emerald-500/5",
-            href: "/admin/leads",
-          },
-          {
-            label: "Vistas totales",
-            value: totalViews,
-            sub: "en todas las propiedades",
-            icon: Eye,
-            color: "text-purple-400",
-            border: "border-purple-500/20",
-            bg: "bg-purple-500/5",
-          },
-        ].map((kpi) => {
-          const inner = (
-            <div className={`rounded-xl border ${kpi.border} ${kpi.bg} p-5 h-full transition-colors ${kpi.href ? "hover:opacity-80 cursor-pointer" : ""}`}>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs text-cima-text-muted">{kpi.label}</p>
-                <kpi.icon className={`h-4 w-4 ${kpi.color} shrink-0`} />
-              </div>
-              <p className={`font-heading font-bold text-3xl leading-none ${kpi.color}`}>
-                {kpi.value.toLocaleString("es-MX")}
-              </p>
-              <p className="text-xs text-cima-text-dim mt-1.5">{kpi.sub}</p>
+        <div>
+          <div className="rounded-xl border border-cima-gold/20 bg-cima-gold/5 p-5 h-full">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-cima-text-muted">Propiedades activas</p>
+              <Building2 className="h-4 w-4 text-cima-gold shrink-0" />
             </div>
-          );
-          return kpi.href
-            ? <Link key={kpi.label} href={kpi.href}>{inner}</Link>
-            : <div key={kpi.label}>{inner}</div>;
-        })}
+            <p className="font-heading font-bold text-3xl leading-none text-cima-gold">
+              {activeProps.toLocaleString("es-MX")}
+            </p>
+            <p className="text-xs text-cima-text-dim mt-1.5">{totalProps} total · {soldProps} vendidas</p>
+          </div>
+        </div>
+
+        <Link href="/admin/visitas">
+          <div className={`rounded-xl border ${(pendingVisits ?? 0) > 0 ? "border-amber-500/20 bg-amber-500/5" : "border-cima-border bg-cima-card"} p-5 h-full hover:opacity-80 cursor-pointer transition-colors`}>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-cima-text-muted">Visitas pendientes</p>
+              <Calendar className={`h-4 w-4 shrink-0 ${(pendingVisits ?? 0) > 0 ? "text-amber-400" : "text-cima-text-muted"}`} />
+            </div>
+            <p className={`font-heading font-bold text-3xl leading-none ${(pendingVisits ?? 0) > 0 ? "text-amber-400" : "text-cima-text-muted"}`}>
+              {(pendingVisits ?? 0).toLocaleString("es-MX")}
+            </p>
+            <p className="text-xs text-cima-text-dim mt-1.5">esperan confirmación</p>
+          </div>
+        </Link>
+
+        <Link href="/admin/leads">
+          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 h-full hover:opacity-80 cursor-pointer transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-cima-text-muted">Leads esta semana</p>
+              <Users className="h-4 w-4 text-emerald-400 shrink-0" />
+            </div>
+            <p className="font-heading font-bold text-3xl leading-none text-emerald-400">
+              {(leadsThisWeek ?? 0).toLocaleString("es-MX")}
+            </p>
+            <p className="text-xs text-cima-text-dim mt-1.5">{pipelineTotal} en pipeline</p>
+          </div>
+        </Link>
+
+        <div>
+          <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-5 h-full">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-cima-text-muted">Vistas totales</p>
+              <Eye className="h-4 w-4 text-purple-400 shrink-0" />
+            </div>
+            <p className="font-heading font-bold text-3xl leading-none text-purple-400">
+              {totalViews.toLocaleString("es-MX")}
+            </p>
+            <p className="text-xs text-cima-text-dim mt-1.5">en todas las propiedades</p>
+          </div>
+        </div>
       </div>
 
       {/* ── Quick actions ── */}
@@ -298,8 +293,8 @@ export default async function AdminDashboard() {
             key={a.href}
             href={a.href}
             className={`flex items-center px-3.5 py-2 rounded-lg border text-xs font-medium transition-colors ${a.primary
-                ? "bg-cima-gold/10 border-cima-gold/30 text-cima-gold hover:bg-cima-gold/20"
-                : "border-cima-border text-cima-text-muted hover:bg-cima-surface hover:text-cima-text"
+              ? "bg-cima-gold/10 border-cima-gold/30 text-cima-gold hover:bg-cima-gold/20"
+              : "border-cima-border text-cima-text-muted hover:bg-cima-surface hover:text-cima-text"
               }`}
           >
             {a.label}
