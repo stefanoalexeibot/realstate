@@ -8,20 +8,20 @@ import {
 import MiniBarChart from "@/components/admin/charts/mini-bar-chart";
 
 const PIPELINE_STAGES = [
-  { key: "prospecto",   label: "Prospecto",   dot: "bg-amber-400",    seg: "bg-amber-500/70" },
-  { key: "contactado",  label: "Contactado",  dot: "bg-blue-400",     seg: "bg-blue-500/70" },
-  { key: "valuacion",   label: "Valuación",   dot: "bg-purple-400",   seg: "bg-purple-500/70" },
-  { key: "publicado",   label: "Publicado",   dot: "bg-emerald-400",  seg: "bg-emerald-500/70" },
-  { key: "negociacion", label: "Negociación", dot: "bg-orange-400",   seg: "bg-orange-500/70" },
-  { key: "vendido",     label: "Vendido",     dot: "bg-green-400",    seg: "bg-green-500/70" },
-  { key: "perdido",     label: "Perdido",     dot: "bg-red-400",      seg: "bg-red-500/70" },
+  { key: "prospecto", label: "Prospecto", dot: "bg-amber-400", seg: "bg-amber-500/70" },
+  { key: "contactado", label: "Contactado", dot: "bg-blue-400", seg: "bg-blue-500/70" },
+  { key: "valuacion", label: "Valuación", dot: "bg-purple-400", seg: "bg-purple-500/70" },
+  { key: "publicado", label: "Publicado", dot: "bg-emerald-400", seg: "bg-emerald-500/70" },
+  { key: "negociacion", label: "Negociación", dot: "bg-orange-400", seg: "bg-orange-500/70" },
+  { key: "vendido", label: "Vendido", dot: "bg-green-400", seg: "bg-green-500/70" },
+  { key: "perdido", label: "Perdido", dot: "bg-red-400", seg: "bg-red-500/70" },
 ];
 
 const VISIT_STATUS: Record<string, { label: string; color: string }> = {
-  pending:   { label: "Pendiente",  color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+  pending: { label: "Pendiente", color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
   confirmed: { label: "Confirmada", color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
-  done:      { label: "Realizada",  color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
-  cancelled: { label: "Cancelada",  color: "bg-cima-surface text-cima-text-dim border-cima-border" },
+  done: { label: "Realizada", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
+  cancelled: { label: "Cancelada", color: "bg-cima-surface text-cima-text-dim border-cima-border" },
 };
 
 function greeting() {
@@ -48,49 +48,75 @@ export default async function AdminDashboard() {
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
-  const [
-    { data: propsByStatus },
-    { data: allViews },
-    { count: leadsThisWeek },
-    { count: pendingVisits },
-    { data: pipelineData },
-    { data: recentVisits },
-    { data: recentLeads },
-    { data: leadsHistory },
-    { data: visitsHistory },
-    { data: propsByType },
-  ] = await Promise.all([
-    supabase.from("re_properties").select("status"),
-    supabase.from("re_properties").select("views"),
-    supabase.from("re_seller_leads")
-      .select("id", { count: "exact", head: true })
-      .gte("created_at", weekAgo.toISOString()),
-    supabase.from("re_visits")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending"),
-    supabase.from("re_seller_leads").select("pipeline_stage"),
-    supabase.from("re_visits")
-      .select("id, name, phone, status, created_at, re_properties(title, neighborhood)")
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase.from("re_seller_leads")
-      .select("id, name, phone, neighborhood, operation_type, pipeline_stage, created_at")
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase.from("re_seller_leads")
-      .select("created_at")
-      .gte("created_at", sixMonthsAgo.toISOString()),
-    supabase.from("re_visits")
-      .select("created_at")
-      .gte("created_at", sixMonthsAgo.toISOString()),
-    supabase.from("re_properties").select("property_type").eq("status", "active"),
-  ]);
+  let propsByStatus: { status: string }[] | null = null;
+  let allViews: { views: number }[] | null = null;
+  let leadsThisWeek: number | null = 0;
+  let pendingVisits: number | null = 0;
+  let pipelineData: { pipeline_stage: string }[] | null = null;
+  let recentVisits: unknown[] | null = null;
+  let recentLeads: unknown[] | null = null;
+  let leadsHistory: { created_at: string }[] | null = null;
+  let visitsHistory: { created_at: string }[] | null = null;
+  let propsByType: { property_type: string }[] | null = null;
+
+  try {
+    const results = await Promise.all([
+      supabase.from("re_properties").select("status"),
+      supabase.from("re_properties").select("views"),
+      supabase.from("re_seller_leads")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", weekAgo.toISOString()),
+      supabase.from("re_visits")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending"),
+      supabase.from("re_seller_leads").select("pipeline_stage"),
+      supabase.from("re_visits")
+        .select("id, name, phone, status, created_at, re_properties(title, neighborhood)")
+        .order("created_at", { ascending: false })
+        .limit(5),
+      supabase.from("re_seller_leads")
+        .select("id, name, phone, neighborhood, operation_type, pipeline_stage, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5),
+      supabase.from("re_seller_leads")
+        .select("created_at")
+        .gte("created_at", sixMonthsAgo.toISOString()),
+      supabase.from("re_visits")
+        .select("created_at")
+        .gte("created_at", sixMonthsAgo.toISOString()),
+      supabase.from("re_properties").select("property_type").eq("status", "active"),
+    ]);
+
+    propsByStatus = results[0].data;
+    allViews = results[1].data;
+    leadsThisWeek = results[2].count;
+    pendingVisits = results[3].count;
+    pipelineData = results[4].data;
+    recentVisits = results[5].data;
+    recentLeads = results[6].data;
+    leadsHistory = results[7].data;
+    visitsHistory = results[8].data;
+    propsByType = results[9].data;
+  } catch (err) {
+    console.error("Admin dashboard data fetch error:", err);
+    return (
+      <div className="p-8 max-w-2xl mx-auto">
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-8 text-center">
+          <p className="font-heading font-bold text-lg text-red-400 mb-2">Error al cargar el dashboard</p>
+          <p className="text-sm text-cima-text-muted mb-4">
+            No se pudieron obtener los datos. Verifica que las variables de entorno de Supabase estén configuradas en Vercel.
+          </p>
+          <p className="font-mono text-xs text-red-400/60">{err instanceof Error ? err.message : "Error desconocido"}</p>
+        </div>
+      </div>
+    );
+  }
 
   // --- Process data ---
   const activeProps = propsByStatus?.filter((p) => p.status === "active").length ?? 0;
-  const soldProps   = propsByStatus?.filter((p) => p.status === "sold").length ?? 0;
-  const totalProps  = propsByStatus?.length ?? 0;
-  const totalViews  = allViews?.reduce((s, p) => s + (p.views ?? 0), 0) ?? 0;
+  const soldProps = propsByStatus?.filter((p) => p.status === "sold").length ?? 0;
+  const totalProps = propsByStatus?.length ?? 0;
+  const totalViews = allViews?.reduce((s, p) => s + (p.views ?? 0), 0) ?? 0;
 
   // Pipeline
   const pipelineCounts: Record<string, number> = Object.fromEntries(
@@ -100,7 +126,7 @@ export default async function AdminDashboard() {
     if (l.pipeline_stage in pipelineCounts) pipelineCounts[l.pipeline_stage]++;
   });
   const pipelineTotal = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
-  const uncontacted   = pipelineCounts["prospecto"] ?? 0;
+  const uncontacted = pipelineCounts["prospecto"] ?? 0;
 
   // Property type breakdown
   const typeCounts: Record<string, number> = {};
@@ -130,7 +156,7 @@ export default async function AdminDashboard() {
     return months.map((m) => ({ label: m.label, value: counts[m.key] }));
   }
 
-  const leadsChart  = agg(leadsHistory);
+  const leadsChart = agg(leadsHistory);
   const visitsChart = agg(visitsHistory);
 
   const todayStr = new Date().toLocaleDateString("es-MX", {
@@ -263,19 +289,18 @@ export default async function AdminDashboard() {
       <div className="flex gap-2 flex-wrap">
         {[
           { label: "+ Nueva propiedad", href: "/admin/propiedades/nueva", primary: true },
-          { label: "Pipeline",    href: "/admin/pipeline" },
-          { label: "Visitas",     href: "/admin/visitas" },
-          { label: "Leads",       href: "/admin/leads" },
+          { label: "Pipeline", href: "/admin/pipeline" },
+          { label: "Visitas", href: "/admin/visitas" },
+          { label: "Leads", href: "/admin/leads" },
           { label: "Propiedades", href: "/admin/propiedades" },
         ].map((a) => (
           <Link
             key={a.href}
             href={a.href}
-            className={`flex items-center px-3.5 py-2 rounded-lg border text-xs font-medium transition-colors ${
-              a.primary
+            className={`flex items-center px-3.5 py-2 rounded-lg border text-xs font-medium transition-colors ${a.primary
                 ? "bg-cima-gold/10 border-cima-gold/30 text-cima-gold hover:bg-cima-gold/20"
                 : "border-cima-border text-cima-text-muted hover:bg-cima-surface hover:text-cima-text"
-            }`}
+              }`}
           >
             {a.label}
           </Link>
