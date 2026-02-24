@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fonts loaded via next/font in layout.tsx — no render-blocking @import */
+
+@layer base {
+  :root {
+    --background: #090A0D;
+    --foreground: #F0EDE8;
+    --radius: 0.75rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    @apply border-cima-border;
+  }
+
+  body {
+    background-color: #090A0D;
+    color: #F0EDE8;
+    font-family: "DM Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090A0D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #23252F;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7A6240;
+}
+
+/* Property image placeholder gradient */
+.property-placeholder {
+  background: linear-gradient(135deg, #161820 0%, #1e202a 50%, #13151C 100%);
+}
+
+/* Gold glow effect */
+.gold-glow {
+  box-shadow: 0 0 30px rgba(200, 169, 110, 0.12);
+}
+
+/* Marquee pause on hover */
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Gold range slider (profit calculator) */
+input.np-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+input.np-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #C8A96E;
+  border: 2px solid #090A0D;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(200, 169, 110, 0.18);
+  transition: box-shadow 0.15s ease;
+}
+
+input.np-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 7px rgba(200, 169, 110, 0.25);
+}
+
+input.np-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #C8A96E;
+  border: 2px solid #090A0D;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(200, 169, 110, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-"] {
+    animation: none !important;
+    transition: none !important;
+  }
+}
