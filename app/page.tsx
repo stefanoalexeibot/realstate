@@ -441,7 +441,7 @@ export default async function HomePage() {
                 <h2 className="font-heading font-bold text-3xl sm:text-4xl text-cima-text mb-4 leading-tight">
                   Solicita tu valuación
                   <br />
-                  <span className="text-cima-gold">gratuita y sin compromiso.</span>
+                  <span className="text-cima-gold">gratuita y sin <span className="sm:inline hidden"> · se paga al escriturar</span> compromiso.</span>
                 </h2>
                 <p className="text-sm text-cima-text-muted leading-relaxed mb-7">
                   En menos de 24 horas un asesor de Cima visita tu propiedad, te da el precio
