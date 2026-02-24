@@ -132,7 +132,9 @@ export default async function HomePage() {
       <LandingNav />
 
       {/* ── STATS MARQUEE ──────────────────────── */}
-      <StatsMarquee />
+      <div className="pt-16">
+        <StatsMarquee />
+      </div>
 
       {/* ── HERO ───────────────────────────────── */}
       <section className="relative pt-28 pb-20 px-6 overflow-hidden min-h-[90vh] flex items-center">
@@ -196,7 +198,7 @@ export default async function HomePage() {
                 </h1>
 
                 <p className="text-base sm:text-lg text-cima-text-muted leading-relaxed mb-8 max-w-xl">
-                  Comisión <span className="text-cima-text font-medium">desde 6%</span>, pagadera al escriturar.
+                  Comisión <span className="text-cima-text font-medium">desde 6%</span>, se paga al escriturar.
                   Exclusiva de 60 días con dedicación total.{" "}
                   <span className="text-cima-text font-medium">Si no vendemos en 30 días, no cobramos.</span>
                 </p>
@@ -291,7 +293,7 @@ export default async function HomePage() {
                 </p>
                 <div className="space-y-3">
                   {[
-                    "Comisión competitiva desde 3%, se paga al escriturar",
+                    "Comisión competitiva desde 6%, se paga al escriturar",
                     "Fotografía y video profesional sin costo extra",
                     "Decoración, limpieza y remodelación virtual con IA",
                     "Publicidad digital pagada en todos los portales desde el día 1",
@@ -441,7 +443,7 @@ export default async function HomePage() {
                 <h2 className="font-heading font-bold text-3xl sm:text-4xl text-cima-text mb-4 leading-tight">
                   Solicita tu valuación
                   <br />
-                  <span className="text-cima-gold">gratuita y sin <span className="sm:inline hidden"> · se paga al escriturar</span> compromiso.</span>
+                  <span className="text-cima-gold">gratuita y sin compromiso.</span>
                 </h2>
                 <p className="text-sm text-cima-text-muted leading-relaxed mb-7">
                   En menos de 24 horas un asesor de Cima visita tu propiedad, te da el precio
