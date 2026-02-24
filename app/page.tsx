@@ -291,7 +291,7 @@ export default async function HomePage() {
                 </p>
                 <div className="space-y-3">
                   {[
-                    "Comisión competitiva desde 3%, pagadera al escriturar",
+                    "Comisión competitiva desde 3%, se paga al escriturar",
                     "Fotografía y video profesional sin costo extra",
                     "Decoración, limpieza y remodelación virtual con IA",
                     "Publicidad digital pagada en todos los portales desde el día 1",

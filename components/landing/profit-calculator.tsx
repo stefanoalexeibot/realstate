@@ -97,7 +97,7 @@ export default function ProfitCalculator() {
       </div>
 
       <p className="text-center text-[10px] text-cima-text-dim mt-4 font-mono">
-        * Comisión varía según valor de la propiedad · pagadera al escriturar
+        * Comisión varía según valor de la propiedad · se paga al escriturar
       </p>
     </div>
   );

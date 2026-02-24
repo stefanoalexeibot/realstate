@@ -8,7 +8,7 @@ const STATS = [
   { Icon: Home, text: "85+ propiedades vendidas en MTY" },
   { Icon: Clock, text: "22 días tiempo promedio de venta" },
   { Icon: Star, text: "5 estrellas en satisfacción de clientes" },
-  { Icon: Percent, text: "Comisión desde 6% · pagadera al escriturar" },
+  { Icon: Percent, text: "Comisión desde 6% · se paga al escriturar" },
   { Icon: Shield, text: "Exclusiva de 60 días · dedicación total" },
   { Icon: Camera, text: "Fotografía profesional incluida" },
   { Icon: TrendingUp, text: "Valuación gratuita · sin costo inicial" },

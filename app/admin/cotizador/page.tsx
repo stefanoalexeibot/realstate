@@ -95,7 +95,7 @@ export default function CotizadorPage() {
       ivaEnabled ? `IVA (16%): ${fmt(nums.iva)}` : null,
       `Total comisión: ${fmt(nums.net)}`,
       ``,
-      `* Comisión pagadera al momento de escriturar.`,
+      `* Comisión se paga al momento de escriturar.`,
     ].filter(Boolean);
     if (splitEnabled) {
       lines.push(``, `División entre agentes:`);
@@ -126,7 +126,7 @@ export default function CotizadorPage() {
           <Calculator className="h-5 w-5 text-cima-gold" />
           Cotizador de comisiones
         </h1>
-        <p className="text-sm text-cima-text-muted mt-1">Calcula la comisión estimada de cualquier operación. Comisión pagadera al escriturar.</p>
+        <p className="text-sm text-cima-text-muted mt-1">Calcula la comisión estimada de cualquier operación. Comisión se paga al escriturar.</p>
       </div>
 
       {/* Reference tables */}
@@ -151,7 +151,7 @@ export default function CotizadorPage() {
                 </span>
               </div>
             ))}
-            <p className="text-[10px] text-cima-text-dim pt-1 border-t border-cima-border">Todo % es negociable. Pagadero al escriturar.</p>
+            <p className="text-[10px] text-cima-text-dim pt-1 border-t border-cima-border">Todo % es negociable. Se paga al escriturar.</p>
           </div>
         </div>
 
@@ -340,7 +340,7 @@ export default function CotizadorPage() {
                 <span className="font-medium text-cima-text">Total comisión</span>
                 <span className="font-heading font-bold text-xl text-cima-gold">{fmt(nums.net)}</span>
               </div>
-              <p className="text-[10px] text-cima-text-dim pt-1">Pagadero al escriturar.</p>
+              <p className="text-[10px] text-cima-text-dim pt-1">Se paga al escriturar.</p>
             </div>
           </div>
 
