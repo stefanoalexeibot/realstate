@@ -2,11 +2,25 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, Pencil, User, Building2, Home } from "lucide-react";
+import { Eye, Pencil, User, Building2, Home, Link2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import AdminSearch from "./admin-search";
 import DeletePropertyButton from "./delete-property-button";
 import type { Property } from "@/lib/types";
+
+// Inline copy button — copies the /lp/[slug] link to clipboard
+function CopyLpButton({ slug }: { slug: string }) {
+    const [copied, setCopied] = useState(false);
+    function copy() {
+        const url = `${window.location.origin}/lp/${slug}`;
+        navigator.clipboard.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+    }
+    return (
+        <button onClick={copy} title="Copiar link de landing page" className="flex items-center gap-1 text-xs text-cima-text-muted hover:text-cima-gold transition-colors">
+            {copied ? <span className="text-cima-gold text-[10px] font-mono">✓ LP link</span> : <><Link2 className="h-3.5 w-3.5" /> LP</>}
+        </button>
+    );
+}
 
 type PropertyWithAgent = Property & { re_agentes: { name: string } | null };
 
@@ -160,6 +174,7 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                                                 <Eye className="h-3.5 w-3.5" />
                                                 Ver
                                             </Link>
+                                            <CopyLpButton slug={p.slug} />
                                         </div>
                                         <div className="sm:border-l sm:border-cima-border sm:pl-2">
                                             <DeletePropertyButton propertyId={p.id} />
