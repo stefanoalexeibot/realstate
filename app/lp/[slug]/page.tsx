@@ -42,19 +42,26 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
 
     const { data } = await supabase
         .from("re_properties")
-        .select("*, re_photos(id, url, order, is_cover), re_agentes!agent_id(name, phone)")
+        .select("*, re_photos(id, url, order, is_cover)")
         .eq("slug", params.slug)
         .single();
 
     if (!data) notFound();
 
-    type AgentInfo = { name: string; phone: string | null } | null;
     const property = data as Property & {
         re_photos: { id: string; url: string; order: number; is_cover: boolean }[];
-        re_agentes: AgentInfo;
     };
 
-    const agentPhone = (property.re_agentes as AgentInfo)?.phone?.replace(/\D/g, "") ?? null;
+    // Fetch agent separately to avoid RLS blocking the join silently
+    let agentPhone: string | null = null;
+    if (property.agent_id) {
+        const { data: agent } = await supabase
+            .from("re_agentes")
+            .select("phone")
+            .eq("id", property.agent_id)
+            .single();
+        agentPhone = agent?.phone?.replace(/\D/g, "") ?? null;
+    }
     const waPhone = agentPhone ? `52${agentPhone.replace(/^52/, "")}` : globalWa;
 
     const photos = (property.re_photos ?? []).sort((a, b) => a.order - b.order);
