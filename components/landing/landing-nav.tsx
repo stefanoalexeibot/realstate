@@ -8,9 +8,10 @@ import { motion, AnimatePresence } from "framer-motion";
 const WA = process.env.NEXT_PUBLIC_CIMA_WA ?? "";
 
 const NAV_LINKS = [
-  { href: "#garantia",    label: "Garantía" },
+  { href: "#garantia", label: "Garantía" },
   { href: "#calculadora", label: "Calculadora" },
   { href: "/propiedades", label: "Propiedades" },
+  { href: "/casos-de-exito", label: "Casos de Éxito" },
 ];
 
 export default function LandingNav() {
@@ -35,16 +36,14 @@ export default function LandingNav() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 border-b border-cima-border/50 backdrop-blur-md transition-all duration-300 ${
-          scrolled || open
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-cima-border/50 backdrop-blur-md transition-all duration-300 ${scrolled || open
             ? "bg-cima-bg/98 shadow-[0_8px_32px_rgba(0,0,0,0.45)]"
             : "bg-cima-bg/90"
-        }`}
+          }`}
       >
         <div
-          className={`mx-auto max-w-6xl px-6 flex items-center justify-between transition-all duration-300 ${
-            scrolled ? "h-13" : "h-16"
-          }`}
+          className={`mx-auto max-w-6xl px-6 flex items-center justify-between transition-all duration-300 ${scrolled ? "h-13" : "h-16"
+            }`}
         >
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>

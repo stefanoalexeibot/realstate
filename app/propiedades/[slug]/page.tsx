@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar } from "lucide-react";
+import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar, CheckCircle2, Clock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import VisitForm from "@/components/landing/visit-form";
 import PhotoGallery from "@/components/landing/photo-gallery";
@@ -59,7 +59,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
     .from("re_properties")
     .select("*, re_photos(id, url, order, is_cover)")
     .eq("slug", params.slug)
-    .eq("status", "active")
+    // No filtramos por status: vendidas/rentadas siguen siendo accesibles
     .single();
 
   if (!data) notFound();
@@ -107,12 +107,38 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
     image: property.cover_photo ?? undefined,
   };
 
+  const isSold = property.status === "sold";
+  const isRented = property.status === "rented";
+  const isClosed = isSold || isRented;
+
   return (
     <div className="min-h-screen bg-cima-bg">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      {/* ── Banner VENDIDA / RENTADA ── */}
+      {isClosed && (
+        <div className={`sticky top-0 z-40 flex items-center justify-center gap-3 px-4 py-3 text-sm font-medium
+          ${isSold
+            ? "bg-cima-gold text-cima-bg"
+            : "bg-blue-500 text-white"
+          }`}>
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <span className="font-heading font-bold">
+            Esta propiedad ya fue {isSold ? "vendida" : "rentada"}
+            {property.days_to_sell ? ` · Cerrada en ${property.days_to_sell} día${property.days_to_sell === 1 ? "" : "s"}` : ""}
+          </span>
+          <span className="hidden sm:inline text-sm opacity-80">·</span>
+          <Link
+            href="/casos-de-exito"
+            className="hidden sm:inline text-sm underline underline-offset-2 opacity-80 hover:opacity-100"
+          >
+            Ver más casos de éxito →
+          </Link>
+        </div>
+      )}
 
       <StickyPropertyHeader
         title={property.title}
