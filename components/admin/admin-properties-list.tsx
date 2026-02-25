@@ -157,28 +157,25 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                                         </span>
                                     </div>
 
-                                    <div className="flex items-center gap-2 w-full sm:w-auto border-t border-cima-border/50 sm:border-0 pt-4 sm:pt-0 justify-between sm:justify-start">
-                                        <div className="flex items-center gap-4 sm:gap-3">
-                                            <Link
-                                                href={`/admin/propiedades/${p.id}/editar`}
-                                                className="flex items-center gap-1.5 text-xs text-cima-text-muted hover:text-cima-gold transition-colors font-medium sm:font-normal"
-                                            >
-                                                <Pencil className="h-3.5 w-3.5" />
-                                                Editar
-                                            </Link>
-                                            <Link
-                                                href={`/propiedades/${p.slug}`}
-                                                target="_blank"
-                                                className="flex items-center gap-1.5 text-xs text-cima-text-muted hover:text-cima-gold transition-colors font-medium sm:font-normal"
-                                            >
-                                                <Eye className="h-3.5 w-3.5" />
-                                                Ver
-                                            </Link>
-                                            <CopyLpButton slug={p.slug} />
-                                        </div>
-                                        <div className="sm:border-l sm:border-cima-border sm:pl-2">
-                                            <DeletePropertyButton propertyId={p.id} />
-                                        </div>
+                                    {/* ── Acciones ── */}
+                                    <div className="flex items-center gap-1.5 w-full sm:w-auto border-t border-cima-border/50 sm:border-0 pt-4 sm:pt-0 flex-wrap sm:flex-nowrap">
+                                        <Link
+                                            href={`/admin/propiedades/${p.id}/editar`}
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-cima-text-muted hover:text-cima-gold hover:bg-cima-gold/10 border border-cima-border hover:border-cima-gold/30 transition-colors"
+                                        >
+                                            <Pencil className="h-3.5 w-3.5" />
+                                            Editar
+                                        </Link>
+                                        <Link
+                                            href={`/propiedades/${p.slug}`}
+                                            target="_blank"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-cima-text-muted hover:text-cima-text hover:bg-cima-surface border border-cima-border transition-colors"
+                                        >
+                                            <Eye className="h-3.5 w-3.5" />
+                                            Ver
+                                        </Link>
+                                        <CopyLpButton slug={p.slug} />
+                                        <DeletePropertyButton propertyId={p.id} />
                                     </div>
                                 </div>
                             );

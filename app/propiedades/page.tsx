@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
+import { Building2, SlidersHorizontal, LayoutGrid, Map, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import PropertyCard from "@/components/landing/property-card";
 import type { Property } from "@/lib/types";
@@ -54,7 +54,8 @@ export default async function PropiedadesPage({
   let query = supabase
     .from("re_properties")
     .select("*")
-    .eq("status", "active")
+    .in("status", ["active", "sold", "rented"])
+    .order("status", { ascending: true })   // active primero (~a < s)
     .order("featured", { ascending: false })
     .order("created_at", { ascending: false });
 
@@ -124,8 +125,8 @@ export default async function PropiedadesPage({
               <Link
                 href={buildUrl({ ...searchParams, vista: undefined })}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${searchParams.vista !== "mapa"
-                    ? "bg-cima-gold text-cima-bg font-semibold"
-                    : "text-cima-text-muted hover:text-cima-text"
+                  ? "bg-cima-gold text-cima-bg font-semibold"
+                  : "text-cima-text-muted hover:text-cima-text"
                   }`}
               >
                 <LayoutGrid className="h-3 w-3" /> Lista
@@ -133,8 +134,8 @@ export default async function PropiedadesPage({
               <Link
                 href={buildUrl({ ...searchParams, vista: "mapa" })}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${searchParams.vista === "mapa"
-                    ? "bg-cima-gold text-cima-bg font-semibold"
-                    : "text-cima-text-muted hover:text-cima-text"
+                  ? "bg-cima-gold text-cima-bg font-semibold"
+                  : "text-cima-text-muted hover:text-cima-text"
                   }`}
               >
                 <Map className="h-3 w-3" /> Mapa
@@ -156,8 +157,8 @@ export default async function PropiedadesPage({
               key={op || "all-op"}
               href={buildUrl({ ...searchParams, operacion: op || undefined })}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${(searchParams.operacion ?? "") === op
-                  ? "bg-cima-gold text-cima-bg font-semibold"
-                  : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
+                ? "bg-cima-gold text-cima-bg font-semibold"
+                : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
                 }`}
             >
               {op === "" ? "Todo" : op === "venta" ? "Venta" : "Renta"}
@@ -172,8 +173,8 @@ export default async function PropiedadesPage({
               key={t || "all-type"}
               href={buildUrl({ ...searchParams, tipo: t || undefined })}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${(searchParams.tipo ?? "") === t
-                  ? "bg-cima-gold text-cima-bg font-semibold"
-                  : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
+                ? "bg-cima-gold text-cima-bg font-semibold"
+                : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
                 }`}
             >
               {t === "" ? "Tipo" : t === "departamento" ? "Depto" : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -189,8 +190,8 @@ export default async function PropiedadesPage({
                   key={z}
                   href={buildUrl({ ...searchParams, zona: searchParams.zona === z ? undefined : z })}
                   className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${searchParams.zona === z
-                      ? "bg-cima-gold text-cima-bg font-semibold"
-                      : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
+                    ? "bg-cima-gold text-cima-bg font-semibold"
+                    : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
                     }`}
                 >
                   {z.length > 14 ? z.split(" ")[0] : z}
@@ -206,8 +207,8 @@ export default async function PropiedadesPage({
               key={p.value}
               href={buildUrl({ ...searchParams, precio: searchParams.precio === p.value ? undefined : p.value })}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${searchParams.precio === p.value
-                  ? "bg-cima-gold text-cima-bg font-semibold"
-                  : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
+                ? "bg-cima-gold text-cima-bg font-semibold"
+                : "border border-cima-border text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text"
                 }`}
             >
               {p.label}
@@ -238,9 +239,27 @@ export default async function PropiedadesPage({
           <PropertiesMap properties={properties as (Property & { lat: number | null; lng: number | null })[]} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.map((p, i) => (
-              <PropertyCard key={p.id} property={p} index={i} />
-            ))}
+            {properties.map((p, i) => {
+              const isClosed = p.status === "sold" || p.status === "rented";
+              return (
+                <div key={p.id} className="relative">
+                  <PropertyCard property={p} index={i} />
+                  {/* Badge encima de propiedades cerradas */}
+                  {isClosed && (
+                    <div className="absolute inset-x-0 top-0 flex justify-center pt-3 pointer-events-none z-10">
+                      <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-widest uppercase shadow-lg
+                        ${p.status === "sold"
+                          ? "bg-cima-gold text-cima-bg"
+                          : "bg-blue-500 text-white"
+                        }`}>
+                        <CheckCircle2 className="h-3 w-3" />
+                        {p.status === "sold" ? "Vendida" : "Rentada"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
