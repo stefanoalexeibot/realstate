@@ -41,7 +41,7 @@ export default function PhotoGallery({ photos, title }: { photos: Photo[]; title
     <>
       {/* Main photo */}
       <div
-        className="relative h-[300px] sm:h-[440px] rounded-xl overflow-hidden border border-cima-border mb-3 cursor-zoom-in group"
+        className="relative h-[300px] sm:h-[420px] lg:h-[480px] rounded-xl overflow-hidden border border-cima-border mb-3 cursor-zoom-in group"
         onClick={() => setLightbox(true)}
       >
         <Image

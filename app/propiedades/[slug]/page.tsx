@@ -167,10 +167,11 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
-          {/* Left */}
-          <div>
+      {/* ── Contenido principal ── */}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 lg:gap-8">
+          {/* ── Left column ── */}
+          <div className="min-w-0">
             {/* Photo gallery */}
             <FadeIn>
               {photos.length > 0 ? (
@@ -228,15 +229,17 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
 
             {/* Price */}
             <FadeIn delay={0.2}>
-              <div className="rounded-xl border border-cima-gold/20 bg-cima-gold/5 px-6 py-5 mb-6 inline-flex items-baseline gap-2 shadow-lg shadow-cima-gold/5 backdrop-blur-sm">
-                <span className="font-heading font-black text-4xl text-cima-gold">{formatPrice(property.price)}</span>
+              {/* Price -- scrollable en iPhone sin overflow */}
+              <div className="rounded-xl border border-cima-gold/20 bg-cima-gold/5 px-4 sm:px-6 py-4 sm:py-5 mb-5 sm:mb-6 inline-flex items-baseline gap-2 shadow-lg shadow-cima-gold/5 max-w-full">
+                <span className="font-heading font-black text-3xl sm:text-4xl text-cima-gold">{formatPrice(property.price)}</span>
                 {isRenta && <span className="text-sm text-cima-text-muted font-mono">/mes</span>}
               </div>
             </FadeIn>
 
             {/* Stats grid */}
             <FadeIn delay={0.3}>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+              {/* Stats — 2 cols en iPhone, 4 en iPad+ */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
                 {property.bedrooms > 0 && (
                   <div className="rounded-xl border border-cima-border bg-cima-card/50 backdrop-blur-sm p-4 text-center hover:border-cima-gold/30 transition-colors group">
                     <BedDouble className="h-5 w-5 text-cima-gold/70 group-hover:text-cima-gold mx-auto mb-1 transition-colors" />
@@ -332,11 +335,11 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
             )}
           </div>
 
-          {/* Right — visit form + contact */}
-          <div className="space-y-4">
+          {/* ── Right column — form sticky ── */}
+          <div className="space-y-4 min-w-0">
             <FadeIn delay={0.4}>
-              <div id="agendar-visita" className="rounded-2xl border border-cima-border bg-cima-card/40 backdrop-blur-xl p-8 sticky top-24 shadow-2xl relative overflow-hidden group">
-                {/* Decorative background element */}
+              <div id="agendar-visita" className="rounded-2xl border border-cima-border bg-cima-card/40 backdrop-blur-xl p-5 sm:p-6 lg:p-8 lg:sticky lg:top-24 shadow-2xl relative overflow-hidden group">
+                {/* Deco */}
                 <div className="absolute -top-24 -right-24 h-48 w-48 bg-cima-gold/5 rounded-full blur-3xl group-hover:bg-cima-gold/10 transition-colors" />
 
                 <div className="flex items-center gap-2.5 mb-6">
