@@ -26,9 +26,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         .single();
 
     if (!data) return { title: "Propiedad" };
-
     const desc = `${data.title} en ${data.neighborhood ?? "Monterrey"}. ${formatPrice(data.price)}${data.operation_type === "renta" ? "/mes" : ""}.`;
-
     return {
         title: `${data.title} | Cima Propiedades`,
         description: desc,
@@ -42,18 +40,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function LpPage({ params }: { params: { slug: string } }) {
     const supabase = createAdminClient();
-    const waPhone = process.env.NEXT_PUBLIC_CIMA_WA ?? "521234567890";
+    const globalWa = process.env.NEXT_PUBLIC_CIMA_WA ?? "521234567890";
 
-    // Sin filtro de status para permitir previews de borradores
+    // Join con el asesor para obtener su teléfono
     const { data } = await supabase
         .from("re_properties")
-        .select("*, re_photos(id, url, order, is_cover)")
+        .select("*, re_photos(id, url, order, is_cover), re_agentes!agent_id(name, phone)")
         .eq("slug", params.slug)
         .single();
 
     if (!data) notFound();
 
-    const property = data as Property & { re_photos: { id: string; url: string; order: number; is_cover: boolean }[] };
+    type AgentInfo = { name: string; phone: string | null } | null;
+    const property = data as Property & {
+        re_photos: { id: string; url: string; order: number; is_cover: boolean }[];
+        re_agentes: AgentInfo;
+    };
+
+    // Usar teléfono del asesor asignado; fallback al global
+    const agentPhone = (property.re_agentes as AgentInfo)?.phone?.replace(/\D/g, "") ?? null;
+    const waPhone = agentPhone ? `52${agentPhone.replace(/^52/, "")}` : globalWa;
+
     const photos = (property.re_photos ?? []).sort((a, b) => a.order - b.order);
     const isRenta = property.operation_type === "renta";
     const coverPhoto = photos.find((p) => p.is_cover)?.url ?? photos[0]?.url ?? property.cover_photo;
@@ -69,7 +76,8 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
     ].filter(Boolean) as { icon: React.ElementType; value: string | number; label: string }[];
 
     return (
-        <div className="min-h-screen bg-cima-bg">
+        // overflow-x-hidden evita que el hero o sticky button ensanche la página
+        <div className="min-h-screen bg-cima-bg overflow-x-hidden">
 
             {/* ── WhatsApp sticky button ── */}
             <a
@@ -77,14 +85,14 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
                 target="_blank"
                 rel="noreferrer"
                 id="wa-sticky"
-                className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full bg-[#25D366] text-white px-5 py-3.5 text-sm font-bold shadow-2xl shadow-[#25D366]/40 hover:bg-[#1eb85a] transition-all hover:scale-105 active:scale-95"
+                className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#25D366] text-white px-4 py-3 text-sm font-bold shadow-2xl shadow-[#25D366]/40 hover:bg-[#1eb85a] transition-all hover:scale-105 active:scale-95"
             >
-                <Phone className="h-4 w-4 fill-white" />
+                <Phone className="h-4 w-4" />
                 WhatsApp
             </a>
 
-            {/* ── Hero ── */}
-            <div className="relative w-full h-[55vh] min-h-[340px] overflow-hidden bg-cima-surface">
+            {/* ── Hero (max-w contenido pero imagen full) ── */}
+            <div className="relative w-full h-[60vh] min-h-[360px] max-h-[560px] bg-cima-surface">
                 {coverPhoto ? (
                     <Image
                         src={coverPhoto}
@@ -98,19 +106,16 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
                         <Building2 className="h-16 w-16 text-cima-gold/20" />
                     </div>
                 )}
-                {/* Dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-                {/* Hero content */}
-                <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-10 max-w-4xl mx-auto">
+                {/* Hero content centrado */}
+                <div className="absolute inset-x-0 bottom-0 max-w-3xl mx-auto px-6 pb-8">
                     <div className="flex flex-wrap gap-2 mb-3">
-                        <span className={`px-3 py-1 rounded-md text-[10px] font-mono font-bold tracking-widest uppercase ${isRenta
-                            ? "bg-blue-500 text-white"
-                            : "bg-cima-gold text-cima-bg"
-                            }`}>
+                        <span className={`px-3 py-1 rounded-md text-[10px] font-mono font-bold tracking-widest uppercase ${isRenta ? "bg-blue-500 text-white" : "bg-cima-gold text-cima-bg"}`}>
                             {isRenta ? "Renta" : "Venta"}
                         </span>
-                        <span className="px-3 py-1 rounded-md text-[10px] font-mono font-semibold tracking-widest uppercase bg-white/10 text-white border border-white/20 backdrop-blur-sm">
+                        <span className="px-3 py-1 rounded-md text-[10px] font-mono font-semibold tracking-widest uppercase bg-white/15 text-white border border-white/25 backdrop-blur-sm">
                             {PROP_LABELS[property.property_type] ?? property.property_type}
                         </span>
                     </div>
@@ -127,11 +132,11 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
             </div>
 
             {/* ── Main content ── */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
 
                     {/* ── Left column ── */}
-                    <div className="space-y-8">
+                    <div className="space-y-7">
 
                         {/* Price */}
                         <div className="flex items-baseline gap-2">
@@ -178,7 +183,7 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
                             </div>
                         )}
 
-                        {/* Photo gallery (below on mobile) */}
+                        {/* Photo gallery */}
                         {photos.length > 1 && (
                             <div>
                                 <h2 className="font-heading font-semibold text-cima-text mb-3">Galería de fotos</h2>
@@ -186,7 +191,7 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
                             </div>
                         )}
 
-                        {/* Mobile CTA (shown between columns on mobile) */}
+                        {/* Mobile CTA */}
                         <div className="lg:hidden rounded-2xl border border-cima-border bg-cima-card p-6">
                             <p className="font-mono text-[10px] tracking-[0.15em] text-cima-gold uppercase mb-1">¿Te interesa?</p>
                             <h2 className="font-heading font-bold text-xl text-cima-text mb-5">Déjanos tus datos</h2>
@@ -200,13 +205,13 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
                             />
                         </div>
 
-                        {/* Bottom urgency banner */}
+                        {/* Urgency banner */}
                         <div className="rounded-2xl bg-gradient-to-r from-cima-gold/10 to-cima-gold/5 border border-cima-gold/20 p-6 text-center">
                             <p className="font-heading font-bold text-cima-text text-lg mb-1">
                                 ¿Listo para dar el siguiente paso?
                             </p>
                             <p className="text-sm text-cima-text-muted mb-4">
-                                Habla con un asesor ahora y agenda tu visita sin compromiso.
+                                Habla con un asesor y agenda tu visita sin compromiso.
                             </p>
                             <a
                                 href={waUrl}
@@ -220,7 +225,7 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
                         </div>
                     </div>
 
-                    {/* ── Right column — Lead form (desktop sticky) ── */}
+                    {/* ── Right column — sticky desktop ── */}
                     <div className="hidden lg:block">
                         <div className="sticky top-6 rounded-2xl border border-cima-border bg-cima-card/60 backdrop-blur-xl p-6 shadow-2xl">
                             <div className="flex items-center gap-2 mb-1">
@@ -257,7 +262,7 @@ export default async function LpPage({ params }: { params: { slug: string } }) {
 
             {/* ── Mini footer ── */}
             <footer className="border-t border-cima-border mt-12 py-6">
-                <div className="max-w-4xl mx-auto px-6 flex items-center justify-between">
+                <div className="max-w-3xl mx-auto px-6 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="h-7 w-7 rounded-lg bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center">
                             <Building2 className="h-3.5 w-3.5 text-cima-gold" />
