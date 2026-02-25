@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, SlidersHorizontal, LayoutGrid, Map, CheckCircle2 } from "lucide-react";
+import { Building2, SlidersHorizontal, LayoutGrid, Map, CheckCircle2, TrendingUp } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import PropertyCard from "@/components/landing/property-card";
 import type { Property } from "@/lib/types";
@@ -79,7 +79,9 @@ export default async function PropiedadesPage({
   }
 
   const { data } = await query;
-  const properties = (data ?? []) as Property[];
+  const allProperties = (data ?? []) as Property[];
+  const properties = allProperties.filter(p => p.status === "active");
+  const closedProperties = allProperties.filter(p => p.status === "sold" || p.status === "rented");
 
   const isFiltered = searchParams.operacion || searchParams.tipo || searchParams.zona || searchParams.precio || searchParams.q;
 
@@ -113,7 +115,9 @@ export default async function PropiedadesPage({
             <h1 className="font-heading font-bold text-3xl text-cima-text mb-1">
               {isFiltered ? "Resultados filtrados" : "Todas las propiedades"}
             </h1>
-            <p className="text-sm text-cima-text-muted">{properties.length} propiedad{properties.length !== 1 ? "es" : ""} encontrada{properties.length !== 1 ? "s" : ""}</p>
+            <p className="text-sm text-cima-text-muted">
+              {properties.length} propiedad{properties.length !== 1 ? "es" : ""} disponible{properties.length !== 1 ? "s" : ""}
+            </p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             {/* Search */}
@@ -260,6 +264,44 @@ export default async function PropiedadesPage({
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* ── Sección Casos de Éxito ── */}
+        {closedProperties.length > 0 && (
+          <div className="mt-16">
+            {/* Divisor con título */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cima-gold/30" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-cima-gold/30 bg-cima-gold/5">
+                <TrendingUp className="h-3.5 w-3.5 text-cima-gold" />
+                <span className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase">Casos de Éxito</span>
+                <span className="font-mono text-[10px] text-cima-text-dim">({closedProperties.length})</span>
+              </div>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cima-gold/30" />
+            </div>
+            <p className="text-xs text-cima-text-dim text-center mb-8 font-mono">
+              Propiedades que ya cerraron su operación · <Link href="/casos-de-exito" className="text-cima-gold hover:underline">Ver página completa →</Link>
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {closedProperties.map((p, i) => {
+                const isSold = p.status === "sold";
+                return (
+                  <div key={p.id} className="group relative block rounded-2xl border border-cima-border bg-cima-card overflow-hidden hover:border-cima-gold/40 hover:shadow-xl hover:shadow-black/20 transition-all duration-500">
+                    <PropertyCard property={p} index={i} />
+                    {/* Badge encima */}
+                    <div className="absolute inset-x-0 top-0 flex justify-center pt-3 pointer-events-none z-10">
+                      <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-widest uppercase shadow-lg
+                        ${isSold ? "bg-cima-gold text-cima-bg" : "bg-blue-500 text-white"}`}>
+                        <CheckCircle2 className="h-3 w-3" />
+                        {isSold ? "Vendida" : "Rentada"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
