@@ -397,9 +397,15 @@ export default function NuevaPropiedad() {
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-cima-text-muted">$</span>
-              <input type="number" required min="0" value={form.price} onChange={(e) => set("price", e.target.value)}
+              <input
+                type="text"
+                inputMode="numeric"
+                required
+                value={form.price}
+                onChange={(e) => set("price", e.target.value.replace(/[^0-9.]/g, ""))}
                 placeholder={form.operation_type === "venta" ? "3500000" : "15000"}
-                className={`${inp} pl-6`} />
+                className={`${inp} pl-6`}
+              />
             </div>
           </div>
 
@@ -496,7 +502,7 @@ export default function NuevaPropiedad() {
             )}
             <div>
               <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Área total m²</label>
-              <input type="number" min="0" value={form.area_m2} onChange={(e) => set("area_m2", e.target.value)}
+              <input type="text" inputMode="numeric" value={form.area_m2} onChange={(e) => set("area_m2", e.target.value.replace(/[^0-9.]/g, ""))}
                 placeholder="220" className={inp} />
             </div>
           </div>
@@ -505,12 +511,12 @@ export default function NuevaPropiedad() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-cima-text-muted mb-1.5">m² de terreno</label>
-              <input type="number" min="0" value={form.terrain_m2} onChange={(e) => set("terrain_m2", e.target.value)}
+              <input type="text" inputMode="numeric" value={form.terrain_m2} onChange={(e) => set("terrain_m2", e.target.value.replace(/[^0-9.]/g, ""))}
                 placeholder="220" className={inp} />
             </div>
             <div>
               <label className="block text-xs font-medium text-cima-text-muted mb-1.5">m² de construcción</label>
-              <input type="number" min="0" value={form.construction_m2} onChange={(e) => set("construction_m2", e.target.value)}
+              <input type="text" inputMode="numeric" value={form.construction_m2} onChange={(e) => set("construction_m2", e.target.value.replace(/[^0-9.]/g, ""))}
                 placeholder="180" className={inp} />
             </div>
           </div>
@@ -518,8 +524,8 @@ export default function NuevaPropiedad() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Año de construcción</label>
-              <input type="number" min="1900" max={new Date().getFullYear()} value={form.construction_year}
-                onChange={(e) => set("construction_year", e.target.value)} placeholder="2015" className={inp} />
+              <input type="text" inputMode="numeric" value={form.construction_year}
+                onChange={(e) => set("construction_year", e.target.value.replace(/[^0-9]/g, ""))} placeholder="2015" className={inp} />
             </div>
           </div>
         </div>

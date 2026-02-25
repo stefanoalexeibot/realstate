@@ -312,7 +312,12 @@ export default function EditarPropiedad() {
             <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Precio (MXN) *</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-cima-text-muted">$</span>
-              <input type="number" required min="0" value={form.price} onChange={(e) => set("price", e.target.value)}
+              <input
+                type="text"
+                inputMode="numeric"
+                required
+                value={form.price}
+                onChange={(e) => set("price", e.target.value.replace(/[^0-9.]/g, ""))}
                 className="w-full rounded-lg bg-cima-surface border border-cima-border pl-6 pr-3 py-2.5 text-sm text-cima-text focus:outline-none focus:border-cima-gold/50 transition-colors" />
             </div>
           </div>
@@ -334,7 +339,7 @@ export default function EditarPropiedad() {
             ] as const).map(({ key, label }) => (
               <div key={key}>
                 <label className="block text-xs font-medium text-cima-text-muted mb-1.5">{label}</label>
-                <input type="number" min="0" value={form[key]} onChange={(e) => set(key, e.target.value)}
+                <input type="text" inputMode="numeric" value={form[key]} onChange={(e) => set(key, e.target.value.replace(/[^0-9.]/g, ""))}
                   className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2.5 text-sm text-cima-text focus:outline-none focus:border-cima-gold/50 transition-colors" />
               </div>
             ))}
