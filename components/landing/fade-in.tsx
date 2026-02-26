@@ -21,8 +21,7 @@ export default function FadeIn({ children, delay = 0, direction = "up", classNam
   return (
     <motion.div
       initial={{ opacity: 0, ...directions[direction] }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
       transition={{ duration: 0.5, delay, ease: "easeOut" }}
       className={className}
     >
