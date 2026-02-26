@@ -16,6 +16,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       state, features, status, featured, agent_notes, propietario_id,
       agent_id, address, construction_year,
       days_to_sell, sold_at,
+      new_photos, // Array of { url, order, is_cover }
     } = body;
 
     if (!title || !price || !operation_type || !property_type) {
@@ -53,6 +54,19 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       .eq("id", params.id);
 
     if (error) throw error;
+
+    // 2. Insert new photos if any
+    if (new_photos && Array.isArray(new_photos) && new_photos.length > 0) {
+      const photosToInsert = new_photos.map((p: any) => ({
+        property_id: params.id,
+        url: p.url,
+        order: p.order || 0,
+        is_cover: p.is_cover || false,
+      }));
+      const { error: photoError } = await supabase.from("re_photos").insert(photosToInsert);
+      if (photoError) throw photoError;
+    }
+
     return NextResponse.json({ ok: true });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Error desconocido";

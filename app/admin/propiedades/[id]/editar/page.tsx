@@ -219,11 +219,10 @@ export default function EditarPropiedad() {
     e.preventDefault();
     setSaving(true);
     setError(null);
+    const uploadedPhotos: { url: string; order: number; is_cover: boolean }[] = [];
 
     try {
-      const supabase = createClient();
-
-      // Upload new photos via server route (service client — bypasses RLS)
+      // 1. Upload new photos to storage via our secure API
       if (newPhotos.length > 0) {
         const maxOrder = existingPhotos.length ? Math.max(...existingPhotos.map((p) => p.order)) + 1 : 0;
         for (let i = 0; i < newPhotos.length; i++) {
@@ -234,16 +233,18 @@ export default function EditarPropiedad() {
           const uploadRes = await fetch("/api/photos/upload", { method: "POST", body: fd });
           const uploadJson = await uploadRes.json();
           if (!uploadRes.ok) throw new Error(uploadJson.error ?? "Error al subir foto");
-          const publicUrl = uploadJson.url;
-          const isCover = existingPhotos.length === 0 && i === 0;
-          await supabase.from("re_photos").insert({ property_id: params.id, url: publicUrl, order: maxOrder + i, is_cover: isCover });
-          if (isCover) await supabase.from("re_properties").update({ cover_photo: publicUrl }).eq("id", params.id);
+
+          uploadedPhotos.push({
+            url: uploadJson.url,
+            order: maxOrder + i,
+            is_cover: existingPhotos.length === 0 && i === 0
+          });
         }
       }
 
       setUploadProgress("Guardando cambios…");
 
-      // Patch property fields
+      // 2. Patch property fields and include new photo URLs for secure DB insertion
       const res = await fetch(`/api/propiedades/${params.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -256,8 +257,10 @@ export default function EditarPropiedad() {
           parking: Number(form.parking),
           days_to_sell: form.days_to_sell ? Number(form.days_to_sell) : null,
           sold_at: form.sold_at || null,
+          new_photos: uploadedPhotos,
         }),
       });
+
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Error al guardar");
 
