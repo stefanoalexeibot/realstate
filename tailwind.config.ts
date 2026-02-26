@@ -32,8 +32,8 @@ const config: Config = {
         sm: "0.375rem",
       },
       animation: {
-        "fade-up": "fadeUp 0.5s ease forwards",
-        "fade-in": "fadeIn 0.4s ease forwards",
+        "fade-up": "fadeUp 0.6s ease both",
+        "fade-in": "fadeIn 0.4s ease both",
         "marquee": "marquee 32s linear infinite",
       },
       keyframes: {

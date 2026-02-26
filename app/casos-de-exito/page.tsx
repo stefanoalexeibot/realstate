@@ -152,7 +152,6 @@ export default async function CasosDeExitoPage() {
                             return (
                                 <div
                                     key={p.id}
-                                    style={{ animationDelay: `${Math.min(i * 0.08, 0.5)}s` }}
                                     className="animate-fade-up"
                                 >
                                     <Link
