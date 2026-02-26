@@ -150,7 +150,11 @@ export default async function CasosDeExitoPage() {
                             const isSold = p.status === "sold";
                             const label = daysLabel(p.days_to_sell);
                             return (
-                                <FadeIn key={p.id} delay={Math.min(i * 0.08, 0.5)}>
+                                <div
+                                    key={p.id}
+                                    style={{ animationDelay: `${Math.min(i * 0.08, 0.5)}s` }}
+                                    className="animate-fade-up"
+                                >
                                     <Link
                                         href={`/propiedades/${p.slug}`}
                                         className="group block rounded-2xl border border-cima-border bg-cima-card overflow-hidden hover:border-cima-gold/50 hover:shadow-2xl hover:shadow-black/30 transition-all duration-500"
@@ -252,7 +256,7 @@ export default async function CasosDeExitoPage() {
                                             )}
                                         </div>
                                     </Link>
-                                </FadeIn>
+                                </div>
                             );
                         })}
                     </div>
