@@ -86,100 +86,102 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                     )}
                 </div>
             ) : (
-                <div className="rounded-xl border border-cima-border bg-cima-card overflow-hidden">
-                    {/* Header (Desktop Only) */}
-                    <div className="hidden sm:grid grid-cols-[1fr_110px_80px_90px_120px_90px_110px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
-                        {["Propiedad", "Precio", "Vistas", "Tipo", "Asesor", "Estado", ""].map((h) => (
-                            <p key={h} className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">{h}</p>
-                        ))}
-                    </div>
+                <div className="rounded-xl border border-cima-border bg-cima-card overflow-x-auto">
+                    <div className="min-w-[900px]">
+                        {/* Header (Desktop Only) */}
+                        <div className="hidden sm:grid grid-cols-[1fr_110px_80px_90px_120px_90px_140px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
+                            {["Propiedad", "Precio", "Vistas", "Tipo", "Asesor", "Estado", ""].map((h) => (
+                                <p key={h} className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">{h}</p>
+                            ))}
+                        </div>
 
-                    <div className="divide-y divide-cima-border">
-                        {filtered.map((p) => {
-                            const st = STATUS_LABELS[p.status] ?? STATUS_LABELS.inactive;
-                            const agentName = p.re_agentes?.name;
-                            return (
-                                <div key={p.id} className="flex flex-col sm:grid sm:grid-cols-[1fr_110px_80px_90px_120px_90px_110px] gap-4 px-4 sm:px-5 py-5 sm:py-4 items-start sm:items-center hover:bg-cima-surface/30 transition-colors">
-                                    <div className="w-full sm:min-w-0 flex items-start justify-between gap-3">
-                                        <div className="min-w-0">
-                                            <p className="font-semibold sm:font-medium text-sm text-cima-text truncate">{p.title}</p>
-                                            <p className="text-xs text-cima-text-muted mt-0.5 sm:mt-0">{p.neighborhood ?? "—"} · {formatDate(p.created_at)}</p>
+                        <div className="divide-y divide-cima-border">
+                            {filtered.map((p) => {
+                                const st = STATUS_LABELS[p.status] ?? STATUS_LABELS.inactive;
+                                const agentName = p.re_agentes?.name;
+                                return (
+                                    <div key={p.id} className="flex flex-col sm:grid sm:grid-cols-[1fr_110px_80px_90px_120px_90px_140px] gap-4 px-4 sm:px-5 py-5 sm:py-4 items-start sm:items-center hover:bg-cima-surface/30 transition-colors">
+                                        <div className="w-full sm:min-w-0 flex items-start justify-between gap-3">
+                                            <div className="min-w-0">
+                                                <p className="font-semibold sm:font-medium text-sm text-cima-text truncate">{p.title}</p>
+                                                <p className="text-xs text-cima-text-muted mt-0.5 sm:mt-0">{p.neighborhood ?? "—"} · {formatDate(p.created_at)}</p>
+                                            </div>
+                                            <span className={`sm:hidden inline-flex px-2 py-0.5 rounded text-[10px] font-mono border shrink-0 ${st.color}`}>
+                                                {st.label}
+                                            </span>
                                         </div>
-                                        <span className={`sm:hidden inline-flex px-2 py-0.5 rounded text-[10px] font-mono border shrink-0 ${st.color}`}>
-                                            {st.label}
-                                        </span>
-                                    </div>
 
-                                    <div className="grid grid-cols-2 gap-3 w-full sm:hidden border-t border-cima-border/50 pt-3">
-                                        <div>
-                                            <p className="text-[9px] text-cima-text-dim font-mono uppercase mb-0.5">Precio</p>
-                                            <p className="text-sm text-cima-gold font-mono">
+                                        <div className="grid grid-cols-2 gap-3 w-full sm:hidden border-t border-cima-border/50 pt-3">
+                                            <div>
+                                                <p className="text-[9px] text-cima-text-dim font-mono uppercase mb-0.5">Precio</p>
+                                                <p className="text-sm text-cima-gold font-mono">
+                                                    {formatPrice(p.price)}{p.operation_type === "renta" ? "/mes" : ""}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] text-cima-text-dim font-mono uppercase mb-0.5">Tipo / Vistas</p>
+                                                <p className="text-xs text-cima-text">
+                                                    <span className="capitalize">{p.property_type}</span> · {p.views ?? 0}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="hidden sm:block">
+                                            <p className="text-sm text-cima-gold font-mono whitespace-nowrap">
                                                 {formatPrice(p.price)}{p.operation_type === "renta" ? "/mes" : ""}
                                             </p>
                                         </div>
-                                        <div>
-                                            <p className="text-[9px] text-cima-text-dim font-mono uppercase mb-0.5">Tipo / Vistas</p>
-                                            <p className="text-xs text-cima-text">
-                                                <span className="capitalize">{p.property_type}</span> · {p.views ?? 0}
-                                            </p>
+
+                                        <div className="hidden sm:block">
+                                            <p className="text-xs text-cima-text-muted font-mono">{p.views ?? 0} vistas</p>
+                                        </div>
+
+                                        <div className="hidden sm:block">
+                                            <p className="text-xs text-cima-text-muted capitalize">{p.property_type}</p>
+                                        </div>
+
+                                        <div className="w-full sm:min-w-0 flex items-center justify-between sm:block border-t border-cima-border/50 sm:border-0 pt-3 sm:pt-0">
+                                            <p className="sm:hidden text-[9px] text-cima-text-dim font-mono uppercase">Asesor</p>
+                                            {agentName ? (
+                                                <span className="flex items-center gap-1.5 text-xs text-cima-text-muted truncate">
+                                                    <User className="h-3.5 w-3.5 shrink-0 text-cima-gold" />
+                                                    {agentName}
+                                                </span>
+                                            ) : (
+                                                <span className="text-xs text-cima-text-dim italic">Sin asignar</span>
+                                            )}
+                                        </div>
+
+                                        <div className="hidden sm:block">
+                                            <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-mono border w-fit ${st.color}`}>
+                                                {st.label}
+                                            </span>
+                                        </div>
+
+                                        {/* ── Acciones ── */}
+                                        <div className="flex items-center gap-1.5 w-full sm:w-auto border-t border-cima-border/50 sm:border-0 pt-4 sm:pt-0 flex-wrap sm:flex-nowrap">
+                                            <Link
+                                                href={`/admin/propiedades/${p.id}/editar`}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-cima-text-muted hover:text-cima-gold hover:bg-cima-gold/10 border border-cima-border hover:border-cima-gold/30 transition-colors"
+                                            >
+                                                <Pencil className="h-3.5 w-3.5" />
+                                                Editar
+                                            </Link>
+                                            <Link
+                                                href={`/propiedades/${p.slug}`}
+                                                target="_blank"
+                                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-cima-text-muted hover:text-cima-text hover:bg-cima-surface border border-cima-border transition-colors"
+                                            >
+                                                <Eye className="h-3.5 w-3.5" />
+                                                Ver
+                                            </Link>
+                                            <CopyLpButton slug={p.slug} />
+                                            <DeletePropertyButton propertyId={p.id} />
                                         </div>
                                     </div>
-
-                                    <div className="hidden sm:block">
-                                        <p className="text-sm text-cima-gold font-mono whitespace-nowrap">
-                                            {formatPrice(p.price)}{p.operation_type === "renta" ? "/mes" : ""}
-                                        </p>
-                                    </div>
-
-                                    <div className="hidden sm:block">
-                                        <p className="text-xs text-cima-text-muted font-mono">{p.views ?? 0} vistas</p>
-                                    </div>
-
-                                    <div className="hidden sm:block">
-                                        <p className="text-xs text-cima-text-muted capitalize">{p.property_type}</p>
-                                    </div>
-
-                                    <div className="w-full sm:min-w-0 flex items-center justify-between sm:block border-t border-cima-border/50 sm:border-0 pt-3 sm:pt-0">
-                                        <p className="sm:hidden text-[9px] text-cima-text-dim font-mono uppercase">Asesor</p>
-                                        {agentName ? (
-                                            <span className="flex items-center gap-1.5 text-xs text-cima-text-muted truncate">
-                                                <User className="h-3.5 w-3.5 shrink-0 text-cima-gold" />
-                                                {agentName}
-                                            </span>
-                                        ) : (
-                                            <span className="text-xs text-cima-text-dim italic">Sin asignar</span>
-                                        )}
-                                    </div>
-
-                                    <div className="hidden sm:block">
-                                        <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-mono border w-fit ${st.color}`}>
-                                            {st.label}
-                                        </span>
-                                    </div>
-
-                                    {/* ── Acciones ── */}
-                                    <div className="flex items-center gap-1.5 w-full sm:w-auto border-t border-cima-border/50 sm:border-0 pt-4 sm:pt-0 flex-wrap sm:flex-nowrap">
-                                        <Link
-                                            href={`/admin/propiedades/${p.id}/editar`}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-cima-text-muted hover:text-cima-gold hover:bg-cima-gold/10 border border-cima-border hover:border-cima-gold/30 transition-colors"
-                                        >
-                                            <Pencil className="h-3.5 w-3.5" />
-                                            Editar
-                                        </Link>
-                                        <Link
-                                            href={`/propiedades/${p.slug}`}
-                                            target="_blank"
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-cima-text-muted hover:text-cima-text hover:bg-cima-surface border border-cima-border transition-colors"
-                                        >
-                                            <Eye className="h-3.5 w-3.5" />
-                                            Ver
-                                        </Link>
-                                        <CopyLpButton slug={p.slug} />
-                                        <DeletePropertyButton propertyId={p.id} />
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             )}
