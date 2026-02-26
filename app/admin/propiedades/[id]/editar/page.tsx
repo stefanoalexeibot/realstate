@@ -58,6 +58,8 @@ export default function EditarPropiedad() {
     featured: false, agent_notes: "",
     propietario_id: "",
     agent_id: "",
+    days_to_sell: "",
+    sold_at: "",
   });
 
   useEffect(() => {
@@ -97,6 +99,8 @@ export default function EditarPropiedad() {
           agent_notes: prop.agent_notes ?? "",
           propietario_id: prop.propietario_id ?? "",
           agent_id: prop.agent_id ?? "",
+          days_to_sell: prop.days_to_sell != null ? String(prop.days_to_sell) : "",
+          sold_at: prop.sold_at ? prop.sold_at.split("T")[0] : "",
         });
         setExistingPhotos((photos ?? []) as ExistingPhoto[]);
         setPropietarios((peopleRes.propietarios ?? []) as Propietario[]);
@@ -124,7 +128,14 @@ export default function EditarPropiedad() {
   }
 
   function set(key: string, value: string | boolean) {
-    setForm((f) => ({ ...f, [key]: value }));
+    setForm((f) => {
+      const next = { ...f, [key]: value };
+      // Auto-set sold_at if status changes to sold/rented and it's empty
+      if (key === "status" && (value === "sold" || value === "rented") && !f.sold_at) {
+        next.sold_at = new Date().toISOString().split("T")[0];
+      }
+      return next;
+    });
   }
 
   function handlePropietarioChange(value: string) {
@@ -243,6 +254,8 @@ export default function EditarPropiedad() {
           bathrooms: Number(form.bathrooms),
           area_m2: form.area_m2 ? Number(form.area_m2) : null,
           parking: Number(form.parking),
+          days_to_sell: form.days_to_sell ? Number(form.days_to_sell) : null,
+          sold_at: form.sold_at || null,
         }),
       });
       const json = await res.json();
@@ -415,6 +428,35 @@ export default function EditarPropiedad() {
               <span className="text-sm text-cima-text-muted">Destacar en inicio</span>
             </label>
           </div>
+
+          {/* Campos de cierre (solo si es Vendida o Rentada) */}
+          {(form.status === "sold" || form.status === "rented") && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-cima-border">
+              <div>
+                <label className="block text-xs font-medium text-cima-text-muted mb-1.5">
+                  Días para {form.status === "sold" ? "vender" : "rentar"}
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={form.days_to_sell}
+                  onChange={(e) => set("days_to_sell", e.target.value.replace(/[^0-9]/g, ""))}
+                  placeholder="Ej. 15"
+                  className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2.5 text-sm text-cima-text focus:outline-none focus:border-cima-gold/50 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Fecha de cierre</label>
+                <input
+                  type="date"
+                  value={form.sold_at}
+                  onChange={(e) => set("sold_at", e.target.value)}
+                  className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2.5 text-sm text-cima-text focus:outline-none focus:border-cima-gold/50 transition-colors"
+                />
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Notas internas (no visibles al público)</label>
             <textarea value={form.agent_notes} onChange={(e) => set("agent_notes", e.target.value)} rows={2}

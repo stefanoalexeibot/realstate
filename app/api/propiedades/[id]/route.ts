@@ -15,6 +15,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       bedrooms, bathrooms, area_m2, parking, neighborhood, city,
       state, features, status, featured, agent_notes, propietario_id,
       agent_id, address, construction_year,
+      days_to_sell, sold_at,
     } = body;
 
     if (!title || !price || !operation_type || !property_type) {
@@ -46,6 +47,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         agent_id: agent_id || null,
         address: address || null,
         construction_year: construction_year ? Number(construction_year) : null,
+        days_to_sell: days_to_sell ? Number(days_to_sell) : null,
+        sold_at: sold_at || null,
       })
       .eq("id", params.id);
 

@@ -57,6 +57,8 @@ const EMPTY_FORM = {
   propietario_id: "",
   agent_id: "",
   agent_notes: "",
+  days_to_sell: "",
+  sold_at: "",
 };
 
 /* ─── Component ─────────────────────────────────────────────────────────── */
@@ -113,7 +115,14 @@ export default function NuevaPropiedad() {
 
   /* ─── Helpers ─────────────────────────────────────────────────────────── */
   function set(key: string, value: string | boolean | string[]) {
-    setForm((f) => ({ ...f, [key]: value }));
+    setForm((f) => {
+      const next = { ...f, [key]: value };
+      // Auto-set sold_at if status changes to sold/rented and it's empty
+      if (key === "status" && (value === "sold" || value === "rented") && !f.sold_at) {
+        next.sold_at = new Date().toISOString().split("T")[0];
+      }
+      return next;
+    });
   }
 
   function handleFiles(files: FileList | null) {
@@ -641,6 +650,34 @@ export default function NuevaPropiedad() {
               className="h-4 w-4 rounded border-cima-border bg-cima-surface accent-cima-gold cursor-pointer" />
             <span className="text-sm text-cima-text-muted">⭐ Destacar en inicio</span>
           </label>
+
+          {/* Campos de cierre (solo si es Vendida o Rentada) */}
+          {(form.status === "sold" || form.status === "rented") && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-cima-border">
+              <div>
+                <label className="block text-xs font-medium text-cima-text-muted mb-1.5">
+                  Días para {form.status === "sold" ? "vender" : "rentar"}
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={form.days_to_sell}
+                  onChange={(e) => set("days_to_sell", e.target.value.replace(/[^0-9]/g, ""))}
+                  placeholder="Ej. 15"
+                  className={inp}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Fecha de cierre</label>
+                <input
+                  type="date"
+                  value={form.sold_at}
+                  onChange={(e) => set("sold_at", e.target.value)}
+                  className={inp}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── Fotos ── */}
