@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { verifyAdminStatus } from "@/lib/auth-utils";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {

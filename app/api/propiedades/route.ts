@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils";
 import { verifyAdminStatus } from "@/lib/auth-utils";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: Request) {
   try {
@@ -73,6 +74,10 @@ export async function POST(req: Request) {
         }))
       );
     }
+
+    revalidatePath("/admin/propiedades");
+    revalidatePath("/casos-de-exito");
+    revalidatePath("/");
 
     return NextResponse.json({ ok: true, slug: property.slug, id: property.id });
   } catch (e) {
