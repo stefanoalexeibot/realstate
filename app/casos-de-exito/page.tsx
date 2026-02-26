@@ -152,7 +152,7 @@ export default async function CasosDeExitoPage() {
                             return (
                                 <div
                                     key={p.id}
-                                    className="animate-fade-up"
+                                    className="block"
                                 >
                                     <Link
                                         href={`/propiedades/${p.slug}`}
