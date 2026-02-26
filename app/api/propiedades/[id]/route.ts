@@ -17,6 +17,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       agent_id, address, construction_year,
       days_to_sell, sold_at,
       new_photos, // Array of { url, order, is_cover }
+      cover_photo, // Optional manual sync
     } = body;
 
     if (!title || !price || !operation_type || !property_type) {
@@ -65,6 +66,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       }));
       const { error: photoError } = await supabase.from("re_photos").insert(photosToInsert);
       if (photoError) throw photoError;
+
+      // Update property cover_photo if any new photo is marked as cover
+      const newCover = new_photos.find((p: any) => p.is_cover)?.url;
+      if (newCover) {
+        await supabase.from("re_properties").update({ cover_photo: newCover }).eq("id", params.id);
+      }
+    }
+
+    if (cover_photo) {
+      await supabase.from("re_properties").update({ cover_photo }).eq("id", params.id);
     }
 
     return NextResponse.json({ ok: true });
