@@ -267,19 +267,19 @@ export default function CimaProPage() {
                                 {
                                     title: "Portal del Asesor",
                                     desc: "Control total de inventario, leads y generación de fichas en segundos.",
-                                    img: "https://pdtpjyawfnhqlypifshn.supabase.co/storage/v1/object/public/web-assets/admin-mockup.png",
+                                    img: "/mockups/admin-mockup.png",
                                     link: "/admin"
                                 },
                                 {
                                     title: "Portal del Propietario",
                                     desc: "La herramienta definitiva para ganar exclusivas con transparencia total.",
-                                    img: "https://pdtpjyawfnhqlypifshn.supabase.co/storage/v1/object/public/web-assets/owner-mockup.png",
+                                    img: "/mockups/owner-portal.png",
                                     icon: <UserCheck className="h-8 w-8 text-cima-gold" />
                                 },
                                 {
                                     title: "Landing de Propiedad",
                                     desc: "El escaparate de lujo que tus mejores casas merecen.",
-                                    img: "https://pdtpjyawfnhqlypifshn.supabase.co/storage/v1/object/public/web-assets/landing-mockup.png",
+                                    img: "/mockups/property-landing.png",
                                     link: "/propiedades"
                                 }
                             ].map((item, i) => (
