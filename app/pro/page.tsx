@@ -22,66 +22,100 @@ function RoiCalculator() {
 
     const totalComm = (price * (commission / 100));
     const monthlyIncome = totalComm * monthlyProp;
-    const timeSavedValue = (monthlyProp * 15 * 500); // 15 horas x propiedad x $500/hr
+    const annualIncome = monthlyIncome * 12;
+    const timeSavedValue = (monthlyProp * 15 * 500);
+    const cimaROI = Math.round((annualIncome / 85000) * 100); // based on Enterprise plan
 
     return (
-        <div className="bg-cima-bg/60 border border-cima-border rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl">
-            <h3 className="font-heading font-bold text-xl text-cima-gold mb-8 text-center sm:text-left">Calculadora de Impacto Financiero</h3>
+        <div>
+            {/* Psychological hook */}
+            <div className="mb-10 p-6 sm:p-8 rounded-3xl bg-red-500/5 border border-red-500/15 flex flex-col sm:flex-row gap-6 items-center">
+                <div className="text-4xl shrink-0">💸</div>
+                <div>
+                    <h4 className="font-heading font-black text-lg text-white mb-2">¿Cuánto dinero estás dejando sobre la mesa cada mes?</h4>
+                    <p className="text-sm text-cima-text-dim leading-relaxed">
+                        El 73% de los asesores de lujo pierden propiedades a la competencia <strong className="text-white">no por precio — sino por imagen, velocidad y tecnología.</strong> Sin un ecosistema digital de alto nivel, tus propiedades compiten con colores del Word y PDFs de los años 90.
+                    </p>
+                </div>
+            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div className="space-y-8">
-                    <div>
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-cima-text-dim block mb-3">Precio promedio propiedad</label>
-                        <input
-                            type="range" min="1000000" max="20000000" step="100000"
-                            value={price} onChange={(e) => setPrice(Number(e.target.value))}
-                            className="w-full accent-cima-gold bg-cima-border rounded-lg h-2"
-                        />
-                        <div className="flex justify-between mt-2 font-mono text-xs text-cima-gold font-bold">
-                            <span>$1M</span>
-                            <span>${(price / 1000000).toFixed(1)}M</span>
-                            <span>$20M</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-cima-text-dim block mb-3">% Comisión de Agencia</label>
-                        <div className="flex gap-4">
-                            {[3, 4, 5, 6].map(val => (
-                                <button
-                                    key={val}
-                                    onClick={() => setCommission(val)}
-                                    className={`flex-1 py-2 rounded-lg border text-xs font-bold transition-all ${commission === val ? "bg-cima-gold text-cima-bg border-cima-gold" : "bg-cima-card border-cima-border text-cima-text-muted hover:border-cima-gold/30"}`}
-                                >
-                                    {val}%
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-cima-text-dim block mb-3">Propiedades por mes</label>
-                        <input
-                            type="number" value={monthlyProp} onChange={(e) => setMonthlyProp(Number(e.target.value))}
-                            className="w-full bg-cima-card border border-cima-border rounded-xl p-3 text-cima-text font-bold text-sm focus:border-cima-gold outline-none transition-colors"
-                        />
-                    </div>
+            <div className="bg-cima-bg/60 border border-cima-border rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                    <h3 className="font-heading font-bold text-xl text-cima-gold">Calculadora de Impacto Financiero</h3>
+                    <span className="text-[9px] font-mono text-cima-text-dim border border-cima-border px-3 py-1.5 rounded-full uppercase tracking-widest">Mueve los controles → ve tu potencial</span>
                 </div>
 
-                <div className="bg-cima-gold/5 rounded-2xl p-6 sm:p-8 border border-cima-gold/10 flex flex-col justify-center">
-                    <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div className="space-y-8">
                         <div>
-                            <p className="text-[10px] uppercase font-bold text-cima-gold tracking-widest mb-1 italic">Potencial de Ingresos al mes</p>
+                            <label className="text-[10px] uppercase tracking-widest font-bold text-cima-text-dim block mb-1">Precio promedio de propiedad</label>
+                            <span className="text-[9px] text-cima-text-dim/60 italic block mb-3">→ ¿Cuánto vale en promedio una propiedad que vendes?</span>
+                            <input
+                                type="range" min="1000000" max="20000000" step="100000"
+                                value={price} onChange={(e) => setPrice(Number(e.target.value))}
+                                className="w-full accent-cima-gold bg-cima-border rounded-lg h-2"
+                            />
+                            <div className="flex justify-between mt-2 font-mono text-xs text-cima-gold font-bold">
+                                <span>$1M</span>
+                                <span>${(price / 1000000).toFixed(1)}M</span>
+                                <span>$20M</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-[10px] uppercase tracking-widest font-bold text-cima-text-dim block mb-1">% Comisión de Agencia</label>
+                            <span className="text-[9px] text-cima-text-dim/60 italic block mb-3">→ ¿Qué porcentaje de comisión maneja tu agencia?</span>
+                            <div className="flex gap-4">
+                                {[3, 4, 5, 6].map(val => (
+                                    <button
+                                        key={val}
+                                        onClick={() => setCommission(val)}
+                                        className={`flex-1 py-2 rounded-lg border text-xs font-bold transition-all ${commission === val ? "bg-cima-gold text-cima-bg border-cima-gold" : "bg-cima-card border-cima-border text-cima-text-muted hover:border-cima-gold/30"}`}
+                                    >
+                                        {val}%
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-[10px] uppercase tracking-widest font-bold text-cima-text-dim block mb-1">Propiedades cerradas por mes</label>
+                            <span className="text-[9px] text-cima-text-dim/60 italic block mb-3">→ ¿Cuántas operaciones completas tu agencia al mes?</span>
+                            <input
+                                type="number" value={monthlyProp} onChange={(e) => setMonthlyProp(Number(e.target.value))}
+                                className="w-full bg-cima-card border border-cima-border rounded-xl p-3 text-cima-text font-bold text-sm focus:border-cima-gold outline-none transition-colors"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="bg-cima-gold/5 rounded-2xl p-6 sm:p-8 border border-cima-gold/10 flex flex-col justify-center gap-6">
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-cima-gold tracking-widest mb-1 italic">Potencial de Ingresos / Mes</p>
                             <p className="text-3xl sm:text-4xl font-heading font-extrabold text-cima-text">
                                 ${new Intl.NumberFormat().format(monthlyIncome)}
                             </p>
                         </div>
-                        <div className="pt-6 border-t border-cima-gold/10">
-                            <p className="text-[10px] uppercase font-bold text-cima-text-dim tracking-widest mb-1">Valor de tiempo ahorrado x mes</p>
-                            <p className="text-xl font-bold text-cima-gold">
+
+                        <div className="border-t border-cima-gold/10 pt-6">
+                            <p className="text-[10px] uppercase font-bold text-cima-text-dim tracking-widest mb-1">Potencial Anual Proyectado</p>
+                            <p className="text-2xl font-black text-cima-gold">
+                                ${new Intl.NumberFormat().format(annualIncome)}
+                            </p>
+                        </div>
+
+                        <div className="border-t border-cima-gold/10 pt-6">
+                            <p className="text-[10px] uppercase font-bold text-cima-text-dim tracking-widest mb-1">Valor de tiempo ahorrado / mes</p>
+                            <p className="text-xl font-bold text-white">
                                 ${new Intl.NumberFormat().format(timeSavedValue)} +
                             </p>
-                            <p className="text-[9px] text-cima-text-dim mt-2 italic">* Calculado basado en 15hrs de ahorro operativo por propiedad.</p>
+                            <p className="text-[9px] text-cima-text-dim mt-1 italic">* 15 horas de ahorro operativo por propiedad × $500/hr</p>
+                        </div>
+
+                        {/* ROI Pill */}
+                        <div className="mt-2 p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+                            <p className="text-[9px] uppercase font-black text-green-400 tracking-widest mb-1">ROI sobre la inversión en Cima</p>
+                            <p className="text-2xl font-black text-green-400">{cimaROI}x</p>
+                            <p className="text-[9px] text-green-400/60 mt-1">Calculado vs. plan Enterprise ($85k). Tu ecosistema se paga solo en el primer cierre.</p>
                         </div>
                     </div>
                 </div>
@@ -383,9 +417,9 @@ export default function CimaProPage() {
                                     highlight: false
                                 }
                             ].map((plan, i) => (
-                                <div key={i} className={`p-12 rounded-[40px] border transition-all duration-700 flex flex-col relative overflow-hidden group ${plan.highlight ? "bg-cima-card border-cima-gold shadow-[0_40px_100px_rgba(200,169,110,0.1)] scale-105 z-20" : "bg-cima-bg/40 border-cima-border/50 scale-100 opacity-90 hover:opacity-100 hover:border-cima-gold/30 hover:scale-[1.02]"}`}>
+                                <div key={i} className={`p-12 rounded-[40px] border transition-all duration-700 flex flex-col relative overflow-visible group ${plan.highlight ? "bg-cima-card border-cima-gold shadow-[0_40px_100px_rgba(200,169,110,0.1)] scale-105 z-20" : "bg-cima-bg/40 border-cima-border/50 scale-100 opacity-90 hover:opacity-100 hover:border-cima-gold/30 hover:scale-[1.02]"}`}>
                                     {plan.highlight && (
-                                        <div className="absolute top-8 right-8 bg-cima-gold text-cima-bg text-[10px] font-black uppercase tracking-[0.2em] py-1.5 px-5 rounded-full shadow-lg">Most Scalable</div>
+                                        <div className="absolute -top-4 right-8 bg-cima-gold text-cima-bg text-[10px] font-black uppercase tracking-[0.2em] py-1.5 px-5 rounded-full shadow-lg z-30">Most Scalable</div>
                                     )}
                                     <h4 className="font-heading font-bold text-2xl mb-2 tracking-tight group-hover:text-cima-gold transition-colors">{plan.name}</h4>
                                     <div className="mb-8">
