@@ -98,10 +98,9 @@ function AdvisorDashboardPreview() {
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-[#07080A] rounded-[inherit]">
-            {/* Real mockup as blurred background layer */}
-            <div className="absolute inset-0 opacity-[0.08] pointer-events-none select-none">
-                <Image src="/mockups/admin-mockup.png" alt="" fill className="object-cover" />
-            </div>
+            {/* Rich dark gradient background for advisor */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0D1520] via-[#07080A] to-[#0A0D12] pointer-events-none" />
+            <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, rgba(200,169,110,0.08) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(59,130,246,0.05) 0%, transparent 50%)" }} />
 
             {/* UI Layer */}
             <div className="relative z-10 flex flex-col h-full">
@@ -219,10 +218,9 @@ function OwnerPortalPreview() {
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-[#07080A] rounded-[inherit]">
-            {/* Blurred real mockup background */}
-            <div className="absolute inset-0 opacity-[0.08] pointer-events-none select-none">
-                <Image src="/mockups/owner-portal.png" alt="" fill className="object-cover" />
-            </div>
+            {/* Rich dark gradient background for owner portal */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#081512] via-[#07080A] to-[#0A0C14] pointer-events-none" />
+            <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 70% 30%, rgba(34,197,94,0.07) 0%, transparent 55%), radial-gradient(circle at 30% 70%, rgba(200,169,110,0.05) 0%, transparent 50%)" }} />
 
             <div className="relative z-10 flex flex-col h-full">
                 {/* Header */}
@@ -468,7 +466,7 @@ const tabs = [
     },
 ];
 
-const TAB_DURATION = 10; // seconds per tab
+const TAB_DURATION = 14; // seconds per tab
 
 export default function ExperienceShowcase() {
     const [active, setActive] = useState(0);
@@ -489,8 +487,8 @@ export default function ExperienceShowcase() {
                         key={tab.id}
                         onClick={() => { setActive(i); setPaused(true); }}
                         className={`relative flex-1 text-left px-5 py-4 rounded-2xl border transition-all duration-500 overflow-hidden ${active === i
-                                ? "border-[#C8A96E]/50 bg-[#C8A96E]/5"
-                                : "border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.03]"
+                            ? "border-[#C8A96E]/50 bg-[#C8A96E]/5"
+                            : "border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.03]"
                             }`}
                     >
                         {active === i && (
@@ -536,12 +534,12 @@ export default function ExperienceShowcase() {
                 {/* Ambient glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${tabs[active].accentFrom} to-transparent pointer-events-none z-0 transition-all duration-1000`} />
 
-                {/* Pill label */}
-                <div className="absolute top-4 left-4 z-20">
+                {/* Pill label — bottom left so it doesn't block UI */}
+                <div className="absolute bottom-10 left-4 z-20">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={active}
-                            initial={{ opacity: 0, y: -8 }}
+                            initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.4 }}
@@ -553,9 +551,9 @@ export default function ExperienceShowcase() {
                     </AnimatePresence>
                 </div>
 
-                {/* Pause indicator */}
+                {/* Pause indicator — bottom right */}
                 {paused && (
-                    <div className="absolute top-4 right-4 z-20 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-full border border-white/10">
+                    <div className="absolute bottom-10 right-4 z-20 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-full border border-white/10">
                         <span className="text-[7px] text-white/30 font-mono">PAUSADO</span>
                     </div>
                 )}
