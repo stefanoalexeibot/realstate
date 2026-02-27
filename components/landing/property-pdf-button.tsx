@@ -200,7 +200,7 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
                         <div className="bg-[#0C0D12] rounded-[2.5rem] p-10 border border-white/5 relative shadow-2xl">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#C8A96E]/20" />
-                                <h3 className="text-[#C8A96E] text-[10px] font-black uppercase tracking-[0.4em]">Descripción Detallada</h3>
+                                <h3 className="text-[#C8A96E] text-[10px] font-black uppercase tracking-[0.4em]">Descripción de la Propiedad</h3>
                                 <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#C8A96E]/20" />
                             </div>
                             <p className="text-base text-white/70 leading-relaxed font-sans whitespace-pre-line text-justify px-4">
