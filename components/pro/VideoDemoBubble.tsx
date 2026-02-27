@@ -30,9 +30,8 @@ export default function VideoDemoBubble() {
                             <span className="text-[8px] font-bold text-cima-gold uppercase tracking-tighter">Live Demo</span>
                         </div>
 
-                        {/* Fake Video Content (Visible on Hover) */}
-                        <div className="hidden group-hover:flex absolute inset-0 bg-cima-bg/90 items-center justify-center p-4">
-                            <div className="text-left">
+                        <div className="absolute inset-x-0 bottom-0 p-4 transition-all duration-500 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0">
+                            <div className="text-left bg-cima-bg/90 p-3 rounded-xl border border-cima-gold/30 backdrop-blur-md shadow-2xl">
                                 <p className="text-[10px] font-black text-cima-gold uppercase tracking-widest mb-1">Cima Intelligence</p>
                                 <p className="text-[9px] text-cima-text leading-tight mb-2">
                                     Mira cómo nuestra IA califica leads y genera tours premium en 5 segundos.

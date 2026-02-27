@@ -177,7 +177,7 @@ export default function CimaProPage() {
                                     <span className="w-1.5 h-1.5 rounded-full bg-cima-gold animate-pulse" />
                                     <span className="font-mono text-[10px] text-cima-gold font-bold tracking-[0.2em] uppercase">V2 Enterprise·2026</span>
                                 </span>
-                                <h1 className="font-heading font-black text-5xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter max-w-xl lg:max-w-none">
+                                <h1 className="font-heading font-black text-5xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter max-w-screen-md">
                                     Infraestructura Elite para Agencias de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cima-gold via-cima-gold-light to-cima-gold">Alto Rendimiento</span>
                                 </h1>
                                 <p className="text-cima-text-dim text-lg sm:text-xl leading-relaxed mb-12 max-w-xl">
