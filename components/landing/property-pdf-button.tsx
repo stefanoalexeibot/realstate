@@ -81,23 +81,39 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
 
     return (
         <>
-            <button
-                onClick={generatePDF}
-                disabled={loading}
-                className="flex items-center justify-center gap-2 w-full rounded-xl bg-cima-surface border border-cima-border px-4 py-3 text-sm font-medium text-cima-text hover:bg-cima-surface/80 hover:border-cima-gold/40 transition-all shadow-lg shadow-black/20"
-            >
-                {loading ? (
-                    <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Generando Ficha Premium...
-                    </>
-                ) : (
-                    <>
-                        <FileText className="h-4 w-4 text-cima-gold" />
-                        Descargar Ficha Técnica PDF
-                    </>
-                )}
-            </button>
+            <div className="grid grid-cols-1 gap-3 w-full">
+                <button
+                    onClick={generatePDF}
+                    disabled={loading}
+                    className="flex items-center justify-center gap-2 w-full rounded-xl bg-cima-surface border border-cima-border px-4 py-3 text-sm font-medium text-cima-text hover:bg-cima-surface/80 hover:border-cima-gold/40 transition-all shadow-lg shadow-black/20"
+                >
+                    {loading ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Generando Ficha Premium...
+                        </>
+                    ) : (
+                        <>
+                            <FileText className="h-4 w-4 text-cima-gold" />
+                            Descargar Ficha Técnica PDF
+                        </>
+                    )}
+                </button>
+
+                <a
+                    href={`https://wa.me/?text=${encodeURIComponent(
+                        `Hola, me gustaría compartirte esta propiedad de Cima Propiedades: \n\n*${property.title}*\nPrecio: ${formatPrice(property.price)}${property.operation_type === "renta" ? "/mes" : ""}\n\nVer más detalles aquí: ${window.location.origin}/propiedades/${property.slug}`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 w-full rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-3 text-sm font-medium text-[#25D366] hover:bg-[#25D366]/20 transition-all shadow-lg shadow-black/10"
+                >
+                    <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-1.557-.594-2.186-1.15-.291-.258-.517-.552-.705-.826a4.803 4.803 0 0 1-.806-1.879c-.066-.37-.024-.658.114-.853.116-.164.249-.234.364-.325l.182-.136c.115-.084.183-.109.265-.109.083 0 .15.011.216.14.066.128.261.636.299.715.038.079.063.173.013.272s-.075.161-.15.249c-.075.088-.158.177-.226.242s-.088.136.013.31c.219.38.544.757.886 1.045.334.281.677.477 1.077.625.114.043.208.031.282-.05.074-.081.332-.387.42-.519.088-.131.183-.11.312-.062l.853.405c.13.062.213.099.255.161.041.063.041.365-.103.77z" />
+                    </svg>
+                    Enviar por WhatsApp
+                </a>
+            </div>
 
             {/* ── Template Oculto para PDF ── */}
             <div ref={templateRef} style={{ display: "none" }} className="font-sans">
@@ -105,14 +121,19 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
                 {/* PÁGINA 1: PORTADA Y DATOS */}
                 <div id="pdf-page-1" className="bg-[#0F172A] text-white w-[800px] h-[1132px] relative overflow-hidden flex flex-col">
                     {/* Header */}
-                    <div className="p-12 pb-6 border-b border-white/10 flex justify-between items-end">
-                        <div>
-                            <h1 className="text-[#C8A96E] text-4xl font-bold tracking-tighter mb-1">CIMA PROPIEDADES</h1>
-                            <p className="text-white/40 text-xs tracking-[0.3em] font-light uppercase">Excelencia Inmobiliaria</p>
+                    <div className="p-12 pb-6 border-b border-white/10 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-[#C8A96E]/10 border border-[#C8A96E]/30 flex items-center justify-center">
+                                <Building2 className="h-5 w-5 text-[#C8A96E]" />
+                            </div>
+                            <div className="flex flex-col leading-none">
+                                <span className="text-xl font-bold text-white">CIMA</span>
+                                <span className="text-[10px] tracking-[0.2em] text-white/40 uppercase">Propiedades</span>
+                            </div>
                         </div>
                         <div className="text-right">
                             <p className="text-[#C8A96E] text-sm font-mono uppercase tracking-widest">Ficha Técnica Oficial</p>
-                            <p className="text-white/30 text-[10px] mt-1 italic">Monterrey, Nuevo León</p>
+                            <p className="text-white/30 text-[10px] mt-1 italic">Excelencia Inmobiliaria</p>
                         </div>
                     </div>
 
@@ -177,7 +198,7 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
                         {/* Descripción */}
                         <div className="flex-1 bg-white/5 rounded-2xl p-8 border border-white/10 relative">
                             <h3 className="text-[#C8A96E] text-xs font-bold uppercase tracking-[0.2em] mb-4">Descripción de la Propiedad</h3>
-                            <p className="text-sm text-white/70 leading-relaxed whitespace-pre-line line-clamp-[12]">
+                            <p className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
                                 {property.description}
                             </p>
                         </div>
