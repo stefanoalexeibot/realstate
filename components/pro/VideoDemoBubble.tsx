@@ -37,9 +37,14 @@ export default function VideoDemoBubble() {
                                 <p className="text-[9px] text-cima-text leading-tight mb-2">
                                     Mira cómo nuestra IA califica leads y genera tours premium en 5 segundos.
                                 </p>
-                                <button className="px-3 py-1 rounded-full bg-cima-gold text-cima-bg text-[9px] font-bold uppercase hover:scale-105 transition-transform">
+                                <a
+                                    href="https://wa.me/528116307133?text=Hola!%20Quiero%20ver%20la%20demo%20completa%20de%20Cima%20Pro."
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-block px-3 py-1 rounded-full bg-cima-gold text-cima-bg text-[10px] font-black uppercase hover:scale-105 transition-transform"
+                                >
                                     Ver Demo Completa
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

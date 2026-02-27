@@ -170,24 +170,27 @@ export default function CimaProPage() {
             <main className="pt-40 pb-20 relative z-10">
                 {/* Hero */}
                 <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-40">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1.2fr,0.8fr] gap-16 lg:gap-24 items-center">
                         <FadeIn direction="right">
                             <div className="relative">
                                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cima-gold/10 border border-cima-gold/20 mb-8">
                                     <span className="w-1.5 h-1.5 rounded-full bg-cima-gold animate-pulse" />
                                     <span className="font-mono text-[10px] text-cima-gold font-bold tracking-[0.2em] uppercase">V2 Enterprise·2026</span>
                                 </span>
-                                <h1 className="font-heading font-black text-5xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter">
+                                <h1 className="font-heading font-black text-5xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter max-w-2xl">
                                     Infraestructura Elite para Agencias de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cima-gold via-cima-gold-light to-cima-gold">Alto Rendimiento</span>
                                 </h1>
                                 <p className="text-cima-text-dim text-lg sm:text-xl leading-relaxed mb-12 max-w-xl">
                                     No estamos vendiendo una web. Estamos desplegando una infraestructura personalizada de grado empresarial que te da soberanía tecnológica total.
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-6 items-center">
-                                    <button className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-cima-gold text-cima-bg font-bold text-base hover:bg-cima-gold-light hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-cima-gold/20">
+                                    <Link
+                                        href="https://wa.me/528116307133?text=Hola!%20Me%20interesa%20solicitar%20un%20despliegue%20Enterprise%20de%20Cima%20Pro."
+                                        className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-cima-gold text-cima-bg font-bold text-base hover:bg-cima-gold-light hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-cima-gold/20"
+                                    >
                                         Solicitar Despliegue Enterprise
                                         <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                                    </button>
+                                    </Link>
                                     <div className="flex -space-x-4 items-center">
                                         {[1, 2, 3, 4].map((i) => (
                                             <div key={i} className="w-11 h-11 rounded-full border-2 border-cima-bg bg-cima-card flex items-center justify-center text-[10px] font-bold shadow-lg">
@@ -210,7 +213,7 @@ export default function CimaProPage() {
                 </section>
 
                 {/* Ecosystem Section */}
-                <section id="ecosistema" className="max-w-7xl mx-auto px-4 sm:px-8 mb-40 relative">
+                <section id="ecosistema" className="max-w-7xl mx-auto px-4 sm:px-8 mb-60 relative">
                     <div className="text-center mb-0">
                         <FadeIn>
                             <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.45em] mb-4 block">Omni-Connected Systems</span>
@@ -491,9 +494,12 @@ export default function CimaProPage() {
                                             </li>
                                         ))}
                                     </ul>
-                                    <button className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 shadow-xl ${plan.highlight ? "bg-cima-gold text-cima-bg hover:bg-cima-gold-light" : "bg-cima-card border border-cima-border text-cima-text hover:border-cima-gold/30"}`}>
+                                    <Link
+                                        href={`https://wa.me/528116307133?text=Hola!%20Me%20interesa%20el%20plan%20${encodeURIComponent(plan.name)}.`}
+                                        className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 shadow-xl flex items-center justify-center ${plan.highlight ? "bg-cima-gold text-cima-bg hover:bg-cima-gold-light" : "bg-cima-card border border-cima-border text-cima-text hover:border-cima-gold/30"}`}
+                                    >
                                         {plan.button}
-                                    </button>
+                                    </Link>
                                 </div>
                             ))}
                         </div>
