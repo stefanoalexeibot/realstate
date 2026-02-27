@@ -1,265 +1,419 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import {
-    Layout, Database, UserCheck, Zap,
-    Search, Bell, Filter, MoreHorizontal,
-    TrendingUp, Calendar, MessageSquare,
-    Globe, Shield, Sparkles, Home,
-    ChevronLeft, ChevronRight, Share2, Heart
+    Database, UserCheck, Zap, Search, Bell,
+    TrendingUp, MessageSquare, Globe, Sparkles,
+    Heart, Share2, Calendar, CheckCircle2,
+    ArrowUpRight, Phone, Mail, Star, MapPin,
+    BarChart2, Users, Eye, Clock
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-// --- Sub-component: Advisor Portal Preview ---
-export function AdvisorDashboardPreview() {
+// ── Animated Counter ─────────────────────────────────────────────────────────
+function AnimatedCounter({ to, duration = 1.5 }: { to: number; duration?: number }) {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        let start = 0;
+        const step = Math.ceil(to / (duration * 60));
+        const timer = setInterval(() => {
+            start = Math.min(start + step, to);
+            setCount(start);
+            if (start >= to) clearInterval(timer);
+        }, 1000 / 60);
+        return () => clearInterval(timer);
+    }, [to, duration]);
+    return <span>{count.toLocaleString()}</span>;
+}
+
+// ── ADVISOR DASHBOARD ────────────────────────────────────────────────────────
+function AdvisorDashboardPreview() {
+    const [activeTab, setActiveTab] = useState(0);
+    const leads = [
+        { name: "Roberto Kuri", score: 95, intent: "Penthouse Valle", tag: "HOT", color: "text-red-400", bg: "bg-red-500/10 border-red-500/30" },
+        { name: "Ana Treviño", score: 82, intent: "Depto. San Pedro", tag: "WARM", color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/30" },
+        { name: "Carlos Morales", score: 71, intent: "Casa Lomas", tag: "NEW", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/30" },
+    ];
+
     return (
-        <div className="w-full aspect-[16/10] bg-[#0A0B0E] rounded-2xl border border-cima-border overflow-hidden flex shadow-2xl">
-            {/* Sidebar */}
-            <div className="w-16 border-r border-cima-border bg-cima-card/30 flex flex-col items-center py-6 gap-6">
-                <div className="w-8 h-8 rounded-lg bg-cima-gold/20 flex items-center justify-center">
-                    <Database className="h-4 w-4 text-cima-gold" />
-                </div>
-                {[Layout, UserCheck, Globe, Zap, Bell].map((Icon, i) => (
-                    <Icon key={i} className="h-4 w-4 text-cima-text-muted opacity-40" />
-                ))}
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col p-6 overflow-hidden">
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-3 bg-cima-card/50 border border-white/5 rounded-lg px-3 py-1.5 w-64">
-                        <Search className="h-3.5 w-3.5 text-cima-text-muted" />
-                        <span className="text-[10px] text-cima-text-muted font-medium">Search properties, leads...</span>
+        <div className="w-full h-full bg-[#07080A] rounded-2xl border border-white/10 overflow-hidden flex flex-col">
+            {/* Top bar */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 bg-white/[0.02]">
+                <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-md bg-[#C8A96E]/20 flex items-center justify-center">
+                        <Database className="w-3 h-3 text-[#C8A96E]" />
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-cima-gold/10 border border-cima-gold/20" />
-                    </div>
+                    <span className="text-[11px] font-bold text-white/80 tracking-wide">Cima CRM</span>
                 </div>
-
-                {/* Dashboard Grid */}
-                <div className="grid grid-cols-2 gap-4 h-full">
-                    <div className="space-y-4">
-                        <h4 className="text-[10px] font-black text-cima-text uppercase tracking-widest">Active Listings</h4>
-                        {[1, 2].map((i) => (
-                            <div key={i} className="p-3 rounded-xl bg-cima-card/40 border border-cima-border flex gap-3 group">
-                                <div className="w-12 h-12 rounded-lg bg-cima-gold/5 border border-white/5 shrink-0 overflow-hidden relative">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-cima-gold/10 to-transparent" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="h-2 w-20 bg-white/10 rounded mb-2" />
-                                    <div className="h-1.5 w-12 bg-cima-gold/20 rounded" />
-                                </div>
-                            </div>
+                <div className="flex items-center gap-3">
+                    <div className="flex gap-1">
+                        {["Leads", "Propiedades"].map((t, i) => (
+                            <button key={i} onClick={() => setActiveTab(i)}
+                                className={`text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md transition-all ${activeTab === i ? "bg-[#C8A96E]/20 text-[#C8A96E]" : "text-white/30 hover:text-white/60"}`}>
+                                {t}
+                            </button>
                         ))}
                     </div>
-
-                    {/* Floating IA Insight */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                        className="bg-cima-gold/10 border border-cima-gold/30 rounded-2xl p-4 self-start relative shadow-xl shadow-cima-gold/5"
-                    >
-                        <div className="flex items-center gap-2 mb-3">
-                            <Sparkles className="h-3 w-3 text-cima-gold animate-pulse" />
-                            <span className="text-[9px] font-black text-cima-gold uppercase tracking-[0.2em]">Cima IA Insight</span>
-                        </div>
-                        <p className="text-[10px] text-cima-text leading-tight mb-3">
-                            "El prospecto 'Robert K.' mostró 95% de interés en Penthouse Del Valle tras ver el tour 3D 4 veces."
-                        </p>
-                        <button className="w-full py-1.5 rounded-lg bg-cima-gold text-cima-bg text-[8px] font-black uppercase">
-                            Generar Llamada IA
-                        </button>
-                    </motion.div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// --- Sub-component: Owner Portal Preview ---
-export function OwnerPortalPreview() {
-    return (
-        <div className="w-full aspect-[16/10] bg-[#0A0B0E] rounded-2xl border border-cima-border overflow-hidden p-8 flex flex-col shadow-2xl relative">
-            <div className="absolute top-0 right-0 p-6 flex gap-2">
-                <div className="px-2 py-0.5 rounded bg-green-500/10 border border-green-500/20">
-                    <span className="text-[8px] font-black text-green-400 uppercase tracking-widest">En Venta</span>
+                    <Bell className="w-3.5 h-3.5 text-white/20" />
                 </div>
             </div>
 
-            <h4 className="text-[10px] font-black text-cima-gold uppercase tracking-[0.3em] mb-2">Mi Propiedad</h4>
-            <h3 className="text-xl font-heading font-black text-cima-text mb-8">Estatus: Residencia Magnolia</h3>
-
-            <div className="grid grid-cols-3 gap-6 mb-8">
+            {/* Stats row */}
+            <div className="grid grid-cols-4 gap-0 border-b border-white/5">
                 {[
-                    { label: "Vistas Portal", val: "1,248", icon: Globe },
-                    { label: "Leads Calificados", val: "12", icon: UserCheck },
-                    { label: "Cierres Proyectados", val: "2", icon: TrendingUp }
-                ].map((stat, i) => (
-                    <div key={i} className="p-4 rounded-xl bg-cima-card/30 border border-cima-border flex flex-col gap-1">
-                        <stat.icon className="h-3 w-3 text-cima-gold/50 mb-1" />
-                        <span className="text-[9px] uppercase font-bold text-cima-text-muted tracking-widest">{stat.label}</span>
-                        <span className="text-xl font-black text-cima-text">{stat.val}</span>
-                    </div>
-                ))}
-            </div>
-
-            {/* Timeline */}
-            <div className="flex-1 space-y-4">
-                <span className="text-[9px] font-black text-cima-text-muted uppercase tracking-widest block mb-4">Línea de Tiempo Operativa</span>
-                {[
-                    { date: "Hoy", text: "Visita agendada para Inversionistas" },
-                    { date: "Ayer", text: "Optimización de ficha técnica con IA completada" },
-                    { date: "24 Feb", text: "Propiedad sincronizada en portales Premium" }
-                ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-4 group">
-                        <div className="w-2 h-2 rounded-full bg-cima-gold/40 relative">
-                            {i === 0 && <div className="absolute inset-0 rounded-full animate-ping bg-cima-gold" />}
-                        </div>
-                        <span className="font-mono text-[9px] text-cima-gold font-bold w-12">{item.date}</span>
-                        <span className="text-[10px] text-cima-text font-medium opacity-70 group-hover:opacity-100 transition-opacity">
-                            {item.text}
+                    { label: "Leads Activos", val: 47, icon: Users },
+                    { label: "Vistas Hoy", val: 1248, icon: Eye },
+                    { label: "Cierres/Mes", val: 8, icon: CheckCircle2 },
+                    { label: "Conv. Rate", val: "17%", icon: TrendingUp, raw: true },
+                ].map((s, i) => (
+                    <div key={i} className={`px-4 py-3 flex flex-col gap-1 ${i < 3 ? "border-r border-white/5" : ""}`}>
+                        <span className="text-[8px] uppercase font-bold tracking-[0.15em] text-white/30">{s.label}</span>
+                        <span className="text-lg font-black text-white leading-none">
+                            {s.raw ? s.val : <AnimatedCounter to={s.val as number} duration={1.2} />}
                         </span>
+                        <s.icon className="w-3 h-3 text-[#C8A96E]/40" />
                     </div>
                 ))}
             </div>
-        </div>
-    );
-}
 
-// --- Sub-component: Property Landing Preview ---
-export function PropertyLandingPreview() {
-    return (
-        <div className="w-full aspect-[16/10] bg-cima-bg rounded-2xl border border-cima-border overflow-hidden flex flex-col shadow-2xl group">
-            {/* Browser Header */}
-            <div className="h-8 bg-cima-card/50 border-b border-cima-border flex items-center px-4 gap-2">
-                <div className="flex gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-red-500/20" />
-                    <div className="w-2 h-2 rounded-full bg-yellow-500/20" />
-                    <div className="w-2 h-2 rounded-full bg-green-500/20" />
-                </div>
-                <div className="mx-auto w-32 h-3.5 bg-cima-bg/50 rounded-md border border-white/5" />
-            </div>
-
-            {/* Landing Body */}
-            <div className="flex-1 relative overflow-hidden flex flex-col pt-6 px-8">
-                {/* Hero Section */}
-                <div className="flex justify-between items-start mb-10">
-                    <div className="space-y-2">
-                        <div className="h-3 w-16 bg-cima-gold/20 rounded" />
-                        <div className="h-6 w-40 bg-white/10 rounded" />
-                        <div className="h-3.5 w-32 bg-white/5 rounded" />
-                    </div>
-                    <div className="flex gap-4">
-                        <Heart className="h-4 w-4 text-cima-gold/40" />
-                        <Share2 className="h-4 w-4 text-cima-gold/40" />
+            {/* Leads list */}
+            <div className="flex-1 overflow-hidden p-4 space-y-2">
+                <div className="flex justify-between items-center mb-3">
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">Leads IA · Prioridad</span>
+                    <div className="flex items-center gap-1 bg-white/5 rounded-md px-2 py-1">
+                        <Search className="w-2.5 h-2.5 text-white/30" />
+                        <span className="text-[8px] text-white/20">Filtrar...</span>
                     </div>
                 </div>
-
-                {/* Gallery Preview */}
-                <div className="grid grid-cols-4 gap-3 flex-1">
-                    <div className="col-span-3 h-full rounded-xl bg-gradient-to-br from-cima-card to-cima-bg border border-white/5 relative group-hover:scale-[1.02] transition-transform duration-700 overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                        <div className="absolute bottom-4 left-4 flex gap-2">
-                            <Calendar className="h-3 w-3 text-white/40" />
-                            <div className="h-2 w-12 bg-white/20 rounded-full" />
+                {leads.map((lead, i) => (
+                    <motion.div
+                        key={lead.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.15 + 0.3 }}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/10 transition-colors group cursor-pointer"
+                    >
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center text-[10px] font-black text-white/60">
+                            {lead.name[0]}
                         </div>
-                    </div>
-                    <div className="space-y-3">
-                        <div className="h-1/2 rounded-xl bg-cima-card/50 border border-white/5" />
-                        <div className="h-1/2 rounded-xl bg-cima-card/50 border border-white/5" />
-                    </div>
-                </div>
-
-                {/* Floating Contact Trigger */}
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-bold text-white/90 truncate">{lead.name}</span>
+                                <span className={`text-[7px] font-black px-1.5 py-0.5 rounded border ${lead.bg} ${lead.color}`}>{lead.tag}</span>
+                            </div>
+                            <span className="text-[9px] text-white/30 truncate block">{lead.intent}</span>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                            <span className={`text-base font-black ${lead.color}`}>{lead.score}%</span>
+                            <div className="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${lead.score}%` }}
+                                    transition={{ delay: i * 0.15 + 0.6, duration: 0.8 }}
+                                    className="h-full bg-gradient-to-r from-[#C8A96E] to-amber-400 rounded-full"
+                                />
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+                {/* IA Insight */}
                 <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 4 }}
-                    className="absolute bottom-6 right-6 p-4 rounded-xl bg-cima-gold text-cima-bg shadow-2xl flex items-center gap-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2 }}
+                    className="mt-2 p-3 rounded-xl bg-[#C8A96E]/10 border border-[#C8A96E]/30 flex items-start gap-2"
                 >
-                    <MessageSquare className="h-4 w-4" />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Agendar Cita</span>
+                    <Sparkles className="w-3.5 h-3.5 text-[#C8A96E] shrink-0 mt-0.5 animate-pulse" />
+                    <div>
+                        <span className="text-[8px] font-black uppercase tracking-widest text-[#C8A96E] block mb-1">Cima IA · Acción Sugerida</span>
+                        <span className="text-[9px] text-white/70 leading-snug">Roberto K. revisó el PDF de precios 4 veces. <strong className="text-white">Llama ahora.</strong></span>
+                    </div>
                 </motion.div>
             </div>
         </div>
     );
 }
 
-// --- Combined Showcase Section Component ---
-export default function ExperienceShowcase() {
-    const [active, setActive] = useState(0);
-
-    const experiences = [
-        {
-            id: "advisor",
-            title: "Portal del Asesor",
-            description: "Control central de inventario y agentes IA calificados.",
-            component: AdvisorDashboardPreview
-        },
-        {
-            id: "owner",
-            title: "Portal Propietario",
-            description: "Transparencia absoluta para ganar todas las exclusivas.",
-            component: OwnerPortalPreview
-        },
-        {
-            id: "landing",
-            title: "Landing Elite",
-            description: "Convertimos cada propiedad en una marca de ultra-lujo.",
-            component: PropertyLandingPreview
-        }
+// ── OWNER PORTAL ─────────────────────────────────────────────────────────────
+function OwnerPortalPreview() {
+    const events = [
+        { date: "Hoy 14:30", text: "Visita confirmada — Familia Rodríguez", done: false },
+        { date: "Ayer", text: "PDF compartido con 3 interesados", done: true },
+        { date: "24 Feb", text: "Tour virtual publicado en portales", done: true },
+        { date: "22 Feb", text: "Ficha técnica generada por IA", done: true },
     ];
 
     return (
-        <div className="space-y-20">
-            {/* Desktop Version: Horizontal Switcher */}
-            <div className="hidden lg:block space-y-16">
-                <div className="flex justify-center gap-10">
-                    {experiences.map((exp, i) => (
-                        <button
-                            key={exp.id}
-                            onClick={() => setActive(i)}
-                            className={`flex flex-col items-start gap-2 transition-all duration-500 border-l-2 pl-6 py-2 ${active === i ? "border-cima-gold opacity-100" : "border-cima-border opacity-40 hover:opacity-100"}`}
+        <div className="w-full h-full bg-[#07080A] rounded-2xl border border-white/10 overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
+                <div>
+                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#C8A96E]">Mi Propiedad</span>
+                    <h3 className="text-sm font-black text-white mt-0.5">Residencia Magnolia · Torre A</h3>
+                </div>
+                <span className="text-[8px] font-black px-2 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 uppercase tracking-widest">En Venta</span>
+            </div>
+
+            {/* KPIs */}
+            <div className="grid grid-cols-3 border-b border-white/5">
+                {[
+                    { label: "Vistas en Portal", val: 1248, icon: Eye },
+                    { label: "Leads Calificados", val: 12, icon: UserCheck },
+                    { label: "Visitas Hechas", val: 5, icon: Calendar },
+                ].map((kpi, i) => (
+                    <div key={i} className={`px-4 py-4 ${i < 2 ? "border-r border-white/5" : ""}`}>
+                        <kpi.icon className="w-3 h-3 text-[#C8A96E]/50 mb-2" />
+                        <div className="text-xl font-black text-white"><AnimatedCounter to={kpi.val} /></div>
+                        <div className="text-[8px] uppercase font-bold text-white/30 tracking-widest mt-0.5">{kpi.label}</div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Timeline */}
+            <div className="flex-1 p-5">
+                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 block mb-4">Actividad Reciente</span>
+                <div className="space-y-3">
+                    {events.map((ev, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.12 + 0.2 }}
+                            className="flex items-start gap-3 group"
                         >
-                            <span className="text-[10px] font-black uppercase tracking-widest block">{exp.title}</span>
-                            <span className="text-xs text-cima-text-dim text-left max-w-[200px] leading-relaxed">{exp.description}</span>
-                        </button>
+                            <div className="relative mt-0.5">
+                                <div className={`w-4 h-4 rounded-full flex items-center justify-center border ${ev.done ? "bg-green-500/20 border-green-500/40" : "bg-[#C8A96E]/20 border-[#C8A96E]/60"}`}>
+                                    {ev.done
+                                        ? <CheckCircle2 className="w-2.5 h-2.5 text-green-400" />
+                                        : <div className="w-1.5 h-1.5 rounded-full bg-[#C8A96E] animate-pulse" />}
+                                </div>
+                            </div>
+                            <div className="flex-1 min-w-0 pb-3 border-b border-white/5 last:border-0">
+                                <span className="text-[10px] font-medium text-white/80 block leading-snug">{ev.text}</span>
+                                <span className="text-[8px] text-white/25 font-mono">{ev.date}</span>
+                            </div>
+                        </motion.div>
                     ))}
                 </div>
+            </div>
+        </div>
+    );
+}
 
-                <div className="relative max-w-5xl mx-auto">
+// ── PROPERTY LANDING PREVIEW ─────────────────────────────────────────────────
+function PropertyLandingPreview() {
+    const [imgIdx, setImgIdx] = useState(0);
+    const colors = ["from-slate-800 to-slate-900", "from-stone-800 to-stone-900", "from-zinc-800 to-zinc-900"];
+    useEffect(() => {
+        const t = setInterval(() => setImgIdx(p => (p + 1) % 3), 2500);
+        return () => clearInterval(t);
+    }, []);
+
+    return (
+        <div className="w-full h-full bg-[#07080A] rounded-2xl border border-white/10 overflow-hidden flex flex-col">
+            {/* Fake browser bar */}
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/5 bg-white/[0.03]">
+                <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-amber-400/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-400/50" />
+                </div>
+                <div className="flex-1 mx-3 bg-white/5 border border-white/5 rounded-md px-3 py-1 text-[9px] text-white/30 font-mono">
+                    propiedades-mty.vercel.app/propiedades/penthouse-del-valle
+                </div>
+                <Share2 className="w-3 h-3 text-white/20" />
+            </div>
+
+            {/* Property body */}
+            <div className="flex-1 overflow-hidden flex gap-0">
+                {/* Main image area */}
+                <div className="flex-1 relative overflow-hidden">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={imgIdx}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className={`absolute inset-0 bg-gradient-to-br ${colors[imgIdx]}`}
+                        />
+                    </AnimatePresence>
+                    {/* Overlay info */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                        <div className="flex items-end justify-between">
+                            <div>
+                                <span className="text-[8px] font-black text-[#C8A96E] uppercase tracking-widest block mb-1">Penthouse · Del Valle</span>
+                                <span className="text-xl font-black text-white leading-none">$12,500,000</span>
+                                <span className="text-[9px] text-white/50 block">MXN · disponible</span>
+                            </div>
+                            <motion.button
+                                animate={{ y: [0, -4, 0] }}
+                                transition={{ repeat: Infinity, duration: 2.5 }}
+                                className="flex items-center gap-1.5 bg-[#C8A96E] text-[#07080A] px-3 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest"
+                            >
+                                <MessageSquare className="w-3 h-3" />
+                                Agendar
+                            </motion.button>
+                        </div>
+                        {/* Thumbnail dots */}
+                        <div className="flex gap-1 mt-2">
+                            {[0, 1, 2].map(i => (
+                                <div key={i} className={`h-0.5 rounded-full transition-all duration-500 ${i === imgIdx ? "w-6 bg-[#C8A96E]" : "w-2 bg-white/20"}`} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Side panel */}
+                <div className="w-40 border-l border-white/5 p-3 flex flex-col gap-3">
+                    <div className="text-[8px] font-black uppercase tracking-widest text-white/30 mb-1">Detalles</div>
+                    {[
+                        { label: "Recámaras", val: "4" },
+                        { label: "Baños", val: "4.5" },
+                        { label: "M²", val: "380" },
+                        { label: "Nivel", val: "PH 32" },
+                    ].map((d, i) => (
+                        <div key={i} className="flex justify-between items-center border-b border-white/5 pb-2">
+                            <span className="text-[9px] text-white/35">{d.label}</span>
+                            <span className="text-[10px] font-bold text-white">{d.val}</span>
+                        </div>
+                    ))}
+                    {/* Contact buttons */}
+                    <div className="mt-auto space-y-2">
+                        <button className="w-full flex items-center justify-center gap-1.5 bg-[#C8A96E] text-[#07080A] py-2 rounded-md text-[8px] font-black">
+                            <Phone className="w-2.5 h-2.5" /> Llamar
+                        </button>
+                        <button className="w-full flex items-center justify-center gap-1.5 border border-white/10 text-white/60 py-2 rounded-md text-[8px] font-bold">
+                            <Mail className="w-2.5 h-2.5" /> Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ── MAIN COMPONENT ───────────────────────────────────────────────────────────
+const experiences = [
+    {
+        id: "advisor",
+        label: "Portal del Asesor",
+        tag: "CRM + IA",
+        desc: "Leads calificados por IA, gestión de inventario y sincronización automática con portales.",
+        accent: "from-amber-500/20 to-transparent",
+        component: AdvisorDashboardPreview,
+    },
+    {
+        id: "owner",
+        label: "Portal Propietario",
+        tag: "Transparencia",
+        desc: "El diferencial que gana exclusivas. Reportes en tiempo real sin llamadas.",
+        accent: "from-green-500/10 to-transparent",
+        component: OwnerPortalPreview,
+    },
+    {
+        id: "landing",
+        label: "Landing de Propiedad",
+        tag: "Conversión",
+        desc: "Cada propiedad, una marca. Páginas de ultra-lujo generadas automáticamente.",
+        accent: "from-blue-500/10 to-transparent",
+        component: PropertyLandingPreview,
+    },
+];
+
+export default function ExperienceShowcase() {
+    const [active, setActive] = useState(0);
+
+    // Auto-advance tabs
+    useEffect(() => {
+        const t = setInterval(() => setActive(p => (p + 1) % experiences.length), 6000);
+        return () => clearInterval(t);
+    }, []);
+
+    const exp = experiences[active];
+
+    return (
+        <div className="w-full">
+            {/* Tab Selector */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-10">
+                {experiences.map((e, i) => (
+                    <button
+                        key={e.id}
+                        onClick={() => { setActive(i); }}
+                        className={`relative flex-1 sm:max-w-[220px] text-left px-5 py-4 rounded-2xl border transition-all duration-500 overflow-hidden group ${active === i
+                                ? "border-[#C8A96E]/50 bg-[#C8A96E]/5"
+                                : "border-white/5 bg-white/[0.02] hover:border-white/10"
+                            }`}
+                    >
+                        {active === i && (
+                            <motion.div layoutId="tab-highlight" className="absolute inset-0 bg-gradient-to-br from-[#C8A96E]/10 to-transparent" />
+                        )}
+                        <span className={`text-[8px] font-black uppercase tracking-[0.2em] mb-1 block transition-colors ${active === i ? "text-[#C8A96E]" : "text-white/25"}`}>
+                            {e.tag}
+                        </span>
+                        <span className={`text-sm font-black block transition-colors ${active === i ? "text-white" : "text-white/40"}`}>
+                            {e.label}
+                        </span>
+                        {/* Progress bar */}
+                        {active === i && (
+                            <motion.div
+                                key={active}
+                                initial={{ width: 0 }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 6, ease: "linear" }}
+                                className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#C8A96E] to-amber-300"
+                            />
+                        )}
+                    </button>
+                ))}
+            </div>
+
+            {/* Preview Area */}
+            <div className="relative rounded-3xl overflow-hidden border border-white/8 shadow-[0_60px_120px_rgba(0,0,0,0.6)]">
+                {/* Glow */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${exp.accent} pointer-events-none z-0`} />
+
+                {/* Description overlay */}
+                <div className="absolute top-4 left-4 z-20">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={active}
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                            transition={{ duration: 0.6, ease: "circOut" }}
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center gap-2 bg-black/60 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5"
                         >
-                            {experiences[active].component()}
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#C8A96E] animate-pulse" />
+                            <span className="text-[9px] font-bold text-white/70">{exp.desc}</span>
                         </motion.div>
                     </AnimatePresence>
-
-                    {/* Decorative Elements */}
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-cima-gold/10 rounded-full blur-[80px] -z-10" />
-                    <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-[80px] -z-10" />
                 </div>
-            </div>
 
-            {/* Mobile/Tablet Version: Staggered List (Similar to before but with live previews) */}
-            <div className="lg:hidden space-y-32">
-                {experiences.map((exp, i) => (
-                    <div key={exp.id} className="space-y-8">
-                        <div className="text-center">
-                            <span className="text-[10px] font-black text-cima-gold uppercase tracking-[0.2em] mb-2 block">{exp.title}</span>
-                            <p className="text-sm text-cima-text-dim max-w-xs mx-auto">{exp.description}</p>
-                        </div>
-                        <div className="px-4">
-                            {exp.component()}
-                        </div>
-                    </div>
-                ))}
+                {/* Component */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={active}
+                        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        className="relative z-10 aspect-[16/9]"
+                    >
+                        {exp.component()}
+                    </motion.div>
+                </AnimatePresence>
+
+                {/* Bottom nav dots */}
+                <div className="absolute bottom-4 right-4 z-20 flex gap-2">
+                    {experiences.map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setActive(i)}
+                            className={`h-1.5 rounded-full transition-all duration-400 ${active === i ? "w-6 bg-[#C8A96E]" : "w-1.5 bg-white/20 hover:bg-white/40"}`}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
