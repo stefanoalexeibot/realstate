@@ -10,6 +10,7 @@ import PropertyQRCode from "./property-qr-code";
 import { QrCode, X, MessageCircle } from "lucide-react";
 import type { Property } from "@/lib/types";
 import { getWhatsAppShareUrl } from "@/lib/share-utils";
+import PropertyPDFButton from "../landing/property-pdf-button";
 
 // Inline copy button — copies the /lp/[slug] link to clipboard
 function CopyLpButton({ slug }: { slug: string }) {
@@ -102,6 +103,7 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
     const [selectedQr, setSelectedQr] = useState<Property | null>(null);
+    const [sharingProperty, setSharingProperty] = useState<Property | null>(null);
 
     function updateLocalStatus(id: string, newStatus: string) {
         setProperties(prev => prev.map(p => p.id === id ? { ...p, status: newStatus as any } : p));
@@ -243,16 +245,14 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                                                     QR
                                                 </button>
                                                 <DeletePropertyButton propertyId={p.id} />
-                                                <a
-                                                    href={getWhatsAppShareUrl(p, typeof window !== "undefined" ? window.location.origin : "")}
-                                                    target="_blank"
-                                                    rel="noreferrer"
+                                                <button
+                                                    onClick={() => setSharingProperty(p)}
                                                     title="Enviar ficha por WhatsApp"
                                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#25D366] hover:bg-[#25D366]/10 border border-[#25D366]/30 transition-colors"
                                                 >
                                                     <MessageCircle className="h-3.5 w-3.5" />
                                                     WhatsApp
-                                                </a>
+                                                </button>
                                             </div>
                                         </div>
                                     );
@@ -263,6 +263,31 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                 </div>
             )}
 
+            {/* Share Modal */}
+            {sharingProperty && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="relative w-full max-w-sm bg-cima-card border border-cima-border rounded-2xl p-6 shadow-2xl">
+                        <button
+                            onClick={() => setSharingProperty(null)}
+                            className="absolute -top-2 -right-2 h-8 w-8 flex items-center justify-center bg-cima-card border border-cima-border rounded-full text-cima-text-dim hover:text-white shadow-lg z-[10]"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+
+                        <div className="text-center mb-6">
+                            <p className="font-mono text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-1">Compartir</p>
+                            <h3 className="font-heading font-bold text-lg text-white">Enviar Ficha Técnica</h3>
+                            <p className="text-xs text-cima-text-muted mt-1">{sharingProperty.title}</p>
+                        </div>
+
+                        <PropertyPDFButton property={sharingProperty} autoShare={true} />
+
+                        <p className="text-[10px] text-cima-text-dim text-center mt-6 px-4">
+                            En móviles se adjuntará el archivo PDF. En escritorio se descargará y abrirá WhatsApp.
+                        </p>
+                    </div>
+                </div>
+            )}
             {/* QR Modal */}
             {selectedQr && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
