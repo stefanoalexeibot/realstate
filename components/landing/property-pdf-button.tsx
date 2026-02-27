@@ -40,7 +40,7 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
             const canvas1 = await html2canvas(capture.querySelector("#pdf-page-1") as HTMLElement, {
                 scale: 2,
                 useCORS: true,
-                backgroundColor: "#0F172A",
+                backgroundColor: "#090A0D",
                 logging: false,
             });
 
@@ -54,7 +54,7 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
                 const canvasG = await html2canvas(galleryPages[i] as HTMLElement, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: "#0F172A",
+                    backgroundColor: "#090A0D",
                     logging: false,
                 });
                 const imgDataG = canvasG.toDataURL("image/jpeg", 0.9);
@@ -72,11 +72,11 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
         }
     };
 
-    // Dividir fotos en grupos de 6 para las páginas de galería
+    // Dividir fotos en grupos de 4 para las páginas de galería (más limpio)
     const photoGroups = [];
     const galleryPhotos = photos.filter(p => p.url !== property.cover_photo);
-    for (let i = 0; i < galleryPhotos.length; i += 6) {
-        photoGroups.push(galleryPhotos.slice(i, i + 6));
+    for (let i = 0; i < galleryPhotos.length; i += 4) {
+        photoGroups.push(galleryPhotos.slice(i, i + 4));
     }
 
     return (
@@ -118,13 +118,15 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
             {/* ── Template Oculto para PDF ── */}
             <div ref={templateRef} style={{ display: "none" }} className="font-sans">
 
-                {/* PÁGINA 1: PORTADA Y DATOS */}
-                <div id="pdf-page-1" className="bg-[#090A0D] text-white w-[800px] min-h-[1132px] relative overflow-hidden flex flex-col font-sans">
+                {/* FUNCIÓN PARA RENDERIZAR HEADER COMÚN */}
+                {/* (Se repite manualmente en cada página del template) */}
 
-                    {/* Header con Branding Real */}
+                {/* PÁGINA 1: PORTADA Y DATOS */}
+                <div id="pdf-page-1" className="bg-[#090A0D] text-white w-[800px] h-[1132px] relative overflow-hidden flex flex-col font-sans">
+                    {/* Header */}
                     <div className="p-10 pb-8 border-b border-white/5 flex justify-between items-center bg-[#0C0D12]">
                         <div className="flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl bg-[#C8A96E]/10 border border-[#C8A96E]/30 flex items-center justify-center shadow-lg shadow-[#C8A96E]/5">
+                            <div className="h-12 w-12 rounded-xl bg-[#C8A96E]/10 border border-[#C8A96E]/30 flex items-center justify-center">
                                 <Building2 className="h-6 w-6 text-[#C8A96E]" />
                             </div>
                             <div className="flex flex-col leading-tight">
@@ -140,101 +142,102 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
                         </div>
                     </div>
 
-                    <div className="p-10 flex flex-col gap-10">
-                        {/* Hero Image Section */}
-                        <div className="relative">
-                            <div className="w-full aspect-[16/9] rounded-3xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#12141C]">
-                                {property.cover_photo && (
-                                    <img src={property.cover_photo} alt="" className="w-full h-full object-cover" />
-                                )}
-                                <div className="absolute top-6 left-6 flex gap-3">
-                                    <div className="bg-[#C8A96E] text-[#090A0D] px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-xl">
-                                        {property.operation_type === "renta" ? "En Renta" : "En Venta"}
-                                    </div>
-                                    <div className="bg-[#090A0D]/60 backdrop-blur-xl text-white border border-white/20 px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-xl">
-                                        {property.property_type}
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="p-10 flex flex-col gap-8">
+                        {/* Hero Image - Más vertical */}
+                        <div className="w-full aspect-[16/10] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl bg-[#12141C]">
+                            {property.cover_photo && (
+                                <img src={property.cover_photo} alt="" className="w-full h-full object-cover" />
+                            )}
                         </div>
 
                         {/* Title & Price Row */}
-                        <div className="flex justify-between items-start gap-8">
-                            <div className="flex-1">
-                                <h2 className="text-4xl font-bold leading-[1.1] text-white font-heading uppercase tracking-tight mb-4">
+                        <div className="grid grid-cols-1 gap-6">
+                            <div>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="bg-[#C8A96E] text-[#090A0D] px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">
+                                        {property.operation_type === "renta" ? "En Renta" : "En Venta"}
+                                    </span>
+                                    <span className="bg-white/5 text-white/60 border border-white/10 px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">
+                                        {property.property_type}
+                                    </span>
+                                </div>
+                                <h2 className="text-4xl font-bold leading-tight text-white font-heading uppercase tracking-tight">
                                     {property.title}
                                 </h2>
-                                <div className="flex items-center gap-2 text-white/50 bg-white/5 self-start px-3 py-1.5 rounded-lg border border-white/5">
+                                <div className="flex items-center gap-2 text-white/40 mt-3">
                                     <MapPin className="h-4 w-4 text-[#C8A96E]" />
-                                    <span className="text-sm font-medium">{property.neighborhood}, {property.city}</span>
+                                    <span className="text-sm">{property.neighborhood}, {property.city}</span>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-[10px] font-mono text-[#C8A96E] uppercase tracking-[0.3em] mb-1 font-bold">Inversión</p>
-                                <div className="text-5xl font-black text-[#C8A96E] font-heading flex flex-col items-end">
-                                    {formatPrice(property.price)}
-                                    {property.operation_type === "renta" && <span className="text-sm text-white/40 font-normal uppercase tracking-widest mt-1">Mensuales</span>}
+
+                            <div className="bg-[#12141C] p-8 rounded-[2rem] border border-white/5 flex justify-between items-center">
+                                <div>
+                                    <p className="text-[10px] font-mono text-[#C8A96E] uppercase tracking-[0.3em] mb-1 font-bold">Inversión Final</p>
+                                    <div className="text-5xl font-black text-[#C8A96E] font-heading">
+                                        {formatPrice(property.price)}
+                                        {property.operation_type === "renta" && <span className="text-lg text-white/40 font-normal ml-3 tracking-widest uppercase">/ Mes</span>}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Stats Grid Refined V4 */}
+                        {/* Stats Refined */}
                         <div className="grid grid-cols-4 gap-4">
                             {[
-                                { label: "Recámaras", value: property.bedrooms, icon: BedDouble },
+                                { label: "Hab", value: property.bedrooms, icon: BedDouble },
                                 { label: "Baños", value: property.bathrooms, icon: Bath },
                                 { label: "Área m²", value: property.area_m2, icon: Maximize2 },
                                 { label: "Cajones", value: property.parking, icon: Car },
                             ].map((stat, i) => (
-                                <div key={i} className="bg-[#12141C] border border-white/5 rounded-[2rem] p-6 text-center flex flex-col items-center justify-center gap-2 shadow-inner group">
-                                    <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center mb-1">
-                                        <stat.icon className="h-5 w-5 text-[#C8A96E]" />
-                                    </div>
-                                    <p className="text-2xl font-black text-white font-heading">{stat.value}</p>
-                                    <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-bold">{stat.label}</p>
+                                <div key={i} className="bg-[#12141C] border border-white/5 rounded-3xl p-6 text-center shadow-inner">
+                                    <stat.icon className="h-5 w-5 text-[#C8A96E] mx-auto mb-2 opacity-80" />
+                                    <p className="text-xl font-black text-white font-heading">{stat.value}</p>
+                                    <p className="text-[9px] text-white/30 uppercase tracking-widest font-bold">{stat.label}</p>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Descripción Section */}
-                        <div className="bg-[#0C0D12] rounded-[2.5rem] p-10 border border-white/5 relative shadow-2xl">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#C8A96E]/20" />
-                                <h3 className="text-[#C8A96E] text-[10px] font-black uppercase tracking-[0.4em]">Descripción de la Propiedad</h3>
-                                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#C8A96E]/20" />
-                            </div>
-                            <p className="text-base text-white/70 leading-relaxed font-sans whitespace-pre-line text-justify px-4">
+                        {/* Descripción */}
+                        <div className="bg-[#0C0D12] rounded-[2rem] p-8 border border-white/5 flex-1">
+                            <h3 className="text-[#C8A96E] text-[10px] font-black uppercase tracking-[0.4em] mb-4 text-center">Descripción de la Propiedad</h3>
+                            <p className="text-sm text-white/60 leading-relaxed font-sans whitespace-pre-line text-justify">
                                 {property.description}
                             </p>
                         </div>
                     </div>
 
-                    {/* Footer V4 */}
-                    <div className="mt-auto p-10 py-8 bg-[#C8A96E] text-[#090A0D] flex justify-between items-center rounded-t-[3rem]">
-                        <div className="flex flex-col">
-                            <span className="text-sm font-bold font-heading uppercase tracking-widest">CIMA PROPIEDADES</span>
-                            <span className="text-[10px] font-medium opacity-80">www.cimapropiedades.com</span>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-0.5">ID de Referencia</p>
-                            <p className="text-sm font-black font-mono">{property.slug.slice(0, 8).toUpperCase()}</p>
-                        </div>
+                    {/* Footer */}
+                    <div className="mt-auto p-10 py-6 bg-[#C8A96E] text-[#090A0D] flex justify-between items-center">
+                        <span className="text-xs font-bold font-heading tracking-widest">WWW.CIMAPROPIEDADES.COM</span>
+                        <span className="text-[10px] font-black font-mono">ID: {property.slug.slice(0, 8).toUpperCase()}</span>
                     </div>
                 </div>
 
-                {/* PÁGINAS DE GALERÍA (Se generan según cantidad de fotos) */}
+                {/* PÁGINAS DE GALERÍA UNIFICADAS */}
                 {photoGroups.map((group, pageIdx) => (
-                    <div key={pageIdx} className="pdf-gallery-page bg-[#0F172A] text-white w-[800px] h-[1132px] p-12 flex flex-col">
-                        <h3 className="text-[#C8A96E] text-xs font-bold uppercase tracking-[0.3em] mb-10 text-center">Galería de Imágenes (Hoja {pageIdx + 1})</h3>
-                        <div className="flex-1 grid grid-cols-2 gap-8">
+                    <div key={pageIdx} className="pdf-gallery-page bg-[#090A0D] text-white w-[800px] h-[1132px] overflow-hidden flex flex-col font-sans">
+                        {/* Mismo Header para consistencia */}
+                        <div className="p-10 pb-8 border-b border-white/5 flex justify-between items-center bg-[#0C0D12]">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-xl bg-[#C8A96E]/10 border border-[#C8A96E]/30 flex items-center justify-center">
+                                    <Building2 className="h-5 w-5 text-[#C8A96E]" />
+                                </div>
+                                <span className="text-lg font-bold tracking-tight text-white font-heading uppercase">CIMA PROPIEDADES</span>
+                            </div>
+                            <p className="text-[#C8A96E] text-[10px] font-mono uppercase tracking-[0.2em] font-bold">Galería / Hoja {pageIdx + 1}</p>
+                        </div>
+
+                        <div className="flex-1 p-10 grid grid-cols-2 grid-rows-2 gap-8">
                             {group.map((img, i) => (
-                                <div key={i} className="rounded-xl overflow-hidden border border-white/10 bg-white/5 aspect-[4/3]">
+                                <div key={i} className="rounded-[2rem] overflow-hidden border border-white/10 bg-[#12141C] shadow-xl">
                                     <img src={img.url} alt="" className="w-full h-full object-cover" />
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-12 text-center text-white/20 text-[10px] tracking-widest uppercase">
-                            Imágenes referenciales de la propiedad
+
+                        <div className="p-10 py-6 bg-[#C8A96E] text-[#090A0D] flex justify-between items-center">
+                            <span className="text-xs font-bold font-heading tracking-widest">WWW.CIMAPROPIEDADES.COM</span>
+                            <span className="text-[10px] font-black font-mono">PÁGINA {pageIdx + 2}</span>
                         </div>
                     </div>
                 ))}
