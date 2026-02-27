@@ -14,7 +14,8 @@ import {
     CheckCircle2,
     Clock,
     UserCheck,
-    Briefcase
+    Briefcase,
+    Search
 } from "lucide-react";
 import { motion } from "framer-motion";
 import FadeIn from "@/components/landing/fade-in";
