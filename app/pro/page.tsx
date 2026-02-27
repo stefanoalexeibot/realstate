@@ -13,6 +13,7 @@ import LiveActivityFeed from "@/components/pro/LiveActivityFeed";
 import InteractiveEcosystem from "@/components/pro/InteractiveEcosystem";
 import TiltCard from "@/components/pro/TiltCard";
 import VideoDemoBubble from "@/components/pro/VideoDemoBubble";
+import ExperienceShowcase from "@/components/pro/ExperienceShowcase";
 
 function RoiCalculator() {
     const [price, setPrice] = useState(5000000);
@@ -299,107 +300,15 @@ export default function CimaProPage() {
                         <FadeIn>
                             <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-6 block">Premium Interfaces</span>
                             <h2 className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl text-cima-text tracking-tight">Experiencia de Usuario de <span className="text-cima-gold">Clase Mundial</span></h2>
+                            <p className="text-cima-text-dim max-w-2xl mx-auto text-lg leading-relaxed mt-4">
+                                No solo diseñamos páginas. Creamos sistemas operativos visuales que facilitan el trabajo del asesor y enamoran al cliente final.
+                            </p>
                         </FadeIn>
                     </div>
 
-                    <div className="space-y-40">
-                        {/* Mockup 1: Admin */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                            <FadeIn direction="right">
-                                <div className="relative aspect-[16/10] rounded-3xl overflow-hidden border border-cima-border bg-cima-card group shadow-[0_40px_100px_rgba(0,0,0,0.4)]">
-                                    <Image
-                                        src="/mockups/admin-mockup.png"
-                                        alt="Cima Admin Dashboard"
-                                        fill
-                                        className="object-cover transform group-hover:scale-105 transition-transform duration-1000"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-cima-bg/40 to-transparent" />
-                                </div>
-                            </FadeIn>
-                            <FadeIn direction="left">
-                                <div className="max-w-md">
-                                    <span className="text-[10px] font-black text-cima-gold uppercase tracking-widest mb-4 block">Centralized Commands</span>
-                                    <h3 className="font-heading font-black text-3xl sm:text-4xl mb-6">Portal del Asesor: Control Total</h3>
-                                    <p className="text-cima-text-dim text-lg leading-relaxed mb-8">
-                                        Gestiona inventario, filtra prospectos calificados por IA y coordina cierres desde un panel de control diseñado para la máxima velocidad operativa.
-                                    </p>
-                                    <ul className="space-y-4">
-                                        {["Sincronización instantánea con portales", "Gestión de documentos centralizada", "Filtros IA de intención de compra"].map((item, i) => (
-                                            <li key={i} className="flex items-center gap-3 text-sm font-bold text-cima-text">
-                                                <Zap className="h-4 w-4 text-cima-gold" />
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </FadeIn>
-                        </div>
-
-                        {/* Mockup 2: Owner Portal */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                            <FadeIn direction="right" className="lg:order-2">
-                                <div className="relative aspect-[16/10] rounded-3xl overflow-hidden border border-cima-border bg-cima-card group shadow-[0_40px_100px_rgba(200,169,110,0.1)]">
-                                    <Image
-                                        src="/mockups/owner-portal.png"
-                                        alt="Owner Portal"
-                                        fill
-                                        className="object-cover transform group-hover:scale-105 transition-transform duration-1000"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-cima-bg/40 to-transparent" />
-                                </div>
-                            </FadeIn>
-                            <FadeIn direction="left" className="lg:order-1">
-                                <div className="max-w-md ml-auto text-right lg:text-left">
-                                    <span className="text-[10px] font-black text-cima-gold uppercase tracking-widest mb-4 block">Trust & Transparency</span>
-                                    <h3 className="font-heading font-black text-3xl sm:text-4xl mb-6">Portal del Propietario</h3>
-                                    <p className="text-cima-text-dim text-lg leading-relaxed mb-8">
-                                        El diferencial que cierra exclusivas. Dale a tus clientes una ventana privada al proceso de venta de su propiedad, eliminando la incertidumbre.
-                                    </p>
-                                    <div className="flex flex-col items-end lg:items-start gap-4">
-                                        {["Visualizaciones en tiempo real", "Timeline de actividades comerciales", "Acceso 24/7 sin llamadas"].map((item, i) => (
-                                            <div key={i} className="flex items-center gap-3 text-sm font-bold text-cima-text">
-                                                <span className="hidden lg:block"><Globe className="h-4 w-4 text-cima-gold" /></span>
-                                                {item}
-                                                <span className="lg:hidden"><Globe className="h-4 w-4 text-cima-gold" /></span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </FadeIn>
-                        </div>
-
-                        {/* Mockup 3: Property Landing */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                            <FadeIn direction="right">
-                                <div className="relative aspect-[16/10] rounded-3xl overflow-hidden border border-cima-border bg-cima-card group shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
-                                    <Image
-                                        src="/mockups/property-landing.png"
-                                        alt="High-End Property Landing"
-                                        fill
-                                        className="object-cover transform group-hover:scale-105 transition-transform duration-1000"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-cima-bg/40 to-transparent" />
-                                </div>
-                            </FadeIn>
-                            <FadeIn direction="left">
-                                <div className="max-w-md">
-                                    <span className="text-[10px] font-black text-cima-gold uppercase tracking-widest mb-4 block">Conversion Optimized</span>
-                                    <h3 className="font-heading font-black text-3xl sm:text-4xl mb-6">Landings de Ultra-Lujo</h3>
-                                    <p className="text-cima-text-dim text-lg leading-relaxed mb-8">
-                                        Cada propiedad es una marca. Generamos automáticamente páginas de destino que no solo informan, sino que enamoran y capturan leads de alto perfil.
-                                    </p>
-                                    <ul className="space-y-4">
-                                        {["Diseño responsive premium", "Mapas interactivos de servicios", "Call-to-actions estratégicos"].map((item, i) => (
-                                            <li key={i} className="flex items-center gap-3 text-sm font-bold text-cima-text">
-                                                <Sparkles className="h-4 w-4 text-cima-gold" />
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </FadeIn>
-                        </div>
-                    </div>
+                    <FadeIn>
+                        <ExperienceShowcase />
+                    </FadeIn>
                 </section>
 
                 {/* ROI Section */}
