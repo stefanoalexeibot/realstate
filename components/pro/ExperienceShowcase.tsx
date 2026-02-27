@@ -98,9 +98,11 @@ function AdvisorDashboardPreview() {
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-[#07080A] rounded-[inherit]">
-            {/* Rich dark gradient background for advisor */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0D1520] via-[#07080A] to-[#0A0D12] pointer-events-none" />
-            <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, rgba(200,169,110,0.08) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(59,130,246,0.05) 0%, transparent 50%)" }} />
+            {/* New advisor background image */}
+            <div className="absolute inset-0 pointer-events-none select-none">
+                <Image src="/advisor-bg.png" alt="" fill className="object-cover opacity-30" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0D1520]/80 via-[#07080A]/60 to-[#0A0D12]/80" />
+            </div>
 
             {/* UI Layer */}
             <div className="relative z-10 flex flex-col h-full">
@@ -218,9 +220,11 @@ function OwnerPortalPreview() {
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-[#07080A] rounded-[inherit]">
-            {/* Rich dark gradient background for owner portal */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#081512] via-[#07080A] to-[#0A0C14] pointer-events-none" />
-            <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 70% 30%, rgba(34,197,94,0.07) 0%, transparent 55%), radial-gradient(circle at 30% 70%, rgba(200,169,110,0.05) 0%, transparent 50%)" }} />
+            {/* New owner portal background image */}
+            <div className="absolute inset-0 pointer-events-none select-none">
+                <Image src="/owner-bg.png" alt="" fill className="object-cover opacity-25" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#081512]/80 via-[#07080A]/60 to-[#0A0C14]/80" />
+            </div>
 
             <div className="relative z-10 flex flex-col h-full">
                 {/* Header */}
@@ -301,12 +305,11 @@ function PropertyLandingPreview() {
     const [imgIdx, setImgIdx] = useState(0);
     const [liked, setLiked] = useState(false);
 
-    // cycle through the before/after images from public folder
+    // New premium property photos
     const propertyImages = [
-        "/mockups/property-landing.png",
-        "/estancia-despues.png",
-        "/cocina-despues.png",
-        "/recamara-despues.png",
+        "/sala.png",
+        "/cocina.png",
+        "/recamara.png",
     ];
 
     useEffect(() => {
