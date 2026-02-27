@@ -7,8 +7,9 @@ import { formatPrice } from "@/lib/utils";
 import AdminSearch from "./admin-search";
 import DeletePropertyButton from "./delete-property-button";
 import PropertyQRCode from "./property-qr-code";
-import { QrCode, X } from "lucide-react";
+import { QrCode, X, MessageCircle } from "lucide-react";
 import type { Property } from "@/lib/types";
+import { getWhatsAppShareUrl } from "@/lib/share-utils";
 
 // Inline copy button — copies the /lp/[slug] link to clipboard
 function CopyLpButton({ slug }: { slug: string }) {
@@ -242,6 +243,16 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                                                     QR
                                                 </button>
                                                 <DeletePropertyButton propertyId={p.id} />
+                                                <a
+                                                    href={getWhatsAppShareUrl(p, typeof window !== "undefined" ? window.location.origin : "")}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    title="Enviar ficha por WhatsApp"
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#25D366] hover:bg-[#25D366]/10 border border-[#25D366]/30 transition-colors"
+                                                >
+                                                    <MessageCircle className="h-3.5 w-3.5" />
+                                                    WhatsApp
+                                                </a>
                                             </div>
                                         </div>
                                     );

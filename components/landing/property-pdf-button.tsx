@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { FileText, Download, Loader2, BedDouble, Bath, Maximize2, Car, MapPin, Building2 } from "lucide-react";
+import { FileText, Download, Loader2, BedDouble, Bath, Maximize2, Car, MapPin, Building2, MessageCircle } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
+import { getWhatsAppShareUrl } from "@/lib/share-utils";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -101,16 +102,12 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
                 </button>
 
                 <a
-                    href={`https://wa.me/?text=${encodeURIComponent(
-                        `Hola, me gustaría compartirte esta propiedad de Cima Propiedades: \n\n*${property.title}*\nPrecio: ${formatPrice(property.price)}${property.operation_type === "renta" ? "/mes" : ""}\n\nVer más detalles aquí: ${window.location.origin}/propiedades/${property.slug}`
-                    )}`}
+                    href={getWhatsAppShareUrl(property, typeof window !== "undefined" ? window.location.origin : "")}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center justify-center gap-2 w-full rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-3 text-sm font-medium text-[#25D366] hover:bg-[#25D366]/20 transition-all shadow-lg shadow-black/10"
                 >
-                    <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-1.557-.594-2.186-1.15-.291-.258-.517-.552-.705-.826a4.803 4.803 0 0 1-.806-1.879c-.066-.37-.024-.658.114-.853.116-.164.249-.234.364-.325l.182-.136c.115-.084.183-.109.265-.109.083 0 .15.011.216.14.066.128.261.636.299.715.038.079.063.173.013.272s-.075.161-.15.249c-.075.088-.158.177-.226.242s-.088.136.013.31c.219.38.544.757.886 1.045.334.281.677.477 1.077.625.114.043.208.031.282-.05.074-.081.332-.387.42-.519.088-.131.183-.11.312-.062l.853.405c.13.062.213.099.255.161.041.063.041.365-.103.77z" />
-                    </svg>
+                    <MessageCircle className="h-4 w-4" />
                     Enviar por WhatsApp
                 </a>
             </div>
