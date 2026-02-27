@@ -170,14 +170,14 @@ export default function CimaProPage() {
             <main className="pt-40 pb-20 relative z-10">
                 {/* Hero */}
                 <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-40">
-                    <div className="grid grid-cols-1 lg:grid-cols-[1.2fr,0.8fr] gap-16 lg:gap-24 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1.1fr,0.9fr] gap-20 lg:gap-32 items-center">
                         <FadeIn direction="right">
                             <div className="relative">
                                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cima-gold/10 border border-cima-gold/20 mb-8">
                                     <span className="w-1.5 h-1.5 rounded-full bg-cima-gold animate-pulse" />
                                     <span className="font-mono text-[10px] text-cima-gold font-bold tracking-[0.2em] uppercase">V2 Enterprise·2026</span>
                                 </span>
-                                <h1 className="font-heading font-black text-5xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter max-w-2xl">
+                                <h1 className="font-heading font-black text-5xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter max-w-xl lg:max-w-none">
                                     Infraestructura Elite para Agencias de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cima-gold via-cima-gold-light to-cima-gold">Alto Rendimiento</span>
                                 </h1>
                                 <p className="text-cima-text-dim text-lg sm:text-xl leading-relaxed mb-12 max-w-xl">
