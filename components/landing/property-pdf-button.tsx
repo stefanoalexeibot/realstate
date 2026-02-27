@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { FileText, Download, Loader2, BedDouble, Bath, Maximize2, Car, MapPin } from "lucide-react";
+import { FileText, Download, Loader2, BedDouble, Bath, Maximize2, Car, MapPin, Building2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 import jsPDF from "jspdf";
