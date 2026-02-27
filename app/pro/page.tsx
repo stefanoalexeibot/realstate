@@ -112,9 +112,31 @@ const FEATURES = [
     }
 ];
 
+const FAQS = [
+    {
+        q: "¿Es difícil de configurar?",
+        a: "Para nada. Nosotros nos encargamos de toda la implementación técnica. Tú solo nos das tu logo y colores, y en 24-48 horas tu sistema está live."
+    },
+    {
+        q: "¿De quién son los datos?",
+        a: "Los datos son 100% tuyos. El sistema se monta sobre tu propia base de datos de Supabase, dándote control total y seguridad de nivel bancario."
+    },
+    {
+        q: "¿Se integra con mis redes?",
+        a: "Sí. Los leads de tus landings pueden caer directo a tu WhatsApp, correo o CRM mediante automatizaciones de n8n."
+    }
+];
+
 export default function CimaProPage() {
     return (
-        <div className="min-h-screen bg-cima-bg text-cima-text selection:bg-cima-gold selection:text-cima-bg">
+        <div className="min-h-screen bg-cima-bg text-cima-text selection:bg-cima-gold selection:text-cima-bg overflow-x-hidden">
+            {/* Background Decor */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute top-[10%] left-[-10%] w-[40%] h-[40%] bg-cima-gold/5 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[120px]" />
+                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(#C8A96E 1px, transparent 1px), linear-gradient(90deg, #C8A96E 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+            </div>
+
             {/* Nav sutil */}
             <nav className="fixed top-0 inset-x-0 h-16 border-b border-cima-border bg-cima-bg/80 backdrop-blur-xl z-50">
                 <div className="max-w-7xl mx-auto h-full px-4 sm:px-8 flex items-center justify-between">
@@ -126,7 +148,7 @@ export default function CimaProPage() {
                     </div>
                     <Link
                         href="https://wa.me/528116307133"
-                        className="text-[11px] font-bold uppercase tracking-widest text-cima-gold hover:text-cima-gold-light transition-colors"
+                        className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-cima-gold hover:text-cima-gold-light transition-colors mr-2 sm:mr-0"
                     >
                         Agendar Demo
                     </Link>
@@ -233,52 +255,138 @@ export default function CimaProPage() {
                 </section>
 
                 {/* Ecosystem Showcase */}
-                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-32">
+                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-32 relative z-10">
                     <FadeIn>
                         <div className="text-center mb-16">
-                            <h2 className="font-heading font-bold text-3xl sm:text-5xl mb-6">Un Ecosistema, <span className="text-cima-gold">Tres Experiencias</span></h2>
-                            <p className="text-cima-text-dim max-w-2xl mx-auto">Una plataforma integrada que conecta a tu equipo, tus clientes y tus prospectos en un solo flujo profesional.</p>
+                            <h2 className="font-heading font-bold text-3xl sm:text-5xl mb-6 tracking-tight">Un Ecosistema, <span className="text-cima-gold">Tres Experiencias</span></h2>
+                            <p className="text-cima-text-dim max-w-2xl mx-auto text-lg leading-relaxed">Una plataforma integrada que conecta a tu equipo, tus clientes y tus prospectos en un solo flujo profesional.</p>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                             {[
                                 {
                                     title: "Portal del Asesor",
                                     desc: "Control total de inventario, leads y generación de fichas en segundos.",
-                                    img: "https://pdtpjyawfnhqlypifshn.supabase.co/storage/v1/object/public/web-assets/admin-mockup.png", // Usaré un placeholder o descripción si no tengo el path exacto de la UI real aquí
+                                    img: "https://pdtpjyawfnhqlypifshn.supabase.co/storage/v1/object/public/web-assets/admin-mockup.png",
                                     link: "/admin"
                                 },
                                 {
                                     title: "Portal del Propietario",
                                     desc: "La herramienta definitiva para ganar exclusivas con transparencia total.",
-                                    img: "/C:/Users/brand/.gemini/antigravity/brain/b46c03a3-d364-4a87-a7ec-1812a44c8172/cima_owner_portal_mockup_1772221658445.png",
-                                    link: "#"
+                                    img: "https://pdtpjyawfnhqlypifshn.supabase.co/storage/v1/object/public/web-assets/owner-mockup.png",
+                                    icon: <UserCheck className="h-8 w-8 text-cima-gold" />
                                 },
                                 {
                                     title: "Landing de Propiedad",
                                     desc: "El escaparate de lujo que tus mejores casas merecen.",
-                                    img: "/C:/Users/brand/.gemini/antigravity/brain/b46c03a3-d364-4a87-a7ec-1812a44c8172/cima_mosaic_hero_mockup_1772215908635.png",
+                                    img: "https://pdtpjyawfnhqlypifshn.supabase.co/storage/v1/object/public/web-assets/landing-mockup.png",
                                     link: "/propiedades"
                                 }
                             ].map((item, i) => (
-                                <div key={i} className="group cursor-pointer">
-                                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-cima-border bg-cima-card mb-6 mb-6 transform transition-transform group-hover:-translate-y-2">
+                                <div key={i} className="group flex flex-col items-center text-center">
+                                    <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden border border-cima-border bg-cima-card/50 mb-8 transform transition-all duration-500 group-hover:-translate-y-3 group-hover:shadow-[0_20px_50px_rgba(200,169,110,0.15)] group-hover:border-cima-gold/30">
                                         <Image
                                             src={item.img}
                                             alt={item.title}
                                             fill
-                                            className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                            className="object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-cima-bg via-transparent to-transparent opacity-60" />
-                                        <div className="absolute bottom-4 left-4 right-4">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cima-gold text-cima-bg text-[10px] font-bold uppercase tracking-widest translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
-                                                Explorar Demo
-                                                <ArrowRight className="h-3 w-3" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-cima-bg via-transparent to-transparent opacity-80" />
+
+                                        {/* Overlay para Items sin link real aún */}
+                                        {!item.link?.startsWith('/') && (
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="p-4 rounded-2xl bg-cima-bg/90 backdrop-blur-md border border-cima-gold/20 shadow-2xl">
+                                                    {item.icon || <Sparkles className="h-8 w-8 text-cima-gold" />}
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
-                                    <h4 className="font-heading font-bold text-xl text-cima-text group-hover:text-cima-gold transition-colors mb-2">{item.title}</h4>
-                                    <p className="text-sm text-cima-text-dim leading-relaxed">{item.desc}</p>
+                                    <h4 className="font-heading font-bold text-2xl text-cima-text group-hover:text-cima-gold transition-colors mb-3 tracking-snug">{item.title}</h4>
+                                    <p className="text-base text-cima-text-dim leading-relaxed px-4">{item.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </FadeIn>
+                </section>
+
+                {/* Process Section */}
+                <section className="max-w-5xl mx-auto px-4 sm:px-8 mb-40 relative z-10">
+                    <FadeIn>
+                        <div className="text-center mb-20">
+                            <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Deployment</span>
+                            <h2 className="font-heading font-extrabold text-3xl sm:text-5xl text-cima-text">Tu Agencia Online en 3 Pasos</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 relative">
+                            {/* Dotted Line connector */}
+                            <div className="hidden md:block absolute top-12 left-0 right-0 h-px border-t-2 border-dashed border-cima-border -z-10" />
+
+                            {[
+                                { step: "01", title: "Branding", desc: "Configuramos el sistema con tu logo, colores y dominio propio." },
+                                { step: "02", title: "Carga Automática", desc: "Sincronizamos tus propiedades y activamos la IA de Cima." },
+                                { step: "03", title: "Go Live", desc: "Lanzamos tu portal y empiezas a cerrar exclusivas de inmediato." }
+                            ].map((s, i) => (
+                                <div key={i} className="flex flex-col items-center text-center">
+                                    <div className="w-20 h-20 rounded-full bg-cima-bg border-4 border-cima-border flex items-center justify-center mb-8 relative bg-cima-bg ring-8 ring-cima-bg">
+                                        <span className="text-2xl font-heading font-black text-cima-gold">{s.step}</span>
+                                    </div>
+                                    <h4 className="font-heading font-bold text-xl text-cima-text mb-4">{s.title}</h4>
+                                    <p className="text-sm text-cima-text-dim leading-relaxed">{s.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </FadeIn>
+                </section>
+
+                {/* Comparison Section */}
+                <section className="max-w-4xl mx-auto px-4 sm:px-8 mb-40 relative z-10">
+                    <FadeIn>
+                        <div className="text-center mb-16">
+                            <h2 className="font-heading font-bold text-3xl sm:text-4xl text-cima-text">Por qué las agencias eligen Cima Pro</h2>
+                        </div>
+
+                        <div className="rounded-3xl border border-cima-border bg-cima-card/30 overflow-hidden shadow-2xl backdrop-blur-md">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-cima-border bg-cima-bg/50">
+                                        <th className="p-6 text-[10px] uppercase tracking-widest font-bold text-cima-text-dim">Métrica</th>
+                                        <th className="p-6 text-[10px] uppercase tracking-widest font-bold text-cima-text-dim border-l border-cima-border">Inmuebles Tradicionales</th>
+                                        <th className="p-6 text-[10px] uppercase tracking-widest font-bold text-cima-gold border-l border-cima-border bg-cima-gold/5">Cima Pro</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm">
+                                    {[
+                                        ["Tiempo de Ficha", "2-3 Horas (Manual)", "3 Segundos (Auto)"],
+                                        ["Diseño", "Genérico / Básico", "Ultra-Premium (SaaS)"],
+                                        ["Transparencia", "Correos / WhatsApp", "Portal Propietario 24/7"],
+                                        ["IA Entorno", "Investigación Manual", "Procesado x IA Instantáneo"],
+                                        ["Conversión", "Baja (Links externos)", "Cierre 3x más rápido"]
+                                    ].map((row, i) => (
+                                        <tr key={i} className="border-b border-cima-border last:border-0 hover:bg-cima-gold/5 transition-colors">
+                                            <td className="p-6 font-bold text-cima-text-muted">{row[0]}</td>
+                                            <td className="p-6 text-cima-text-dim border-l border-cima-border">{row[1]}</td>
+                                            <td className="p-6 text-cima-gold font-bold border-l border-cima-border bg-cima-gold/5">{row[2]}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </FadeIn>
+                </section>
+
+                {/* FAQ Section */}
+                <section className="max-w-3xl mx-auto px-4 sm:px-8 mb-40 relative z-10">
+                    <FadeIn>
+                        <h2 className="font-heading font-bold text-3xl sm:text-4xl text-cima-text mb-12 text-center">Preguntas Frecuentes</h2>
+                        <div className="space-y-4">
+                            {FAQS.map((faq, i) => (
+                                <div key={i} className="p-6 rounded-2xl bg-cima-card/30 border border-cima-border hover:border-cima-gold/20 transition-all">
+                                    <h4 className="font-bold text-lg text-cima-text mb-2 flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-cima-gold" />
+                                        {faq.q}
+                                    </h4>
+                                    <p className="text-cima-text-dim text-sm leading-relaxed pl-5">{faq.a}</p>
                                 </div>
                             ))}
                         </div>
