@@ -94,13 +94,16 @@ export default function LiveActivityFeed() {
     }, []);
 
     useEffect(() => {
+        const checkMobile = () => window.innerWidth < 768;
+        const isMobile = checkMobile();
+
         let poolIndex = 4 % FEED_POOL.length;
         const interval = setInterval(() => {
             const newItem = makeItem(FEED_POOL[poolIndex % FEED_POOL.length]);
             poolIndex++;
             setLeadsToday((v) => v + Math.floor(Math.random() * 3));
-            setFeed((prev) => [newItem, ...prev.slice(0, 3)]);
-        }, 4000);
+            setFeed((prev) => [newItem, ...prev.slice(0, isMobile ? 2 : 3)]);
+        }, isMobile ? 8000 : 4000);
         return () => clearInterval(interval);
     }, []);
 

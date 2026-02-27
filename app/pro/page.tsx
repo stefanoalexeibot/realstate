@@ -203,13 +203,13 @@ export default function CimaProPage() {
                     </div>
                     <div className="flex items-center gap-8">
                         <Link
-                            href="https://wa.me/528116307133"
+                            href="https://wa.me/528121980008"
                             className="hidden sm:block text-[11px] font-bold uppercase tracking-widest text-cima-text-muted hover:text-cima-gold transition-colors"
                         >
                             Arquitectura
                         </Link>
                         <Link
-                            href="https://wa.me/528116307133"
+                            href="https://wa.me/528121980008"
                             className="px-6 py-2.5 rounded-full bg-cima-gold text-cima-bg text-[11px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-cima-gold/20"
                         >
                             Agendar Demo
@@ -218,25 +218,25 @@ export default function CimaProPage() {
                 </div>
             </nav>
 
-            <main className="pt-40 pb-20 relative z-10">
+            <main className="pt-28 sm:pt-40 pb-28 sm:pb-20 relative z-10">
                 {/* Hero */}
-                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-40">
-                    <div className="grid grid-cols-1 lg:grid-cols-[1.1fr,0.9fr] gap-20 lg:gap-32 items-center">
+                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-16 sm:mb-40">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1.1fr,0.9fr] gap-10 lg:gap-32 items-center">
                         <FadeIn direction="right">
                             <div className="relative">
                                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cima-gold/10 border border-cima-gold/20 mb-8">
                                     <span className="w-1.5 h-1.5 rounded-full bg-cima-gold animate-pulse" />
                                     <span className="font-mono text-[10px] text-cima-gold font-bold tracking-[0.2em] uppercase">V2 Enterprise·2026</span>
                                 </span>
-                                <h1 className="font-heading font-black text-5xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter max-w-screen-md">
+                                <h1 className="font-heading font-black text-4xl sm:text-5xl lg:text-7xl mb-6 sm:mb-8 leading-[1.05] tracking-tighter">
                                     Infraestructura Elite para Agencias de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cima-gold via-cima-gold-light to-cima-gold">Alto Rendimiento</span>
                                 </h1>
-                                <p className="text-cima-text-dim text-lg sm:text-xl leading-relaxed mb-12 max-w-xl">
+                                <p className="text-cima-text-dim text-base sm:text-xl leading-relaxed mb-8 sm:mb-12 max-w-xl">
                                     No estamos vendiendo una web. Estamos desplegando una infraestructura personalizada de grado empresarial que te da soberanía tecnológica total.
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-6 items-center">
                                     <Link
-                                        href="https://wa.me/528116307133?text=Hola!%20Me%20interesa%20solicitar%20un%20despliegue%20Enterprise%20de%20Cima%20Pro."
+                                        href="https://wa.me/528121980008?text=Hola!%20Me%20interesa%20solicitar%20un%20despliegue%20Enterprise%20de%20Cima%20Pro."
                                         className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-cima-gold text-cima-bg font-bold text-base hover:bg-cima-gold-light hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-cima-gold/20"
                                     >
                                         Solicitar Despliegue Enterprise
@@ -264,11 +264,12 @@ export default function CimaProPage() {
                 </section>
 
                 {/* Ecosystem Section */}
-                <section id="ecosistema" className="max-w-7xl mx-auto px-4 sm:px-8 mb-60 relative">
+                <section id="ecosistema" className="max-w-7xl mx-auto px-4 sm:px-8 mb-24 sm:mb-60 relative">
                     <div className="text-center mb-0">
                         <FadeIn>
                             <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.45em] mb-4 block">Omni-Connected Systems</span>
-                            <h2 className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-tight">Arquitectura Integrada 360</h2>
+                            <h2 className="font-heading font-black text-3xl sm:text-5xl lg:text-6xl mb-4 sm:mb-6 tracking-tight">
+                                Arquitectura Integrada 360</h2>
                             <p className="text-cima-text-dim max-w-2xl mx-auto text-lg leading-relaxed">
                                 Un sistema de sistemas. Conectamos cada punto de contacto de tu agencia en un solo flujo de datos automatizado y de alta conversión.
                             </p>
@@ -279,8 +280,8 @@ export default function CimaProPage() {
                 </section>
 
                 {/* Features Grid */}
-                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-40">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-16 sm:mb-40">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8">
                         {FEATURES.map((feature, i) => (
                             <FadeIn key={i} delay={0.1 * i}>
                                 <TiltCard className="h-full">
@@ -439,14 +440,14 @@ export default function CimaProPage() {
                                     deliveryNote: "Discovery, arquitectura custom y despliegue escalonado"
                                 }
                             ].map((plan, i) => (
-                                <div key={i} className={`p-12 rounded-[40px] border transition-all duration-700 flex flex-col relative overflow-visible group ${plan.highlight ? "bg-cima-card border-cima-gold shadow-[0_40px_100px_rgba(200,169,110,0.1)] scale-105 z-20" : "bg-cima-bg/40 border-cima-border/50 scale-100 opacity-90 hover:opacity-100 hover:border-cima-gold/30 hover:scale-[1.02]"}`}>
+                                <div key={i} className={`p-8 md:p-12 rounded-[32px] md:rounded-[40px] border transition-all duration-700 flex flex-col relative overflow-visible group ${plan.highlight ? "bg-cima-card border-cima-gold shadow-[0_40px_100px_rgba(200,169,110,0.1)] md:scale-105 z-20" : "bg-cima-bg/40 border-cima-border/50 scale-100 opacity-90 hover:opacity-100 hover:border-cima-gold/30 md:hover:scale-[1.02]"}`}>
                                     {plan.highlight && (
                                         <div className="absolute -top-4 right-8 bg-cima-gold text-cima-bg text-[10px] font-black uppercase tracking-[0.2em] py-1.5 px-5 rounded-full shadow-lg z-30">Most Scalable</div>
                                     )}
-                                    <h4 className="font-heading font-bold text-2xl mb-2 tracking-tight group-hover:text-cima-gold transition-colors">{plan.name}</h4>
+                                    <h4 className="font-heading font-bold text-xl md:text-2xl mb-2 tracking-tight group-hover:text-cima-gold transition-colors">{plan.name}</h4>
                                     <div className="mb-4">
-                                        <span className="text-5xl font-black text-cima-gold tracking-tighter">{plan.price}</span>
-                                        <span className="text-cima-text-dim text-xs ml-3 font-mono font-bold uppercase tracking-widest opacity-60">One-Time Fee</span>
+                                        <span className="text-4xl md:text-5xl font-black text-cima-gold tracking-tighter">{plan.price}</span>
+                                        <span className="text-cima-text-dim text-[10px] md:text-xs ml-3 font-mono font-bold uppercase tracking-widest opacity-60">One-Time Fee</span>
                                     </div>
                                     {/* Delivery time */}
                                     <div className="flex items-start gap-2 mb-6 p-3 rounded-xl bg-white/[0.03] border border-white/5">
@@ -456,20 +457,20 @@ export default function CimaProPage() {
                                             <span className="text-[9px] text-cima-text-dim italic">{plan.deliveryNote}</span>
                                         </div>
                                     </div>
-                                    <p className="text-cima-text-muted text-sm mb-10 leading-relaxed font-medium min-h-[48px]">{plan.desc}</p>
-                                    <ul className="space-y-5 mb-12 flex-1">
+                                    <p className="text-cima-text-muted text-sm mb-8 md:mb-10 leading-relaxed font-medium min-h-[48px]">{plan.desc}</p>
+                                    <ul className="space-y-4 md:space-y-5 mb-10 md:mb-12 flex-1">
                                         {plan.features.map((f, j) => (
-                                            <li key={j} className="flex items-start gap-4 text-sm text-cima-text-dim/80 font-medium">
-                                                <div className="w-5 h-5 rounded-full bg-cima-gold/10 flex items-center justify-center shrink-0 mt-0.5">
-                                                    <ShieldCheck className="h-3 w-3 text-cima-gold" />
+                                            <li key={j} className="flex items-start gap-3 md:gap-4 text-xs md:text-sm text-cima-text-dim/80 font-medium">
+                                                <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-cima-gold/10 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <ShieldCheck className="h-2.5 w-2.5 md:h-3 md:w-3 text-cima-gold" />
                                                 </div>
                                                 {f}
                                             </li>
                                         ))}
                                     </ul>
                                     <Link
-                                        href={`https://wa.me/528116307133?text=Hola!%20Me%20interesa%20el%20plan%20${encodeURIComponent(plan.name)}.`}
-                                        className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 shadow-xl flex items-center justify-center ${plan.highlight ? "bg-cima-gold text-cima-bg hover:bg-cima-gold-light" : "bg-cima-card border border-cima-border text-cima-text hover:border-cima-gold/30"}`}
+                                        href={`https://wa.me/528121980008?text=Hola!%20Me%20interesa%20el%20plan%20${encodeURIComponent(plan.name)}.`}
+                                        className={`w-full py-4 md:py-5 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all duration-500 shadow-xl flex items-center justify-center ${plan.highlight ? "bg-cima-gold text-cima-bg hover:bg-cima-gold-light" : "bg-cima-card border border-cima-border text-cima-text hover:border-cima-gold/30"}`}
                                     >
                                         {plan.button}
                                     </Link>
@@ -496,41 +497,43 @@ export default function CimaProPage() {
                             <p className="text-cima-text-dim mt-4 text-base max-w-xl mx-auto">Lo que muchos intentan armar por su cuenta termina costando el doble y tardando 3 veces más.</p>
                         </div>
 
-                        <div className="rounded-3xl border border-cima-border overflow-hidden">
-                            {/* Header */}
-                            <div className="grid grid-cols-3 bg-cima-card/60">
-                                <div className="p-5 border-r border-cima-border" />
-                                <div className="p-5 border-r border-cima-border text-center">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-cima-text-dim block">Solución Tradicional</span>
-                                    <span className="text-[9px] text-cima-text-dim/50">(freelancers + CRM + diseñador)</span>
+                        <div className="rounded-3xl border border-cima-border overflow-hidden overflow-x-auto">
+                            <div className="min-w-[600px] md:min-w-full">
+                                {/* Header */}
+                                <div className="grid grid-cols-3 bg-cima-card/60">
+                                    <div className="p-5 border-r border-cima-border" />
+                                    <div className="p-5 border-r border-cima-border text-center">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-cima-text-dim block">Solución Tradicional</span>
+                                        <span className="text-[9px] text-cima-text-dim/50">(freelancers + CRM + diseñador)</span>
+                                    </div>
+                                    <div className="p-5 text-center bg-cima-gold/5">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-cima-gold block">Cima Pro</span>
+                                        <span className="text-[9px] text-cima-gold/50">Ecosistema Unificado</span>
+                                    </div>
                                 </div>
-                                <div className="p-5 text-center bg-cima-gold/5">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-cima-gold block">Cima Pro</span>
-                                    <span className="text-[9px] text-cima-gold/50">Ecosistema Unificado</span>
-                                </div>
+                                {/* Rows */}
+                                {[
+                                    { item: "Costo total estimado", trad: "$60k–$150k+ fragmentado", cima: "$45k–$120k todo incluido", cimaGood: true },
+                                    { item: "Tiempo de implementación", trad: "6–18 meses", cima: "4–20 semanas", cimaGood: true },
+                                    { item: "Portales de Propietarios", trad: "No existe / extra", cima: "Incluido", cimaGood: true },
+                                    { item: "IA de calificación de leads", trad: "No existe", cima: "Nativa en el sistema", cimaGood: true },
+                                    { item: "Landing individual por propiedad", trad: "Manual, semanas por página", cima: "Automática al publicar", cimaGood: true },
+                                    { item: "Mantenimiento y actualizaciones", trad: "Pagar a distintos proveedores", cima: "Un solo punto de contacto", cimaGood: true },
+                                    { item: "Propiedad de los datos", trad: "Dependiente de plataformas", cima: "100% tuya en tu cloud", cimaGood: true },
+                                ].map((row, i) => (
+                                    <div key={i} className={`grid grid-cols-3 border-t border-cima-border ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                                        <div className="p-4 sm:p-5 flex items-center border-r border-cima-border">
+                                            <span className="text-[11px] font-bold text-cima-text">{row.item}</span>
+                                        </div>
+                                        <div className="p-4 sm:p-5 flex items-center justify-center border-r border-cima-border">
+                                            <span className="text-[11px] text-red-400/80 font-medium text-center">{row.trad}</span>
+                                        </div>
+                                        <div className="p-4 sm:p-5 flex items-center justify-center bg-cima-gold/[0.03]">
+                                            <span className="text-[11px] text-cima-gold font-bold text-center">{row.cima}</span>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            {/* Rows */}
-                            {[
-                                { item: "Costo total estimado", trad: "$60k–$150k+ fragmentado", cima: "$45k–$120k todo incluido", cimaGood: true },
-                                { item: "Tiempo de implementación", trad: "6–18 meses", cima: "4–20 semanas", cimaGood: true },
-                                { item: "Portales de Propietarios", trad: "No existe / extra", cima: "Incluido", cimaGood: true },
-                                { item: "IA de calificación de leads", trad: "No existe", cima: "Nativa en el sistema", cimaGood: true },
-                                { item: "Landing individual por propiedad", trad: "Manual, semanas por página", cima: "Automática al publicar", cimaGood: true },
-                                { item: "Mantenimiento y actualizaciones", trad: "Pagar a distintos proveedores", cima: "Un solo punto de contacto", cimaGood: true },
-                                { item: "Propiedad de los datos", trad: "Dependiente de plataformas", cima: "100% tuya en tu cloud", cimaGood: true },
-                            ].map((row, i) => (
-                                <div key={i} className={`grid grid-cols-3 border-t border-cima-border ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
-                                    <div className="p-4 sm:p-5 flex items-center border-r border-cima-border">
-                                        <span className="text-[11px] font-bold text-cima-text">{row.item}</span>
-                                    </div>
-                                    <div className="p-4 sm:p-5 flex items-center justify-center border-r border-cima-border">
-                                        <span className="text-[11px] text-red-400/80 font-medium text-center">{row.trad}</span>
-                                    </div>
-                                    <div className="p-4 sm:p-5 flex items-center justify-center bg-cima-gold/[0.03]">
-                                        <span className="text-[11px] text-cima-gold font-bold text-center">{row.cima}</span>
-                                    </div>
-                                </div>
-                            ))}
                         </div>
                     </FadeIn>
                 </section>
@@ -572,7 +575,7 @@ export default function CimaProPage() {
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start">
                                     <Link
-                                        href="https://wa.me/528116307133"
+                                        href="https://wa.me/528121980008"
                                         className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-cima-bg text-cima-gold font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-black/20 flex items-center justify-center gap-3"
                                     >
                                         Contactar Especialista
@@ -617,7 +620,7 @@ export default function CimaProPage() {
                         <p className="text-[11px] text-white font-bold">Solo 3 agencias por ciudad/mes</p>
                     </div>
                     <Link
-                        href="https://wa.me/528116307133?text=Hola!%20Quiero%20agendar%20una%20demo%20de%20Cima%20Pro."
+                        href="https://wa.me/528121980008?text=Hola!%20Quiero%20agendar%20una%20demo%20de%20Cima%20Pro."
                         className="shrink-0 px-5 py-3 rounded-2xl bg-cima-gold text-cima-bg text-[11px] font-black uppercase tracking-widest"
                     >
                         Agendar Demo

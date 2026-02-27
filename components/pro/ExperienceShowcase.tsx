@@ -474,6 +474,14 @@ const TAB_DURATION = 14; // seconds per tab
 export default function ExperienceShowcase() {
     const [active, setActive] = useState(0);
     const [paused, setPaused] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         if (paused) return;
@@ -484,14 +492,14 @@ export default function ExperienceShowcase() {
     return (
         <div className="w-full">
             {/* Tabs */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-8 md:mb-10">
                 {tabs.map((tab, i) => (
                     <button
                         key={tab.id}
                         onClick={() => { setActive(i); setPaused(true); }}
-                        className={`relative flex-1 text-left px-5 py-4 rounded-2xl border transition-all duration-500 overflow-hidden ${active === i
+                        className={`relative flex-1 text-left px-4 py-3 md:px-5 md:py-4 rounded-xl md:rounded-2xl border transition-all duration-500 overflow-hidden ${active === i
                             ? "border-[#C8A96E]/50 bg-[#C8A96E]/5"
-                            : "border-white/5 bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.03]"
+                            : "border-white/5 bg-white/[0.02] md:hover:border-white/10 md:hover:bg-white/[0.03]"
                             }`}
                     >
                         {active === i && (
@@ -501,13 +509,13 @@ export default function ExperienceShowcase() {
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                             />
                         )}
-                        <span className={`relative text-[8px] font-black uppercase tracking-[0.25em] block mb-1 transition-colors ${active === i ? "text-[#C8A96E]" : "text-white/20"}`}>
+                        <span className={`relative text-[7px] md:text-[8px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em] block mb-1 transition-colors ${active === i ? "text-[#C8A96E]" : "text-white/20"}`}>
                             {tab.tag}
                         </span>
-                        <span className={`relative text-sm font-black block mb-1 transition-colors ${active === i ? "text-white" : "text-white/40"}`}>
+                        <span className={`relative text-xs md:text-sm font-black block mb-0.5 md:mb-1 transition-colors ${active === i ? "text-white" : "text-white/40"}`}>
                             {tab.label}
                         </span>
-                        <span className={`relative text-[9px] leading-relaxed transition-colors ${active === i ? "text-white/50" : "text-white/15"}`}>
+                        <span className={`relative text-[9px] leading-relaxed transition-colors hidden sm:block ${active === i ? "text-white/50" : "text-white/15"}`}>
                             {tab.desc}
                         </span>
                         {/* Auto-progress bar */}
@@ -529,16 +537,17 @@ export default function ExperienceShowcase() {
 
             {/* Preview */}
             <div
-                className="relative rounded-3xl overflow-hidden border border-white/8 shadow-[0_60px_120px_rgba(0,0,0,0.7)]"
-                style={{ aspectRatio: "16/9" }}
-                onMouseEnter={() => setPaused(true)}
-                onMouseLeave={() => setPaused(false)}
+                className="relative rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] md:shadow-[0_60px_120px_rgba(0,0,0,0.7)]"
+                style={{ aspectRatio: isMobile ? "4/5" : "16/9" }}
+                onMouseEnter={() => !isMobile && setPaused(true)}
+                onMouseLeave={() => !isMobile && setPaused(false)}
+                onClick={() => isMobile && setPaused(true)}
             >
                 {/* Ambient glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${tabs[active].accentFrom} to-transparent pointer-events-none z-0 transition-all duration-1000`} />
 
                 {/* Pill label — bottom left so it doesn't block UI */}
-                <div className="absolute bottom-10 left-4 z-20">
+                <div className="absolute bottom-6 left-3 md:bottom-10 md:left-4 z-20">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={active}
@@ -546,17 +555,17 @@ export default function ExperienceShowcase() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.4 }}
-                            className="flex items-center gap-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-full px-3 py-1.5"
+                            className="flex items-center gap-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-full px-2 py-1 md:px-3 md:py-1.5"
                         >
                             <div className="w-1.5 h-1.5 rounded-full bg-[#C8A96E] animate-pulse" />
-                            <span className="text-[9px] font-bold text-white/60">{tabs[active].label}</span>
+                            <span className="text-[8px] md:text-[9px] font-bold text-white/60">{tabs[active].label}</span>
                         </motion.div>
                     </AnimatePresence>
                 </div>
 
                 {/* Pause indicator — bottom right */}
                 {paused && (
-                    <div className="absolute bottom-10 right-4 z-20 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-full border border-white/10">
+                    <div className="absolute bottom-6 right-3 md:bottom-10 md:right-4 z-20 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-full border border-white/10">
                         <span className="text-[7px] text-white/30 font-mono">PAUSADO</span>
                     </div>
                 )}
@@ -568,8 +577,9 @@ export default function ExperienceShowcase() {
                         initial={{ opacity: 0, y: 16, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.99 }}
-                        transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
                         className="absolute inset-0 z-10"
+                        style={{ willChange: "transform, opacity" }}
                     >
                         {active === 0 && <AdvisorDashboardPreview />}
                         {active === 1 && <OwnerPortalPreview />}
@@ -578,20 +588,20 @@ export default function ExperienceShowcase() {
                 </AnimatePresence>
 
                 {/* Bottom navigation dots */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                <div className="absolute bottom-3 md:bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
                     {tabs.map((_, i) => (
                         <button
                             key={i}
                             onClick={() => { setActive(i); setPaused(true); }}
-                            className={`h-1.5 rounded-full transition-all duration-500 ${active === i ? "w-8 bg-[#C8A96E]" : "w-2 bg-white/20 hover:bg-white/40"}`}
+                            className={`h-1 rounded-full transition-all duration-500 ${active === i ? "w-6 md:w-8 bg-[#C8A96E]" : "w-1.5 md:w-2 bg-white/20"}`}
                         />
                     ))}
                 </div>
             </div>
 
             {/* Hover hint */}
-            <p className="text-center text-[9px] text-white/20 mt-4 font-mono">
-                Pasa el cursor sobre el preview para pausar · Haz click en las pestañas para navegar
+            <p className="text-center text-[8px] md:text-[9px] text-white/20 mt-4 font-mono">
+                {isMobile ? "Toca para pausar la rotación" : "Pasa el cursor para pausar · Haz click en las pestañas para navegar"}
             </p>
         </div>
     );

@@ -37,7 +37,7 @@ export default function VideoDemoBubble() {
                                     Mira cómo nuestra IA califica leads y genera tours premium en 5 segundos.
                                 </p>
                                 <a
-                                    href="https://wa.me/528116307133?text=Hola!%20Quiero%20ver%20la%20demo%20completa%20de%20Cima%20Pro."
+                                    href="https://wa.me/528121980008?text=Hola!%20Quiero%20ver%20la%20demo%20completa%20de%20Cima%20Pro."
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-block px-3 py-1 rounded-full bg-cima-gold text-cima-bg text-[10px] font-black uppercase hover:scale-105 transition-transform"
