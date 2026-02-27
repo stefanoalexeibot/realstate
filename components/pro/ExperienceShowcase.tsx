@@ -538,7 +538,7 @@ export default function ExperienceShowcase() {
             {/* Preview */}
             <div
                 className="relative rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] md:shadow-[0_60px_120px_rgba(0,0,0,0.7)]"
-                style={{ aspectRatio: isMobile ? "4/5" : "16/9" }}
+                style={{ aspectRatio: isMobile ? "1/1" : "16/9" }}
                 onMouseEnter={() => !isMobile && setPaused(true)}
                 onMouseLeave={() => !isMobile && setPaused(false)}
                 onClick={() => isMobile && setPaused(true)}

@@ -14,6 +14,8 @@ import InteractiveEcosystem from "@/components/pro/InteractiveEcosystem";
 import TiltCard from "@/components/pro/TiltCard";
 import VideoDemoBubble from "@/components/pro/VideoDemoBubble";
 import ExperienceShowcase from "@/components/pro/ExperienceShowcase";
+import { AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
 function RoiCalculator() {
     const [price, setPrice] = useState(5000000);
@@ -183,6 +185,7 @@ const FAQS = [
 ];
 
 export default function CimaProPage() {
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     return (
         <div className="min-h-screen bg-cima-bg text-cima-text selection:bg-cima-gold selection:text-cima-bg overflow-x-hidden">
             {/* Background Decor */}
@@ -346,7 +349,7 @@ export default function CimaProPage() {
                 </section>
 
                 {/* Visual Showcase / Experience Section */}
-                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-40">
+                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-24 md:mb-40">
                     <div className="text-center mb-24">
                         <FadeIn>
                             <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-6 block">Premium Interfaces</span>
@@ -497,8 +500,9 @@ export default function CimaProPage() {
                             <p className="text-cima-text-dim mt-4 text-base max-w-xl mx-auto">Lo que muchos intentan armar por su cuenta termina costando el doble y tardando 3 veces más.</p>
                         </div>
 
-                        <div className="rounded-3xl border border-cima-border overflow-hidden overflow-x-auto">
-                            <div className="min-w-[600px] md:min-w-full">
+                        {/* Desktop Table (Visible on md+) */}
+                        <div className="hidden md:block rounded-3xl border border-cima-border overflow-hidden">
+                            <div className="w-full">
                                 {/* Header */}
                                 <div className="grid grid-cols-3 bg-cima-card/60">
                                     <div className="p-5 border-r border-cima-border" />
@@ -522,20 +526,99 @@ export default function CimaProPage() {
                                     { item: "Propiedad de los datos", trad: "Dependiente de plataformas", cima: "100% tuya en tu cloud", cimaGood: true },
                                 ].map((row, i) => (
                                     <div key={i} className={`grid grid-cols-3 border-t border-cima-border ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
-                                        <div className="p-4 sm:p-5 flex items-center border-r border-cima-border">
+                                        <div className="p-5 flex items-center border-r border-cima-border">
                                             <span className="text-[11px] font-bold text-cima-text">{row.item}</span>
                                         </div>
-                                        <div className="p-4 sm:p-5 flex items-center justify-center border-r border-cima-border">
+                                        <div className="p-5 flex items-center justify-center border-r border-cima-border">
                                             <span className="text-[11px] text-red-400/80 font-medium text-center">{row.trad}</span>
                                         </div>
-                                        <div className="p-4 sm:p-5 flex items-center justify-center bg-cima-gold/[0.03]">
+                                        <div className="p-5 flex items-center justify-center bg-cima-gold/[0.03]">
                                             <span className="text-[11px] text-cima-gold font-bold text-center">{row.cima}</span>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
+
+                        {/* Mobile Trigger Button */}
+                        <div className="md:hidden">
+                            <button
+                                onClick={() => setIsTableModalOpen(true)}
+                                className="w-full p-8 rounded-3xl bg-cima-card border border-cima-gold/30 flex flex-col items-center gap-4 group active:scale-95 transition-all shadow-2xl shadow-cima-gold/5"
+                            >
+                                <div className="w-16 h-16 rounded-2xl bg-cima-gold/10 flex items-center justify-center">
+                                    <BarChart3 className="h-8 w-8 text-cima-gold" />
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-cima-text font-black text-xl mb-1">Ver Análisis de Valor</p>
+                                    <p className="text-cima-text-dim text-xs">Comparativa Cima Pro vs Tradicional</p>
+                                </div>
+                                <div className="flex items-center gap-2 text-cima-gold text-[10px] font-black uppercase tracking-widest mt-2">
+                                    Abrir Comparativa <ArrowRight className="h-3 w-3" />
+                                </div>
+                            </button>
+                        </div>
                     </FadeIn>
+
+                    {/* Fullscreen Modal Table */}
+                    <AnimatePresence>
+                        {isTableModalOpen && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 z-[100] bg-cima-bg/95 backdrop-blur-2xl flex items-center justify-center p-4"
+                            >
+                                <motion.div
+                                    initial={{ scale: 0.9, y: 20 }}
+                                    animate={{ scale: 1, y: 0 }}
+                                    exit={{ scale: 0.9, y: 20 }}
+                                    className="w-full max-w-4xl bg-cima-card border border-cima-border rounded-[40px] shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col"
+                                >
+                                    <button
+                                        onClick={() => setIsTableModalOpen(false)}
+                                        className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-red-500/20 hover:border-red-500/30 transition-all z-20"
+                                    >
+                                        <X className="h-5 w-5 text-white" />
+                                    </button>
+
+                                    <div className="p-8 border-b border-cima-border flex flex-col items-center">
+                                        <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-2 block text-center">Análisis de Valor</span>
+                                        <h3 className="font-heading font-black text-2xl text-cima-text text-center">Cima Pro vs Tradicional</h3>
+                                    </div>
+
+                                    <div className="flex-1 overflow-auto p-4 sm:p-8">
+                                        <div className="rounded-2xl border border-cima-border overflow-hidden min-w-[500px]">
+                                            <div className="grid grid-cols-3 bg-white/5 font-black text-[10px] uppercase tracking-widest">
+                                                <div className="p-4 border-r border-cima-border">Punto</div>
+                                                <div className="p-4 border-r border-cima-border text-center text-red-300">Tradicional</div>
+                                                <div className="p-4 text-center text-cima-gold">Cima Pro</div>
+                                            </div>
+                                            {[
+                                                { item: "Costo total", trad: "$60k–$150k+", cima: "$45k–$120k", cimaGood: true },
+                                                { item: "Implementación", trad: "6–18 meses", cima: "4–20 semanas", cimaGood: true },
+                                                { item: "Portales Prop.", trad: "No existe", cima: "Incluido", cimaGood: true },
+                                                { item: "Lead AI", trad: "Manual", cima: "Nativo AI", cimaGood: true },
+                                                { item: "Landings", trad: "Días/Semanas", cima: "Instantáneo", cimaGood: true },
+                                                { item: "Mantenimiento", trad: "Fragmentado", cima: "Unificado", cimaGood: true },
+                                                { item: "Soberanía Datos", trad: "Media/Baja", cima: "100% Tuya", cimaGood: true },
+                                            ].map((row, i) => (
+                                                <div key={i} className="grid grid-cols-3 border-t border-cima-border text-[11px]">
+                                                    <div className="p-4 border-r border-cima-border font-bold text-cima-text-dim">{row.item}</div>
+                                                    <div className="p-4 border-r border-cima-border text-center text-red-200/60 font-medium">{row.trad}</div>
+                                                    <div className="p-4 text-center text-cima-gold font-black bg-cima-gold/5">{row.cima}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="mt-8 p-6 rounded-2xl bg-cima-gold text-cima-bg text-center">
+                                            <p className="font-black text-sm uppercase tracking-widest mb-1 italic">Veredicto Final</p>
+                                            <p className="text-xs font-bold font-heading">Cima Pro ofrece un ROI de +350% vs soluciones tradicionales en el primer año.</p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </section>
 
                 {/* FAQ Section */}
