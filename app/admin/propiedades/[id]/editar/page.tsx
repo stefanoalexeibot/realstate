@@ -60,6 +60,8 @@ export default function EditarPropiedad() {
     agent_id: "",
     days_to_sell: "",
     sold_at: "",
+    video_url: "",
+    tour_url: "",
   });
 
   useEffect(() => {
@@ -101,6 +103,8 @@ export default function EditarPropiedad() {
           agent_id: prop.agent_id ?? "",
           days_to_sell: prop.days_to_sell != null ? String(prop.days_to_sell) : "",
           sold_at: prop.sold_at ? prop.sold_at.split("T")[0] : "",
+          video_url: prop.video_url ?? "",
+          tour_url: prop.tour_url ?? "",
         });
         setExistingPhotos((photos ?? []) as ExistingPhoto[]);
         setPropietarios((peopleRes.propietarios ?? []) as Propietario[]);
@@ -275,6 +279,8 @@ export default function EditarPropiedad() {
           days_to_sell: form.days_to_sell ? Number(form.days_to_sell) : null,
           sold_at: form.sold_at || null,
           new_photos: uploadedPhotos,
+          video_url: form.video_url || null,
+          tour_url: form.tour_url || null,
         }),
       });
 
@@ -395,6 +401,21 @@ export default function EditarPropiedad() {
             <input type="text" value={form.features} onChange={(e) => set("features", e.target.value)}
               placeholder="Alberca, Jardín, Cuarto de servicio"
               className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2.5 text-sm text-cima-text placeholder-cima-text-dim focus:outline-none focus:border-cima-gold/50 transition-colors" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Link de Video (YouTube/Vimeo)</label>
+              <input type="url" value={form.video_url} onChange={(e) => set("video_url", e.target.value)}
+                placeholder="https://youtu.be/..."
+                className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2.5 text-sm text-cima-text placeholder-cima-text-dim focus:outline-none focus:border-cima-gold/50 transition-colors" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Link de Recorrido 360 (Matterport/etc)</label>
+              <input type="url" value={form.tour_url} onChange={(e) => set("tour_url", e.target.value)}
+                placeholder="https://my.matterport.com/show/..."
+                className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2.5 text-sm text-cima-text placeholder-cima-text-dim focus:outline-none focus:border-cima-gold/50 transition-colors" />
+            </div>
           </div>
         </div>
 

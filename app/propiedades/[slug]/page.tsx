@@ -6,6 +6,8 @@ import { Building2, BedDouble, Bath, Maximize2, Car, MapPin, Phone, Calendar, Ch
 import { createClient } from "@/lib/supabase/server";
 import VisitForm from "@/components/landing/visit-form";
 import PhotoGallery from "@/components/landing/photo-gallery";
+import PropertyPDFButton from "@/components/landing/property-pdf-button";
+import SurroundingsIntelligence from "@/components/landing/surroundings-intelligence";
 import { formatPrice } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 import Image from "next/image";
@@ -174,8 +176,13 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
           <div className="min-w-0">
             {/* Photo gallery */}
             <FadeIn>
-              {photos.length > 0 ? (
-                <PhotoGallery photos={photos} title={property.title} />
+              {photos.length > 0 || property.video_url || property.tour_url ? (
+                <PhotoGallery
+                  photos={photos}
+                  title={property.title}
+                  video_url={property.video_url}
+                  tour_url={property.tour_url}
+                />
               ) : (
                 <div className="rounded-xl overflow-hidden border border-cima-border mb-6 h-[300px] property-placeholder relative flex items-center justify-center">
                   <div className="text-center">
@@ -333,6 +340,12 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
                 </div>
               </div>
             )}
+
+            {/* Inteligencia de Entorno */}
+            <SurroundingsIntelligence
+              neighborhood={property.neighborhood ?? ""}
+              city={property.city ?? ""}
+            />
           </div>
 
           {/* ── Right column — form sticky ── */}
@@ -361,6 +374,9 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
               <Phone className="h-4 w-4" />
               Preguntar por WhatsApp
             </a>
+
+            {/* Descargar Ficha PDF */}
+            <PropertyPDFButton property={property} photos={photos} />
 
             {/* Share */}
             <ShareProperty title={property.title} price={formatPrice(property.price)} slug={params.slug} />

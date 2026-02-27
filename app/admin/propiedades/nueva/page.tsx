@@ -59,6 +59,8 @@ const EMPTY_FORM = {
   agent_notes: "",
   days_to_sell: "",
   sold_at: "",
+  video_url: "",
+  tour_url: "",
 };
 
 /* ─── Component ─────────────────────────────────────────────────────────── */
@@ -535,6 +537,19 @@ export default function NuevaPropiedad() {
               <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Año de construcción</label>
               <input type="text" inputMode="numeric" value={form.construction_year}
                 onChange={(e) => set("construction_year", e.target.value.replace(/[^0-9]/g, ""))} placeholder="2015" className={inp} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Link de Video (YouTube/Vimeo)</label>
+              <input type="url" value={form.video_url} onChange={(e) => set("video_url", e.target.value)}
+                placeholder="https://youtu.be/..." className={inp} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Link de Recorrido 360 (Matterport/etc)</label>
+              <input type="url" value={form.tour_url} onChange={(e) => set("tour_url", e.target.value)}
+                placeholder="https://my.matterport.com/show/..." className={inp} />
             </div>
           </div>
         </div>

@@ -34,6 +34,8 @@ export interface Property {
   agent_id: string | null;
   agent_notes: string | null;
   construction_year: number | null;
+  video_url: string | null;
+  tour_url: string | null;
 }
 
 export interface PropertyPhoto {

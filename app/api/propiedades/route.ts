@@ -19,6 +19,7 @@ export async function POST(req: Request) {
       state, features, status, featured, photos, propietario_id,
       agent_notes, agent_id, address, construction_year,
       days_to_sell, sold_at,
+      video_url, tour_url,
     } = body;
 
     if (!title || !price || !operation_type || !property_type) {
@@ -57,6 +58,8 @@ export async function POST(req: Request) {
         construction_year: construction_year ? Number(construction_year) : null,
         days_to_sell: days_to_sell ? Number(days_to_sell) : null,
         sold_at: sold_at || null,
+        video_url: video_url || null,
+        tour_url: tour_url || null,
       })
       .select()
       .single();

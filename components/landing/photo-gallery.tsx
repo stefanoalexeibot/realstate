@@ -2,13 +2,21 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, ZoomIn, Play, Map, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Photo = { id: string; url: string; order: number };
 
-export default function PhotoGallery({ photos, title }: { photos: Photo[]; title: string }) {
+interface PhotoGalleryProps {
+  photos: Photo[];
+  title: string;
+  video_url?: string | null;
+  tour_url?: string | null;
+}
+
+export default function PhotoGallery({ photos, title, video_url, tour_url }: PhotoGalleryProps) {
+  const [activeTab, setActiveTab] = useState<"photos" | "video" | "tour">("photos");
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
@@ -35,63 +43,137 @@ export default function PhotoGallery({ photos, title }: { photos: Photo[]; title
     }
   }, [lightbox]);
 
-  if (photos.length === 0) return null;
+  if (photos.length === 0 && !video_url && !tour_url) return null;
+
+  // Helpers to get embed URLs
+  const getYoutubeEmbed = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : url;
+  };
+
+  const isVimeo = video_url?.includes("vimeo.com");
 
   return (
     <>
-      {/* Main photo */}
-      <div
-        className="relative h-[300px] sm:h-[420px] lg:h-[480px] rounded-xl overflow-hidden border border-cima-border mb-3 cursor-zoom-in group"
-        onClick={() => setLightbox(true)}
-      >
-        <Image
-          src={photos[active].url}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-          priority
-        />
-        {/* Overlay controls */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        <div className="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <span className="bg-black/60 text-white text-[10px] font-mono px-2 py-1 rounded-full backdrop-blur-sm">
-            {active + 1} / {photos.length}
-          </span>
-          <div className="bg-black/60 text-white p-1.5 rounded-full backdrop-blur-sm">
-            <ZoomIn className="h-3.5 w-3.5" />
+      <div className="relative mb-6">
+        {/* Tab Switcher (only if there's more than just photos) */}
+        {(video_url || tour_url) && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex p-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10 shadow-2xl">
+            <button
+              onClick={() => setActiveTab("photos")}
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all",
+                activeTab === "photos" ? "bg-white text-cima-bg shadow-lg" : "text-white/80 hover:text-white"
+              )}
+            >
+              <Camera className="h-3.5 w-3.5" />
+              Fotos
+            </button>
+            {video_url && (
+              <button
+                onClick={() => setActiveTab("video")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all",
+                  activeTab === "video" ? "bg-white text-cima-bg shadow-lg" : "text-white/80 hover:text-white"
+                )}
+              >
+                <Play className="h-3.5 w-3.5" />
+                Video
+              </button>
+            )}
+            {tour_url && (
+              <button
+                onClick={() => setActiveTab("tour")}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all",
+                  activeTab === "tour" ? "bg-white text-cima-bg shadow-lg" : "text-white/80 hover:text-white"
+                )}
+              >
+                <Map className="h-3.5 w-3.5" />
+                Tour 360
+              </button>
+            )}
           </div>
-        </div>
-        {/* Arrow nav on main */}
-        {photos.length > 1 && (
-          <>
-            <button
-              onClick={(e) => { e.stopPropagation(); prev(); }}
-              disabled={active === 0}
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white disabled:opacity-0 hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); next(); }}
-              disabled={active === photos.length - 1}
-              className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white disabled:opacity-0 hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </>
         )}
+
+        {/* Content Viewer */}
+        <div className="relative h-[300px] sm:h-[420px] lg:h-[520px] rounded-2xl overflow-hidden border border-cima-border bg-cima-surface/30">
+          {activeTab === "photos" && (
+            <div className="w-full h-full cursor-zoom-in group" onClick={() => setLightbox(true)}>
+              <Image
+                src={photos[active].url}
+                alt={title}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              {/* Overlay controls */}
+              <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="bg-black/60 text-white text-[10px] font-mono px-2.5 py-1.5 rounded-full backdrop-blur-md border border-white/10">
+                  {active + 1} / {photos.length}
+                </span>
+                <div className="bg-black/60 text-white p-2 rounded-full backdrop-blur-md border border-white/10">
+                  <ZoomIn className="h-4 w-4" />
+                </div>
+              </div>
+
+              {/* Arrow navigation */}
+              {photos.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); prev(); }}
+                    disabled={active === 0}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white disabled:opacity-0 hover:bg-black/80 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 border border-white/10"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); next(); }}
+                    disabled={active === photos.length - 1}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white disabled:opacity-0 hover:bg-black/80 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 border border-white/10"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "video" && video_url && (
+            <iframe
+              src={getYoutubeEmbed(video_url)}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          )}
+
+          {activeTab === "tour" && tour_url && (
+            <iframe
+              src={tour_url}
+              className="w-full h-full"
+              allowFullScreen
+              allow="xr-spatial-tracking"
+            />
+          )}
+        </div>
       </div>
 
-      {/* Thumbnails */}
-      {photos.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1 mb-6 scrollbar-thin">
+      {/* Thumbnails (only for Photos tab) */}
+      {activeTab === "photos" && photos.length > 1 && (
+        <div className="flex gap-2.5 overflow-x-auto pb-4 scrollbar-hide">
           {photos.map((p, i) => (
             <button
               key={p.id}
               onClick={() => setActive(i)}
               className={cn(
-                "shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 transition-all hover:opacity-90",
-                i === active ? "border-cima-gold ring-1 ring-cima-gold/30" : "border-cima-border/50 opacity-60 hover:opacity-80"
+                "shrink-0 h-16 w-24 rounded-xl overflow-hidden border-2 transition-all hover:brightness-110",
+                i === active
+                  ? "border-cima-gold ring-2 ring-cima-gold/20 scale-95"
+                  : "border-transparent opacity-60 hover:opacity-100"
               )}
             >
               <Image src={p.url} alt="" width={96} height={64} className="object-cover w-full h-full" />
@@ -107,88 +189,51 @@ export default function PhotoGallery({ photos, title }: { photos: Photo[]; title
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+            className="fixed inset-0 z-[100] bg-black/98 flex items-center justify-center p-4"
             onClick={() => setLightbox(false)}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Galería de fotos"
           >
-            {/* Close */}
             <button
               onClick={() => setLightbox(false)}
-              className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
-              aria-label="Cerrar galería"
+              className="absolute top-6 right-6 h-12 w-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all z-10"
             >
-              <X className="h-4 w-4" />
+              <X className="h-6 w-6" />
             </button>
 
-            {/* Counter */}
-            <span className="absolute top-4 left-1/2 -translate-x-1/2 text-white/70 text-xs font-mono">
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 text-white/70 text-sm font-mono tracking-widest">
               {active + 1} / {photos.length}
-            </span>
-
-            {/* Keyboard hint */}
-            <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 text-white/30 text-[10px] font-mono hidden sm:flex items-center gap-3">
-              <span>← → navegar</span>
-              <span>ESC cerrar</span>
             </div>
 
-            {/* Prev */}
-            {active > 0 && (
-              <button
-                onClick={(e) => { e.stopPropagation(); prev(); }}
-                className="absolute left-4 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-            )}
+            <button
+              onClick={(e) => { e.stopPropagation(); prev(); }}
+              disabled={active === 0}
+              className="absolute left-6 h-14 w-14 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white disabled:opacity-0 transition-all"
+            >
+              <ChevronLeft className="h-8 w-8" />
+            </button>
 
-            {/* Image */}
             <motion.div
               key={active}
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.25 }}
-              className="relative max-w-5xl max-h-[85vh] w-full px-16"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="relative w-full max-w-6xl aspect-[3/2]"
               onClick={(e) => e.stopPropagation()}
             >
               <Image
                 src={photos[active].url}
                 alt={title}
-                width={1200}
-                height={800}
-                className="w-full h-full object-contain max-h-[85vh]"
+                fill
+                className="object-contain"
+                priority
               />
             </motion.div>
 
-            {/* Next */}
-            {active < photos.length - 1 && (
-              <button
-                onClick={(e) => { e.stopPropagation(); next(); }}
-                className="absolute right-4 h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-              >
-                <ChevronRight className="h-6 w-6" />
-              </button>
-            )}
-
-            {/* Thumbnail strip in lightbox */}
-            {photos.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 overflow-x-auto max-w-sm px-2" onClick={(e) => e.stopPropagation()}>
-                {photos.map((p, i) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setActive(i)}
-                    className={cn(
-                      "shrink-0 h-10 w-14 rounded overflow-hidden border transition-all",
-                      i === active ? "border-cima-gold opacity-100" : "border-white/20 opacity-50 hover:opacity-80"
-                    )}
-                  >
-                    <Image src={p.url} alt="" width={56} height={40} className="object-cover w-full h-full" />
-                  </button>
-                ))}
-              </div>
-            )}
+            <button
+              onClick={(e) => { e.stopPropagation(); next(); }}
+              disabled={active === photos.length - 1}
+              className="absolute right-6 h-14 w-14 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white disabled:opacity-0 transition-all"
+            >
+              <ChevronRight className="h-8 w-8" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

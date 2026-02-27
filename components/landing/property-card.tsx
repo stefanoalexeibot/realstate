@@ -49,7 +49,8 @@ export default function PropertyCard({ property, index = 0, className }: Propert
               src={property.cover_photo}
               alt={property.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              priority={index < 2}
+              className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (

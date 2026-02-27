@@ -19,6 +19,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       days_to_sell, sold_at,
       new_photos, // Array of { url, order, is_cover }
       cover_photo, // Optional manual sync
+      video_url, tour_url,
     } = body;
 
     if (!title || !price || !operation_type || !property_type) {
@@ -52,6 +53,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         construction_year: construction_year ? Number(construction_year) : null,
         days_to_sell: days_to_sell ? Number(days_to_sell) : null,
         sold_at: sold_at || null,
+        video_url: video_url || null,
+        tour_url: tour_url || null,
       })
       .eq("id", params.id);
 

@@ -123,7 +123,19 @@ export default function AdminDashboardClient({ data }: { data: AdminDashboardDat
                         <p className="font-heading font-bold text-2xl sm:text-3xl leading-none text-cima-gold">
                             {activeProps.toLocaleString("es-MX")}
                         </p>
-                        <p className="text-[10px] text-cima-text-dim mt-1.5 leading-tight">{totalProps} total · {soldProps} vendidas</p>
+                        <div className="mt-2.5">
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="text-[9px] text-cima-text-dim uppercase font-mono">Meta de ventas</p>
+                                <p className="text-[9px] text-cima-gold font-bold font-mono">{soldProps}/10</p>
+                            </div>
+                            <div className="h-1 rounded-full bg-cima-gold/10 overflow-hidden">
+                                <div
+                                    className="h-full bg-cima-gold transition-all duration-1000"
+                                    style={{ width: `${Math.min((soldProps / 10) * 100, 100)}%` }}
+                                />
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-cima-text-dim mt-2 leading-tight">{totalProps} total · {soldProps} vendidas</p>
                     </div>
                 </div>
 

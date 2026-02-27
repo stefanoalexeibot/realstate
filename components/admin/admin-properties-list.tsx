@@ -6,6 +6,8 @@ import { Eye, Pencil, User, Building2, Home, Link2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import AdminSearch from "./admin-search";
 import DeletePropertyButton from "./delete-property-button";
+import PropertyQRCode from "./property-qr-code";
+import { QrCode, X } from "lucide-react";
 import type { Property } from "@/lib/types";
 
 // Inline copy button — copies the /lp/[slug] link to clipboard
@@ -32,6 +34,53 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
     inactive: { label: "Inactiva", color: "bg-cima-surface text-cima-text-dim border-cima-border" },
 };
 
+function QuickStatusSelect({
+    propertyId,
+    currentStatus,
+    onUpdate
+}: {
+    propertyId: string;
+    currentStatus: string;
+    onUpdate: (newStatus: string) => void
+}) {
+    const [loading, setLoading] = useState(false);
+
+    async function handleChange(newStatus: string) {
+        if (newStatus === currentStatus) return;
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/propiedades/${propertyId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus }),
+            });
+            if (!res.ok) throw new Error("Error al actualizar");
+            onUpdate(newStatus);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const st = STATUS_LABELS[currentStatus] ?? STATUS_LABELS.inactive;
+
+    return (
+        <select
+            value={currentStatus}
+            disabled={loading}
+            onChange={(e) => handleChange(e.target.value)}
+            className={`appearance-none px-2 py-0.5 rounded text-[10px] font-mono border focus:outline-none focus:ring-1 focus:ring-cima-gold/50 cursor-pointer disabled:opacity-50 ${st.color}`}
+        >
+            {Object.entries(STATUS_LABELS).map(([val, { label }]) => (
+                <option key={val} value={val} className="bg-cima-bg text-cima-text">
+                    {label}
+                </option>
+            ))}
+        </select>
+    );
+}
+
 const STATUS_OPTIONS = [
     { value: "all", label: "Todas" },
     { value: "active", label: "Activas" },
@@ -48,10 +97,16 @@ function formatDate(iso: string) {
 }
 
 export default function AdminPropertiesList({ initialProperties }: { initialProperties: PropertyWithAgent[] }) {
+    const [properties, setProperties] = useState(initialProperties);
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
+    const [selectedQr, setSelectedQr] = useState<Property | null>(null);
 
-    const filtered = initialProperties.filter((p) => {
+    function updateLocalStatus(id: string, newStatus: string) {
+        setProperties(prev => prev.map(p => p.id === id ? { ...p, status: newStatus as any } : p));
+    }
+
+    const filtered = properties.filter((p) => {
         const matchesSearch =
             p.title.toLowerCase().includes(search.toLowerCase()) ||
             (p.neighborhood || "").toLowerCase().includes(search.toLowerCase());
@@ -91,7 +146,7 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                     <div className="overflow-x-auto sm:overflow-x-auto">
                         <div className="min-w-full sm:min-w-[1000px]">
                             {/* Header (Desktop Only) */}
-                            <div className="hidden sm:grid grid-cols-[1fr_110px_70px_80px_110px_90px_160px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
+                            <div className="hidden sm:grid grid-cols-[1fr_110px_70px_80px_110px_90px_180px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
                                 {["Propiedad", "Precio", "Vistas", "Tipo", "Asesor", "Estado", ""].map((h) => (
                                     <p key={h} className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">{h}</p>
                                 ))}
@@ -102,7 +157,7 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                                     const st = STATUS_LABELS[p.status] ?? STATUS_LABELS.inactive;
                                     const agentName = p.re_agentes?.name;
                                     return (
-                                        <div key={p.id} className="flex flex-col sm:grid sm:grid-cols-[1fr_110px_70px_80px_110px_90px_160px] gap-4 px-4 sm:px-5 py-5 sm:py-4 items-start sm:items-center hover:bg-cima-surface/30 transition-colors">
+                                        <div key={p.id} className="flex flex-col sm:grid sm:grid-cols-[1fr_110px_70px_80px_110px_90px_180px] gap-4 px-4 sm:px-5 py-5 sm:py-4 items-start sm:items-center hover:bg-cima-surface/30 transition-colors">
                                             <div className="w-full sm:min-w-0 flex items-start justify-between gap-3">
                                                 <div className="min-w-0">
                                                     <p className="font-semibold sm:font-medium text-sm text-cima-text truncate">{p.title}</p>
@@ -178,6 +233,14 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                                                     Ver
                                                 </Link>
                                                 <CopyLpButton slug={p.slug} />
+                                                <button
+                                                    onClick={() => setSelectedQr(p)}
+                                                    title="Generar QR para Lona"
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-cima-text-muted hover:text-cima-gold hover:bg-cima-surface border border-cima-border transition-colors"
+                                                >
+                                                    <QrCode className="h-3.5 w-3.5" />
+                                                    QR
+                                                </button>
                                                 <DeletePropertyButton propertyId={p.id} />
                                             </div>
                                         </div>
@@ -185,6 +248,21 @@ export default function AdminPropertiesList({ initialProperties }: { initialProp
                                 })}
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* QR Modal */}
+            {selectedQr && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="relative w-full max-w-sm">
+                        <button
+                            onClick={() => setSelectedQr(null)}
+                            className="absolute -top-12 right-0 p-2 text-white/70 hover:text-white transition-colors"
+                        >
+                            <X className="h-6 w-6" />
+                        </button>
+                        <PropertyQRCode slug={selectedQr.slug} title={selectedQr.title} />
                     </div>
                 </div>
             )}
