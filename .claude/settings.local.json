@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx remotion render:*)",
+      "Bash(npx tsc:*)",
+      "Bash(test:*)",
+      "Bash(find:*)",
+      "Bash(else echo \"bezier-easing: NOT INSTALLED\")",
+      "Bash(fi)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}

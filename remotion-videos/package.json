@@ -1,0 +1,25 @@
+{
+  "name": "cima-remotion-videos",
+  "version": "1.0.0",
+  "description": "Remotion videos para Cima Propiedades",
+  "scripts": {
+    "studio": "npx remotion studio src/Root.tsx",
+    "render:property": "npx remotion render src/Root.tsx PropertyCard out/property-card.mp4",
+    "render:property:story": "npx remotion render src/Root.tsx PropertyCardStory out/property-story.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.429",
+    "@remotion/google-fonts": "^4.0.429",
+    "@remotion/media-utils": "^4.0.429",
+    "@remotion/motion-blur": "^4.0.429",
+    "@remotion/noise": "^4.0.429",
+    "@remotion/transitions": "^4.0.429",
+    "remotion": "^4.0.429"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.28",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.0.0"
+  }
+}
