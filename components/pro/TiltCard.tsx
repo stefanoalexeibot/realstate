@@ -51,13 +51,14 @@ export default function TiltCard({
         setStyle({
             transform:
                 "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
+            background: "transparent",
         });
     }, []);
 
     return (
         <div
             ref={ref}
-            className={`${className} transition-transform duration-300 ease-out`}
+            className={`${className} transition-all duration-500 ease-out`}
             style={{
                 transformStyle: "preserve-3d",
                 ...style,

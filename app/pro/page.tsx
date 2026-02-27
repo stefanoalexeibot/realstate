@@ -199,12 +199,12 @@ export default function CimaProPage() {
                         <div className="w-9 h-9 bg-cima-gold rounded-xl flex items-center justify-center shadow-lg shadow-cima-gold/20">
                             <Building2 className="h-5 w-5 text-cima-bg" />
                         </div>
-                        <span className="font-heading font-black text-xl tracking-tight">Cima <span className="text-cima-gold">Pro</span></span>
+                        <span className="font-heading font-black text-lg md:text-xl tracking-tight">Cima <span className="text-cima-gold">Pro</span></span>
                     </div>
                     <div className="flex items-center gap-8">
                         <Link
                             href="https://wa.me/528121980008"
-                            className="hidden sm:block text-[11px] font-bold uppercase tracking-widest text-cima-text-muted hover:text-cima-gold transition-colors"
+                            className="hidden md:block text-[11px] font-bold uppercase tracking-widest text-cima-text-muted hover:text-cima-gold transition-colors"
                         >
                             Arquitectura
                         </Link>
@@ -228,7 +228,7 @@ export default function CimaProPage() {
                                     <span className="w-1.5 h-1.5 rounded-full bg-cima-gold animate-pulse" />
                                     <span className="font-mono text-[10px] text-cima-gold font-bold tracking-[0.2em] uppercase">V2 Enterprise·2026</span>
                                 </span>
-                                <h1 className="font-heading font-black text-4xl sm:text-5xl lg:text-7xl mb-6 sm:mb-8 leading-[1.05] tracking-tighter">
+                                <h1 className="font-heading font-black text-3xl sm:text-5xl lg:text-7xl mb-6 sm:mb-8 leading-[1.1] md:leading-[1.05] tracking-tighter">
                                     Infraestructura Elite para Agencias de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cima-gold via-cima-gold-light to-cima-gold">Alto Rendimiento</span>
                                 </h1>
                                 <p className="text-cima-text-dim text-base sm:text-xl leading-relaxed mb-8 sm:mb-12 max-w-xl">
@@ -237,10 +237,10 @@ export default function CimaProPage() {
                                 <div className="flex flex-col sm:flex-row gap-6 items-center">
                                     <Link
                                         href="https://wa.me/528121980008?text=Hola!%20Me%20interesa%20solicitar%20un%20despliegue%20Enterprise%20de%20Cima%20Pro."
-                                        className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-cima-gold text-cima-bg font-bold text-base hover:bg-cima-gold-light hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-cima-gold/20"
+                                        className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-10 rounded-2xl bg-cima-gold text-cima-bg font-bold text-sm md:text-base hover:bg-cima-gold-light hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-cima-gold/20"
                                     >
                                         Solicitar Despliegue Enterprise
-                                        <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                                        <ArrowRight className="h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:translate-x-1" />
                                     </Link>
                                     <div className="flex -space-x-4 items-center">
                                         {[1, 2, 3, 4].map((i) => (
@@ -614,14 +614,14 @@ export default function CimaProPage() {
 
             {/* Sticky mobile CTA */}
             <div className="fixed bottom-0 inset-x-0 z-40 sm:hidden">
-                <div className="bg-cima-bg/95 backdrop-blur-xl border-t border-cima-border px-5 py-4 flex items-center gap-4">
+                <div className="bg-cima-bg/95 backdrop-blur-xl border-t border-cima-border px-5 py-3 md:py-4 flex items-center gap-4">
                     <div className="flex-1">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-cima-gold">Cupo limitado</p>
-                        <p className="text-[11px] text-white font-bold">Solo 3 agencias por ciudad/mes</p>
+                        <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-cima-gold">Cupo limitado</p>
+                        <p className="text-[10px] md:text-[11px] text-white font-bold leading-tight">Solo 3 agencias por ciudad/mes</p>
                     </div>
                     <Link
                         href="https://wa.me/528121980008?text=Hola!%20Quiero%20agendar%20una%20demo%20de%20Cima%20Pro."
-                        className="shrink-0 px-5 py-3 rounded-2xl bg-cima-gold text-cima-bg text-[11px] font-black uppercase tracking-widest"
+                        className="shrink-0 px-4 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl bg-cima-gold text-cima-bg text-[10px] md:text-[11px] font-black uppercase tracking-widest"
                     >
                         Agendar Demo
                     </Link>

@@ -515,7 +515,7 @@ export default function ExperienceShowcase() {
                         <span className={`relative text-xs md:text-sm font-black block mb-0.5 md:mb-1 transition-colors ${active === i ? "text-white" : "text-white/40"}`}>
                             {tab.label}
                         </span>
-                        <span className={`relative text-[9px] leading-relaxed transition-colors hidden sm:block ${active === i ? "text-white/50" : "text-white/15"}`}>
+                        <span className={`relative text-[9px] leading-tight transition-colors hidden md:block ${active === i ? "text-white/50" : "text-white/15"}`}>
                             {tab.desc}
                         </span>
                         {/* Auto-progress bar */}
