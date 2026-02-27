@@ -119,95 +119,106 @@ export default function PropertyPDFButton({ property, photos }: PropertyPDFButto
             <div ref={templateRef} style={{ display: "none" }} className="font-sans">
 
                 {/* PÁGINA 1: PORTADA Y DATOS */}
-                <div id="pdf-page-1" className="bg-[#0F172A] text-white w-[800px] h-[1132px] relative overflow-hidden flex flex-col">
-                    {/* Header */}
-                    <div className="p-12 pb-6 border-b border-white/10 flex justify-between items-center">
+                <div id="pdf-page-1" className="bg-[#090A0D] text-white w-[800px] min-h-[1132px] relative overflow-hidden flex flex-col font-sans">
+
+                    {/* Header con Branding Real */}
+                    <div className="p-10 pb-8 border-b border-white/5 flex justify-between items-center bg-[#0C0D12]">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-[#C8A96E]/10 border border-[#C8A96E]/30 flex items-center justify-center">
-                                <Building2 className="h-5 w-5 text-[#C8A96E]" />
+                            <div className="h-12 w-12 rounded-xl bg-[#C8A96E]/10 border border-[#C8A96E]/30 flex items-center justify-center shadow-lg shadow-[#C8A96E]/5">
+                                <Building2 className="h-6 w-6 text-[#C8A96E]" />
                             </div>
-                            <div className="flex flex-col leading-none">
-                                <span className="text-xl font-bold text-white">CIMA</span>
-                                <span className="text-[10px] tracking-[0.2em] text-white/40 uppercase">Propiedades</span>
+                            <div className="flex flex-col leading-tight">
+                                <span className="text-2xl font-bold tracking-tight text-white font-heading">CIMA</span>
+                                <span className="text-[11px] tracking-[0.3em] text-[#C8A96E] font-mono uppercase">Propiedades</span>
                             </div>
                         </div>
                         <div className="text-right">
-                            <p className="text-[#C8A96E] text-sm font-mono uppercase tracking-widest">Ficha Técnica Oficial</p>
-                            <p className="text-white/30 text-[10px] mt-1 italic">Excelencia Inmobiliaria</p>
+                            <div className="inline-block bg-[#C8A96E]/10 border border-[#C8A96E]/20 px-3 py-1 rounded-md mb-1">
+                                <p className="text-[#C8A96E] text-[10px] font-mono uppercase tracking-[0.2em] font-bold">Ficha Técnica Oficial</p>
+                            </div>
+                            <p className="text-white/30 text-[10px] italic">Excelencia en Bienes Raíces</p>
                         </div>
                     </div>
 
-                    <div className="flex-1 p-12 flex flex-col">
-                        {/* Hero Image */}
-                        <div className="w-full aspect-[16/10] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative mb-10">
-                            {property.cover_photo && (
-                                <img src={property.cover_photo} alt="" className="w-full h-full object-cover" />
-                            )}
-                            <div className="absolute top-6 left-6 flex gap-3">
-                                <span className="bg-[#C8A96E] text-[#0F172A] px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest">
-                                    {property.operation_type === "renta" ? "En Renta" : "En Venta"}
-                                </span>
-                                <span className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest">
-                                    {property.property_type}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Info Grid */}
-                        <div className="grid grid-cols-2 gap-12 mb-10">
-                            <div className="space-y-6">
-                                <div>
-                                    <h2 className="text-3xl font-bold leading-tight mb-2 uppercase">{property.title}</h2>
-                                    <div className="flex items-center gap-2 text-white/60">
-                                        <MapPin className="h-4 w-4 text-[#C8A96E]" />
-                                        <span className="text-sm">{property.neighborhood}, {property.city}</span>
+                    <div className="p-10 flex flex-col gap-10">
+                        {/* Hero Image Section */}
+                        <div className="relative">
+                            <div className="w-full aspect-[16/9] rounded-3xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#12141C]">
+                                {property.cover_photo && (
+                                    <img src={property.cover_photo} alt="" className="w-full h-full object-cover" />
+                                )}
+                                <div className="absolute top-6 left-6 flex gap-3">
+                                    <div className="bg-[#C8A96E] text-[#090A0D] px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-xl">
+                                        {property.operation_type === "renta" ? "En Renta" : "En Venta"}
+                                    </div>
+                                    <div className="bg-[#090A0D]/60 backdrop-blur-xl text-white border border-white/20 px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-xl">
+                                        {property.property_type}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="text-5xl font-black text-[#C8A96E]">
-                                    {formatPrice(property.price)}
-                                    {property.operation_type === "renta" && <span className="text-lg text-white/40 font-normal ml-2">/ mensual</span>}
+                        {/* Title & Price Row */}
+                        <div className="flex justify-between items-start gap-8">
+                            <div className="flex-1">
+                                <h2 className="text-4xl font-bold leading-[1.1] text-white font-heading uppercase tracking-tight mb-4">
+                                    {property.title}
+                                </h2>
+                                <div className="flex items-center gap-2 text-white/50 bg-white/5 self-start px-3 py-1.5 rounded-lg border border-white/5">
+                                    <MapPin className="h-4 w-4 text-[#C8A96E]" />
+                                    <span className="text-sm font-medium">{property.neighborhood}, {property.city}</span>
                                 </div>
                             </div>
-
-                            {/* Stats Badge */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
-                                    <BedDouble className="h-5 w-5 text-[#C8A96E] mx-auto mb-1" />
-                                    <p className="text-xl font-bold">{property.bedrooms}</p>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Recámaras</p>
-                                </div>
-                                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
-                                    <Bath className="h-5 w-5 text-[#C8A96E] mx-auto mb-1" />
-                                    <p className="text-xl font-bold">{property.bathrooms}</p>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Baños</p>
-                                </div>
-                                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
-                                    <Maximize2 className="h-5 w-5 text-[#C8A96E] mx-auto mb-1" />
-                                    <p className="text-xl font-bold">{property.area_m2}m²</p>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Construcción</p>
-                                </div>
-                                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
-                                    <Car className="h-5 w-5 text-[#C8A96E] mx-auto mb-1" />
-                                    <p className="text-xl font-bold">{property.parking}</p>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Estacionamiento</p>
+                            <div className="text-right">
+                                <p className="text-[10px] font-mono text-[#C8A96E] uppercase tracking-[0.3em] mb-1 font-bold">Inversión</p>
+                                <div className="text-5xl font-black text-[#C8A96E] font-heading flex flex-col items-end">
+                                    {formatPrice(property.price)}
+                                    {property.operation_type === "renta" && <span className="text-sm text-white/40 font-normal uppercase tracking-widest mt-1">Mensuales</span>}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Descripción */}
-                        <div className="flex-1 bg-white/5 rounded-2xl p-8 border border-white/10 relative">
-                            <h3 className="text-[#C8A96E] text-xs font-bold uppercase tracking-[0.2em] mb-4">Descripción de la Propiedad</h3>
-                            <p className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                        {/* Stats Grid Refined V4 */}
+                        <div className="grid grid-cols-4 gap-4">
+                            {[
+                                { label: "Recámaras", value: property.bedrooms, icon: BedDouble },
+                                { label: "Baños", value: property.bathrooms, icon: Bath },
+                                { label: "Área m²", value: property.area_m2, icon: Maximize2 },
+                                { label: "Cajones", value: property.parking, icon: Car },
+                            ].map((stat, i) => (
+                                <div key={i} className="bg-[#12141C] border border-white/5 rounded-[2rem] p-6 text-center flex flex-col items-center justify-center gap-2 shadow-inner group">
+                                    <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center mb-1">
+                                        <stat.icon className="h-5 w-5 text-[#C8A96E]" />
+                                    </div>
+                                    <p className="text-2xl font-black text-white font-heading">{stat.value}</p>
+                                    <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-bold">{stat.label}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Descripción Section */}
+                        <div className="bg-[#0C0D12] rounded-[2.5rem] p-10 border border-white/5 relative shadow-2xl">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#C8A96E]/20" />
+                                <h3 className="text-[#C8A96E] text-[10px] font-black uppercase tracking-[0.4em]">Descripción Detallada</h3>
+                                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#C8A96E]/20" />
+                            </div>
+                            <p className="text-base text-white/70 leading-relaxed font-sans whitespace-pre-line text-justify px-4">
                                 {property.description}
                             </p>
                         </div>
                     </div>
 
-                    {/* Footer */}
-                    <div className="p-12 py-8 bg-[#C8A96E] text-[#0F172A] flex justify-between items-center font-bold">
-                        <span className="text-sm">www.cimapropiedades.com</span>
-                        <span className="text-xs uppercase tracking-widest">Propiedad ID: {property.slug.slice(0, 8)}</span>
+                    {/* Footer V4 */}
+                    <div className="mt-auto p-10 py-8 bg-[#C8A96E] text-[#090A0D] flex justify-between items-center rounded-t-[3rem]">
+                        <div className="flex flex-col">
+                            <span className="text-sm font-bold font-heading uppercase tracking-widest">CIMA PROPIEDADES</span>
+                            <span className="text-[10px] font-medium opacity-80">www.cimapropiedades.com</span>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-0.5">ID de Referencia</p>
+                            <p className="text-sm font-black font-mono">{property.slug.slice(0, 8).toUpperCase()}</p>
+                        </div>
                     </div>
                 </div>
 
