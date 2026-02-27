@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
     ShieldCheck, Zap, Globe, MessageCircle, BarChart3,
-    ArrowRight, Sparkles, Building2, UserCheck, Layout
+    ArrowRight, Sparkles, Building2, UserCheck, Layout, Calendar
 } from "lucide-react";
 import { motion } from "framer-motion";
 import FadeIn from "@/components/landing/fade-in";
@@ -163,6 +163,22 @@ const FAQS = [
     {
         q: "¿Cómo se escala el sistema?",
         a: "Nuestra arquitectura distribuida permite manejar desde una agencia boutique hasta una franquicia nacional con miles de propiedades sin pérdida de rendimiento."
+    },
+    {
+        q: "¿Por qué no contratar un desarrollador independiente más barato?",
+        a: "Un freelancer puede construir partes del sistema, pero no el ecosistema. Necesitarías contratar por separado: diseñador UX, desarrollador backend, experto en CRM, especialista en IA y alguien que los integre. El proceso toma meses, los errores de integración son costosos, y cuando algo falla, nadie es responsable. Con Cima Pro tienes un solo equipo, un solo contrato y un solo punto de responsabilidad."
+    },
+    {
+        q: "¿En cuánto tiempo comienza a generar resultados?",
+        a: "La mayoría de nuestros clientes registran su primer lead calificado en los primeros 7 días post-lanzamiento. El Portal de Propietarios comienza a generar exclusivas nuevas desde la primera reunión en que lo demuestras."
+    },
+    {
+        q: "¿Funciona si ya tengo un CRM o sitio web?",
+        a: "Sí. Realizamos una auditoría de lo que ya tienes y decidimos qué migramos, qué integramos y qué reemplazamos. El objetivo es no tirar nada que funcione, sino potenciarlo dentro del ecosistema."
+    },
+    {
+        q: "¿Qué pasa si quiero expandirme a otra ciudad?",
+        a: "El sistema está diseñado para escalar geográficamente. Agregar una nueva ciudad o sucursal es una configuración de días, no meses. Ya tienes la infraestructura lista para crecer."
     }
 ];
 
@@ -398,7 +414,9 @@ export default function CimaProPage() {
                                     desc: "Para asesores que buscan posicionarse en el mercado de ultra-lujo.",
                                     features: ["Landing Elite Individual", "Fichas Automáticas", "IA Intelligence Básica", "Soporte Vía Desk"],
                                     button: "Comenzar Setup",
-                                    highlight: false
+                                    highlight: false,
+                                    delivery: "4 – 6 semanas",
+                                    deliveryNote: "Kick-off + auditoría de marca incluidos"
                                 },
                                 {
                                     name: "Enterprise Pro",
@@ -406,7 +424,9 @@ export default function CimaProPage() {
                                     desc: "La arquitectura completa para dominar mercados locales.",
                                     features: ["Ecosistema 360 Full", "Portales de Cliente Ilimitados", "IA Pro Avanzada", "Automatización CRM", "SLA 24/7 Priority"],
                                     button: "Solicitar Despliegue",
-                                    highlight: true
+                                    highlight: true,
+                                    delivery: "8 – 12 semanas",
+                                    deliveryNote: "Incluye sprints de configuración y capacitación"
                                 },
                                 {
                                     name: "Global Elite",
@@ -414,7 +434,9 @@ export default function CimaProPage() {
                                     desc: "Estructura masiva para agencias nacionales e internacionales.",
                                     features: ["Multimarca Dinámica", "IA de Análisis Predictivo", "Infraestructura Dedicada", "Partner Success Manager"],
                                     button: "Contactar Partners",
-                                    highlight: false
+                                    highlight: false,
+                                    delivery: "12 – 20 semanas",
+                                    deliveryNote: "Discovery, arquitectura custom y despliegue escalonado"
                                 }
                             ].map((plan, i) => (
                                 <div key={i} className={`p-12 rounded-[40px] border transition-all duration-700 flex flex-col relative overflow-visible group ${plan.highlight ? "bg-cima-card border-cima-gold shadow-[0_40px_100px_rgba(200,169,110,0.1)] scale-105 z-20" : "bg-cima-bg/40 border-cima-border/50 scale-100 opacity-90 hover:opacity-100 hover:border-cima-gold/30 hover:scale-[1.02]"}`}>
@@ -422,9 +444,17 @@ export default function CimaProPage() {
                                         <div className="absolute -top-4 right-8 bg-cima-gold text-cima-bg text-[10px] font-black uppercase tracking-[0.2em] py-1.5 px-5 rounded-full shadow-lg z-30">Most Scalable</div>
                                     )}
                                     <h4 className="font-heading font-bold text-2xl mb-2 tracking-tight group-hover:text-cima-gold transition-colors">{plan.name}</h4>
-                                    <div className="mb-8">
+                                    <div className="mb-4">
                                         <span className="text-5xl font-black text-cima-gold tracking-tighter">{plan.price}</span>
                                         <span className="text-cima-text-dim text-xs ml-3 font-mono font-bold uppercase tracking-widest opacity-60">One-Time Fee</span>
+                                    </div>
+                                    {/* Delivery time */}
+                                    <div className="flex items-start gap-2 mb-6 p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                                        <Calendar className="w-3.5 h-3.5 text-cima-gold shrink-0 mt-0.5" />
+                                        <div>
+                                            <span className="text-[10px] font-black text-cima-gold uppercase tracking-widest block">{plan.delivery}</span>
+                                            <span className="text-[9px] text-cima-text-dim italic">{plan.deliveryNote}</span>
+                                        </div>
                                     </div>
                                     <p className="text-cima-text-muted text-sm mb-10 leading-relaxed font-medium min-h-[48px]">{plan.desc}</p>
                                     <ul className="space-y-5 mb-12 flex-1">
@@ -443,6 +473,62 @@ export default function CimaProPage() {
                                     >
                                         {plan.button}
                                     </Link>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Scarcity note */}
+                        <div className="mt-12 flex items-center justify-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+                            <p className="text-sm text-cima-text-dim font-mono font-bold text-center">
+                                <span className="text-white">Cupo limitado:</span> Solo tomamos <span className="text-cima-gold">3 nuevas agencias por ciudad</span> cada mes para garantizar la calidad del despliegue.
+                            </p>
+                        </div>
+                    </FadeIn>
+                </section>
+
+                {/* Comparison Table */}
+                <section className="max-w-5xl mx-auto px-4 sm:px-8 mb-40 relative">
+                    <FadeIn>
+                        <div className="text-center mb-14">
+                            <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Análisis de Valor</span>
+                            <h2 className="font-heading font-black text-4xl sm:text-5xl text-cima-text tracking-tight">Cima Pro vs. La Alternativa Tradicional</h2>
+                            <p className="text-cima-text-dim mt-4 text-base max-w-xl mx-auto">Lo que muchos intentan armar por su cuenta termina costando el doble y tardando 3 veces más.</p>
+                        </div>
+
+                        <div className="rounded-3xl border border-cima-border overflow-hidden">
+                            {/* Header */}
+                            <div className="grid grid-cols-3 bg-cima-card/60">
+                                <div className="p-5 border-r border-cima-border" />
+                                <div className="p-5 border-r border-cima-border text-center">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-cima-text-dim block">Solución Tradicional</span>
+                                    <span className="text-[9px] text-cima-text-dim/50">(freelancers + CRM + diseñador)</span>
+                                </div>
+                                <div className="p-5 text-center bg-cima-gold/5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-cima-gold block">Cima Pro</span>
+                                    <span className="text-[9px] text-cima-gold/50">Ecosistema Unificado</span>
+                                </div>
+                            </div>
+                            {/* Rows */}
+                            {[
+                                { item: "Costo total estimado", trad: "$60k–$150k+ fragmentado", cima: "$45k–$120k todo incluido", cimaGood: true },
+                                { item: "Tiempo de implementación", trad: "6–18 meses", cima: "4–20 semanas", cimaGood: true },
+                                { item: "Portales de Propietarios", trad: "No existe / extra", cima: "Incluido", cimaGood: true },
+                                { item: "IA de calificación de leads", trad: "No existe", cima: "Nativa en el sistema", cimaGood: true },
+                                { item: "Landing individual por propiedad", trad: "Manual, semanas por página", cima: "Automática al publicar", cimaGood: true },
+                                { item: "Mantenimiento y actualizaciones", trad: "Pagar a distintos proveedores", cima: "Un solo punto de contacto", cimaGood: true },
+                                { item: "Propiedad de los datos", trad: "Dependiente de plataformas", cima: "100% tuya en tu cloud", cimaGood: true },
+                            ].map((row, i) => (
+                                <div key={i} className={`grid grid-cols-3 border-t border-cima-border ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                                    <div className="p-4 sm:p-5 flex items-center border-r border-cima-border">
+                                        <span className="text-[11px] font-bold text-cima-text">{row.item}</span>
+                                    </div>
+                                    <div className="p-4 sm:p-5 flex items-center justify-center border-r border-cima-border">
+                                        <span className="text-[11px] text-red-400/80 font-medium text-center">{row.trad}</span>
+                                    </div>
+                                    <div className="p-4 sm:p-5 flex items-center justify-center bg-cima-gold/[0.03]">
+                                        <span className="text-[11px] text-cima-gold font-bold text-center">{row.cima}</span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -522,6 +608,22 @@ export default function CimaProPage() {
 
             {/* Floating UI */}
             <VideoDemoBubble />
+
+            {/* Sticky mobile CTA */}
+            <div className="fixed bottom-0 inset-x-0 z-40 sm:hidden">
+                <div className="bg-cima-bg/95 backdrop-blur-xl border-t border-cima-border px-5 py-4 flex items-center gap-4">
+                    <div className="flex-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-cima-gold">Cupo limitado</p>
+                        <p className="text-[11px] text-white font-bold">Solo 3 agencias por ciudad/mes</p>
+                    </div>
+                    <Link
+                        href="https://wa.me/528116307133?text=Hola!%20Quiero%20agendar%20una%20demo%20de%20Cima%20Pro."
+                        className="shrink-0 px-5 py-3 rounded-2xl bg-cima-gold text-cima-bg text-[11px] font-black uppercase tracking-widest"
+                    >
+                        Agendar Demo
+                    </Link>
+                </div>
+            </div>
 
             <footer className="border-t border-cima-border py-20 bg-cima-bg relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-8">
