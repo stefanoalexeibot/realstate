@@ -342,8 +342,8 @@ export default function ExperienceShowcase() {
                         key={e.id}
                         onClick={() => { setActive(i); }}
                         className={`relative flex-1 sm:max-w-[220px] text-left px-5 py-4 rounded-2xl border transition-all duration-500 overflow-hidden group ${active === i
-                                ? "border-[#C8A96E]/50 bg-[#C8A96E]/5"
-                                : "border-white/5 bg-white/[0.02] hover:border-white/10"
+                            ? "border-[#C8A96E]/50 bg-[#C8A96E]/5"
+                            : "border-white/5 bg-white/[0.02] hover:border-white/10"
                             }`}
                     >
                         {active === i && (
@@ -390,7 +390,7 @@ export default function ExperienceShowcase() {
                     </AnimatePresence>
                 </div>
 
-                {/* Component */}
+                {/* Component — must use capitalized var so React renders properly (rules of hooks) */}
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={active}
@@ -400,7 +400,9 @@ export default function ExperienceShowcase() {
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         className="relative z-10 aspect-[16/9]"
                     >
-                        {exp.component()}
+                        {active === 0 && <AdvisorDashboardPreview />}
+                        {active === 1 && <OwnerPortalPreview />}
+                        {active === 2 && <PropertyLandingPreview />}
                     </motion.div>
                 </AnimatePresence>
 
