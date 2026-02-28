@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
     const body = await req.json();
-    const supabase = createServiceClient();
+    const supabase = createAdminClient();
 
     const updateData: Record<string, unknown> = {};
     if ("status" in body) updateData.status = body.status;

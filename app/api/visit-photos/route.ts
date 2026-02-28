@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 // GET /api/visit-photos?visit_id=xxx
 export async function GET(req: Request) {
@@ -8,7 +8,7 @@ export async function GET(req: Request) {
         const visitId = searchParams.get("visit_id");
         if (!visitId) return NextResponse.json({ error: "visit_id requerido" }, { status: 400 });
 
-        const supabase = createServiceClient();
+        const supabase = createAdminClient();
         const { data, error } = await supabase
             .from("re_visit_photos")
             .select("*")
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "visit_id y file son requeridos" }, { status: 400 });
         }
 
-        const supabase = createServiceClient();
+        const supabase = createAdminClient();
 
         // Upload to storage
         const ext = file.name.split(".").pop() ?? "jpg";
