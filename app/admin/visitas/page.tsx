@@ -463,6 +463,15 @@ export default function VisitasAdmin() {
                 <div><label className="block text-xs font-medium text-cima-text-muted mb-1.5">Nombre *</label><input value={newVisit.name} onChange={e => setNewVisit(v => ({ ...v, name: e.target.value }))} className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2 text-sm text-cima-text" /></div>
                 <div><label className="block text-xs font-medium text-cima-text-muted mb-1.5">Teléfono *</label><input value={newVisit.phone} onChange={e => setNewVisit(v => ({ ...v, phone: e.target.value }))} className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2 text-sm text-cima-text" /></div>
               </div>
+              <div>
+                <label className="block text-xs font-medium text-cima-text-muted mb-1.5">Fecha de Visita</label>
+                <input
+                  type="date"
+                  value={newVisit.preferred_date}
+                  onChange={e => setNewVisit(v => ({ ...v, preferred_date: e.target.value }))}
+                  className="w-full rounded-lg bg-cima-surface border border-cima-border px-3 py-2 text-sm text-cima-text focus:outline-none focus:border-cima-gold/50"
+                />
+              </div>
               <button onClick={saveManualVisit} disabled={savingNew} className="w-full py-3 rounded-xl bg-cima-gold text-cima-bg font-bold flex items-center justify-center gap-2">{savingNew ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Confirmar</button>
             </div>
           </div>
