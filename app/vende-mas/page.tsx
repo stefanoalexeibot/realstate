@@ -68,27 +68,68 @@ function PortalPreviewSystem() {
     const tabs = [
         {
             id: 0,
-            label: "Dashboard Real-Time",
+            label: "Dashboard Propietario",
             icon: Layout,
             title: "Toda la visibilidad, cero llamadas.",
-            desc: "Tu cliente ve el avance paso a paso: desde la toma de fotos hasta el cierre.",
+            desc: "Tu cliente ve el avance paso a paso: desde la toma de fotos hasta el cierre, tal como en el portal real.",
             mock: (
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10">
-                        <div className="flex gap-3 items-center">
-                            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-xs font-bold">Estado: Promoción Activa</span>
+                <div className="space-y-4 px-1">
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-mono text-cima-gold uppercase tracking-tighter decoration-cima-gold/30 underline decoration-dotted">Mi Portal</p>
+                            <h4 className="text-sm font-bold text-white">Hola, PEDRO</h4>
                         </div>
-                        <span className="text-[10px] font-mono text-white/40">Día 12</span>
+                        <div className="h-6 px-2 rounded-full border border-cima-gold/30 bg-cima-gold/5 flex items-center gap-1.5 shrink-0">
+                            <ShieldCheck className="h-3 w-3 text-cima-gold" />
+                            <span className="text-[8px] font-bold text-cima-gold uppercase tracking-tighter">Expediente OK</span>
+                        </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                            <p className="text-[9px] text-white/40 uppercase mb-1">Visitas</p>
-                            <p className="text-xl font-bold">24</p>
+
+                    <div className="bg-white/[0.03] border border-white/10 rounded-xl p-3 relative overflow-hidden group/card shadow-2xl">
+                        <div className="flex justify-between items-start mb-3">
+                            <div className="min-w-0 flex-1">
+                                <h5 className="text-[11px] font-bold text-white truncate">Departamento en Valle Oriente</h5>
+                                <p className="text-[8px] text-white/40 truncate">Valle Oriente, Monterrey</p>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 shrink-0">
+                                <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                                <span className="text-[7px] font-bold text-green-500 uppercase">Activa</span>
+                            </div>
                         </div>
-                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                            <p className="text-[9px] text-white/40 uppercase mb-1">Interesados</p>
-                            <p className="text-xl font-bold">12</p>
+
+                        <div className="grid grid-cols-4 gap-2 mb-3">
+                            {[
+                                { l: "Precio", v: "$4.2M" },
+                                { l: "Rec.", v: "2" },
+                                { l: "m²", v: "220" },
+                                { l: "Tipo", v: "Venta" }
+                            ].map((s, i) => (
+                                <div key={i} className="bg-white/5 border border-white/5 rounded-lg p-1.5 text-center">
+                                    <p className="text-[6px] text-white/30 uppercase font-bold mb-0.5">{s.l}</p>
+                                    <p className="text-[9px] font-black text-white">{s.v}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Timeline */}
+                        <div className="pt-3 border-t border-white/5">
+                            <p className="text-[7px] font-bold text-white/40 uppercase mb-3 tracking-widest">Etapa de tu venta</p>
+                            <div className="relative flex justify-between">
+                                <div className="absolute top-[9px] left-0 right-0 h-[1px] bg-white/10" />
+                                {[
+                                    { s: "Captación", d: true },
+                                    { s: "Publicación", d: true },
+                                    { s: "Visitas", a: true },
+                                    { s: "Prospecto", d: false }
+                                ].map((step, i) => (
+                                    <div key={i} className="relative z-10 flex flex-col items-center">
+                                        <div className={`h-4.5 w-4.5 rounded-full border flex items-center justify-center ${step.a ? "bg-cima-gold border-cima-gold shadow-lg shadow-cima-gold/20" : step.d ? "bg-white/10 border-white/20" : "bg-black border-white/10"}`}>
+                                            {step.d ? <CheckCircle2 className="h-2.5 w-2.5 text-black" /> : <div className={`h-1.5 w-1.5 rounded-full ${step.a ? "bg-black" : "bg-white/10"}`} />}
+                                        </div>
+                                        <p className={`text-[6px] mt-1 pr-1 font-bold truncate uppercase ${step.a ? "text-cima-gold" : "text-white/20"}`}>{step.s}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -96,41 +137,78 @@ function PortalPreviewSystem() {
         },
         {
             id: 1,
-            label: "Evidencia Física",
+            label: "Seguimiento y Feedback",
             icon: Camera,
             title: "Prueba visual de tu trabajo.",
-            desc: "Sube fotos de las visitas y notas de feedback. El propietario sabe que estás moviendo su propiedad.",
+            desc: "Tus clientes ven el sentimiento del mercado en tiempo real. Esto facilita los ajustes de precio.",
             mock: (
-                <div className="grid grid-cols-2 gap-3">
-                    {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="aspect-video bg-white/5 border border-white/10 rounded-lg flex items-center justify-center relative overflow-hidden group">
-                            <Camera className="h-6 w-6 text-white/10" />
-                            <div className="absolute bottom-1 right-1 bg-green-500 rounded-full p-0.5">
-                                <CheckCircle2 className="h-2 w-2 text-black" />
+                <div className="space-y-4 px-1">
+                    <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 overflow-hidden">
+                        <div className="flex justify-between items-center mb-4">
+                            <div className="flex items-center gap-2">
+                                <TrendingUp className="h-3 w-3 text-cima-gold" />
+                                <h5 className="text-[10px] font-black text-white uppercase tracking-widest">Sentimiento del Mercado</h5>
                             </div>
+                            <span className="text-[8px] font-mono text-white/20">Semana 3</span>
                         </div>
-                    ))}
+
+                        <div className="grid grid-cols-1 gap-2 mb-4">
+                            {[
+                                { label: "Precio alto", count: 3, color: "bg-red-500" },
+                                { label: "Le encantó", count: 1, color: "bg-green-500" },
+                                { label: "Lo pensará", count: 2, color: "bg-cima-gold" }
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/5 group/chip hover:bg-white/10 transition-all">
+                                    <span className="text-[9px] font-bold text-white/70">{item.label}</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className={`h-1.5 w-1.5 rounded-full ${item.color}`} />
+                                        <span className="text-[9px] font-black text-white">{item.count}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="p-3 bg-cima-gold/5 border border-cima-gold/20 rounded-lg">
+                            <p className="text-[8px] text-white/60 italic leading-relaxed">
+                                "La mayoría de prospectos comentan que el acabando de la cocina es excelente, pero les gustaría una opción de financiamiento..."
+                            </p>
+                        </div>
+                    </div>
                 </div>
             )
         },
         {
             id: 2,
-            label: "Inteligencia de Datos",
-            icon: BarChart3,
-            title: "Feedback que cierra tratos.",
-            desc: "Deja que los datos hablen. Genera reportes de mercado que justifican ajustes de precio con un clic.",
+            label: "Promoción de Alto Impacto",
+            icon: Share2,
+            title: "Viralidad que vende.",
+            desc: "Incentivamos al propietario a compartir su propiedad en redes, multiplicando el alcance de tu exclusiva.",
             mock: (
-                <div className="space-y-3">
-                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-cima-gold w-[70%]" />
+                <div className="space-y-4 px-1">
+                    <div className="text-center mb-4">
+                        <p className="text-[8px] font-black text-cima-gold uppercase tracking-[0.2em] mb-1">Promueve tu propiedad</p>
+                        <p className="text-[7px] text-white/40">Ayuda a que más personas la vean y se venda más rápido.</p>
                     </div>
-                    <div className="flex justify-between text-[10px] font-mono">
-                        <span className="text-cima-gold">Sentimiento Positivo</span>
-                        <span className="text-white/40">70%</span>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-[#25D366]/10 border border-[#25D366]/30 p-4 rounded-xl flex flex-col items-center gap-2 group/wa cursor-pointer hover:bg-[#25D366]/20 transition-all">
+                            <MessageSquare className="h-6 w-6 text-[#25D366]" />
+                            <span className="text-[9px] font-bold text-[#25D366]">WhatsApp</span>
+                        </div>
+                        <div className="bg-[#1877F2]/10 border border-[#1877F2]/30 p-4 rounded-xl flex flex-col items-center gap-2 group/fb cursor-pointer hover:bg-[#1877F2]/20 transition-all">
+                            <Share2 className="h-6 w-6 text-[#1877F2]" />
+                            <span className="text-[9px] font-bold text-[#1877F2]">Facebook</span>
+                        </div>
                     </div>
-                    <p className="text-[10px] text-white/40 italic p-3 bg-white/[0.02] rounded-lg border border-white/5">
-                        "El feedback indica que el precio está 5% arriba del mercado actual..."
-                    </p>
+
+                    <div className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded-full bg-cima-gold/20 flex items-center justify-center">
+                                <Eye className="h-3 w-3 text-cima-gold" />
+                            </div>
+                            <span className="text-[8px] text-white/60 font-medium">4 personas han visto tu propiedad hoy.</span>
+                        </div>
+                    </div>
                 </div>
             )
         }
@@ -175,27 +253,35 @@ function PortalPreviewSystem() {
                             {/* The "Portal" Mockup */}
                             <div className="relative group mx-auto max-w-[280px] md:max-w-sm">
                                 <div className="absolute -inset-6 bg-cima-gold/10 blur-[40px] md:blur-[60px] rounded-full opacity-50" />
-                                <div className="relative border-[3px] md:border-4 border-white/10 rounded-[2rem] md:rounded-[2.5rem] aspect-[9/16] bg-[#0c0c0d] overflow-hidden shadow-2xl p-4 md:p-6">
+                                <div className="relative border-[4px] md:border-6 border-white/10 rounded-[2.5rem] md:rounded-[3.5rem] aspect-[9/18] bg-[#0c0c0d] overflow-hidden shadow-2xl p-4 md:p-6 ring-1 ring-white/20">
                                     {/* Phone notch */}
-                                    <div className="mx-auto w-16 md:w-24 h-3 md:h-4 bg-white/10 rounded-full mb-6 md:mb-8" />
+                                    <div className="mx-auto w-16 md:w-24 h-4 md:h-5 bg-black border border-white/5 rounded-b-2xl mb-8 md:mb-10 flex items-center justify-center overflow-hidden">
+                                        <div className="h-1 w-8 bg-white/10 rounded-full" />
+                                    </div>
 
-                                    <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-8">
-                                        <div className="h-6 w-6 md:h-8 md:w-8 rounded-full bg-cima-gold/20 border border-cima-gold/40" />
-                                        <div className="flex-1">
-                                            <div className="h-2 w-16 md:w-20 bg-white/10 rounded-full mb-1" />
-                                            <div className="h-1 w-8 md:w-12 bg-white/5 rounded-full" />
+                                    {/* Portal Header */}
+                                    <div className="flex items-center justify-between gap-2 mb-8 md:mb-10">
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center shrink-0">
+                                                <Cpu className="h-4 w-4 text-cima-gold" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[7px] font-black uppercase text-white leading-none">Cima</span>
+                                                <span className="text-[5px] font-mono text-cima-gold tracking-widest leading-none uppercase">Portal</span>
+                                            </div>
+                                        </div>
+                                        <div className="h-6 w-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                                            <Menu className="h-3 w-3 text-white/40" />
                                         </div>
                                     </div>
 
                                     {tabs[activeTab].mock}
 
-                                    <div className="absolute bottom-6 md:bottom-10 left-4 md:left-6 right-4 md:right-6 space-y-2 md:space-y-3">
-                                        <div className="h-7 md:h-8 w-full bg-cima-gold/20 border border-cima-gold/40 rounded-lg flex items-center justify-center">
-                                            <MessageSquare className="h-3 w-3 text-cima-gold" />
-                                        </div>
-                                        <div className="h-7 md:h-8 w-full bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
-                                            <Share2 className="h-3 w-3 text-white/20" />
-                                        </div>
+                                    {/* Bottom Navigation */}
+                                    <div className="absolute bottom-6 left-6 right-6 h-12 bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-around px-4">
+                                        {[Layout, Camera, FileText, Settings].map((Icon, i) => (
+                                            <Icon key={i} className={`h-4 w-4 ${i === activeTab ? "text-cima-gold" : "text-white/20"}`} />
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -207,83 +293,155 @@ function PortalPreviewSystem() {
     );
 }
 
+
 function AgentCommandCenterPreview() {
     return (
-        <div className="bg-[#0c0c0d] border border-white/5 rounded-[20px] md:rounded-[40px] overflow-hidden shadow-2xl relative group w-full max-w-full">
+        <div className="bg-[#0c0c0d] border border-white/5 rounded-[20px] md:rounded-[40px] overflow-hidden shadow-2xl relative group w-full max-w-full ring-1 ring-white/10">
             <div className="absolute inset-0 bg-gradient-to-tr from-cima-gold/[0.03] to-transparent pointer-events-none" />
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[500px]">
-                {/* Sidebar - Collapsible on small screens? Let's use simple layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
+                {/* Sidebar */}
                 <div className="lg:col-span-3 border-r border-white/5 p-4 md:p-6 bg-black/40 lg:flex lg:flex-col">
-                    <div className="flex items-center justify-between lg:justify-start gap-3 mb-6 lg:mb-10">
-                        <div className="flex items-center gap-2">
-                            <div className="h-6 w-6 md:h-8 md:w-8 rounded bg-cima-gold flex items-center justify-center">
-                                <Briefcase className="h-3 w-3 md:h-4 md:w-4 text-black" />
+                    <div className="flex items-center justify-between lg:justify-start gap-4 mb-8 lg:mb-12">
+                        <div className="flex items-center gap-2.5">
+                            <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/20">
+                                <Briefcase className="h-4 w-4 text-black" />
                             </div>
-                            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white/80">Agent Command</span>
+                            <div className="flex flex-col">
+                                <span className="text-[9px] font-black uppercase tracking-wider text-white">Command</span>
+                                <span className="text-[7px] font-mono text-cima-gold uppercase tracking-widest">Active System</span>
+                            </div>
                         </div>
-                        <Menu className="h-4 w-4 md:h-5 md:w-5 lg:hidden text-white/40" />
+                        <Menu className="h-5 w-5 lg:hidden text-white/40 cursor-pointer" />
                     </div>
 
-                    <nav className="space-y-1 md:space-y-2 hidden lg:block overflow-y-auto">
+                    <nav className="space-y-2 hidden lg:block overflow-y-auto pr-2 custom-scrollbar">
                         {[
                             { icon: Layout, label: "Mis Propiedades", active: true },
                             { icon: Users, label: "Clientes / Dueños", active: false },
                             { icon: Target, label: "Visitas Registradas", active: false },
                             { icon: TrendingUp, label: "Analíticos", active: false },
+                            { icon: MessageSquare, label: "Mensajería", active: false, badge: "3" },
                             { icon: Settings, label: "Configuración", active: false }
                         ].map((item, i) => (
-                            <div key={i} className={`flex items-center gap-3 p-2 md:p-3 rounded-xl transition-all ${item.active ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20" : "text-white/20 hover:text-white/40"}`}>
-                                <item.icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                                <span className="text-[8px] md:text-[10px] font-bold uppercase">{item.label}</span>
+                            <div key={i} className={`flex items-center justify-between group cursor-pointer p-3 rounded-xl transition-all duration-300 ${item.active ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20" : "text-white/30 hover:bg-white/[0.03] hover:text-white/60"}`}>
+                                <div className="flex items-center gap-3">
+                                    <item.icon className="h-4 w-4" />
+                                    <span className="text-[10px] font-bold uppercase tracking-tight">{item.label}</span>
+                                </div>
+                                {item.badge && (
+                                    <span className="h-4 w-4 rounded-full bg-cima-gold text-black text-[8px] font-black flex items-center justify-center">{item.badge}</span>
+                                )}
                             </div>
                         ))}
                     </nav>
 
-                    <div className="mt-6 lg:mt-auto p-3 md:p-4 bg-white/[0.02] border border-white/5 rounded-xl md:rounded-2xl hidden lg:block overflow-hidden">
-                        <p className="text-[8px] md:text-[9px] text-cima-gold font-bold mb-2 uppercase tracking-tight">Capacidad de Cuenta</p>
-                        <div className="h-1 w-full bg-white/5 rounded-full mb-2">
-                            <div className="h-full bg-cima-gold w-[40%]" />
+                    <div className="mt-8 lg:mt-auto p-4 bg-gradient-to-b from-white/[0.04] to-transparent border border-white/10 rounded-2xl hidden lg:block overflow-hidden relative group/capacity">
+                        <div className="absolute inset-0 bg-cima-gold opacity-0 group-hover/capacity:opacity-[0.02] transition-opacity" />
+                        <p className="text-[10px] text-cima-gold font-black mb-3 uppercase tracking-widest">Capacidad de Cuenta</p>
+                        <div className="h-1.5 w-full bg-white/5 rounded-full mb-3 p-[1px]">
+                            <div className="h-full bg-cima-gold w-[60%] rounded-full shadow-[0_0_10px_rgba(200,169,110,0.5)]" />
                         </div>
-                        <p className="text-[7px] md:text-[8px] text-white/30 uppercase">4/10 propiedades activas</p>
+                        <div className="flex justify-between items-center">
+                            <p className="text-[8px] text-white/40 uppercase font-mono">6/10 propiedades</p>
+                            <ArrowRight className="h-2.5 w-2.5 text-cima-gold animate-pulse" />
+                        </div>
                     </div>
                 </div>
 
-                <div className="lg:col-span-9 p-4 md:p-8 lg:p-12 overflow-x-hidden">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 md:mb-10 text-wrap">
-                        <h4 className="text-lg md:text-xl font-heading font-black">Mis Propiedades en Venta</h4>
-                        <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-cima-gold text-black px-4 py-2 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-tight sm:tracking-tighter hover:scale-105 transition-all shadow-lg shadow-cima-gold/10 whitespace-nowrap">
-                            <Plus className="h-3.5 w-3.5" /> Nueva Propiedad
+                <div className="lg:col-span-9 p-4 md:p-8 lg:p-10 overflow-x-hidden flex flex-col">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
+                        <div>
+                            <h4 className="text-xl md:text-2xl font-heading font-black tracking-tight mb-1">Mis Propiedades</h4>
+                            <p className="text-xs text-white/40">Gestionando <span className="text-white font-bold">6 activos</span> en Monterrey, N.L.</p>
+                        </div>
+                        <button className="w-full sm:w-auto flex items-center justify-center gap-3 bg-cima-gold text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:scale-105 transition-all shadow-xl shadow-cima-gold/10 group">
+                            <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" /> Nueva Propiedad
                         </button>
                     </div>
 
-                    <div className="space-y-3 md:space-y-4">
+                    <div className="grid grid-cols-1 gap-4 flex-1">
                         {[
-                            { name: "Residencia Las Misiones", price: "$12.4M", status: "En Venta", owner: "Familia García" },
-                            { name: "Departamento Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M." }
+                            {
+                                name: "Residencia Las Misiones",
+                                price: "$12.4M",
+                                status: "Venta",
+                                owner: "Familia García",
+                                img: "/cocina-despues.png",
+                                hits: 142
+                            },
+                            {
+                                name: "Departamento Torre LOVFT",
+                                price: "$4.2M",
+                                status: "Exclusiva",
+                                owner: "Ing. Roberto M.",
+                                img: "/estancia-despues.png",
+                                hits: 89
+                            },
+                            {
+                                name: "Residencia Contry Sol",
+                                price: "$8.9M",
+                                status: "Venta",
+                                owner: "Dra. Sofía L.",
+                                img: "/recamara-despues.png",
+                                hits: 56
+                            }
                         ].map((prop, i) => (
-                            <div key={i} className="bg-white/[0.03] border border-white/10 p-4 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 hover:border-cima-gold/30 transition-all group/item overflow-hidden">
-                                <div className="flex items-center gap-3 md:gap-5 w-full md:w-auto">
-                                    <div className="h-10 w-14 md:h-12 md:w-16 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center text-white/20 font-mono text-[8px] md:text-[10px] shrink-0">PHOTO</div>
-                                    <div className="min-w-0">
-                                        <p className="text-[10px] md:text-xs font-bold text-white group-hover/item:text-cima-gold transition-colors truncate">{prop.name}</p>
-                                        <div className="flex gap-3 md:gap-4 mt-1">
-                                            <span className="text-[8px] md:text-[9px] text-white/30 font-mono uppercase tracking-tighter shrink-0">{prop.price}</span>
-                                            <span className="text-[8px] md:text-[9px] text-cima-gold font-bold uppercase tracking-widest shrink-0">{prop.status}</span>
+                            <div key={i} className="bg-white/[0.03] border border-white/5 p-4 md:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 hover:border-cima-gold/40 hover:bg-white/[0.05] transition-all group/item">
+                                <div className="flex items-center gap-4 md:gap-6 w-full sm:w-auto">
+                                    <div className="h-14 w-20 md:h-16 md:w-24 bg-black border border-white/10 rounded-xl overflow-hidden shrink-0 relative">
+                                        <img src={prop.img} alt={prop.name} className="w-full h-full object-cover opacity-80 group-hover/item:opacity-100 transition-opacity" />
+                                        <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10">
+                                            <p className="text-[6px] font-black text-cima-gold uppercase">HD</p>
+                                        </div>
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <p className="text-sm md:text-base font-bold text-white group-hover/item:text-cima-gold transition-colors truncate tracking-tight">{prop.name}</p>
+                                            <span className="px-1.5 py-0.5 rounded-md bg-cima-gold/10 border border-cima-gold/20 text-[7px] font-black text-cima-gold uppercase whitespace-nowrap">{prop.status}</span>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center gap-1.5 font-mono">
+                                                <TrendingUp className="h-3 w-3 text-cima-gold" />
+                                                <span className="text-[10px] font-bold text-white/60">{prop.price}</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5 border-l border-white/10 pl-4 font-mono">
+                                                <Eye className="h-3 w-3 text-white/20" />
+                                                <span className="text-[10px] font-bold text-white/40">{prop.hits} vistas</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto border-t md:border-t-0 pt-3 md:pt-0 border-white/5">
-                                    <div className="text-left md:text-right">
-                                        <p className="text-[7px] md:text-[8px] text-white/20 uppercase font-black tracking-widest mb-0.5 md:mb-1">Dueño asignado</p>
-                                        <p className="text-[9px] md:text-[10px] text-white/60 font-medium truncate">{prop.owner}</p>
-                                    </div>
-                                    <div className="flex gap-1.5 md:gap-2">
-                                        <div className="p-1.5 md:p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/10 hover:border-cima-gold/40 transition-all cursor-pointer">
-                                            <Eye className="h-3 md:h-3.5 w-3 md:w-3.5 text-white/40" />
+
+                                <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto border-t sm:border-t-0 pt-4 sm:pt-0 border-white/5">
+                                    <div className="space-y-1">
+                                        <p className="text-[7px] font-black text-white/20 uppercase tracking-[0.2em]">Propietario</p>
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-5 w-5 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                                                <Users className="h-2.5 w-2.5 text-white/40" />
+                                            </div>
+                                            <p className="text-[11px] font-bold text-white/70">{prop.owner}</p>
                                         </div>
-                                        <div className="p-1.5 md:p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/10 hover:border-cima-gold/40 transition-all cursor-pointer">
-                                            <Target className="h-3 md:h-3.5 w-3 md:w-3.5 text-white/40" />
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        <div className="group/btn relative">
+                                            <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-cima-gold/20 hover:border-cima-gold/40 transition-all cursor-pointer">
+                                                <Settings className="h-4 w-4 text-white/40 group-hover/item:text-cima-gold transition-colors" />
+                                            </div>
+                                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-cima-gold text-black text-[7px] font-black uppercase rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Editar Plan</span>
+                                        </div>
+                                        <div className="group/btn relative">
+                                            <div className="p-2.5 bg-cima-gold/10 border border-cima-gold/20 rounded-xl hover:bg-cima-gold text-black transition-all cursor-pointer group/portal">
+                                                <Layout className="h-4 w-4 text-cima-gold group-hover/portal:text-black transition-colors" />
+                                            </div>
+                                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-cima-gold text-black text-[7px] font-black uppercase rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Ver Portal</span>
+                                        </div>
+                                        <div className="group/btn relative">
+                                            <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
+                                                <Share2 className="h-4 w-4 text-white/20" />
+                                            </div>
+                                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-white text-black text-[7px] font-black uppercase rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Generar QR</span>
                                         </div>
                                     </div>
                                 </div>
@@ -291,17 +449,18 @@ function AgentCommandCenterPreview() {
                         ))}
                     </div>
 
-                    <div className="mt-8 md:mt-12 p-6 md:p-8 border-2 border-dashed border-white/5 rounded-2xl md:rounded-3xl flex flex-col items-center text-center">
-                        <div className="h-8 w-8 md:h-10 md:w-10 bg-white/5 rounded-full flex items-center justify-center mb-3 md:mb-4">
-                            <Plus className="h-4 w-4 md:h-5 md:w-5 text-white/20" />
+                    <div className="mt-8 p-6 border-2 border-dashed border-white/5 rounded-3xl flex flex-col items-center justify-center text-center group/empty hover:border-cima-gold/20 transition-all cursor-pointer">
+                        <div className="h-10 w-10 bg-white/5 rounded-full flex items-center justify-center mb-4 group-hover/empty:scale-110 group-hover/empty:bg-cima-gold/10 transition-all">
+                            <Plus className="h-5 w-5 text-white/20 group-hover/empty:text-cima-gold" />
                         </div>
-                        <p className="text-[8px] md:text-[10px] text-white/30 uppercase font-bold md:font-black tracking-[0.15em] md:tracking-[0.2em]">Sube tu inventario y deja que el sistema trabaje por ti.</p>
+                        <p className="text-[10px] text-white/20 uppercase font-black tracking-widest group-hover/empty:text-white/40 transition-colors">Añadir nueva propiedad exclusiva</p>
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+
 
 function ZeroFrictionTimeline() {
     return (
