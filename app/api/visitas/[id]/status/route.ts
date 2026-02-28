@@ -3,6 +3,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
+    const { id } = await params;
     const body = await req.json();
     const supabase = createServiceClient();
 
@@ -15,11 +16,15 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const { error } = await supabase
       .from("re_visits")
       .update(updateData)
-      .eq("id", params.id);
+      .eq("id", id);
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase update error:", error);
+      throw error;
+    }
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Error" }, { status: 500 });
+  } catch (err: any) {
+    console.error("Visit status PATCH error:", err);
+    return NextResponse.json({ error: err.message || "Error" }, { status: 500 });
   }
 }

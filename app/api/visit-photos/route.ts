@@ -41,26 +41,34 @@ export async function POST(req: Request) {
         const path = `visits/${visitId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const buffer = await file.arrayBuffer();
 
+        console.log(`[POST /api/visit-photos] Uploading to cima-photos: ${path}`);
         const { data: uploaded, error: uploadErr } = await supabase.storage
             .from("cima-photos")
             .upload(path, buffer, { contentType: file.type, cacheControl: "3600", upsert: false });
 
-        if (uploadErr) throw uploadErr;
+        if (uploadErr) {
+            console.error("[POST /api/visit-photos] Upload error:", uploadErr);
+            throw uploadErr;
+        }
 
         const { data: { publicUrl } } = supabase.storage.from("cima-photos").getPublicUrl(uploaded.path);
+        console.log(`[POST /api/visit-photos] Public URL: ${publicUrl}`);
 
         // Insert record
         const { data: row, error: insertErr } = await supabase
             .from("re_visit_photos")
             .insert({ visit_id: visitId, url: publicUrl, uploaded_by: "admin" })
             .select()
-            .single();
+            .maybeSingle();
 
-        if (insertErr) throw insertErr;
+        if (insertErr) {
+            console.error("[POST /api/visit-photos] DB insert error:", insertErr);
+            throw insertErr;
+        }
 
         return NextResponse.json({ ok: true, photo: row });
-    } catch (e) {
-        console.error(e);
-        return NextResponse.json({ error: "Error al subir foto" }, { status: 500 });
+    } catch (e: any) {
+        console.error("[POST /api/visit-photos] Unexpected error:", e);
+        return NextResponse.json({ error: e.message || "Error al subir foto" }, { status: 500 });
     }
 }

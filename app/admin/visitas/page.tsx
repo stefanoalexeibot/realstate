@@ -169,7 +169,7 @@ export default function VisitasAdmin() {
   async function saveNote(id: string) {
     setSavingNote(true);
     try {
-      await fetch(`/api/visitas/${id}/status`, {
+      const res = await fetch(`/api/visitas/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -178,13 +178,20 @@ export default function VisitasAdmin() {
           feedback_tags: selectedTags
         }),
       });
+
+      if (!res.ok) throw new Error("Error al guardar");
+
       setVisits((prev) => prev.map((v) => v.id === id ? {
         ...v,
         agent_notes: noteText.trim() || null,
         interest_level: rating,
         feedback_tags: selectedTags
       } : v));
+
+      alert("¡Cambios guardados correctamente!");
       setEditingNote(null);
+    } catch (err) {
+      alert("Error al guardar los cambios.");
     } finally {
       setSavingNote(false);
     }
@@ -203,9 +210,17 @@ export default function VisitasAdmin() {
         fd.append("file", file);
         const res = await fetch("/api/visit-photos", { method: "POST", body: fd });
         const json = await res.json();
-        if (res.ok && json.photo) newPhotos.push(json.photo);
+        if (res.ok && json.photo) {
+          newPhotos.push(json.photo);
+        } else {
+          alert(`Error al subir imagen: ${json.error || "Error desconocido"}`);
+        }
       }
-      setVisitPhotos((prev) => ({ ...prev, [visitId]: [...(prev[visitId] ?? []), ...newPhotos] }));
+      if (newPhotos.length > 0) {
+        setVisitPhotos((prev) => ({ ...prev, [visitId]: [...(prev[visitId] ?? []), ...newPhotos] }));
+      }
+    } catch (err) {
+      alert("Error de conexión al subir imagen.");
     } finally {
       setUploadingPhoto(null);
       const ref = fileRefs.current[visitId];
