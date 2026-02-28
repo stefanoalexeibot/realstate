@@ -42,6 +42,36 @@ function getCommissionInfo(price: number): { pct: number; label: string } {
     return { pct: 3.5, label: "más de $10M" };
 }
 
+function MarketSentiment({ visits }: { visits: PortalDashboardData["visits"] }) {
+    const allTags = visits.flatMap(v => v.feedback_tags ?? []);
+    if (allTags.length === 0) return null;
+
+    const counts: Record<string, number> = {};
+    allTags.forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+
+    return (
+        <div className="rounded-2xl border border-cima-gold/20 bg-cima-gold/5 p-5 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+                <TrendingUp className="h-4 w-4 text-cima-gold" />
+                <h3 className="font-heading font-bold text-sm text-cima-text">Sentimiento del Mercado</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+                {sorted.map(([tag, count]) => (
+                    <div key={tag} className="flex items-center justify-between p-2.5 rounded-xl bg-cima-card border border-cima-border">
+                        <span className="text-[11px] text-cima-text-muted">{tag}</span>
+                        <span className="text-[10px] font-mono text-cima-gold bg-cima-gold/10 px-1.5 py-0.5 rounded">{count}</span>
+                    </div>
+                ))}
+            </div>
+            <p className="text-[10px] text-cima-text-dim mt-4 italic">
+                Este resumen se basa en los comentarios directos recopilados por tu asesor durante las visitas.
+            </p>
+        </div>
+    );
+}
+
 // ─── Timeline ────────────────────────────────────────────────────────────────
 
 type SaleStage = "captacion" | "publicacion" | "visitas" | "cierre";
@@ -304,76 +334,86 @@ export default function PortalDashboardClient({ data }: { data: PortalDashboardD
                         )}
 
                         {visits.length > 0 && (
-                            <div className="rounded-2xl border border-cima-border bg-cima-card overflow-hidden">
-                                <div className="px-5 py-4 border-b border-cima-border flex items-center justify-between">
-                                    <p className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">Solicitudes de visita</p>
-                                    {stats.pendingVisits > 0 && (
-                                        <span className="px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/20 text-[10px] font-mono text-amber-400">
-                                            {stats.pendingVisits} pendientes
-                                        </span>
-                                    )}
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] text-cima-gold uppercase mb-1">Actividad</p>
+                                        <h2 className="font-heading font-bold text-lg sm:text-xl text-cima-text">Seguimiento y Feedback</h2>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] text-cima-text-dim uppercase tracking-wider">Total visitas</p>
+                                        <p className="text-xl font-heading font-bold text-cima-text">{visits.length}</p>
+                                    </div>
                                 </div>
-                                <div className="divide-y divide-cima-border">
+
+                                <MarketSentiment visits={visits} />
+
+                                <div className="space-y-4">
                                     {visits.map((v) => {
                                         const vs = VISIT_STATUS_LABELS[v.status] ?? VISIT_STATUS_LABELS.pending;
                                         return (
-                                            <div key={v.id} className="px-5 py-3.5">
-                                                <div className="flex items-center justify-between gap-4">
-                                                    <div className="min-w-0">
-                                                        <p className="text-sm font-medium text-cima-text">{v.name}</p>
-                                                        {v.preferred_date && <p className="text-xs text-cima-text-muted mt-0.5">Fecha: {v.preferred_date}</p>}
-                                                        <p className="text-[10px] text-cima-text-dim mt-0.5">{formatDate(v.created_at)}</p>
-                                                    </div>
-                                                    <span className={`text-xs font-mono shrink-0 ${vs.color}`}>{vs.label}</span>
-                                                </div>
-
-                                                {(v.interest_level || (v.feedback_tags && v.feedback_tags.length > 0)) && (
-                                                    <div className="mt-2 flex flex-wrap items-center gap-3">
-                                                        {v.interest_level && (
-                                                            <div className="flex gap-0.5 text-cima-gold">
-                                                                {[1, 2, 3, 4, 5].map((s) => (
-                                                                    <Star key={s} className={`h-3 w-3 ${v.interest_level && v.interest_level >= s ? "fill-current" : "text-cima-text-dim opacity-30"}`} />
-                                                                ))}
+                                            <div key={v.id} className="rounded-2xl border border-cima-border bg-cima-card overflow-hidden group hover:border-cima-gold/30 transition-all duration-300">
+                                                <div className="p-5">
+                                                    <div className="flex items-start justify-between gap-4 mb-3">
+                                                        <div>
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <p className="text-sm font-bold text-cima-text">{v.name}</p>
+                                                                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border border-current opacity-70 ${vs.color}`}>{vs.label}</span>
                                                             </div>
-                                                        )}
-                                                        {v.feedback_tags && v.feedback_tags.length > 0 && (
-                                                            <div className="flex flex-wrap gap-1">
-                                                                {v.feedback_tags.map((t) => (
-                                                                    <span key={t} className="px-1.5 py-0.5 rounded bg-cima-surface border border-cima-border text-[9px] text-cima-text-muted">
-                                                                        {t}
-                                                                    </span>
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )}
-
-                                                {v.agent_notes && (
-                                                    <div className="mt-2 flex items-start gap-2 rounded-lg bg-cima-surface border border-cima-border px-3 py-2">
-                                                        <MessageSquare className="h-3 w-3 text-cima-gold mt-0.5 shrink-0" />
-                                                        <p className="text-xs text-cima-text-muted">{v.agent_notes}</p>
-                                                    </div>
-                                                )}
-                                                {v.photos && v.photos.length > 0 && (
-                                                    <div className="mt-2">
-                                                        <p className="font-mono text-[10px] tracking-widest text-cima-text-dim uppercase mb-1.5">Evidencias de visita</p>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {v.photos.map((photo) => (
-                                                                <button
-                                                                    key={photo.id}
-                                                                    onClick={() => setLightbox(photo.url)}
-                                                                    className="relative h-16 w-16 rounded-lg overflow-hidden border border-cima-border hover:border-cima-gold/50 transition-colors group"
-                                                                >
-                                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                                    <img src={photo.url} alt="Evidencia" className="h-full w-full object-cover" />
-                                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                                                                        <ZoomIn className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                                    </div>
-                                                                </button>
-                                                            ))}
+                                                            <p className="text-[11px] text-cima-text-dim">{formatDate(v.created_at)}</p>
                                                         </div>
+                                                        {v.interest_level && (
+                                                            <div className="flex gap-0.5 text-cima-gold bg-cima-gold/5 px-2 py-1 rounded-lg border border-cima-gold/10">
+                                                                {[1, 2, 3, 4, 5].map((s) => (
+                                                                    <Star key={s} className={`h-2.5 w-2.5 ${v.interest_level && v.interest_level >= s ? "fill-current" : "text-cima-text-dim opacity-20"}`} />
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                )}
+
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        <div className="space-y-3">
+                                                            {v.agent_notes && (
+                                                                <div className="relative p-3 rounded-xl bg-cima-surface/50 border border-cima-border">
+                                                                    <MessageSquare className="h-3 w-3 text-cima-gold absolute -top-1.5 -left-1.5" />
+                                                                    <p className="text-xs text-cima-text-muted italic leading-relaxed">"{v.agent_notes}"</p>
+                                                                </div>
+                                                            )}
+
+                                                            {v.feedback_tags && v.feedback_tags.length > 0 && (
+                                                                <div className="flex flex-wrap gap-1.5">
+                                                                    {v.feedback_tags.map((t) => (
+                                                                        <span key={t} className="px-2 py-0.5 rounded-full bg-cima-bg border border-cima-border text-[9px] text-cima-text-dim">
+                                                                            {t}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {v.photos && v.photos.length > 0 && (
+                                                            <div>
+                                                                <p className="font-mono text-[9px] tracking-widest text-cima-text-dim uppercase mb-2 flex items-center gap-1.5">
+                                                                    <Camera className="h-3 w-3" /> Evidencias
+                                                                </p>
+                                                                <div className="flex flex-wrap gap-2">
+                                                                    {v.photos.map((photo) => (
+                                                                        <button
+                                                                            key={photo.id}
+                                                                            onClick={() => setLightbox(photo.url)}
+                                                                            className="relative h-14 w-14 sm:h-16 sm:w-16 rounded-xl overflow-hidden border border-cima-border group/img"
+                                                                        >
+                                                                            <img src={photo.url} alt="Evidencia" className="h-full w-full object-cover transition-transform duration-500 group-hover/img:scale-110" />
+                                                                            <div className="absolute inset-0 bg-cima-bg/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                                                                                <ZoomIn className="h-4 w-4 text-white" />
+                                                                            </div>
+                                                                        </button>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         );
                                     })}
