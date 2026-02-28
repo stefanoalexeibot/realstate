@@ -47,7 +47,6 @@ type VisitRow = {
   status: VisitStatus;
   created_at: string;
   preferred_date: string | null;
-  preferred_time: string | null;
   agent_notes: string | null;
   interest_level: number | null;
   feedback_tags: string[] | null;
@@ -56,7 +55,7 @@ type VisitRow = {
     title: string;
     neighborhood: string | null;
     slug: string;
-    main_image: string | null;
+    cover_photo: string | null;
   } | null;
 };
 
@@ -93,9 +92,9 @@ export default function VisitasAdmin() {
       const { data, error } = await supabase
         .from("re_visits")
         .select(`
-          id, name, phone, status, created_at, preferred_date, preferred_time, 
+          id, name, phone, status, created_at, preferred_date, 
           agent_notes, interest_level, feedback_tags, 
-          re_properties(id, title, neighborhood, slug, main_image)
+          re_properties(id, title, neighborhood, slug, cover_photo)
         `)
         .order("created_at", { ascending: false });
 
@@ -325,7 +324,6 @@ export default function VisitasAdmin() {
 
                     <div>
                       <p className="text-sm text-cima-text-muted">{v.preferred_date ? formatDate(v.preferred_date) : "—"}</p>
-                      <p className="text-[10px] text-cima-text-dim mt-0.5">{v.preferred_time ?? "—"}</p>
                     </div>
 
                     <div>
