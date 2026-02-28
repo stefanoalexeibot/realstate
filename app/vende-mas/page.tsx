@@ -190,6 +190,85 @@ export default function VendeMasPage() {
                 </div>
             </section>
 
+            {/* Pricing Section */}
+            <section className="py-24 px-6 bg-[#0A0A0B] relative">
+                <div className="mx-auto max-w-6xl">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 tracking-tight">Elige tu Plan de Crecimiento</h2>
+                        <p className="text-white/40 max-w-2xl mx-auto">Una inversión que se paga sola con tu primera exclusiva lograda.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                name: "Starter",
+                                price: "$14,900",
+                                desc: "Ideal para el asesor que empieza a digitalizarse.",
+                                features: ["Landing Page Elite", "Portal Propietario (1 activo)", "QR de Venta", "QR en Letrero"],
+                                cta: "Empezar Starter"
+                            },
+                            {
+                                name: "Professional",
+                                price: "$29,900",
+                                desc: "Para asesores Top que manejan inventario exclusivo.",
+                                features: ["Todo en Starter", "Hasta 5 Portales Activos", "Reportes de Feedback IA", "Soporte Prioritario"],
+                                highlight: true,
+                                cta: "Ir Pro"
+                            },
+                            {
+                                name: "Team / Agency",
+                                price: "$49,900",
+                                desc: "Para inmobiliarias que quieren dominar su zona.",
+                                features: ["Todo en Pro", "Multi-perfil (3 asesores)", "Inventario Ilimitado", "Dominio Propio (.com)"],
+                                cta: "Contactar Agencia"
+                            }
+                        ].map((plan, i) => (
+                            <div
+                                key={plan.name}
+                                className={`p-10 rounded-[40px] border flex flex-col h-full transition-all duration-500 ${plan.highlight ? "bg-cima-gold/5 border-cima-gold shadow-[0_40px_100px_-20px_rgba(200,169,110,0.15)] scale-105 z-10" : "bg-white/[0.02] border-white/5"}`}
+                            >
+                                <h3 className="text-xl font-heading font-bold mb-2">{plan.name}</h3>
+                                <div className="flex items-baseline gap-1 mb-6">
+                                    <span className="text-4xl font-black text-cima-gold">{plan.price}</span>
+                                    <span className="text-xs text-white/40 font-mono">MXN</span>
+                                </div>
+                                <p className="text-sm text-white/50 mb-8 leading-relaxed h-12">{plan.desc}</p>
+                                <ul className="space-y-4 mb-10 flex-1">
+                                    {plan.features.map(f => (
+                                        <li key={f} className="flex items-center gap-3 text-xs text-white/70">
+                                            <ShieldCheck className="h-4 w-4 text-cima-gold shrink-0" />
+                                            {f}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Link
+                                    href="/onboarding"
+                                    className={`w-full py-4 rounded-2xl font-heading font-bold text-center transition-all ${plan.highlight ? "bg-cima-gold text-black hover:bg-white" : "bg-white/5 text-white hover:bg-white/10"}`}
+                                >
+                                    {plan.cta}
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Enterprise Bridge */}
+            <section className="py-24 px-6 border-y border-white/5 bg-gradient-to-b from-transparent to-cima-gold/[0.02]">
+                <div className="mx-auto max-w-4xl text-center">
+                    <h2 className="text-2xl md:text-3xl font-heading font-bold mb-6">¿Eres una agencia consolidada?</h2>
+                    <p className="text-white/60 mb-10 leading-relaxed">
+                        Si manejas una franquicia o un equipo de +10 asesores, necesitas infraestructura dedicada, IA personalizada y soberanía tecnológica total.
+                    </p>
+                    <Link
+                        href="/pro"
+                        className="inline-flex items-center gap-2 text-cima-gold font-bold hover:gap-4 transition-all"
+                    >
+                        Conoce Cima Pro (Enterprise) <ArrowRight className="h-4 w-4" />
+                    </Link>
+                </div>
+            </section>
+
             {/* Footer */}
             <footer className="py-12 px-6 border-t border-white/5 mt-12">
                 <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-6 opacity-40 hover:opacity-100 transition-opacity">
