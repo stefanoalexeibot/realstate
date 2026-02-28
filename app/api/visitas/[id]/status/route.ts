@@ -13,16 +13,26 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     if ("interest_level" in body) updateData.interest_level = body.interest_level;
     if ("feedback_tags" in body) updateData.feedback_tags = body.feedback_tags;
 
-    const { error } = await supabase
+    console.log(`[PATCH /api/visitas/${id}/status] Updating with:`, updateData);
+
+    const { data, error } = await supabase
       .from("re_visits")
       .update(updateData)
-      .eq("id", id);
+      .eq("id", id)
+      .select()
+      .maybeSingle();
 
     if (error) {
       console.error("Supabase update error:", error);
       throw error;
     }
-    return NextResponse.json({ ok: true });
+
+    if (!data) {
+      console.warn(`[PATCH /api/visitas/${id}/status] No record found or updated for ID: ${id}`);
+      return NextResponse.json({ error: "No se encontró el registro o no tienes permisos." }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true, data });
   } catch (err: any) {
     console.error("Visit status PATCH error:", err);
     return NextResponse.json({ error: err.message || "Error" }, { status: 500 });
