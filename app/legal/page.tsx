@@ -23,89 +23,168 @@ import { useState } from "react";
 import LegalActivityFeed from "@/components/legal/LegalActivityFeed";
 import LegalEcosystem from "@/components/legal/LegalEcosystem";
 import LegalShowcase from "@/components/legal/LegalShowcase";
+import LegalROI from "@/components/legal/LegalROI";
+import LegalVault from "@/components/legal/LegalVault";
 
 export default function CimaLegalPage() {
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-blue-500 selection:text-white overflow-x-hidden">
-            {/* Background Decor */}
+        <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-blue-500 selection:text-white overflow-x-hidden pt-12 md:pt-0">
+            {/* Ultra-Premium Background Decor */}
             <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-slate-500/5 rounded-full blur-[120px]" />
-                <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "linear-gradient(#3b82f6 1px, transparent 1px), linear-gradient(90deg, #3b82f6 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+                {/* Dynamic Radial Glows */}
+                <motion.div
+                    animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.3, 0.5, 0.3]
+                    }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[160px]"
+                />
+                <motion.div
+                    animate={{
+                        scale: [1, 1.1, 1],
+                        opacity: [0.2, 0.4, 0.2]
+                    }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                    className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 rounded-full blur-[140px]"
+                />
+
+                {/* Technical Grid with Pulse */}
+                <div className="absolute inset-0 opacity-[0.03] space-y-[60px]" style={{ backgroundImage: "linear-gradient(#3b82f6 1px, transparent 1px), linear-gradient(90deg, #3b82f6 1px, transparent 1px)", backgroundSize: "60px 60px" }}>
+                    <motion.div
+                        animate={{ y: ["0%", "100%"] }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        className="h-[2px] w-full bg-gradient-to-r from-transparent via-blue-500/50 to-transparent blur-sm"
+                    />
+                </div>
+
+                {/* Grainy Texture Overlay */}
+                <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
             </div>
 
-            {/* Navigation */}
-            <nav className="fixed top-0 inset-x-0 h-20 border-b border-slate-800 bg-[#020617]/80 backdrop-blur-xl z-50">
-                <div className="max-w-7xl mx-auto h-full px-4 sm:px-8 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20">
+            {/* Premium Navigation */}
+            <nav className="fixed top-0 inset-x-0 h-20 border-b border-white/5 bg-[#020617]/40 backdrop-blur-2xl z-50">
+                <div className="max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center justify-between">
+                    <div className="flex items-center gap-3 group cursor-pointer">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-2xl shadow-blue-500/20 group-hover:scale-110 transition-transform">
                             <Scale className="h-5 w-5 text-white" />
                         </div>
-                        <span className="font-heading font-black text-lg md:text-xl tracking-tight text-white">Cima <span className="text-blue-500">Legal</span></span>
+                        <div className="flex flex-col">
+                            <span className="font-heading font-black text-xl tracking-tight text-white leading-none">Cima <span className="text-blue-500 text-shadow-blue">Legal</span></span>
+                            <span className="text-[8px] font-mono text-blue-400/60 uppercase tracking-[0.3em] mt-1">Foundational Node</span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-4 md:gap-8">
+                    <div className="flex items-center gap-10">
+                        <div className="hidden md:flex items-center gap-8">
+                            {['Ecosistema', 'Seguridad', 'Transparencia'].map((item) => (
+                                <Link key={item} href="#" className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 hover:text-blue-400 transition-colors">
+                                    {item}
+                                </Link>
+                            ))}
+                        </div>
                         <Link
                             href="https://wa.me/528121980008"
-                            className="hidden md:block text-[11px] font-bold uppercase tracking-widest text-slate-400 hover:text-blue-400 transition-colors"
+                            className="relative group overflow-hidden px-8 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all"
                         >
-                            Arquitectura Jurídica
-                        </Link>
-                        <Link
-                            href="https://wa.me/528121980008"
-                            className="px-6 py-2.5 rounded-full bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
-                        >
-                            Solicitar Demo
+                            <span className="relative z-10 text-[10px] font-black uppercase tracking-widest text-white group-hover:text-blue-400">Solicitar Demo</span>
+                            <div className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 opacity-10" />
                         </Link>
                     </div>
                 </div>
             </nav>
 
-            <main className="pt-28 sm:pt-40 pb-28 relative z-10">
-                {/* Hero */}
-                <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-32 sm:mb-48">
-                    <div className="grid grid-cols-1 lg:grid-cols-[1.1fr,0.9fr] gap-16 lg:gap-24 items-center">
+            <main className="relative z-10 pt-32 md:pt-48 pb-32">
+                {/* Hero section refined */}
+                <section className="max-w-7xl mx-auto px-6 md:px-12 mb-40 md:mb-60">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1.1fr,0.9fr] gap-20 items-center">
                         <FadeIn direction="right">
                             <div className="relative">
-                                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                                    <span className="font-mono text-[10px] text-blue-400 font-bold tracking-[0.2em] uppercase">Protocol Legal · V2.0</span>
-                                </span>
-                                <h1 className="font-heading font-black text-4xl sm:text-6xl lg:text-7xl mb-8 leading-[1.05] tracking-tighter text-white">
-                                    Soberanía Tecnológica para Despachos de <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-slate-400">Élite</span>
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-blue-500/5 border border-blue-500/20 mb-10"
+                                >
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-75" />
+                                        <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
+                                    </span>
+                                    <span className="font-mono text-[9px] text-blue-400 font-black tracking-[0.3em] uppercase">Protocol Elite · 2024</span>
+                                </motion.div>
+
+                                <h1 className="font-heading font-black text-4xl sm:text-6xl lg:text-8xl mb-10 leading-[0.95] tracking-tighter text-white">
+                                    La Firma <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-400 drop-shadow-sm">Imbatible</span>
                                 </h1>
-                                <p className="text-slate-400 text-lg sm:text-xl leading-relaxed mb-12 max-w-xl">
-                                    Digitalizamos la confianza. Implementamos infraestructura de grado industrial para abogados y notarías que exigen transparencia total y seguridad absoluta.
+
+                                <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-14 max-w-xl font-medium">
+                                    No gestionamos casos, operamos infraestructura de confianza. Cima Legal es el estándar de oro para despachos y notarías que exigen <strong className="text-white">superioridad técnica</strong> y transparencia total.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-6 items-center">
+
+                                <div className="flex flex-col sm:flex-row gap-8 items-center">
                                     <Link
-                                        href="https://wa.me/528121980008?text=Hola!%20Me%20interesa%20Cima%20Legal%20para%20mi%20despacho."
-                                        className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-blue-600 text-white font-bold text-base hover:bg-blue-500 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-blue-900/20"
+                                        href="https://wa.me/528121980008"
+                                        className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-blue-600 text-white font-black text-sm hover:bg-blue-500 hover:scale-[1.05] active:scale-[0.98] transition-all flex items-center justify-center gap-4 group shadow-[0_20px_50px_rgba(37,99,235,0.3)]"
                                     >
-                                        Implementar Cima Legal
+                                        Implementar Infraestructura
                                         <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                                     </Link>
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex -space-x-3">
+
+                                    <div className="flex items-center gap-5 p-4 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-sm">
+                                        <div className="flex -space-x-4">
                                             {[1, 2, 3].map((i) => (
-                                                <div key={i} className="w-10 h-10 rounded-full border-2 border-[#020617] bg-slate-800 flex items-center justify-center text-[10px] font-bold text-blue-400">
-                                                    {String.fromCharCode(74 + i)}
+                                                <div key={i} className="w-12 h-12 rounded-2xl border-2 border-[#020617] bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-[10px] font-black text-blue-400 shadow-xl">
+                                                    {['SC', 'JD', 'RM'][i - 1]}
                                                 </div>
                                             ))}
                                         </div>
                                         <div className="text-left">
-                                            <p className="text-[10px] font-black text-white uppercase tracking-widest">+45 Firmas</p>
-                                            <p className="text-[9px] text-slate-500 font-medium whitespace-nowrap">Nodos Jurídicos Activos</p>
+                                            <p className="text-[11px] font-black text-white uppercase tracking-widest leading-none mb-1">Socios Elite</p>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex gap-0.5">
+                                                    {[1, 2, 3, 4, 5].map(s => <Sparkles key={s} className="w-2.5 h-2.5 text-blue-400 fill-blue-400" />)}
+                                                </div>
+                                                <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">Verified Nodes</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </FadeIn>
 
-                        <FadeIn direction="left" delay={0.2}>
-                            <LegalActivityFeed />
+                        <FadeIn direction="up" delay={0.2}>
+                            <div className="relative group">
+                                <div className="absolute -inset-4 bg-blue-500/10 rounded-[40px] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                                <div className="relative">
+                                    <LegalActivityFeed />
+
+                                    {/* Floating Stats Card */}
+                                    <motion.div
+                                        animate={{ y: [0, -10, 0] }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                        className="absolute -bottom-10 -left-10 hidden xl:flex flex-col p-6 rounded-3xl bg-slate-900/80 backdrop-blur-3xl border border-white/10 shadow-2xl"
+                                    >
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                                                <ShieldCheck className="w-4 h-4 text-green-400" />
+                                            </div>
+                                            <span className="text-[10px] font-black text-white uppercase tracking-widest">SLA de Respuesta</span>
+                                        </div>
+                                        <div className="flex items-end gap-2">
+                                            <span className="text-3xl font-black text-white leading-none">99.9%</span>
+                                            <span className="text-[9px] text-green-400 font-bold uppercase tracking-tighter mb-1">Uptime Jurídico</span>
+                                        </div>
+                                    </motion.div>
+                                </div>
+                            </div>
                         </FadeIn>
                     </div>
                 </section>
+
+                {/* ROI / Value Section */}
+                <LegalROI />
+
+                {/* Vault Section - New Premium Component */}
+                <LegalVault />
 
                 {/* Ecosystem Section */}
                 <section className="max-w-7xl mx-auto px-4 sm:px-8 mb-32 sm:mb-48">

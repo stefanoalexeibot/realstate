@@ -9,35 +9,40 @@ import {
     Clock,
     Scale,
     CheckCircle2,
-    Bell
+    Bell,
+    Activity,
+    MapPin
 } from "lucide-react";
 
 type FeedItem = {
-    id: number;
+    id: string;
     Icon: any;
     color: string;
     bg: string;
     text: string;
     firm: string;
     firmColor: string;
+    urgency?: 'high' | 'medium' | 'low';
 };
 
 const LEGAL_FEED_POOL: Omit<FeedItem, "id">[] = [
     {
         Icon: Gavel,
-        color: "text-blue-400",
-        bg: "bg-blue-400/10",
+        color: "text-red-400",
+        bg: "bg-red-400/10",
         text: "Sentencia favorable publicada en juzgado",
         firm: "García & Asociados",
-        firmColor: "text-blue-400"
+        firmColor: "text-red-400",
+        urgency: 'high'
     },
     {
         Icon: FileText,
-        color: "text-slate-400",
-        bg: "bg-slate-400/10",
+        color: "text-blue-400",
+        bg: "bg-blue-400/10",
         text: "Borrador de contrato listo para revisión",
         firm: "Notaría 128 MTY",
-        firmColor: "text-slate-400"
+        firmColor: "text-blue-400",
+        urgency: 'medium'
     },
     {
         Icon: ShieldCheck,
@@ -45,7 +50,8 @@ const LEGAL_FEED_POOL: Omit<FeedItem, "id">[] = [
         bg: "bg-green-400/10",
         text: "Documentación certificada en blockchain",
         firm: "LegalTrust Pro",
-        firmColor: "text-green-400"
+        firmColor: "text-green-400",
+        urgency: 'low'
     },
     {
         Icon: Clock,
@@ -53,7 +59,8 @@ const LEGAL_FEED_POOL: Omit<FeedItem, "id">[] = [
         bg: "bg-amber-400/10",
         text: "Audiencia programada para 12 de Abril",
         firm: "Bufete Jurídico Integra",
-        firmColor: "text-amber-400"
+        firmColor: "text-amber-400",
+        urgency: 'high'
     },
     {
         Icon: Scale,
@@ -61,7 +68,8 @@ const LEGAL_FEED_POOL: Omit<FeedItem, "id">[] = [
         bg: "bg-indigo-400/10",
         text: "Recurso de apelación presentado exitosamente",
         firm: "Corporate Defense",
-        firmColor: "text-indigo-400"
+        firmColor: "text-indigo-400",
+        urgency: 'medium'
     },
     {
         Icon: CheckCircle2,
@@ -69,7 +77,8 @@ const LEGAL_FEED_POOL: Omit<FeedItem, "id">[] = [
         bg: "bg-emerald-400/10",
         text: "Pago de impuestos notariales verificado",
         firm: "Notaría Pública 42",
-        firmColor: "text-emerald-400"
+        firmColor: "text-emerald-400",
+        urgency: 'low'
     },
     {
         Icon: Bell,
@@ -77,21 +86,20 @@ const LEGAL_FEED_POOL: Omit<FeedItem, "id">[] = [
         bg: "bg-blue-500/10",
         text: "Nuevo aviso en boletín judicial detectado",
         firm: "Cima Legal Monitor",
-        firmColor: "text-blue-500"
+        firmColor: "text-blue-500",
+        urgency: 'high'
     },
 ];
 
-let globalId = 0;
-
-function makeItem(pool: typeof LEGAL_FEED_POOL[0]): FeedItem {
-    return { ...pool, id: ++globalId };
+function makeItem(pool: Omit<FeedItem, "id">, index: number): FeedItem {
+    return { ...pool, id: `${Date.now()}-${index}` };
 }
 
 export default function LegalActivityFeed() {
     const [activeCases, setActiveCases] = useState(142);
     const [notificationsToday, setNotificationsToday] = useState(892);
     const [feed, setFeed] = useState<FeedItem[]>(() =>
-        LEGAL_FEED_POOL.slice(0, 4).map(makeItem)
+        LEGAL_FEED_POOL.slice(0, 3).map((item, idx) => makeItem(item, idx))
     );
 
     useEffect(() => {
@@ -107,7 +115,7 @@ export default function LegalActivityFeed() {
 
         let poolIndex = 4 % LEGAL_FEED_POOL.length;
         const interval = setInterval(() => {
-            const newItem = makeItem(LEGAL_FEED_POOL[poolIndex % LEGAL_FEED_POOL.length]);
+            const newItem = { ...LEGAL_FEED_POOL[poolIndex % LEGAL_FEED_POOL.length], id: `${Date.now()}-${poolIndex}` }; // Ensure unique ID
             poolIndex++;
             setNotificationsToday((v) => v + Math.floor(Math.random() * 2));
             setFeed((prev) => [newItem, ...prev.slice(0, isMobile ? 2 : 3)]);

@@ -13,6 +13,7 @@ import {
     Search,
     Bell,
     TrendingUp,
+    TrendingDown,
     Sparkles
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
@@ -190,44 +191,113 @@ function ClientCasePreview() {
 // BÓVEDA DIGITAL (VAULT)
 // ═══════════════════════════════════════════════════════════════════════════════
 function LegalVaultPreview() {
-    return (
-        <div className="w-full h-full relative overflow-hidden bg-slate-950 rounded-[inherit] flex items-center justify-center p-12">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
+    const [isLocked, setIsLocked] = useState(true);
 
-            <div className="relative z-10 w-full max-w-sm">
-                <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-blue-500/10 border border-blue-500/30 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_40px_rgba(59,130,246,0.1)]">
-                        <ShieldCheck className="w-10 h-10 text-blue-400 animate-pulse" />
+    useEffect(() => {
+        const timer = setTimeout(() => setIsLocked(false), 800);
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div className="w-full h-full relative overflow-hidden bg-[#020617] rounded-[inherit] flex items-center justify-center p-8 md:p-12">
+            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(#3b82f6 0.1px, transparent 0.1px), linear-gradient(90deg, #3b82f6 0.1px, transparent 0.1px)", backgroundSize: "30px 30px" }} />
+
+            <motion.div
+                initial={false}
+                animate={{ opacity: isLocked ? 1 : 0.05, filter: isLocked ? "blur(0px)" : "blur(10px)" }}
+                className="absolute inset-0 z-20 flex items-center justify-center bg-[#020617]/40 backdrop-blur-md pointer-events-none"
+            >
+                <motion.div
+                    animate={{ scale: isLocked ? 1 : 1.5, rotate: isLocked ? 0 : 90 }}
+                    transition={{ duration: 0.8, ease: "circIn" }}
+                >
+                    <Lock className="w-20 h-20 text-blue-500/40" />
+                </motion.div>
+            </motion.div>
+
+            <div className="relative z-10 w-full max-w-lg">
+                <div className="flex items-center gap-6 mb-10">
+                    <div className="w-16 h-16 rounded-3xl bg-blue-600/10 border border-blue-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(59,130,246,0.15)]">
+                        <ShieldCheck className="w-8 h-8 text-blue-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">Bóveda Digital Blindada</h3>
-                    <p className="text-sm text-slate-500">Documentos con certificación notarial en blockchain y encriptación de grado militar.</p>
+                    <div>
+                        <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">Bóveda Blindada</h3>
+                        <p className="text-[10px] font-mono text-blue-400 font-black tracking-[0.3em] uppercase">AES-256 Quantum Resistant</p>
+                    </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-4">
                     {[
-                        { name: "Escritura_Publica_45.pdf", size: "2.4 MB", securityValue: "AES-256" },
-                        { name: "Anexo_Pruebas_Video.mp4", size: "156 MB", securityValue: "Encrypted" },
-                        { name: "Sentencia_Definitiva.doc", size: "1.1 MB", securityValue: "Signed" },
+                        { name: "Escritura_Publica_45.pdf", size: "2.4 MB", status: "VERIFIED" },
+                        { name: "Certificado_Notarial.doc", size: "1.1 MB", status: "SIGNED" },
+                        { name: "Anexo_Evidencia_Alpha.mp4", size: "156 MB", status: "ENCRYPTED" },
                     ].map((doc, i) => (
-                        <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-sm hover:bg-white/[0.05] transition-all cursor-pointer group">
-                            <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center group-hover:border-blue-500/30 transition-colors text-slate-500 group-hover:text-blue-400">
-                                <FileText className="w-5 h-5" />
+                        <motion.div
+                            key={i}
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 + (i * 0.1) }}
+                            className="flex items-center gap-5 p-5 rounded-2xl bg-white/[0.03] border border-white/5 group hover:bg-white/[0.05] hover:border-blue-500/20 transition-all cursor-pointer"
+                        >
+                            <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center group-hover:bg-blue-600/10 transition-colors">
+                                <FileText className="w-5 h-5 text-slate-500 group-hover:text-blue-400" />
                             </div>
-                            <div className="flex-1">
-                                <span className="text-[11px] font-bold text-white block truncate">{doc.name}</span>
-                                <span className="text-[9px] text-slate-500 uppercase tracking-widest">{doc.size}</span>
+                            <div className="flex-1 min-w-0">
+                                <span className="text-[11px] font-black text-white block truncate tracking-tight uppercase">{doc.name}</span>
+                                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{doc.size}</span>
                             </div>
-                            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 font-mono text-[8px] text-blue-400 font-bold">
-                                <Lock className="w-2.5 h-2.5" />
-                                {doc.securityValue}
+                            <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[8px] font-black text-blue-400 tracking-widest">
+                                {doc.status}
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
+            </div>
+        </div>
+    );
+}
 
-                <div className="mt-8 pt-8 border-t border-slate-800 flex justify-between items-center text-[9px] font-mono text-slate-500 uppercase tracking-[0.2em]">
-                    <span>Node: Secure-Legal-A1</span>
-                    <span className="text-blue-500 font-bold">Status: Synchronized</span>
+function ComparisonPreview() {
+    return (
+        <div className="w-full h-full relative overflow-hidden bg-[#020617] rounded-[inherit] flex flex-col p-8 md:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full">
+                <div className="p-8 rounded-[32px] bg-red-500/[0.02] border border-red-500/10 flex flex-col">
+                    <div className="flex items-center gap-3 mb-8">
+                        <TrendingDown className="w-5 h-5 text-red-400" />
+                        <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">Despacho Tradicional</span>
+                    </div>
+                    <div className="space-y-6 flex-1 opacity-40">
+                        {['Llamadas interminables', 'Reportes manuales', 'Incertidumbre total', 'Archivos perdidos'].map((text, i) => (
+                            <div key={i} className="flex items-center gap-3">
+                                <Scale className="w-3 h-3 text-slate-600" />
+                                <span className="text-xs text-slate-400 font-medium">{text}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-8 p-4 rounded-xl bg-red-500/5 text-[10px] text-red-300 font-bold uppercase tracking-tight text-center">
+                        Eficiencia: ~35%
+                    </div>
+                </div>
+
+                <div className="p-8 rounded-[32px] bg-blue-500/[0.05] border border-blue-500/20 flex flex-col relative overflow-hidden shadow-2xl">
+                    <div className="absolute inset-0 bg-blue-500/5 blur-3xl rounded-full translate-x-1/2 translate-y-1/2" />
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-3 mb-8">
+                            <TrendingUp className="w-5 h-5 text-blue-400" />
+                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Cima Legal Node</span>
+                        </div>
+                        <div className="space-y-6 flex-1">
+                            {['Monitoreo Judicial 24/7', 'Portal de Clientes Pro', 'Seguridad Blockchain', 'Firma Distribuida'].map((text, i) => (
+                                <div key={i} className="flex items-center gap-3">
+                                    <CheckCircle2 className="w-3 h-3 text-blue-400" />
+                                    <span className="text-xs text-white font-bold">{text}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-8 p-4 rounded-xl bg-blue-600 text-[10px] text-white font-black uppercase tracking-[0.2em] text-center shadow-lg shadow-blue-500/20">
+                            Eficiencia: 100%
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -235,9 +305,10 @@ function LegalVaultPreview() {
 }
 
 const tabs = [
-    { id: "admin", label: "Gestión Jurídica", tag: "CONTROL TOTAL", accentFrom: "from-blue-500/15", component: "admin" },
-    { id: "client", label: "Expediente en Vivo", tag: "TRANSPARENCIA", accentFrom: "from-slate-500/10", component: "client" },
-    { id: "vault", label: "Bóveda Digital", tag: "SEGURIDAD", accentFrom: "from-emerald-500/10", component: "vault" },
+    { id: "comparison", label: "Cima vs Tradicional", tag: "COMPARATIVA", accentFrom: "from-slate-500/10", component: "comparison" },
+    { id: "admin", label: "Gestión Elite", tag: "CONTROL TOTAL", accentFrom: "from-blue-500/15", component: "admin" },
+    { id: "client", label: "Portal Transparente", tag: "EXPERIENCIA", accentFrom: "from-indigo-500/10", component: "client" },
+    { id: "vault", label: "Bóveda Blindada", tag: "SEGURIDAD", accentFrom: "from-blue-600/10", component: "vault" },
 ];
 
 export default function LegalShowcase() {
@@ -260,20 +331,20 @@ export default function LegalShowcase() {
 
     return (
         <div className="w-full">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
                 {tabs.map((tab, i) => (
                     <button
                         key={tab.id}
                         onClick={() => { setActive(i); setPaused(true); }}
-                        className={`relative text-left px-5 py-6 rounded-2xl border transition-all duration-500 overflow-hidden ${active === i
-                            ? "border-blue-500/40 bg-blue-500/5"
+                        className={`relative text-left px-5 py-6 rounded-3xl border transition-all duration-500 overflow-hidden ${active === i
+                            ? "border-blue-500/40 bg-blue-500/5 shadow-2xl shadow-blue-500/10"
                             : "border-white/5 bg-white/[0.02] hover:border-white/10"
                             }`}
                     >
-                        <span className={`text-[8px] font-black uppercase tracking-[0.25em] block mb-2 ${active === i ? "text-blue-400" : "text-slate-600"}`}>
+                        <span className={`text-[9px] font-black uppercase tracking-[0.2em] block mb-2 ${active === i ? "text-blue-400" : "text-slate-600"}`}>
                             {tab.tag}
                         </span>
-                        <span className={`text-sm font-bold block mb-1 ${active === i ? "text-white" : "text-slate-500"}`}>
+                        <span className={`text-xs md:text-sm font-black block leading-tight ${active === i ? "text-white" : "text-slate-500"}`}>
                             {tab.label}
                         </span>
                         {active === i && !paused && (
@@ -282,7 +353,7 @@ export default function LegalShowcase() {
                                 initial={{ width: "0%" }}
                                 animate={{ width: "100%" }}
                                 transition={{ duration: 10, ease: "linear" }}
-                                className="absolute bottom-0 left-0 h-0.5 bg-blue-500"
+                                className="absolute bottom-0 left-0 h-1 bg-blue-600"
                             />
                         )}
                     </button>
@@ -290,7 +361,7 @@ export default function LegalShowcase() {
             </div>
 
             <div
-                className="relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-[#020617]"
+                className="relative rounded-[40px] overflow-hidden border border-white/5 shadow-2xl bg-[#020617]"
                 style={{ aspectRatio: isMobile ? "1/1" : "16/9" }}
                 onMouseEnter={() => setPaused(true)}
                 onMouseLeave={() => setPaused(false)}
@@ -300,15 +371,16 @@ export default function LegalShowcase() {
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={active}
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.99 }}
-                        transition={{ duration: 0.5 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                         className="absolute inset-0 z-10"
                     >
-                        {active === 0 && <LegalAdminPreview />}
-                        {active === 1 && <ClientCasePreview />}
-                        {active === 2 && <LegalVaultPreview />}
+                        {active === 0 && <ComparisonPreview />}
+                        {active === 1 && <LegalAdminPreview />}
+                        {active === 2 && <ClientCasePreview />}
+                        {active === 3 && <LegalVaultPreview />}
                     </motion.div>
                 </AnimatePresence>
             </div>
