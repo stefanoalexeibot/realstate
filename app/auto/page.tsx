@@ -14,19 +14,47 @@ import {
 import AutoROI from "@/components/auto/AutoROI";
 import AutoVault from "@/components/auto/AutoVault";
 import AutoEcosystem from "@/components/auto/AutoEcosystem";
+import AutoJourney from "@/components/auto/AutoJourney";
+import AutoTestimonials from "@/components/auto/AutoTestimonials";
 import LandingNav from "@/components/landing/landing-nav";
 
 export default function CimaAutoPage() {
+    const [quickValue, setQuickValue] = React.useState(550000);
+
     return (
         <main className="min-h-screen bg-[#020617] text-white selection:bg-blue-500/30">
-            {/* High-Performance Background Effects */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-600/10 blur-[120px] rounded-full" />
+            {/* High-Performance Aurora Background Effects */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                {/* Aurora Blobs */}
+                <motion.div
+                    animate={{
+                        scale: [1, 1.2, 1],
+                        x: [0, 50, 0],
+                        y: [0, 30, 0]
+                    }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                    className="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] bg-blue-600/15 blur-[140px] rounded-full"
+                />
+                <motion.div
+                    animate={{
+                        scale: [1.2, 1, 1.2],
+                        x: [0, -30, 0],
+                        y: [0, 50, 0]
+                    }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute -bottom-[10%] -right-[10%] w-[60%] h-[60%] bg-indigo-600/15 blur-[140px] rounded-full"
+                />
+                <motion.div
+                    animate={{
+                        opacity: [0.1, 0.2, 0.1],
+                    }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[40%] h-[40%] bg-blue-400/5 blur-[120px] rounded-full"
+                />
 
-                {/* Subtle Carbon Fiber Pattern Overlay */}
-                <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay"
-                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zm1 5v1H5z'/%3E%3C/g%3E%3C/svg%3E")` }} />
+                {/* Refined Noise / Grain Surface */}
+                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
             </div>
 
             <LandingNav />
@@ -45,39 +73,84 @@ export default function CimaAutoPage() {
                         </motion.div>
 
                         <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="text-5xl sm:text-8xl font-bold tracking-tight mb-8"
+                            className="text-5xl sm:text-8xl font-black tracking-tight mb-8 leading-[0.9]"
                         >
-                            Vende tu auto como un <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500 text-glow">
-                                Profesional del Futuro.
+                            Vende tu auto <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white text-glow">
+                                al precio de mercado.
                             </span>
                         </motion.h1>
 
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
+                        {/* Instant Valuator Tool Inside Hero */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="text-gray-400 text-xl max-w-3xl mb-12 leading-relaxed"
+                            className="w-full max-w-xl bg-white/5 border border-white/10 p-6 sm:p-8 rounded-[2.5rem] backdrop-blur-2xl mb-12 shadow-2xl relative group"
                         >
-                            Cima Auto elimina las comisiones abusivas de las agencias y la inseguridad de los tratos directos. Tecnología, transparencia y el mejor precio del mercado.
-                        </motion.p>
+                            {/* Inner Glow */}
+                            <div className="absolute inset-0 bg-blue-500/5 rounded-[2.5rem] pointer-events-none group-hover:bg-blue-500/10 transition-colors" />
+
+                            <div className="relative z-10 space-y-6 text-left">
+                                <div className="flex justify-between items-end">
+                                    <div>
+                                        <p className="text-[10px] font-mono text-blue-400 uppercase tracking-widest mb-1">Precio Libre Deseado</p>
+                                        <h3 className="text-3xl sm:text-4xl font-black tabular-nums">${quickValue.toLocaleString()}</h3>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-1">Pérdida en Agencia</p>
+                                        <p className="text-xl font-bold text-red-500">-${(quickValue * 0.2).toLocaleString()}</p>
+                                    </div>
+                                </div>
+
+                                <div className="relative py-4">
+                                    <input
+                                        type="range"
+                                        min="200000"
+                                        max="3000000"
+                                        step="20000"
+                                        value={quickValue}
+                                        onChange={(e) => setQuickValue(parseInt(e.target.value))}
+                                        className="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-400"
+                                    />
+                                    {/* Visual feedback pulses on move */}
+                                    <motion.div
+                                        animate={{ opacity: [0, 0.4, 0], scale: [0.8, 1.2, 0.8] }}
+                                        transition={{ duration: 1, repeat: Infinity }}
+                                        className="absolute -inset-4 bg-blue-500/10 blur-xl rounded-full pointer-events-none"
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-4 pt-2 border-t border-white/5">
+                                    <div className="flex -space-x-2">
+                                        {[1, 2, 3].map(i => (
+                                            <div key={i} className="w-6 h-6 rounded-full border border-gray-900 bg-gray-800 overflow-hidden">
+                                                <img src={`https://i.pravatar.cc/50?u=${i}`} alt="user" className="w-full h-full object-cover" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 font-medium">
+                                        <span className="text-blue-400 font-bold">+24 ofertas</span> recibidas en Monterrey hoy
+                                    </p>
+                                </div>
+                            </div>
+                        </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
+                            transition={{ delay: 0.4 }}
                             className="flex flex-col sm:flex-row gap-4 sm:gap-6"
                         >
-                            <button className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold text-lg transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-2 group">
-                                Valuar mi Auto Gratis
+                            <button className="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-lg transition-all shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center gap-3 group">
+                                Listar mi Auto Ahora
                                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <button className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl font-bold text-lg transition-all backdrop-blur-md flex items-center justify-center gap-2">
+                            <button className="px-10 py-5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl font-bold text-lg transition-all backdrop-blur-md flex items-center justify-center gap-3">
                                 <Play className="w-5 h-5 fill-current" />
-                                Ver Demo Elite
+                                Ver Proceso de Venta
                             </button>
                         </motion.div>
 
@@ -111,8 +184,14 @@ export default function CimaAutoPage() {
 
             {/* Integrated Elite Components */}
             <AutoROI />
-            <AutoVault />
+            <div className="relative">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
+                <AutoVault />
+                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
+            </div>
+            <AutoJourney />
             <AutoEcosystem />
+            <AutoTestimonials />
 
             {/* Final CTA Section */}
             <section className="py-24 sm:py-32 relative overflow-hidden">

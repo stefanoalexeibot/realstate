@@ -208,8 +208,8 @@ const AutoVault = () => {
                                     viewport={{ once: true }}
                                     transition={{ delay: index * 0.1 }}
                                     className={`group relative p-4 rounded-xl border transition-all duration-300 ${isLocked
-                                            ? "bg-gray-900/50 border-gray-800 opacity-50 blur-[2px]"
-                                            : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-blue-500/30"
+                                        ? "bg-gray-900/50 border-gray-800 opacity-50 blur-[2px]"
+                                        : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-blue-500/30"
                                         }`}
                                 >
                                     <div className="flex items-center justify-between">

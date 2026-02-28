@@ -46,8 +46,8 @@ const Node = ({ icon: Icon, label, x, y, delay = 0, isMain = false }: NodeProps)
             <motion.div
                 whileHover={{ scale: 1.1 }}
                 className={`relative z-10 p-4 rounded-2xl border flex items-center justify-center transition-all duration-300 ${isMain
-                        ? "w-20 h-20 bg-blue-600 border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.5)]"
-                        : "w-16 h-16 bg-white/5 border-white/10 hover:border-blue-500/40 backdrop-blur-xl"
+                    ? "w-20 h-20 bg-blue-600 border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.5)]"
+                    : "w-16 h-16 bg-white/5 border-white/10 hover:border-blue-500/40 backdrop-blur-xl"
                     }`}
             >
                 <Icon className={`w-8 h-8 ${isMain ? "text-white" : "text-blue-400"}`} />
@@ -122,20 +122,46 @@ const AutoEcosystem = () => {
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-blue-500/5 rounded-full" />
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] border border-blue-500/10 rounded-full" />
 
-                    {/* Connections (SVG Lines) */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                        {nodes.filter(n => !n.isMain).map((node) => (
-                            <line
-                                key={node.id}
-                                x1="50%"
-                                y1="50%"
-                                x2={`${node.x}%`}
-                                y2={`${node.y}%`}
-                                className="stroke-blue-500/10 stroke-[1px]"
-                            />
-                        ))}
+                    {/* Connections with energetic flush */}
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
+                        {nodes.map((node, i) => {
+                            if (i === 0) return null;
+                            const center = nodes[0];
+                            return (
+                                <g key={i}>
+                                    <motion.line
+                                        initial={{ pathLength: 0, opacity: 0 }}
+                                        whileInView={{ pathLength: 1, opacity: 1 }}
+                                        transition={{ duration: 1.5, delay: i * 0.2 }}
+                                        x1={`${center.x}%`} y1={`${center.y}%`}
+                                        x2={`${node.x}%`} y2={`${node.y}%`}
+                                        stroke="rgba(59,130,246,0.15)"
+                                        strokeWidth="2"
+                                        strokeDasharray="4 4"
+                                    />
+                                    {/* Fluorescent flux pulse */}
+                                    <motion.line
+                                        animate={{ pathOffset: [0, 1] }}
+                                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                        x1={`${center.x}%`} y1={`${center.y}%`}
+                                        x2={`${node.x}%`} y2={`${node.y}%`}
+                                        stroke="url(#energyGradient)"
+                                        strokeWidth="3"
+                                        strokeDasharray="0.1 0.9"
+                                        strokeDashoffset="0"
+                                        pathLength="1"
+                                    />
+                                </g>
+                            );
+                        })}
+                        <defs>
+                            <linearGradient id="energyGradient" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="transparent" />
+                                <stop offset="50%" stopColor="#3b82f6" fillOpacity="1" />
+                                <stop offset="100%" stopColor="transparent" />
+                            </linearGradient>
+                        </defs>
                     </svg>
-
                     {/* Animated Data Packets */}
                     {nodes.filter(n => !n.isMain).map((node, i) => (
                         <DataPacket
