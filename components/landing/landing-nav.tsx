@@ -37,8 +37,8 @@ export default function LandingNav() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 border-b border-cima-border/50 backdrop-blur-md transition-all duration-300 ${scrolled || open
-            ? "bg-cima-bg/98 shadow-[0_8px_32px_rgba(0,0,0,0.45)]"
-            : "bg-cima-bg/90"
+          ? "bg-cima-bg/98 shadow-[0_8px_32px_rgba(0,0,0,0.45)]"
+          : "bg-cima-bg/90"
           }`}
       >
         <div
