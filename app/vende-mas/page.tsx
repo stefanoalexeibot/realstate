@@ -1,18 +1,353 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
     BarChart3, Users, Layout, Zap,
     ArrowRight, ShieldCheck, Cpu,
     MessageSquare, Sparkles, Smartphone,
     Target, TrendingUp, ShieldAlert,
-    Clock, CheckCircle2, X
+    Clock, CheckCircle2, X, Bell,
+    MousePointer2, Camera, FileText,
+    Share2, Rocket, Briefcase, Plus,
+    Settings, Key, Eye
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MotionDiv, MotionSpan } from "@/components/landing/motion-wrapper";
 import TiltCard from "@/components/landing/tilt-card";
 import FadeIn from "@/components/landing/fade-in";
+
+// --- Components ---
+
+function LiveActivityFeed() {
+    const activities = [
+        { name: "Carlos R.", loc: "Monterrey", action: "cerró una exclusiva de $8M", time: "hace 2 min" },
+        { name: "Inmobiliaria Elite", loc: "CDMX", action: "activó 5 portales nuevos", time: "hace 15 min" },
+        { name: "Lucía M.", loc: "Guadalajara", action: "digitalizó su inventario", time: "hace 45 min" },
+        { name: "Roberto G.", loc: "Querétaro", action: "recibió feedback positivo de cliente", time: "hace 1 hora" }
+    ];
+
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % activities.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, [activities.length]);
+
+    return (
+        <div className="fixed bottom-8 left-8 z-50 hidden md:block w-72">
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -20, scale: 0.95 }}
+                    className="bg-cima-card/80 backdrop-blur-xl border border-cima-gold/20 p-4 rounded-2xl shadow-2xl flex items-center gap-4"
+                >
+                    <div className="h-10 w-10 rounded-full bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center shrink-0">
+                        <Bell className="h-5 w-5 text-cima-gold" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-bold text-cima-gold uppercase tracking-widest">{activities[index].loc}</p>
+                        <p className="text-[11px] text-white/80 leading-tight">
+                            <span className="font-bold text-white">{activities[index].name}</span> {activities[index].action}
+                        </p>
+                        <p className="text-[9px] text-white/30 mt-1 font-mono">{activities[index].time}</p>
+                    </div>
+                </motion.div>
+            </AnimatePresence>
+        </div>
+    );
+}
+
+function PortalPreviewSystem() {
+    const [activeTab, setActiveTab] = useState(0);
+
+    const tabs = [
+        {
+            id: 0,
+            label: "Dashboard Real-Time",
+            icon: Layout,
+            title: "Toda la visibilidad, cero llamadas.",
+            desc: "Tu cliente ve el avance paso a paso: desde la toma de fotos hasta el cierre.",
+            mock: (
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10">
+                        <div className="flex gap-3 items-center">
+                            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-xs font-bold">Estado: Promoción Activa</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-white/40">Día 12</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                            <p className="text-[9px] text-white/40 uppercase mb-1">Visitas</p>
+                            <p className="text-xl font-bold">24</p>
+                        </div>
+                        <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                            <p className="text-[9px] text-white/40 uppercase mb-1">Interesados</p>
+                            <p className="text-xl font-bold">12</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: 1,
+            label: "Evidencia Física",
+            icon: Camera,
+            title: "Prueba visual de tu trabajo.",
+            desc: "Sube fotos de las visitas y notas de feedback. El propietario sabe que estás moviendo su propiedad.",
+            mock: (
+                <div className="grid grid-cols-2 gap-3">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="aspect-video bg-white/5 border border-white/10 rounded-lg flex items-center justify-center relative overflow-hidden group">
+                            <Camera className="h-6 w-6 text-white/10" />
+                            <div className="absolute bottom-1 right-1 bg-green-500 rounded-full p-0.5">
+                                <CheckCircle2 className="h-2 w-2 text-black" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )
+        },
+        {
+            id: 2,
+            label: "Inteligencia de Datos",
+            icon: BarChart3,
+            title: "Feedback que cierra tratos.",
+            desc: "Deja que los datos hablen. Genera reportes de mercado que justifican ajustes de precio con un clic.",
+            mock: (
+                <div className="space-y-3">
+                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-full bg-cima-gold w-[70%]" />
+                    </div>
+                    <div className="flex justify-between text-[10px] font-mono">
+                        <span className="text-cima-gold">Sentimiento Positivo</span>
+                        <span className="text-white/40">70%</span>
+                    </div>
+                    <p className="text-[10px] text-white/40 italic p-3 bg-white/[0.02] rounded-lg border border-white/5">
+                        "El feedback indica que el precio está 5% arriba del mercado actual..."
+                    </p>
+                </div>
+            )
+        }
+    ];
+
+    return (
+        <div className="bg-white/[0.02] border border-white/10 rounded-[40px] overflow-hidden backdrop-blur-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+                {/* Selector */}
+                <div className="lg:col-span-4 border-b lg:border-b-0 lg:border-r border-white/10 p-8 space-y-4">
+                    <p className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.3em] mb-8">Interacción Dueño</p>
+                    {tabs.map((tab, i) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(i)}
+                            className={`w-full flex items-center gap-4 p-5 rounded-2xl transition-all duration-500 text-left group ${activeTab === i ? "bg-cima-gold text-black shadow-xl shadow-cima-gold/20" : "hover:bg-white/5 text-white/40 hover:text-white"}`}
+                        >
+                            <tab.icon className={`h-5 w-5 ${activeTab === i ? "text-black" : "text-cima-gold/50 group-hover:text-cima-gold"}`} />
+                            <span className="text-xs font-bold uppercase tracking-widest">{tab.label}</span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Visualizer */}
+                <div className="lg:col-span-8 p-8 md:p-12 lg:p-20 flex flex-col justify-center bg-gradient-to-br from-white/[0.01] to-transparent">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.5, ease: "circOut" }}
+                            className="max-w-xl"
+                        >
+                            <h3 className="text-3xl md:text-4xl font-heading font-black mb-6 leading-tight">
+                                {tabs[activeTab].title}
+                            </h3>
+                            <p className="text-white/50 text-base mb-12 leading-relaxed">
+                                {tabs[activeTab].desc}
+                            </p>
+
+                            {/* The "Portal" Mockup */}
+                            <div className="relative group max-w-sm">
+                                <div className="absolute -inset-10 bg-cima-gold/10 blur-[60px] rounded-full opacity-50" />
+                                <div className="relative border-4 border-white/10 rounded-[2.5rem] aspect-[9/16] bg-[#0c0c0d] overflow-hidden shadow-2xl p-6">
+                                    {/* Phone notch */}
+                                    <div className="mx-auto w-24 h-4 bg-white/10 rounded-full mb-8" />
+
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="h-8 w-8 rounded-full bg-cima-gold/20 border border-cima-gold/40" />
+                                        <div className="flex-1">
+                                            <div className="h-2 w-20 bg-white/10 rounded-full mb-1" />
+                                            <div className="h-1.5 w-12 bg-white/5 rounded-full" />
+                                        </div>
+                                    </div>
+
+                                    {tabs[activeTab].mock}
+
+                                    <div className="absolute bottom-10 left-6 right-6 space-y-3">
+                                        <div className="h-8 w-full bg-cima-gold/20 border border-cima-gold/40 rounded-lg flex items-center justify-center">
+                                            <MessageSquare className="h-3 w-3 text-cima-gold" />
+                                        </div>
+                                        <div className="h-8 w-full bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
+                                            <Share2 className="h-3 w-3 text-white/20" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function AgentCommandCenterPreview() {
+    return (
+        <div className="bg-[#0c0c0d] border border-white/5 rounded-[40px] overflow-hidden shadow-2xl relative group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-cima-gold/[0.03] to-transparent pointer-events-none" />
+
+            <div className="grid grid-cols-1 lg:grid-cols-12">
+                <div className="lg:col-span-3 border-r border-white/5 p-6 bg-black/40">
+                    <div className="flex items-center gap-3 mb-10">
+                        <div className="h-8 w-8 rounded bg-cima-gold flex items-center justify-center">
+                            <Briefcase className="h-4 w-4 text-black" />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/80">Agent Command</span>
+                    </div>
+
+                    <nav className="space-y-2">
+                        {[
+                            { icon: Layout, label: "Mis Propiedades", active: true },
+                            { icon: Users, label: "Clientes / Dueños", active: false },
+                            { icon: Target, label: "Visitas Registradas", active: false },
+                            { icon: TrendingUp, label: "Analíticos", active: false },
+                            { icon: Settings, label: "Configuración", active: false }
+                        ].map((item, i) => (
+                            <div key={i} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${item.active ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20" : "text-white/20 hover:text-white/40"}`}>
+                                <item.icon className="h-4 w-4" />
+                                <span className="text-[10px] font-bold uppercase">{item.label}</span>
+                            </div>
+                        ))}
+                    </nav>
+
+                    <div className="mt-20 p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
+                        <p className="text-[9px] text-cima-gold font-bold mb-2 uppercase tracking-tight">Capacidad de Cuenta</p>
+                        <div className="h-1 w-full bg-white/5 rounded-full mb-2">
+                            <div className="h-full bg-cima-gold w-[40%]" />
+                        </div>
+                        <p className="text-[8px] text-white/30 uppercase">4/10 propiedades activas</p>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-9 p-8 md:p-12">
+                    <div className="flex justify-between items-center mb-10">
+                        <h4 className="text-xl font-heading font-black">Mis Propiedades en Venta</h4>
+                        <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter hover:scale-105 transition-all shadow-lg shadow-cima-gold/10">
+                            <Plus className="h-3.5 w-3.5" /> Nueva Propiedad
+                        </button>
+                    </div>
+
+                    <div className="space-y-4">
+                        {[
+                            { name: "Residencia Las Misiones", price: "$12.4M", status: "En Venta", owner: "Familia García" },
+                            { name: "Departamento Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M." }
+                        ].map((prop, i) => (
+                            <div key={i} className="bg-white/[0.03] border border-white/10 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 hover:border-cima-gold/30 transition-all group/item">
+                                <div className="flex items-center gap-5">
+                                    <div className="h-12 w-16 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center text-white/20 font-mono text-[10px]">PHOTO</div>
+                                    <div>
+                                        <p className="text-xs font-bold text-white group-hover/item:text-cima-gold transition-colors">{prop.name}</p>
+                                        <div className="flex gap-4 mt-1">
+                                            <span className="text-[9px] text-white/30 font-mono uppercase tracking-tighter">{prop.price}</span>
+                                            <span className="text-[9px] text-cima-gold font-bold uppercase tracking-widest">{prop.status}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-6">
+                                    <div className="text-right hidden md:block">
+                                        <p className="text-[8px] text-white/20 uppercase font-black tracking-widest mb-1">Dueño asignado</p>
+                                        <p className="text-[10px] text-white/60 font-medium">{prop.owner}</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <div className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/10 hover:border-cima-gold/40 transition-all cursor-pointer">
+                                            <Eye className="h-3.5 w-3.5 text-white/40" />
+                                        </div>
+                                        <div className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/10 hover:border-cima-gold/40 transition-all cursor-pointer">
+                                            <Target className="h-3.5 w-3.5 text-white/40" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-12 p-8 border-2 border-dashed border-white/5 rounded-3xl flex flex-col items-center text-center">
+                        <div className="h-10 w-10 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                            <Plus className="h-5 w-5 text-white/20" />
+                        </div>
+                        <p className="text-[10px] text-white/30 uppercase font-black tracking-[0.2em]">Sube tu inventario y deja que el sistema trabaje por ti.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function ZeroFrictionTimeline() {
+    return (
+        <div className="relative py-20">
+            <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px bg-white/10 hidden md:block" />
+
+            <div className="space-y-24">
+                {[
+                    { step: "01", title: "Configuración Relámpago", desc: "Eliges tu plan y personalizas tu marca en menos de 10 minutos. No necesitas saber código.", icon: MousePointer2 },
+                    { step: "02", title: "Lanzamiento Instantáneo", desc: "Tu infraestructura se despliega en nuestros servidores de alto rendimiento. Estás live en 24h.", icon: Rocket },
+                    { step: "03", title: "Domina tu Mercado", desc: "Empiezas a captar exclusivas con tecnología que tus competidores ni siquiera sueñan tener.", icon: Target }
+                ].map((item, i) => (
+                    <div key={item.step} className={`relative flex flex-col md:flex-row gap-12 items-center ${i % 2 !== 0 ? "md:flex-row-reverse" : ""}`}>
+                        <div className="flex-1 text-center md:text-right">
+                            {i % 2 === 0 ? (
+                                <>
+                                    <h4 className="text-2xl font-heading font-black mb-4">{item.title}</h4>
+                                    <p className="text-white/40 text-sm max-w-sm ml-auto">{item.desc}</p>
+                                </>
+                            ) : (
+                                <div className="h-32 w-32 rounded-3xl bg-white/[0.02] border border-white/10 flex items-center justify-center ml-auto">
+                                    <item.icon className="h-12 w-12 text-cima-gold/50" />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="relative z-10 flex items-center justify-center">
+                            <div className="h-16 w-16 rounded-full bg-cima-card border-2 border-cima-gold flex items-center justify-center shadow-2xl shadow-cima-gold/20">
+                                <span className="text-cima-gold font-mono font-black">{item.step}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 text-center md:text-left">
+                            {i % 2 !== 0 ? (
+                                <>
+                                    <h4 className="text-2xl font-heading font-black mb-4">{item.title}</h4>
+                                    <p className="text-white/40 text-sm max-w-sm">{item.desc}</p>
+                                </>
+                            ) : (
+                                <div className="h-32 w-32 rounded-3xl bg-white/[0.02] border border-white/10 flex items-center justify-center mr-auto">
+                                    <item.icon className="h-12 w-12 text-cima-gold/50" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
 
 function MasterRoiCalculator() {
     const [price, setPrice] = useState(5000000);
@@ -121,10 +456,27 @@ const FEATURES = [
 ];
 
 export default function VendeMasPage() {
-    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        setMousePos({ x: e.clientX, y: e.clientY });
+    };
 
     return (
-        <div className="min-h-screen bg-[#0A0A0B] text-white selection:bg-cima-gold/30 scroll-smooth">
+        <div
+            onMouseMove={handleMouseMove}
+            className="min-h-screen bg-[#0A0A0B] text-white selection:bg-cima-gold/30 scroll-smooth relative"
+        >
+            {/* Searchlight Effect */}
+            <div
+                className="pointer-events-none fixed inset-0 z-30 transition-opacity opacity-0 md:opacity-100"
+                style={{
+                    background: `radial-gradient(600px at ${mousePos.x}px ${mousePos.y}px, rgba(200, 169, 110, 0.03), transparent 80%)`
+                }}
+            />
+
+            <LiveActivityFeed />
+
             {/* Navbar Minimalista */}
             <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 backdrop-blur-xl bg-black/20">
                 <div className="mx-auto max-w-7xl h-16 px-6 flex items-center justify-between">
@@ -155,7 +507,8 @@ export default function VendeMasPage() {
 
                 <div className="relative mx-auto max-w-5xl text-center">
                     <FadeIn>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 overflow-hidden group">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                             <ShieldAlert className="h-3.5 w-3.5 text-cima-gold" />
                             <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-cima-gold">Disponibilidad Limitada por Ciudad</span>
                         </div>
@@ -175,9 +528,10 @@ export default function VendeMasPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <Link
                             href="/onboarding"
-                            className="w-full sm:w-auto px-10 py-5 bg-cima-gold text-black font-heading font-bold rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_-10px_rgba(200,169,110,0.3)]"
+                            className="w-full sm:w-auto px-10 py-5 bg-cima-gold text-black font-heading font-bold rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_-10px_rgba(200,169,110,0.3)] relative group overflow-hidden"
                         >
-                            Lanzar mi plataforma hoy
+                            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                            <span className="relative z-10">Lanzar mi plataforma hoy</span>
                         </Link>
                         <a
                             href="#roi"
@@ -249,10 +603,70 @@ export default function VendeMasPage() {
                 </div>
             </section>
 
+            {/* Agents Dashboard Section - THE NEW CONTROL CENTER PREVIEW */}
+            <section className="py-24 px-6 relative bg-black/40 border-b border-white/5 overflow-hidden">
+                <div className="mx-auto max-w-6xl">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        <FadeIn direction="right">
+                            <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">El Motor de tu Negocio</span>
+                            <h2 className="text-4xl md:text-5xl font-heading font-black mb-8 tracking-tight">Agent Command Center</h2>
+                            <p className="text-white/60 text-lg mb-8 leading-relaxed">
+                                No solo les das un portal a tus clientes; tú obtienes un **centro de comando inteligente** para gestionar todo tu inventario.
+                            </p>
+                            <ul className="space-y-6 mb-10">
+                                {[
+                                    { t: "Gestión Centralizada", d: "Sube y actualiza propiedades en segundos.", icon: Layout },
+                                    { t: "Generador de Portales", d: "Un clic para activar el portal del dueño.", icon: Key },
+                                    { t: "Tracking de Visitas", d: "Registra feedback real y genera reportes IA.", icon: Target }
+                                ].map((item, i) => (
+                                    <li key={i} className="flex gap-4 group">
+                                        <div className="h-10 w-10 rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center group-hover:bg-cima-gold/20 transition-all shrink-0">
+                                            <item.icon className="h-5 w-5 text-cima-gold" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-white text-sm">{item.t}</p>
+                                            <p className="text-white/40 text-xs mt-1">{item.d}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </FadeIn>
+
+                        <FadeIn direction="left">
+                            <AgentCommandCenterPreview />
+                        </FadeIn>
+                    </div>
+                </div>
+            </section>
+
+            {/* Interactive Portal Preview Section (Dueño) */}
+            <section className="py-24 px-6 relative overflow-hidden">
+                <div className="mx-auto max-w-6xl">
+                    <div className="text-center mb-20">
+                        <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Lo que ve tu Cliente</span>
+                        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4 tracking-tight">Portal del Propietario</h2>
+                        <p className="text-white/40 max-w-2xl mx-auto">La herramienta que te hará ganar más exclusivas al darles transparencia total.</p>
+                    </div>
+
+                    <PortalPreviewSystem />
+                </div>
+            </section>
+
             {/* ROI Calculator Section */}
-            <section id="roi" className="py-24 px-6 relative">
+            <section id="roi" className="py-24 px-6 relative bg-[#070708]">
                 <div className="mx-auto max-w-6xl">
                     <MasterRoiCalculator />
+                </div>
+            </section>
+
+            {/* Zero Friction Timeline */}
+            <section className="py-24 px-6">
+                <div className="mx-auto max-w-6xl">
+                    <div className="text-center mb-20">
+                        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4 tracking-tight">De Cero a Pro en 24 Horas</h2>
+                        <p className="text-white/40">Fricción eliminada. Eficiencia maximizada.</p>
+                    </div>
+                    <ZeroFrictionTimeline />
                 </div>
             </section>
 
@@ -363,7 +777,7 @@ export default function VendeMasPage() {
                                 className={`p-10 rounded-[50px] border flex flex-col h-full transition-all duration-700 relative overflow-hidden group ${plan.highlight ? "bg-cima-card border-cima-gold shadow-[0_50px_100px_-20px_rgba(200,169,110,0.2)] lg:scale-105 z-10" : "bg-white/[0.02] border-white/5"}`}
                             >
                                 {plan.popular && (
-                                    <div className="absolute top-6 right-10 bg-cima-gold text-black text-[9px] font-black uppercase tracking-widest py-1.5 px-4 rounded-full">Más Popular</div>
+                                    <div className="absolute top-6 right-10 bg-cima-gold text-black text-[9px] font-black uppercase tracking-widest py-1.5 px-4 rounded-full animate-bounce">Más Popular</div>
                                 )}
                                 <h3 className="text-xl font-heading font-bold mb-2 group-hover:text-cima-gold transition-colors">{plan.name}</h3>
                                 <div className="flex items-baseline gap-1 mb-8">
@@ -383,9 +797,10 @@ export default function VendeMasPage() {
                                 </ul>
                                 <Link
                                     href="/onboarding"
-                                    className={`w-full py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] text-center transition-all duration-500 shadow-xl ${plan.highlight ? "bg-cima-gold text-black hover:scale-105" : "bg-white/5 text-white hover:bg-white/10"}`}
+                                    className={`w-full py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] text-center transition-all duration-500 shadow-xl overflow-hidden relative group/btn ${plan.highlight ? "bg-cima-gold text-black hover:scale-105" : "bg-white/5 text-white hover:bg-white/10"}`}
                                 >
-                                    {plan.cta}
+                                    <div className="absolute inset-0 bg-white/20 translate-x-full group-hover/btn:translate-x-0 transition-transform duration-300" />
+                                    <span className="relative z-10">{plan.cta}</span>
                                 </Link>
 
                                 {/* Availability Note */}
