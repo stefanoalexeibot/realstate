@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { Loader2, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUtmParams } from "@/hooks/useUtmParams";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
 export default function SellForm() {
   const [state, setState] = useState<FormState>("idle");
+  const utm = useUtmParams();
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -25,7 +27,7 @@ export default function SellForm() {
       const res = await fetch("/api/seller-leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, ...utm }),
       });
       if (!res.ok) throw new Error();
       setState("success");

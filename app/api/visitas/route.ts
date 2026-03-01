@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { notifyNewVisit } from "@/lib/notify";
+import { checkRateLimit, isHoneypotFilled } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
+    const rateLimited = checkRateLimit(req);
+    if (rateLimited) return rateLimited;
+
     const body = await req.json();
+
+    if (isHoneypotFilled(body)) {
+      return NextResponse.json({ ok: true });
+    }
+
     const { property_id, name, phone, email, preferred_date, message } = body;
 
     if (!property_id || !name || !phone) {

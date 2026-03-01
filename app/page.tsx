@@ -27,6 +27,8 @@ import LandingNav from "@/components/landing/landing-nav";
 import RotatingZone from "@/components/landing/rotating-zone";
 import AuroraHero from "@/components/landing/aurora-hero";
 import BenefitsSection from "@/components/landing/benefits-section";
+import LazySection from "@/components/landing/lazy-section";
+import WhatsAppFloat from "@/components/landing/whatsapp-float";
 
 import PriceEstimator from "@/components/landing/price-estimator";
 import type { Property } from "@/lib/types";
@@ -271,10 +273,14 @@ export default async function HomePage() {
       <BenefitsSection />
 
       {/* ── BEFORE / AFTER SLIDER ──────────────── */}
-      <BeforeAfterSlider />
+      <LazySection>
+        <BeforeAfterSlider />
+      </LazySection>
 
       {/* ── PRICE ESTIMATOR ─────────────────────── */}
-      <PriceEstimator />
+      <LazySection>
+        <PriceEstimator />
+      </LazySection>
 
       {/* ── PROFIT CALCULATOR ───────────────────── */}
       <section id="calculadora" className="px-6 py-16 border-t border-cima-border/50">
@@ -382,7 +388,9 @@ export default async function HomePage() {
       </section>
 
       {/* ── ASISTENTE VIRTUAL ───────────────────── */}
-      <AsistenteDemo />
+      <LazySection>
+        <AsistenteDemo />
+      </LazySection>
 
       {/* ── TESTIMONIALS ────────────────────────── */}
       <section className="px-6 py-16 border-t border-cima-border/50">
@@ -562,6 +570,9 @@ export default async function HomePage() {
 
       {/* ── SOCIAL PROOF TOAST ─────────────────── */}
       <SocialProofToast />
+
+      {/* ── WHATSAPP FLOATING CTA ─────────────── */}
+      <WhatsAppFloat />
 
 
     </div>

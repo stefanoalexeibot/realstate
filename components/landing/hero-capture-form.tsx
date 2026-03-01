@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { Loader2, CheckCircle, ArrowRight, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUtmParams } from "@/hooks/useUtmParams";
 
 type State = "idle" | "loading" | "success" | "error";
 
 export default function HeroCaptureForm() {
   const [state, setState] = useState<State>("idle");
   const [form, setForm] = useState({ name: "", phone: "", estimated_price: "" });
+  const utm = useUtmParams();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +28,7 @@ export default function HeroCaptureForm() {
             : null,
           operation_type: "venta",
           message: "Lead desde hero — 30 días",
+          ...utm,
         }),
       });
       if (!res.ok) throw new Error();
