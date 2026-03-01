@@ -198,7 +198,7 @@ export default function DemoAdminLive() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black uppercase tracking-wider text-white">Panel</span>
-                            <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">Team / Agency</span>
+                            <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">Pro</span>
                         </div>
                     </div>
 

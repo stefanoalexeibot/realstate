@@ -11,6 +11,7 @@ export interface PlanConfig {
     price: string;
     tagline: string;
     maxProperties: number; // -1 = ilimitado
+    deliveryDays: number; // días de entrega
     color: string; // accent color
     features: {
         landing: {
@@ -43,6 +44,7 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
         price: "$14,900",
         tagline: "Para asesores independientes",
         maxProperties: 1,
+        deliveryDays: 5,
         color: "#9CA3AF", // gray
         features: {
             landing: {
@@ -73,6 +75,7 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
         price: "$29,900",
         tagline: "Para asesores top y equipos",
         maxProperties: 5,
+        deliveryDays: 7,
         color: "#C8A96E", // cima-gold
         features: {
             landing: {
@@ -103,6 +106,7 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
         price: "$49,900",
         tagline: "Para inmobiliarias locales",
         maxProperties: -1,
+        deliveryDays: 14,
         color: "#C8A96E", // cima-gold
         features: {
             landing: {

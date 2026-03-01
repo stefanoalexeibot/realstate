@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
+import DemoLandingExample from "@/components/demo/DemoLandingExample";
 import { DEMO_PLANS } from "@/lib/config/demo-plans";
 
 type View = "admin" | "portal" | "landing";
@@ -94,8 +95,8 @@ function QROverlay({ onClose }: { onClose: () => void }) {
                         />
                     </div>
                 </div>
-                <p className="text-sm font-bold text-gray-900 mb-1">Escanea para ver los planes</p>
-                <p className="text-xs text-gray-500">propiedades-mty.vercel.app/vende-mas</p>
+                <p className="text-sm font-bold text-gray-900 mb-1">Escanea para más información</p>
+                <p className="text-xs text-gray-500">Planes y precios disponibles</p>
             </motion.div>
         </motion.div>
     );
@@ -121,7 +122,7 @@ export default function LiveDemoClient() {
     const VIEW_LABELS: Record<View, string> = {
         admin: "👨‍💼 Esto es lo que VE EL ASESOR — gestión de propiedades, leads, visitas y analíticos",
         portal: "🏠 Esto es lo que VE EL PROPIETARIO — transparencia total sobre el progreso de venta",
-        landing: "🌐 Esta es la LANDING PAGE que recibe el asesor — captura de leads y posicionamiento",
+        landing: "🌐 Esta es la LANDING PAGE para cada propiedad — captura de leads automática",
     };
 
     return (
@@ -136,7 +137,7 @@ export default function LiveDemoClient() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black uppercase tracking-wider text-white">Demo en Vivo</span>
-                            <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">Paquete {plan.name}</span>
+                            <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">Plataforma Inmobiliaria</span>
                         </div>
                     </div>
 
@@ -215,18 +216,7 @@ export default function LiveDemoClient() {
                 >
                     {view === "admin" && <DemoAdminLive />}
                     {view === "portal" && <DemoPortal plan={plan} />}
-                    {view === "landing" && (
-                        <div className="relative">
-                            <iframe
-                                src="/"
-                                className="w-full border-0"
-                                style={{ height: "calc(100vh - 80px)" }}
-                                title="Landing Page Preview"
-                            />
-                            {/* Overlay gradient at bottom */}
-                            <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#0A0A0B] to-transparent pointer-events-none" />
-                        </div>
-                    )}
+                    {view === "landing" && <DemoLandingExample />}
                 </motion.div>
             </AnimatePresence>
 
