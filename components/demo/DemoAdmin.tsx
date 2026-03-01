@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import {
     Layout, Users, Target, TrendingUp, MessageSquare,
     Settings, Plus, Eye, Share2, BarChart3,
-    ArrowRight, Bell, Search
+    ArrowRight, Bell, Search, Zap
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import UpgradeBanner from "./UpgradeBanner";
@@ -14,12 +15,64 @@ interface DemoAdminProps {
 }
 
 const PROPERTIES = [
-    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/cocina-despues.png", hits: 142 },
-    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89 },
-    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/recamara-despues.png", hits: 56 },
-    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-despues.png", hits: 34 },
-    { name: "Pent. Santa María", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/estancia-despues.png", hits: 201 },
+    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72] },
+    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45] },
+    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28] },
+    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20] },
+    { name: "Pent. Santa María", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90] },
 ];
+
+/* ─── Mini Sparkline Chart ─────────────────────────────────── */
+function MiniChart({ data, color = "#C8A96E", height = 32 }: { data: number[]; color?: string; height?: number }) {
+    const max = Math.max(...data);
+    const min = Math.min(...data);
+    const range = max - min || 1;
+    const w = 80;
+    const points = data.map((v, i) => ({
+        x: (i / (data.length - 1)) * w,
+        y: height - ((v - min) / range) * (height - 4) - 2,
+    }));
+    const pathD = points.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
+    const areaD = `${pathD} L${w},${height} L0,${height} Z`;
+
+    return (
+        <svg width={w} height={height} viewBox={`0 0 ${w} ${height}`} className="overflow-visible">
+            <defs>
+                <linearGradient id={`grad-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+                    <stop offset="100%" stopColor={color} stopOpacity="0" />
+                </linearGradient>
+            </defs>
+            <path d={areaD} fill={`url(#grad-${color.replace("#", "")})`} />
+            <path d={pathD} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx={points[points.length - 1].x} cy={points[points.length - 1].y} r="2" fill={color} />
+        </svg>
+    );
+}
+
+/* ─── Notification Toast ───────────────────────────────────── */
+function NotificationToast() {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20, x: 20 }}
+            animate={{ opacity: 1, y: 0, x: 0 }}
+            transition={{ delay: 1.5, duration: 0.5 }}
+            className="fixed bottom-6 right-6 z-50 bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl max-w-xs"
+        >
+            <div className="flex items-start gap-3">
+                <div className="h-8 w-8 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
+                    <Zap className="h-4 w-4 text-green-400" />
+                </div>
+                <div className="min-w-0">
+                    <p className="text-[10px] font-black text-white uppercase tracking-wider mb-1">Nueva Visita Agendada</p>
+                    <p className="text-[9px] text-white/40">Familia López — Residencia Las Misiones</p>
+                    <p className="text-[8px] text-white/20 mt-1 font-mono">Hace 2 min</p>
+                </div>
+                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shrink-0 mt-1" />
+            </div>
+        </motion.div>
+    );
+}
 
 export default function DemoAdmin({ plan }: DemoAdminProps) {
     const f = plan.features.admin;
@@ -33,6 +86,13 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
         { icon: TrendingUp, label: "Analíticos", active: false, always: false, requires: f.analytics },
         { icon: MessageSquare, label: "Mensajes", active: false, always: false, requires: f.messages, badge: "3" },
         { icon: Settings, label: "Config", active: false, always: true },
+    ];
+
+    const STATS = [
+        { label: "Vistas Totales", value: "1,247", change: "+12%", icon: Eye, data: [180, 220, 195, 310, 280, 350, 420] },
+        { label: "Leads Activos", value: "23", change: "+5", icon: Users, data: [8, 10, 12, 15, 14, 18, 23] },
+        { label: "Visitas Mes", value: "18", change: "+3", icon: Target, data: [5, 7, 6, 9, 11, 14, 18] },
+        { label: "Conversión", value: "4.2%", change: "+0.8%", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
     ];
 
     return (
@@ -57,10 +117,10 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                                 <div
                                     key={i}
                                     className={`flex items-center justify-between p-2.5 rounded-xl transition-all ${item.active
-                                            ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20"
-                                            : isLocked
-                                                ? "text-white/10 cursor-not-allowed"
-                                                : "text-white/30 hover:bg-white/[0.03] hover:text-white/60 cursor-pointer"
+                                        ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20"
+                                        : isLocked
+                                            ? "text-white/10 cursor-not-allowed"
+                                            : "text-white/30 hover:bg-white/[0.03] hover:text-white/60 cursor-pointer"
                                         }`}
                                 >
                                     <div className="flex items-center gap-2">
@@ -68,7 +128,11 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                                         <span className="text-[9px] font-bold uppercase tracking-tight">{item.label}</span>
                                     </div>
                                     {item.badge && !isLocked && (
-                                        <span className="h-4 w-4 rounded-full bg-cima-gold text-black text-[7px] font-black flex items-center justify-center">{item.badge}</span>
+                                        <span className="relative h-4 w-4 rounded-full bg-cima-gold text-black text-[7px] font-black flex items-center justify-center">
+                                            {item.badge}
+                                            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-500 animate-ping" />
+                                            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-500" />
+                                        </span>
                                     )}
                                     {isLocked && (
                                         <span className="text-[7px] text-white/10 font-bold">PRO</span>
@@ -99,28 +163,46 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                                 {plan.maxProperties !== -1 && <span className="text-white/20"> (límite: {plan.maxProperties})</span>}
                             </p>
                         </div>
-                        <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
-                            <Plus className="h-3.5 w-3.5" /> Nueva
-                        </button>
+                        <div className="flex items-center gap-2">
+                            {/* Notification bell - Pro/Premium */}
+                            {f.messages && (
+                                <div className="relative p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
+                                    <Bell className="h-3.5 w-3.5 text-white/40" />
+                                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[7px] font-black text-white flex items-center justify-center">
+                                        5
+                                    </span>
+                                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 animate-ping opacity-30" />
+                                </div>
+                            )}
+                            <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
+                                <Plus className="h-3.5 w-3.5" /> Nueva
+                            </button>
+                        </div>
                     </div>
 
                     {/* Analytics Row - Pro/Premium only */}
                     {f.analytics ? (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                            {[
-                                { label: "Vistas Totales", value: "1,247", change: "+12%", icon: Eye },
-                                { label: "Leads Activos", value: "23", change: "+5", icon: Users },
-                                { label: "Visitas Mes", value: "18", change: "+3", icon: Target },
-                                { label: "Conversión", value: "4.2%", change: "+0.8%", icon: TrendingUp },
-                            ].map((stat, i) => (
-                                <div key={i} className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
-                                    <div className="flex items-center justify-between mb-2">
+                            {STATS.map((stat, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="bg-white/[0.03] border border-white/5 rounded-xl p-4 hover:border-white/10 transition-all"
+                                >
+                                    <div className="flex items-center justify-between mb-3">
                                         <stat.icon className="h-3.5 w-3.5 text-white/20" />
-                                        <span className="text-[8px] font-bold text-green-500">{stat.change}</span>
+                                        <span className="text-[8px] font-bold text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded-full">{stat.change}</span>
                                     </div>
-                                    <p className="text-lg font-heading font-bold text-white">{stat.value}</p>
-                                    <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
-                                </div>
+                                    <div className="flex items-end justify-between gap-2">
+                                        <div>
+                                            <p className="text-lg font-heading font-bold text-white">{stat.value}</p>
+                                            <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
+                                        </div>
+                                        <MiniChart data={stat.data} />
+                                    </div>
+                                </motion.div>
                             ))}
                         </div>
                     ) : (
@@ -132,7 +214,13 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                     {/* Property Cards */}
                     <div className="space-y-3">
                         {visibleProps.map((prop, i) => (
-                            <div key={i} className="bg-white/[0.03] border border-white/5 p-3 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group">
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 + i * 0.08 }}
+                                className="bg-white/[0.03] border border-white/5 p-3 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group"
+                            >
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="h-10 w-14 bg-black border border-white/10 rounded-lg overflow-hidden shrink-0">
                                         <img src={prop.img} alt={prop.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
@@ -150,6 +238,12 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                                             <span className="text-white/40">{prop.owner}</span>
                                         </div>
                                     </div>
+                                    {/* Mini trend chart per property - Pro/Premium */}
+                                    {f.analytics && (
+                                        <div className="hidden md:block shrink-0">
+                                            <MiniChart data={prop.trend} height={24} />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-white/5">
                                     <div className="p-1.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/20 transition-all cursor-pointer">
@@ -162,7 +256,7 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                                         <Share2 className="h-3 w-3 text-white/20" />
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
@@ -178,6 +272,9 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                     )}
                 </div>
             </div>
+
+            {/* Notification toast - Pro/Premium only */}
+            {f.messages && <NotificationToast />}
         </div>
     );
 }
