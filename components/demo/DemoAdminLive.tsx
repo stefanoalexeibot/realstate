@@ -7,7 +7,8 @@ import {
     Settings, Plus, Eye, Share2, BarChart3,
     Bell, Zap, Phone, Instagram, Globe, Facebook,
     Calendar, Clock, CheckCircle2, AlertCircle, MapPin,
-    ArrowUpRight, ArrowDownRight, Mail, ChevronRight, Lock
+    ArrowUpRight, ArrowDownRight, Mail, ChevronRight, Lock,
+    X, Sparkles, Upload, Image, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 
@@ -20,11 +21,19 @@ interface DemoAdminLiveProps {
 
 /* ─── Mock Data ────────────────────────────────────────────── */
 const PROPERTIES = [
-    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72] },
-    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45] },
-    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28] },
-    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20] },
-    { name: "Pent. Santa María", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90] },
+    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
+    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa María" },
+    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
+    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de Anáhuac 305, Valle Poniente" },
+    { name: "Pent. Santa María", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa María" },
+    { name: "Casa Cumbres Elite", price: "$5.5M", status: "Venta", owner: "Arq. Mendoza", img: "/recamara-despues.png", hits: 67, trend: [15, 22, 18, 28, 35, 32, 40], beds: 3, baths: 2.5, m2: 210, address: "Cumbres Elite 7° Sector, Priv. Ámbar" },
+    { name: "Depto. Vía Cordillera", price: "$3.8M", status: "Venta", owner: "Sra. Lozano", img: "/cocina-despues.png", hits: 45, trend: [8, 12, 15, 11, 20, 18, 25], beds: 2, baths: 1, m2: 85, address: "Vía Cordillera 200, Col. Residencial" },
+    { name: "Residencia Carretera Nal.", price: "$18.5M", status: "Exclusiva", owner: "Fam. Treviño", img: "/estancia-despues.png", hits: 178, trend: [40, 55, 48, 65, 72, 68, 85], beds: 5, baths: 4.5, m2: 480, address: "Carr. Nacional Km 268, La Estanzuela" },
+    { name: "Townhouse San Pedro", price: "$7.2M", status: "Venta", owner: "Lic. Cavazos", img: "/recamara-despues.png", hits: 92, trend: [25, 30, 28, 38, 45, 42, 55], beds: 3, baths: 3, m2: 175, address: "San Pedro Garza García, Zona Valle" },
+    { name: "Loft Barrio Antiguo", price: "$2.9M", status: "Venta", owner: "Dis. Ramírez", img: "/cocina-despues.png", hits: 110, trend: [35, 42, 38, 50, 58, 55, 70], beds: 1, baths: 1, m2: 65, address: "Barrio Antiguo, Calle Morelos 412" },
+    { name: "Casa Bosques del Valle", price: "$9.7M", status: "Venta", owner: "Dr. González", img: "/estancia-despues.png", hits: 73, trend: [18, 25, 22, 30, 38, 35, 42], beds: 4, baths: 3, m2: 290, address: "Bosques del Valle, Priv. Roble" },
+    { name: "Pent. Distrito Tec", price: "$6.8M", status: "Exclusiva", owner: "Ing. Salinas", img: "/recamara-despues.png", hits: 156, trend: [42, 50, 45, 62, 70, 65, 82], beds: 2, baths: 2, m2: 130, address: "Blvd. Díaz Ordaz, Torre Altus, P.H." },
+    { name: "Residencia Chipinque", price: "$22.0M", status: "Exclusiva", owner: "Fam. Garza", img: "/cocina-despues.png", hits: 225, trend: [55, 65, 60, 78, 88, 82, 95], beds: 5, baths: 5, m2: 550, address: "Paseo de Chipinque 100, San Pedro" },
 ];
 
 const LEADS = [
@@ -183,10 +192,13 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
         if (activeTab === "leads" || activeTab === "visitas" && !f.visits) setActiveTab("propiedades");
         if (activeTab === "analiticos" && !f.analytics) setActiveTab("propiedades");
         if (activeTab === "mensajes" && !f.messages) setActiveTab("propiedades");
+        setSelectedProperty(null);
     }, [plan.tier]);
 
     const maxProps = plan.maxProperties === -1 ? PROPERTIES.length : plan.maxProperties;
     const visibleProps = PROPERTIES.slice(0, maxProps);
+    const canEdit = plan.tier === "profesional" || plan.tier === "premium";
+    const [selectedProperty, setSelectedProperty] = useState<number | null>(null);
 
     const PLAN_LABELS: Record<string, string> = {
         basico: "Starter",
@@ -230,10 +242,10 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
                                 key={item.id}
                                 onClick={() => !item.locked && setActiveTab(item.id)}
                                 className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all ${item.locked
-                                        ? "text-white/10 cursor-not-allowed"
-                                        : activeTab === item.id
-                                            ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20"
-                                            : "text-white/30 hover:bg-white/[0.03] hover:text-white/60"
+                                    ? "text-white/10 cursor-not-allowed"
+                                    : activeTab === item.id
+                                        ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20"
+                                        : "text-white/30 hover:bg-white/[0.03] hover:text-white/60"
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -278,10 +290,10 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
                                 key={item.id}
                                 onClick={() => !item.locked && setActiveTab(item.id)}
                                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[8px] font-bold uppercase whitespace-nowrap transition-all ${item.locked
-                                        ? "bg-white/5 text-white/15 cursor-not-allowed"
-                                        : activeTab === item.id
-                                            ? "bg-cima-gold text-black"
-                                            : "bg-white/5 text-white/40"
+                                    ? "bg-white/5 text-white/15 cursor-not-allowed"
+                                    : activeTab === item.id
+                                        ? "bg-cima-gold text-black"
+                                        : "bg-white/5 text-white/40"
                                     }`}
                             >
                                 {item.locked ? <Lock className="h-3 w-3" /> : <item.icon className="h-3 w-3" />}
@@ -357,7 +369,20 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
                             exit={{ opacity: 0, y: -5 }}
                             transition={{ duration: 0.2 }}
                         >
-                            {activeTab === "propiedades" && <PropertiesView properties={visibleProps} />}
+                            {activeTab === "propiedades" && (
+                                selectedProperty !== null && canEdit ? (
+                                    <PropertyDetailPanel
+                                        property={visibleProps[selectedProperty]}
+                                        onBack={() => setSelectedProperty(null)}
+                                    />
+                                ) : (
+                                    <PropertiesView
+                                        properties={visibleProps}
+                                        canEdit={canEdit}
+                                        onSelect={(i) => setSelectedProperty(i)}
+                                    />
+                                )
+                            )}
                             {activeTab === "leads" && <LeadsView />}
                             {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
                             {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
@@ -376,7 +401,7 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
 /* ═══ VIEWS ════════════════════════════════════════════════ */
 
 /* ── Properties View ───────────────────────────────────────── */
-function PropertiesView({ properties }: { properties: typeof PROPERTIES }) {
+function PropertiesView({ properties, canEdit, onSelect }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void }) {
     return (
         <div className="space-y-3">
             {properties.map((prop, i) => (
@@ -384,8 +409,9 @@ function PropertiesView({ properties }: { properties: typeof PROPERTIES }) {
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.08 }}
-                    className="bg-white/[0.03] border border-white/5 p-3 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group"
+                    transition={{ delay: Math.min(i * 0.05, 0.5) }}
+                    onClick={() => canEdit && onSelect(i)}
+                    className={`bg-white/[0.03] border border-white/5 p-3 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group ${canEdit ? "cursor-pointer" : ""}`}
                 >
                     <div className="flex items-center gap-3 mb-2">
                         <div className="h-10 w-14 bg-black border border-white/10 rounded-lg overflow-hidden shrink-0">
@@ -408,20 +434,199 @@ function PropertiesView({ properties }: { properties: typeof PROPERTIES }) {
                             <MiniChart data={prop.trend} height={24} />
                         </div>
                     </div>
-                    <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-white/5">
-                        <div className="p-1.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/20 transition-all cursor-pointer">
-                            <Settings className="h-3 w-3 text-white/40" />
-                        </div>
-                        <div className="p-1.5 bg-cima-gold/10 border border-cima-gold/20 rounded-lg hover:bg-cima-gold transition-all cursor-pointer">
-                            <Layout className="h-3 w-3 text-cima-gold" />
-                        </div>
-                        <div className="p-1.5 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
-                            <Share2 className="h-3 w-3 text-white/20" />
+                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                        {canEdit && (
+                            <span className="text-[7px] text-white/20 font-bold uppercase tracking-widest flex items-center gap-1">
+                                <Edit3 className="h-2.5 w-2.5" /> Click para editar
+                            </span>
+                        )}
+                        <div className={`flex items-center gap-1.5 ${canEdit ? "" : "ml-auto"}`}>
+                            <div className="p-1.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/20 transition-all cursor-pointer">
+                                <Settings className="h-3 w-3 text-white/40" />
+                            </div>
+                            <div className="p-1.5 bg-cima-gold/10 border border-cima-gold/20 rounded-lg hover:bg-cima-gold transition-all cursor-pointer">
+                                <Layout className="h-3 w-3 text-cima-gold" />
+                            </div>
+                            <div className="p-1.5 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
+                                <Share2 className="h-3 w-3 text-white/20" />
+                            </div>
                         </div>
                     </div>
                 </motion.div>
             ))}
         </div>
+    );
+}
+
+/* ── Property Detail Panel ─────────────────────────────────── */
+function PropertyDetailPanel({ property, onBack }: { property: (typeof PROPERTIES)[0]; onBack: () => void }) {
+    const [isPublished, setIsPublished] = useState(true);
+    const [aiGenerating, setAiGenerating] = useState(false);
+    const [aiText, setAiText] = useState("");
+
+    const FULL_AI_TEXT = `Descubre esta impresionante ${property.name.toLowerCase()} ubicada en ${property.address}. Con ${property.beds} amplias recámaras, ${property.baths} baños de lujo y ${property.m2}m² de construcción, esta propiedad ofrece el espacio ideal para tu familia. Acabados de primera calidad, iluminación natural excepcional y una ubicación privilegiada que garantiza plusvalía. Agenda tu visita hoy.`;
+
+    function handleAIGenerate() {
+        setAiGenerating(true);
+        setAiText("");
+        let idx = 0;
+        const interval = setInterval(() => {
+            idx++;
+            setAiText(FULL_AI_TEXT.slice(0, idx));
+            if (idx >= FULL_AI_TEXT.length) {
+                clearInterval(interval);
+                setAiGenerating(false);
+            }
+        }, 15);
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="space-y-6"
+        >
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <button onClick={onBack} className="flex items-center gap-2 text-[9px] font-bold text-white/40 uppercase tracking-wider hover:text-white transition-all">
+                    <ChevronRight className="h-3.5 w-3.5 rotate-180" />
+                    Volver a propiedades
+                </button>
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                        <span className="text-[8px] text-white/40 font-bold uppercase">Publicada</span>
+                        <button onClick={() => setIsPublished(!isPublished)} className="relative">
+                            <div className={`w-8 h-4 rounded-full transition-all ${isPublished ? "bg-green-500" : "bg-white/10"}`}>
+                                <div className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition-all ${isPublished ? "left-[18px]" : "left-0.5"}`} />
+                            </div>
+                        </button>
+                    </div>
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[8px] font-black uppercase tracking-wider hover:bg-white transition-all">
+                        <ExternalLink className="h-3 w-3" /> Ver Landing
+                    </button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left: Form */}
+                <div className="lg:col-span-2 space-y-4">
+                    {/* Hero image */}
+                    <div className="relative h-48 rounded-xl overflow-hidden border border-white/10">
+                        <img src={property.img} alt={property.name} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                            <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase ${isPublished ? "bg-green-500/20 text-green-400 border border-green-500/30" : "bg-red-500/20 text-red-400 border border-red-500/30"}`}>
+                                {isPublished ? "En línea" : "Borrador"}
+                            </span>
+                            <span className="text-[8px] text-white/60 font-mono">{property.hits} vistas</span>
+                        </div>
+                    </div>
+
+                    {/* Form fields */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Nombre</label>
+                            <input className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none focus:border-cima-gold/40 transition-all" defaultValue={property.name} readOnly />
+                        </div>
+                        <div>
+                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Precio</label>
+                            <input className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none focus:border-cima-gold/40 transition-all" defaultValue={property.price} readOnly />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Dirección</label>
+                        <input className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white outline-none focus:border-cima-gold/40 transition-all" defaultValue={property.address} readOnly />
+                    </div>
+
+                    {/* Specs */}
+                    <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
+                            <BedDouble className="h-4 w-4 text-white/20 mx-auto mb-1" />
+                            <p className="text-sm font-bold text-white">{property.beds}</p>
+                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Recámaras</p>
+                        </div>
+                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
+                            <Bath className="h-4 w-4 text-white/20 mx-auto mb-1" />
+                            <p className="text-sm font-bold text-white">{property.baths}</p>
+                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Baños</p>
+                        </div>
+                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
+                            <Ruler className="h-4 w-4 text-white/20 mx-auto mb-1" />
+                            <p className="text-sm font-bold text-white">{property.m2}</p>
+                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">m²</p>
+                        </div>
+                    </div>
+
+                    {/* Description with AI */}
+                    <div>
+                        <div className="flex items-center justify-between mb-1">
+                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Descripción</label>
+                            <button
+                                onClick={handleAIGenerate}
+                                disabled={aiGenerating}
+                                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-[7px] font-black text-purple-400 uppercase tracking-wider hover:bg-purple-500/20 transition-all disabled:opacity-50"
+                            >
+                                <Sparkles className={`h-3 w-3 ${aiGenerating ? "animate-spin" : ""}`} />
+                                {aiGenerating ? "Generando…" : "Generar con IA"}
+                            </button>
+                        </div>
+                        <textarea
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white/60 outline-none focus:border-cima-gold/40 transition-all resize-none h-28"
+                            value={aiText || `Hermosa propiedad en ${property.address}. Contacta para más información.`}
+                            readOnly
+                        />
+                    </div>
+                </div>
+
+                {/* Right: Photos & Actions */}
+                <div className="space-y-4">
+                    {/* Photos */}
+                    <div>
+                        <div className="flex items-center justify-between mb-2">
+                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Galería de Fotos</label>
+                            <span className="text-[7px] text-white/20 font-mono">4 fotos</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            {[property.img, "/estancia-despues.png", "/recamara-despues.png", "/cocina-despues.png"].map((img, j) => (
+                                <div key={j} className="aspect-square rounded-lg overflow-hidden border border-white/10 relative group/photo">
+                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                        <Edit3 className="h-3 w-3 text-white" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-2.5 border border-dashed border-white/10 rounded-lg text-[8px] font-bold text-white/30 uppercase tracking-wider hover:border-cima-gold/30 hover:text-cima-gold transition-all">
+                            <Upload className="h-3 w-3" /> Subir más fotos
+                        </button>
+                    </div>
+
+                    {/* Quick actions */}
+                    <div className="space-y-2">
+                        <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Acciones</p>
+                        {[
+                            { icon: FileText, label: "Generar ficha PDF", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
+                            { icon: Share2, label: "Compartir WhatsApp", color: "text-green-400 bg-green-500/10 border-green-500/20" },
+                            { icon: Image, label: "Generar anuncio redes", color: "text-pink-400 bg-pink-500/10 border-pink-500/20" },
+                            { icon: Sparkles, label: "Llenado completo con IA", color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
+                        ].map((action, j) => (
+                            <button key={j} className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all hover:scale-[1.02] ${action.color}`}>
+                                <action.icon className="h-3.5 w-3.5 shrink-0" />
+                                {action.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Owner info */}
+                    <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3">
+                        <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-2">Propietario</p>
+                        <p className="text-xs font-bold text-white">{property.owner}</p>
+                        <p className="text-[9px] text-white/30 mt-0.5">{property.status} · {property.address.split(",").pop()?.trim()}</p>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
     );
 }
 
