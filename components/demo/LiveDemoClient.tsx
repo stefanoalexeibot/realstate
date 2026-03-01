@@ -9,7 +9,7 @@ import {
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
-import { DEMO_PLANS } from "@/lib/config/demo-plans";
+import { DEMO_PLANS, type PlanTier } from "@/lib/config/demo-plans";
 
 type View = "admin" | "portal" | "landing";
 
@@ -105,9 +105,23 @@ function QROverlay({ onClose }: { onClose: () => void }) {
 /* ═══ MAIN COMPONENT ═══════════════════════════════════════ */
 export default function LiveDemoClient() {
     const [view, setView] = useState<View>("admin");
+    const [tier, setTier] = useState<PlanTier>("premium");
     const [showQR, setShowQR] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const plan = DEMO_PLANS.premium;
+    const [upgradeFlash, setUpgradeFlash] = useState(false);
+    const plan = DEMO_PLANS[tier];
+
+    const TIER_ORDER: PlanTier[] = ["basico", "profesional", "premium"];
+
+    function switchTier(newTier: PlanTier) {
+        const oldIdx = TIER_ORDER.indexOf(tier);
+        const newIdx = TIER_ORDER.indexOf(newTier);
+        setTier(newTier);
+        if (newIdx > oldIdx) {
+            setUpgradeFlash(true);
+            setTimeout(() => setUpgradeFlash(false), 600);
+        }
+    }
 
     function toggleFullscreen() {
         if (!document.fullscreenElement) {
@@ -126,7 +140,20 @@ export default function LiveDemoClient() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0A0A0B]">
+        <div className="min-h-screen bg-[#0A0A0B] relative">
+            {/* Upgrade flash overlay */}
+            <AnimatePresence>
+                {upgradeFlash && (
+                    <motion.div
+                        initial={{ opacity: 0.7 }}
+                        animate={{ opacity: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="fixed inset-0 z-[60] bg-cima-gold/5 pointer-events-none"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* ── Presenter Toolbar ─────────────────────── */}
             <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-2.5">
@@ -167,8 +194,34 @@ export default function LiveDemoClient() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
+                        {/* Plan Selector */}
+                        <div className="hidden md:flex items-center gap-0.5 bg-white/[0.03] p-0.5 rounded-lg border border-white/10">
+                            {([
+                                { id: "basico" as PlanTier, label: "Starter", price: plan.tier === "basico" ? plan.price : DEMO_PLANS.basico.price },
+                                { id: "profesional" as PlanTier, label: "Pro", price: plan.tier === "profesional" ? plan.price : DEMO_PLANS.profesional.price },
+                                { id: "premium" as PlanTier, label: "Team", price: plan.tier === "premium" ? plan.price : DEMO_PLANS.premium.price },
+                            ]).map((t) => (
+                                <button
+                                    key={t.id}
+                                    onClick={() => switchTier(t.id)}
+                                    className={`px-2.5 py-1.5 rounded-md text-[8px] font-bold uppercase tracking-wider transition-all ${tier === t.id
+                                            ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
+                                            : "text-white/30 hover:text-white/50 hover:bg-white/5"
+                                        }`}
+                                >
+                                    <span>{t.label}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Price & delivery badge */}
+                        <div className="hidden lg:flex flex-col items-end">
+                            <span className="text-[10px] font-bold text-white">{plan.price}</span>
+                            <span className="text-[7px] text-white/30 font-mono">{plan.deliveryDays} días entrega</span>
+                        </div>
+
                         {/* Timer */}
-                        <div className="hidden md:flex">
+                        <div className="hidden xl:flex">
                             <PresentationTimer />
                         </div>
 
@@ -199,9 +252,19 @@ export default function LiveDemoClient() {
                 </div>
 
                 {/* Context bar */}
-                <div className="border-t border-white/5 px-4 py-1.5 flex items-center gap-2">
-                    <Eye className="h-3 w-3 text-white/20" />
-                    <p className="text-[9px] text-white/30">{VIEW_LABELS[view]}</p>
+                <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Eye className="h-3 w-3 text-white/20" />
+                        <p className="text-[9px] text-white/30">{VIEW_LABELS[view]}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
+                        <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
+                        <span className="text-[7px] text-white/15">•</span>
+                        <span className="text-[7px] text-white/20">{plan.price}</span>
+                        <span className="text-[7px] text-white/15">•</span>
+                        <span className="text-[7px] text-white/20">{plan.deliveryDays}d</span>
+                    </div>
                 </div>
             </div>
 
@@ -214,7 +277,7 @@ export default function LiveDemoClient() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
                 >
-                    {view === "admin" && <DemoAdminLive />}
+                    {view === "admin" && <DemoAdminLive plan={plan} />}
                     {view === "portal" && <DemoPortal plan={plan} />}
                     {view === "landing" && <DemoLandingExample />}
                 </motion.div>

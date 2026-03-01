@@ -7,11 +7,16 @@ import {
     Settings, Plus, Eye, Share2, BarChart3,
     Bell, Zap, Phone, Instagram, Globe, Facebook,
     Calendar, Clock, CheckCircle2, AlertCircle, MapPin,
-    ArrowUpRight, ArrowDownRight, Mail, ChevronRight
+    ArrowUpRight, ArrowDownRight, Mail, ChevronRight, Lock
 } from "lucide-react";
+import type { PlanConfig } from "@/lib/config/demo-plans";
 
 /* ─── Types ────────────────────────────────────────────────── */
 type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes";
+
+interface DemoAdminLiveProps {
+    plan: PlanConfig;
+}
 
 /* ─── Mock Data ────────────────────────────────────────────── */
 const PROPERTIES = [
@@ -169,22 +174,39 @@ function BarChart({ data, labels }: { data: number[]; labels: string[] }) {
 }
 
 /* ═══ MAIN COMPONENT ═══════════════════════════════════════ */
-export default function DemoAdminLive() {
+export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
+    const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
 
-    const navItems: { id: SidebarTab; icon: React.ElementType; label: string; badge?: string }[] = [
-        { id: "propiedades", icon: Layout, label: "Propiedades" },
-        { id: "leads", icon: Users, label: "Leads", badge: "7" },
-        { id: "visitas", icon: Target, label: "Visitas", badge: "2" },
-        { id: "analiticos", icon: TrendingUp, label: "Analíticos" },
-        { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: "3" },
+    // Reset to propiedades if current tab becomes unavailable
+    React.useEffect(() => {
+        if (activeTab === "leads" || activeTab === "visitas" && !f.visits) setActiveTab("propiedades");
+        if (activeTab === "analiticos" && !f.analytics) setActiveTab("propiedades");
+        if (activeTab === "mensajes" && !f.messages) setActiveTab("propiedades");
+    }, [plan.tier]);
+
+    const maxProps = plan.maxProperties === -1 ? PROPERTIES.length : plan.maxProperties;
+    const visibleProps = PROPERTIES.slice(0, maxProps);
+
+    const PLAN_LABELS: Record<string, string> = {
+        basico: "Starter",
+        profesional: "Professional",
+        premium: "Team / Agency",
+    };
+
+    const navItems: { id: SidebarTab; icon: React.ElementType; label: string; badge?: string; locked: boolean }[] = [
+        { id: "propiedades", icon: Layout, label: "Propiedades", locked: false },
+        { id: "leads", icon: Users, label: "Leads", badge: "7", locked: false },
+        { id: "visitas", icon: Target, label: "Visitas", badge: "2", locked: !f.visits },
+        { id: "analiticos", icon: TrendingUp, label: "Analíticos", locked: !f.analytics },
+        { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: "3", locked: !f.messages },
     ];
 
     const STATS = [
         { label: "Vistas Totales", value: "1,247", change: "+12%", icon: Eye, data: [180, 220, 195, 310, 280, 350, 420] },
         { label: "Leads Activos", value: "23", change: "+5", icon: Users, data: [8, 10, 12, 15, 14, 18, 23] },
-        { label: "Visitas Mes", value: "18", change: "+3", icon: Target, data: [5, 7, 6, 9, 11, 14, 18] },
-        { label: "Conversión", value: "4.2%", change: "+0.8%", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
+        { label: "Visitas Mes", value: f.visits ? "18" : "—", change: f.visits ? "+3" : "🔒", icon: Target, data: [5, 7, 6, 9, 11, 14, 18] },
+        { label: "Conversión", value: f.analytics ? "4.2%" : "—", change: f.analytics ? "+0.8%" : "🔒", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
     ];
 
     return (
@@ -198,7 +220,7 @@ export default function DemoAdminLive() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black uppercase tracking-wider text-white">Panel</span>
-                            <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">Pro</span>
+                            <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">{PLAN_LABELS[plan.tier] || plan.name}</span>
                         </div>
                     </div>
 
@@ -206,23 +228,27 @@ export default function DemoAdminLive() {
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => setActiveTab(item.id)}
-                                className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all ${activeTab === item.id
-                                    ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20"
-                                    : "text-white/30 hover:bg-white/[0.03] hover:text-white/60"
+                                onClick={() => !item.locked && setActiveTab(item.id)}
+                                className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all ${item.locked
+                                        ? "text-white/10 cursor-not-allowed"
+                                        : activeTab === item.id
+                                            ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20"
+                                            : "text-white/30 hover:bg-white/[0.03] hover:text-white/60"
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
                                     <item.icon className="h-3.5 w-3.5 shrink-0" />
                                     <span className="text-[9px] font-bold uppercase tracking-tight">{item.label}</span>
                                 </div>
-                                {item.badge && (
+                                {item.locked ? (
+                                    <Lock className="h-3 w-3 text-white/10" />
+                                ) : item.badge ? (
                                     <span className="relative h-4 w-4 rounded-full bg-cima-gold text-black text-[7px] font-black flex items-center justify-center">
                                         {item.badge}
                                         <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-500 animate-ping" />
                                         <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-500" />
                                     </span>
-                                )}
+                                ) : null}
                             </button>
                         ))}
 
@@ -237,9 +263,9 @@ export default function DemoAdminLive() {
                     <div className="p-3 bg-white/[0.03] border border-white/10 rounded-xl">
                         <p className="text-[7px] text-cima-gold font-black mb-2 uppercase tracking-widest">Capacidad</p>
                         <div className="h-1.5 w-full bg-white/5 rounded-full mb-2">
-                            <div className="h-full bg-cima-gold rounded-full shadow-[0_0_8px_rgba(200,169,110,0.4)]" style={{ width: "100%" }} />
+                            <div className="h-full bg-cima-gold rounded-full shadow-[0_0_8px_rgba(200,169,110,0.4)]" style={{ width: `${Math.min((visibleProps.length / 5) * 100, 100)}%` }} />
                         </div>
-                        <p className="text-[7px] text-white/40 font-mono">5/∞</p>
+                        <p className="text-[7px] text-white/40 font-mono">{visibleProps.length}/{maxProps === PROPERTIES.length ? "∞" : maxProps}</p>
                     </div>
                 </div>
 
@@ -250,15 +276,17 @@ export default function DemoAdminLive() {
                         {navItems.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => setActiveTab(item.id)}
-                                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[8px] font-bold uppercase whitespace-nowrap transition-all ${activeTab === item.id
-                                    ? "bg-cima-gold text-black"
-                                    : "bg-white/5 text-white/40"
+                                onClick={() => !item.locked && setActiveTab(item.id)}
+                                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[8px] font-bold uppercase whitespace-nowrap transition-all ${item.locked
+                                        ? "bg-white/5 text-white/15 cursor-not-allowed"
+                                        : activeTab === item.id
+                                            ? "bg-cima-gold text-black"
+                                            : "bg-white/5 text-white/40"
                                     }`}
                             >
-                                <item.icon className="h-3 w-3" />
+                                {item.locked ? <Lock className="h-3 w-3" /> : <item.icon className="h-3 w-3" />}
                                 {item.label}
-                                {item.badge && (
+                                {!item.locked && item.badge && (
                                     <span className="h-3.5 w-3.5 rounded-full bg-red-500 text-white text-[6px] font-black flex items-center justify-center">{item.badge}</span>
                                 )}
                             </button>
@@ -276,7 +304,7 @@ export default function DemoAdminLive() {
                                 {activeTab === "mensajes" && "Mensajes"}
                             </h1>
                             <p className="text-xs text-white/40">
-                                {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">5 activos</span></>}
+                                {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> · Límite: {maxProps}</span>}</>}
                                 {activeTab === "leads" && <>Tienes <span className="text-white font-bold">7 leads</span> esta semana</>}
                                 {activeTab === "visitas" && <>Próximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
                                 {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">últimos 30 días</span></>}
@@ -329,11 +357,11 @@ export default function DemoAdminLive() {
                             exit={{ opacity: 0, y: -5 }}
                             transition={{ duration: 0.2 }}
                         >
-                            {activeTab === "propiedades" && <PropertiesView />}
+                            {activeTab === "propiedades" && <PropertiesView properties={visibleProps} />}
                             {activeTab === "leads" && <LeadsView />}
-                            {activeTab === "visitas" && <VisitsView />}
-                            {activeTab === "analiticos" && <AnalyticsView />}
-                            {activeTab === "mensajes" && <MessagesView />}
+                            {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
+                            {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
+                            {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -348,10 +376,10 @@ export default function DemoAdminLive() {
 /* ═══ VIEWS ════════════════════════════════════════════════ */
 
 /* ── Properties View ───────────────────────────────────────── */
-function PropertiesView() {
+function PropertiesView({ properties }: { properties: typeof PROPERTIES }) {
     return (
         <div className="space-y-3">
-            {PROPERTIES.map((prop, i) => (
+            {properties.map((prop, i) => (
                 <motion.div
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
