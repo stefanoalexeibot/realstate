@@ -7,12 +7,15 @@ import {
     ArrowRight, ShieldCheck, Cpu,
     MessageSquare, Sparkles, Smartphone,
     Target, TrendingUp, ShieldAlert,
-    Clock, CheckCircle2, X, Bell,
-    MousePointer2, Camera, FileText,
-    Share2, Rocket, Briefcase, Plus,
-    Settings, Key, Eye, Menu
+    CheckCircle2, X, Plus, Clock, Key, Share2, PlusCircle,
+    Camera, FileText, Settings, Menu, Briefcase, MousePointer2, Rocket, Share,
+    AlertCircle, Globe, Heart, Mail, Phone,
+    Building2, Search, Info, Trash2, Edit3, Filter,
+    ChevronRight, ChevronLeft, Calendar, UserPlus,
+    DollarSign, Briefcase as Portfolio, Bell, Eye, LogOut,
+    Check, ArrowUpRight, MinusCircle
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MotionDiv, MotionSpan } from "@/components/landing/motion-wrapper";
 import TiltCard from "@/components/landing/tilt-card";
 import FadeIn from "@/components/landing/fade-in";
@@ -544,6 +547,119 @@ function ZeroFrictionTimeline() {
     );
 }
 
+function EliteComparison() {
+    return (
+        <div className="space-y-12 md:space-y-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                {/* Traditional Side */}
+                <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden group grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+                    <div className="absolute top-4 right-4 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest py-1 px-3 rounded-full border border-red-500/20">
+                        Generación Anterior
+                    </div>
+                    <h4 className="text-xl md:text-2xl font-heading font-bold mb-6 text-white/60">Software Tradicional</h4>
+
+                    <div className="space-y-4 mb-8">
+                        {["EasyBroker", "Nocnok", "Wiggot", "Wasi"].map(name => (
+                            <div key={name} className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl relative group/comp">
+                                <div className="h-2 w-2 rounded-full bg-white/20" />
+                                <span className="font-mono text-sm text-white/40">{name}</span>
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/comp:opacity-100 transition-opacity pointer-events-none">
+                                    <div className="h-[1px] w-[80%] bg-red-500/50 rotate-[-5deg]" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <ul className="space-y-3">
+                        {[
+                            "Sitios web lentos y genéricos",
+                            "Reportes en PDF estáticos",
+                            "Sin portal interactivo para dueños",
+                            "Curva de aprendizaje pesada"
+                        ].map(text => (
+                            <li key={text} className="flex items-center gap-3 text-xs text-white/30">
+                                <MinusCircle className="h-4 w-4 text-red-500/30" />
+                                {text}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Cima Side */}
+                <div className="bg-cima-gold/5 border-2 border-cima-gold/30 rounded-[30px] md:rounded-[50px] p-8 md:p-16 relative overflow-hidden group shadow-[0_40px_100px_-20px_rgba(200,169,110,0.15)]">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-cima-gold/20 blur-[100px] rounded-full" />
+                    <div className="absolute top-6 right-8 bg-cima-gold text-black text-[9px] font-black uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg shadow-cima-gold/20">
+                        El Nuevo Estándar
+                    </div>
+
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="h-12 w-12 rounded-2xl bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/30">
+                            <Zap className="h-6 w-6 text-black" />
+                        </div>
+                        <div>
+                            <h4 className="text-2xl md:text-3xl font-heading font-black text-white">Cima Master</h4>
+                            <p className="text-cima-gold font-mono text-[10px] uppercase tracking-widest">Template Pro</p>
+                        </div>
+                    </div>
+
+                    <ul className="space-y-5 mb-10">
+                        {[
+                            { t: "Impacto Visual de Élite", d: "Diseño que justifica tu comisión de inmediato." },
+                            { t: "Portal Propietario Nativo", d: "Transparencia que elimina la ansiedad del dueño." },
+                            { t: "Velocidad Ultra-Rápida", d: "Carga en < 1s. Retención de leads duplicada." },
+                            { t: "Inteligencia Proactiva", d: "Feedback real de visitas para defensa de precio." }
+                        ].map((item, i) => (
+                            <motion.li
+                                key={i}
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                className="flex gap-4"
+                            >
+                                <div className="h-6 w-6 rounded-full bg-cima-gold/20 border border-cima-gold/30 flex items-center justify-center shrink-0">
+                                    <Check className="h-3 w-3 text-cima-gold" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold text-white">{item.t}</p>
+                                    <p className="text-[11px] text-white/50">{item.d}</p>
+                                </div>
+                            </motion.li>
+                        ))}
+                    </ul>
+
+                    <Link
+                        href="/onboarding"
+                        className="w-full py-5 bg-cima-gold text-black rounded-2xl font-black text-xs uppercase tracking-widest text-center shadow-2xl shadow-cima-gold/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-3 group/btn"
+                    >
+                        Dejar atrás lo tradicional
+                        <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Link>
+                </div>
+            </div>
+
+            {/* Micro-Table Comparison */}
+            <div className="rounded-[40px] border border-white/5 overflow-hidden bg-white/[0.01]">
+                <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
+                    {[
+                        { l: "Despliegue", t: "3 Meses", c: "24 Horas" },
+                        { l: "Estética", t: "Genérica", c: "Ultra-Lujo" },
+                        { l: "Soporte", t: "Tickets", c: "Personal VIP" },
+                        { l: "Costo", t: "Longevo", c: "Eficiente" }
+                    ].map((item, i) => (
+                        <div key={i} className="p-6 md:p-10 text-center space-y-2">
+                            <p className="text-[9px] uppercase font-bold text-white/20 tracking-[0.2em]">{item.l}</p>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[10px] text-white/20 line-through italic">{item.t}</span>
+                                <span className="text-sm md:text-base font-black text-cima-gold italic">{item.c}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function MasterRoiCalculator() {
     const [price, setPrice] = useState(5000000);
     const [monthlyProp, setMonthlyProp] = useState(1);
@@ -897,39 +1013,14 @@ export default function VendeMasPage() {
 
             {/* Comparison Table */}
             <section className="py-16 md:py-24 px-4 md:px-6 relative">
-                <div className="mx-auto max-w-5xl">
-                    <div className="text-center mb-12 md:mb-16">
+                <div className="mx-auto max-w-6xl">
+                    <div className="text-center mb-16 md:mb-24">
                         <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Análisis de Mercado</span>
-                        <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">¿Por qué Master Template?</h2>
-                        <p className="text-white/40 text-sm md:text-base">Comparativa contra el desarrollo tradicional y plataformas genéricas.</p>
+                        <h2 className="text-3xl md:text-5xl lg:text-7xl font-heading font-black mb-6 tracking-tight">El Nuevo Estándar vs <br className="hidden md:block" /> <span className="text-white/20">Lo Tradicional</span></h2>
+                        <p className="text-white/40 text-sm md:text-lg max-w-2xl mx-auto">No es solo otro software; es una categoría diferente de tecnología inmobiliaria.</p>
                     </div>
 
-                    <div className="rounded-2xl md:rounded-[40px] border border-white/10 overflow-x-auto no-scrollbar bg-white/[0.01]">
-                        <table className="w-full text-left min-w-[600px]">
-                            <thead className="bg-white/5 border-b border-white/10">
-                                <tr>
-                                    <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/40">Característica</th>
-                                    <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/40">Tradicional</th>
-                                    <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-cima-gold bg-cima-gold/5 font-mono">Master Template</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-[11px] md:text-sm font-medium">
-                                {[
-                                    { f: "Costo de Inicio", t: "$150,000 MXN+", m: "Desde $14,900 MXN", good: true },
-                                    { f: "Tiempo de Entrega", t: "3–6 meses", m: "< 24 horas", good: true },
-                                    { f: "Portal Propietario", t: "No incluido / Manual", m: "Nativo Automatizado", good: true },
-                                    { f: "Mantenimiento", t: "$5,000/mes+", m: "Incluido en tu plan", good: true },
-                                    { f: "IA e Inteligencia", t: "Costo extra masivo", m: "Integrado en el core", good: true }
-                                ].map((row, i) => (
-                                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                                        <td className="p-4 md:p-6 text-white/80">{row.f}</td>
-                                        <td className="p-4 md:p-6 text-white/30">{row.t}</td>
-                                        <td className="p-4 md:p-6 text-cima-gold font-bold bg-cima-gold/[0.02]">{row.m}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <EliteComparison />
                 </div>
             </section>
 
