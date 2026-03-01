@@ -13,7 +13,7 @@ import {
     Building2, Search, Info, Trash2, Edit3, Filter,
     ChevronRight, ChevronLeft, Calendar, UserPlus,
     DollarSign, Briefcase as Portfolio, Bell, Eye, LogOut,
-    Check, ArrowUpRight, MinusCircle
+    Check, ArrowUpRight, MinusCircle, ChevronDown
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MotionDiv, MotionSpan } from "@/components/landing/motion-wrapper";
@@ -24,10 +24,36 @@ import FadeIn from "@/components/landing/fade-in";
 
 function LiveActivityFeed() {
     const activities = [
-        { name: "Carlos R.", loc: "Monterrey", action: "cerró una exclusiva de $8M", time: "hace 2 min" },
+        { name: "Carlos R.", loc: "Monterrey", action: "cerró una exclusiva de $12M", time: "hace 2 min" },
         { name: "Inmobiliaria Elite", loc: "CDMX", action: "activó 5 portales nuevos", time: "hace 15 min" },
         { name: "Lucía M.", loc: "Guadalajara", action: "digitalizó su inventario", time: "hace 45 min" },
-        { name: "Roberto G.", loc: "Querétaro", action: "recibió feedback positivo de cliente", time: "hace 1 hora" }
+        { name: "Roberto G.", loc: "Querétaro", action: "recibió feedback positivo de cliente", time: "hace 1 hora" },
+        { name: "Ana P.", loc: "San Pedro", action: "captó mansión en Las Misiones", time: "hace 3 min" },
+        { name: "Marco S.", loc: "Puebla", action: "generó reporte de mercado IA", time: "hace 8 min" },
+        { name: "Elena V.", loc: "Mérida", action: "compartió ficha tech con inversionista", time: "hace 12 min" },
+        { name: "Diego T.", loc: "Cancún", action: "cerró venta de Penthouse", time: "hace 20 min" },
+        { name: "Sofía L.", loc: "Tijuana", action: "actualizó estatus de expediente", time: "hace 25 min" },
+        { name: "Javier M.", loc: "Toluca", action: "registró visita de prospecto VIP", time: "hace 30 min" },
+        { name: "Carla B.", loc: "León", action: "activó QR inteligente de venta", time: "hace 35 min" },
+        { name: "Miguel H.", loc: "Saltillo", action: "personalizó su marca Master", time: "hace 40 min" },
+        { name: "Patricia K.", loc: "San Luis", action: "envió seguimiento digital", time: "hace 50 min" },
+        { name: "Fernando Z.", loc: "Aguascalientes", action: "subió 3 exclusivas nuevas", time: "hace 1 hora" },
+        { name: "Gabriel F.", loc: "Torreón", action: "conectó su dominio profesional", time: "hace 1 hora" },
+        { name: "Valentina D.", loc: "Morelia", action: "recibió mensaje de lead calificado", time: "hace 1 hora" },
+        { name: "Andrés Q.", loc: "Hermosillo", action: "completó onboarding VIP", time: "hace 2 horas" },
+        { name: "Mónica G.", loc: "Veracruz", action: "descargó reporte de ROI anual", time: "hace 2 horas" },
+        { name: "Ricardo E.", loc: "Chihuahua", action: "activó feedback automático IA", time: "hace 2 horas" },
+        { name: "Lorena J.", loc: "Villahermosa", action: "mostró portal a un propietario", time: "hace 3 horas" },
+        { name: "Samuel V.", loc: "Cuernavaca", action: "certificó su cuenta como Agente Cima", time: "hace 3 horas" },
+        { name: "Isabel N.", loc: "Pachuca", action: "compartió propiedad en Facebook", time: "hace 3 horas" },
+        { name: "Hugo P.", loc: "Ensenada", action: "cerró renta de local comercial", time: "hace 4 horas" },
+        { name: "Beatriz M.", loc: "Xalapa", action: "actualizó precio por feedback IA", time: "hace 4 horas" },
+        { name: "Raúl G.", loc: "Durango", action: "configuró webhooks de CRM", time: "hace 5 horas" },
+        { name: "Paola S.", loc: "Mazatlán", action: "activó modo ultra-lujo en sitio", time: "hace 5 horas" },
+        { name: "Mateo L.", loc: "Colima", action: "recibió 12 visitas al portal", time: "hace 6 horas" },
+        { name: "Claudia R.", loc: "Oaxaca", action: "generó dossier de venta tech", time: "hace 6 horas" },
+        { name: "Esteban D.", loc: "Manzanillo", action: "activó 2 portales de equipo", time: "hace 7 horas" },
+        { name: "Regina F.", loc: "Zacatecas", action: "completó integración de inventario", time: "hace 7 horas" }
     ];
 
     const [index, setIndex] = useState(0);
@@ -82,6 +108,12 @@ function PortalPreviewSystem() {
                             <div>
                                 <p className="text-[6px] font-black text-cima-gold uppercase tracking-widest mb-1">Mi Portal</p>
                                 <h5 className="text-[10px] font-bold text-white">Hola, PEDRO</h5>
+                                <div className="mt-1 flex items-center gap-1">
+                                    <div className="h-3 w-3 rounded-full bg-cima-gold flex items-center justify-center">
+                                        <Check className="h-1.5 w-1.5 text-black" />
+                                    </div>
+                                    <span className="text-[6px] font-bold text-white/60 uppercase tracking-widest">Agente Verificado Cima</span>
+                                </div>
                             </div>
                             <div className="flex flex-col items-end gap-1">
                                 <span className="px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-[6px] font-black text-green-500 uppercase">● Activa</span>
@@ -293,9 +325,9 @@ function PortalPreviewSystem() {
                             transition={{ duration: 0.5, ease: "circOut" }}
                             className="max-w-xl mx-auto lg:mx-0"
                         >
-                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-heading font-black mb-4 md:mb-6 leading-tight text-center lg:text-left">
-                                {tabs[activeTab].title}
-                            </h3>
+                            <h2 className="text-3xl md:text-5xl lg:text-7xl font-heading font-black mb-6 md:mb-8 tracking-tighter leading-[1.1] md:leading-[1.05]">
+                                De Cero a Pro en <span className="text-cima-gold">7 Días.</span>
+                            </h2>
                             <p className="text-white/50 text-sm md:text-base mb-8 md:mb-12 leading-relaxed text-center lg:text-left">
                                 {tabs[activeTab].desc}
                             </p>
@@ -491,7 +523,7 @@ function ZeroFrictionTimeline() {
             <div className="space-y-16 md:space-y-24">
                 {[
                     { step: "01", title: "Configuración Relámpago", desc: "Eliges tu plan y personalizas tu marca en menos de 10 minutos. No necesitas saber código.", icon: MousePointer2 },
-                    { step: "02", title: "Lanzamiento Instantáneo", desc: "Tu infraestructura se despliega en nuestros servidores de alto rendimiento. Estás live en 24h.", icon: Rocket },
+                    { step: "02", title: "Lanzamiento Instantáneo", desc: "Tu infraestructura se despliega en nuestros servidores de alto rendimiento. Estás live en 7 días.", icon: Rocket },
                     { step: "03", title: "Domina tu Mercado", desc: "Empiezas a captar exclusivas con tecnología que tus competidores ni siquiera sueñan tener.", icon: Target }
                 ].map((item, i) => (
                     <div key={item.step} className={`relative flex flex-col md:flex-row gap-6 md:gap-12 items-start md:items-center ${i % 2 !== 0 ? "md:flex-row-reverse" : ""}`}>
@@ -558,13 +590,21 @@ function EliteComparison() {
                     </div>
                     <h4 className="text-xl md:text-2xl font-heading font-bold mb-6 text-white/60">Software Tradicional</h4>
 
-                    <div className="space-y-4 mb-8">
-                        {["EasyBroker", "Nocnok", "Wiggot", "Wasi"].map(name => (
-                            <div key={name} className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl relative group/comp">
-                                <div className="h-2 w-2 rounded-full bg-white/20" />
-                                <span className="font-mono text-sm text-white/40">{name}</span>
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/comp:opacity-100 transition-opacity pointer-events-none">
-                                    <div className="h-[1px] w-[80%] bg-red-500/50 rotate-[-5deg]" />
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                        {[
+                            { name: "EasyBroker", img: "/competitors/easybroker.png", scale: "scale-[1.56]" },
+                            { name: "Nocnok", img: "/competitors/NOCNOK.png" },
+                            { name: "Wiggot", img: "/competitors/wiggot.png" },
+                            { name: "Wasi", img: "/competitors/wasi.png" }
+                        ].map(comp => (
+                            <div key={comp.name} className="flex items-center justify-center p-6 bg-white/5 border border-white/10 rounded-xl relative group/comp overflow-hidden">
+                                <img
+                                    src={comp.img}
+                                    alt={comp.name}
+                                    className={`h-8 md:h-10 w-auto object-contain brightness-0 invert opacity-40 group-hover/comp:opacity-100 transition-opacity ${comp.scale || ""}`}
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-40 group-hover/comp:opacity-100 transition-opacity pointer-events-none">
+                                    <div className="h-[1px] w-[80%] bg-red-500/50 rotate-[-10deg]" />
                                 </div>
                             </div>
                         ))}
@@ -641,7 +681,7 @@ function EliteComparison() {
             <div className="rounded-[40px] border border-white/5 overflow-hidden bg-white/[0.01]">
                 <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
                     {[
-                        { l: "Despliegue", t: "3 Meses", c: "24 Horas" },
+                        { l: "Despliegue", t: "3 Meses", c: "7 Días" },
                         { l: "Estética", t: "Genérica", c: "Ultra-Lujo" },
                         { l: "Soporte", t: "Tickets", c: "Personal VIP" },
                         { l: "Costo", t: "Longevo", c: "Eficiente" }
@@ -663,10 +703,18 @@ function EliteComparison() {
 function MasterRoiCalculator() {
     const [price, setPrice] = useState(5000000);
     const [monthlyProp, setMonthlyProp] = useState(1);
+    const [commissionPercent, setCommissionPercent] = useState(5); // Default 5%
+    const [selectedPlan, setSelectedPlan] = useState("Professional");
 
-    // Master Template costs (average between plans)
-    const investment = 29900;
-    const commission = 0.05; // 5% average
+    const plans = {
+        "Starter": 14900,
+        "Professional": 29900,
+        "Team": 49900
+    };
+
+    // Master Template costs
+    const investment = plans[selectedPlan as keyof typeof plans];
+    const commission = commissionPercent / 100;
 
     const singleCommission = price * commission;
     const monthlyGain = singleCommission * monthlyProp;
@@ -680,7 +728,7 @@ function MasterRoiCalculator() {
                     <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.3em] mb-4 block">Simulador de Impacto</span>
                     <h3 className="text-2xl md:text-3xl font-heading font-bold mb-4 md:mb-6">Tu tecnología se paga con <span className="text-cima-gold">un solo cierre.</span></h3>
                     <p className="text-white/50 mb-8 md:mb-10 text-xs md:text-sm leading-relaxed">
-                        ¿Cuánto vale tu tiempo y tu imagen? Calcula el retorno de inversión al digitalizar tu proceso con la Master Template.
+                        ¿Cuánto vale tu tiempo y tu imagen? Calcula el retorno de inversión al digitalizar tu proceso con la Master Template (ajustando tus propios porcentajes).
                     </p>
 
                     <div className="space-y-6 md:space-y-8">
@@ -708,6 +756,35 @@ function MasterRoiCalculator() {
                                         className={`py-2.5 rounded-xl border text-[10px] md:text-xs font-bold transition-all ${Math.round(monthlyProp * 12) === val ? "bg-cima-gold text-black border-cima-gold" : "bg-white/5 border-white/10 text-white/40 hover:border-cima-gold/30"}`}
                                     >
                                         {val}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-[9px] md:text-[10px] uppercase font-bold text-white/40 block mb-3 md:mb-4">Porcentaje de Comisión (%)</label>
+                            <input
+                                type="range" min="3" max="10" step="1"
+                                value={commissionPercent} onChange={(e) => setCommissionPercent(Number(e.target.value))}
+                                className="w-full accent-cima-gold bg-white/10 h-1.5 rounded-full appearance-none cursor-pointer"
+                            />
+                            <div className="flex justify-between mt-2 text-[9px] md:text-[10px] font-mono text-white/30 uppercase">
+                                <span>3%</span>
+                                <span className="text-cima-gold font-bold text-xs">{commissionPercent}%</span>
+                                <span>10%</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-[9px] md:text-[10px] uppercase font-bold text-white/40 block mb-3 md:mb-4">Plan de Inversión</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {Object.keys(plans).map(plan => (
+                                    <button
+                                        key={plan}
+                                        onClick={() => setSelectedPlan(plan)}
+                                        className={`py-2 rounded-xl border text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all ${selectedPlan === plan ? "bg-cima-gold text-black border-cima-gold" : "bg-white/5 border-white/10 text-white/40 hover:border-cima-gold/30"}`}
+                                    >
+                                        {plan}
                                     </button>
                                 ))}
                             </div>
@@ -762,9 +839,94 @@ const FEATURES = [
     {
         icon: Zap,
         title: "Despliegue Relámpago",
-        desc: "Tu plataforma lista en menos de 24 horas. Sin programadores, sin meses de espera, sin dolores de cabeza."
+        desc: "Tu plataforma lista en 7 días."
     }
 ];
+
+function SuccessMetrics() {
+    const metrics = [
+        { label: "Portales Activos", value: "+30", icon: Globe },
+        { label: "Tiempo de Entrega", value: "7 días", icon: Clock },
+        { label: "ROI Promedio", value: "12x", icon: TrendingUp },
+        { label: "Satisfacción", value: "99%", icon: Heart }
+    ];
+
+    return (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            {metrics.map((m, i) => (
+                <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-center group hover:border-cima-gold/30 transition-all">
+                    <div className="h-10 w-10 rounded-full bg-cima-gold/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <m.icon className="h-5 w-5 text-cima-gold" />
+                    </div>
+                    <p className="text-2xl font-black text-white mb-1">{m.value}</p>
+                    <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">{m.label}</p>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function EliteFaq() {
+    const faqs = [
+        {
+            q: "¿Realmente mi plataforma estará lista en 7 días?",
+            a: "Sí. Nuestra infraestructura Master Template está diseñada para un despliegue optimizado. Una vez configurado tu perfil, el sistema se activa y personaliza en nuestros servidores para estar live en 7 días."
+        },
+        {
+            q: "¿Tengo que saber programar?",
+            a: "En absoluto. La plataforma es 'Zero Code'. Tú te encargas de tus exclusivas, nosotros de la tecnología y el mantenimiento."
+        },
+        {
+            q: "¿Cómo funciona el ahorro de tiempo?",
+            a: "Automatizamos la generación de fichas, portales para dueños y seguimiento. Un asesor promedio ahorra hasta 15 horas semanales en tareas administrativas."
+        },
+        {
+            q: "¿Puedo usar mi propio dominio?",
+            a: "Sí, en los planes Professional y Team puedes conectar tu propio dominio (ej. tuagencia.com) para una marca 100% profesional."
+        },
+        {
+            q: "¿Qué pasa si ya tengo un CRM?",
+            a: "La Master Template puede funcionar de forma independiente o podemos conectarla a tus flujos actuales vía webhooks de n8n o Zapier."
+        }
+    ];
+
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+    return (
+        <div className="max-w-3xl mx-auto space-y-4">
+            {faqs.map((faq, i) => (
+                <div
+                    key={i}
+                    className="group rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden transition-all hover:border-cima-gold/20"
+                >
+                    <button
+                        onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                        className="w-full p-6 text-left flex items-center justify-between gap-4"
+                    >
+                        <span className="text-sm md:text-base font-bold text-white/80 group-hover:text-white transition-colors">{faq.q}</span>
+                        <div className={`h-6 w-6 rounded-full border border-white/10 flex items-center justify-center shrink-0 transition-transform duration-300 ${openIndex === i ? "rotate-180 bg-cima-gold border-cima-gold" : ""}`}>
+                            <ChevronDown className={`h-3 w-3 ${openIndex === i ? "text-black" : "text-cima-gold"}`} />
+                        </div>
+                    </button>
+                    <AnimatePresence>
+                        {openIndex === i && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <div className="px-6 pb-6 text-sm text-white/50 leading-relaxed border-t border-white/5 pt-4">
+                                    {faq.a}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            ))}
+        </div>
+    );
+}
 
 export default function VendeMasPage() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -854,6 +1016,13 @@ export default function VendeMasPage() {
                 </div>
             </section>
 
+            {/* Success Metrics Bar */}
+            <section className="py-12 md:py-16 px-4 md:px-6 bg-black relative">
+                <div className="mx-auto max-w-6xl">
+                    <SuccessMetrics />
+                </div>
+            </section>
+
             {/* The Pain Points Section */}
             <section className="py-16 md:py-24 px-4 md:px-6 border-y border-white/5 bg-[#070708]">
                 <div className="mx-auto max-w-6xl">
@@ -896,7 +1065,7 @@ export default function VendeMasPage() {
                                 <div className="absolute -inset-4 bg-cima-gold/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full pointer-events-none" />
                                 <div className="relative bg-white/[0.03] border border-white/10 rounded-3xl md:rounded-[40px] p-8 md:p-12 backdrop-blur-md">
                                     <Smartphone className="h-8 w-8 md:h-10 md:w-10 text-cima-gold mb-6 md:mb-8" />
-                                    <h3 className="text-xl md:text-2xl font-heading font-bold mb-4 md:mb-6 leading-tight">"El 73% de los propietarios eligen al asesor que les ofrece seguimiento digital."</h3>
+                                    <h3 className="text-xl md:text-2xl font-heading font-bold mb-4 md:mb-6 leading-tight">"El 73% de los propietarios eligen al asesor que les ofrece seguimiento digital en 7 Días."</h3>
                                     <p className="text-white/40 text-xs italic">
                                         — Fuente: Reporte de Tendencias Inmobiliarias 2025.
                                     </p>
@@ -1024,6 +1193,18 @@ export default function VendeMasPage() {
                 </div>
             </section>
 
+            {/* Elite FAQ Section */}
+            <section className="py-16 md:py-24 px-4 md:px-6 relative bg-black/20 border-y border-white/5">
+                <div className="mx-auto max-w-6xl">
+                    <div className="text-center mb-12 md:mb-16">
+                        <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Resolviendo Dudas</span>
+                        <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 tracking-tight">Preguntas Frecuentes</h2>
+                        <p className="text-white/40 text-sm md:text-base max-w-2xl mx-auto italic">Todo lo que necesitas saber para dar el salto.</p>
+                    </div>
+                    <EliteFaq />
+                </div>
+            </section>
+
             {/* Pricing Section */}
             <section className="py-16 md:py-24 px-4 md:px-6 bg-[#0A0A0B] relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-cima-gold/5 rounded-full blur-[100px] md:blur-[150px] -mr-48 md:-mr-96 -mt-48 md:-mt-96 pointer-events-none" />
@@ -1042,7 +1223,9 @@ export default function VendeMasPage() {
                                 desc: "Para el asesor que busca diferenciarse hoy mismo.",
                                 features: ["Landing Page Elite", "1 Portal Propietario Activo", "QR de Venta Inteligente", "Hosting Incluido"],
                                 cta: "Comenzar hoy mismo",
-                                popular: false
+                                popular: false,
+                                slots: "2/3 disponibles",
+                                deliveryTime: "Entregado en 5 días"
                             },
                             {
                                 name: "Professional",
@@ -1051,7 +1234,9 @@ export default function VendeMasPage() {
                                 features: ["Todo en Starter", "5 Portales Propietarios", "Feedback IA Automatico", "Soporte VIP WhatsApp"],
                                 highlight: true,
                                 popular: true,
-                                cta: "Activar Licencia Pro"
+                                cta: "Activar Licencia Pro",
+                                slots: "¡ÚLTIMO CUPO!",
+                                deliveryTime: "Entregado en 7 días"
                             },
                             {
                                 name: "Team / Agency",
@@ -1059,7 +1244,9 @@ export default function VendeMasPage() {
                                 desc: "La estructura para inmobiliarias que dominan zonas.",
                                 features: ["Todo en Pro", "Multi-Asesores (Hasta 3)", "Inventario Ilimitado", "Dominio .com Propio"],
                                 cta: "Escalar mi Agencia",
-                                popular: false
+                                popular: false,
+                                slots: "Bajo solicitud",
+                                deliveryTime: "Entregado en 14 días"
                             }
                         ].map((plan, i) => (
                             <div
@@ -1067,14 +1254,19 @@ export default function VendeMasPage() {
                                 className={`p-8 md:p-10 rounded-[30px] md:rounded-[50px] border flex flex-col h-full transition-all duration-700 relative overflow-hidden group ${plan.highlight ? "bg-cima-card border-cima-gold shadow-[0_30px_60px_-20px_rgba(200,169,110,0.2)] lg:scale-105 z-10" : "bg-white/[0.02] border-white/5"}`}
                             >
                                 {plan.popular && (
-                                    <div className="absolute top-6 right-8 md:right-10 bg-cima-gold text-black text-[8px] md:text-[9px] font-black uppercase tracking-widest py-1.5 px-3 md:px-4 rounded-full">Más Popular</div>
+                                    <div className="absolute top-6 right-8 md:right-10 bg-cima-gold text-black text-[8px] md:text-[9px] font-black uppercase tracking-widest py-1.5 px-3 md:px-4 rounded-full font-mono">Más Popular</div>
                                 )}
+                                <div className="mb-4">
+                                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[8px] font-mono text-cima-gold font-bold uppercase tracking-widest">
+                                        {plan.slots}
+                                    </span>
+                                </div>
                                 <h3 className="text-lg md:text-xl font-heading font-bold mb-2 group-hover:text-cima-gold transition-colors">{plan.name}</h3>
                                 <div className="flex items-baseline gap-1 mb-6 md:mb-8">
                                     <span className="text-4xl md:text-5xl font-black text-cima-gold tracking-tighter">{plan.price}</span>
                                     <span className="text-[10px] md:text-xs text-white/40 font-mono font-bold uppercase tracking-widest">MXN</span>
                                 </div>
-                                <p className="text-xs md:text-sm text-white/50 mb-8 md:mb-10 leading-relaxed font-medium h-auto sm:h-12">{plan.desc}</p>
+                                <p className="text-xs md:text-sm text-white/50 mb-8 md:mb-10 leading-relaxed font-medium h-auto sm:h-12 border-b border-white/5 pb-4">{plan.desc}</p>
                                 <ul className="space-y-4 md:space-y-5 mb-10 md:mb-12 flex-1">
                                     {plan.features.map(f => (
                                         <li key={f} className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs font-bold text-white/70">
@@ -1085,6 +1277,11 @@ export default function VendeMasPage() {
                                         </li>
                                     ))}
                                 </ul>
+
+                                <div className="flex items-center gap-2 mb-6 text-[10px] text-cima-gold/60 font-mono font-bold uppercase">
+                                    <Clock className="w-3 h-3" />
+                                    {plan.deliveryTime}
+                                </div>
                                 <Link
                                     href="/onboarding"
                                     className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-[9px] md:text-[10px] uppercase tracking-[0.15em] md:tracking-[0.2em] text-center transition-all duration-500 shadow-xl overflow-hidden relative group/btn ${plan.highlight ? "bg-cima-gold text-black hover:scale-105" : "bg-white/5 text-white hover:bg-white/10"}`}
@@ -1093,11 +1290,17 @@ export default function VendeMasPage() {
                                     <span className="relative z-10">{plan.cta}</span>
                                 </Link>
 
-                                {/* Availability Note */}
-                                <div className="mt-5 md:mt-6 flex items-center justify-center gap-2 opacity-50 text-[8px] md:text-[9px] font-mono font-bold uppercase tracking-widest">
-                                    <Clock className="h-3 w-3" />
-                                    Entrega en 24h
-                                </div>
+                                {plan.highlight && (
+                                    <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-center gap-3 animate-pulse">
+                                        <div className="p-2 bg-green-500/10 rounded-full border border-green-500/20">
+                                            <MessageSquare className="h-3 w-3 text-green-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[7px] font-black text-green-500 uppercase tracking-widest leading-none mb-1">Onboarding VIP</p>
+                                            <p className="text-[6px] font-bold text-white/40 uppercase tracking-widest leading-none">Asesoría de Guante Blanco</p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -1105,7 +1308,7 @@ export default function VendeMasPage() {
             </section>
 
             {/* Enterprise Bridge */}
-            <section className="py-16 md:py-24 px-4 md:px-6 border-y border-white/5 bg-gradient-to-b from-transparent to-cima-gold/[0.02] relative">
+            < section className="py-16 md:py-24 px-4 md:px-6 border-y border-white/5 bg-gradient-to-b from-transparent to-cima-gold/[0.02] relative" >
                 <div className="mx-auto max-w-4xl text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 md:mb-8 shrink-0">
                         <Cpu className="h-3.5 w-3.5 text-cima-gold-light" />
@@ -1122,10 +1325,10 @@ export default function VendeMasPage() {
                         Explorar Cima Pro <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 shrink-0" />
                     </Link>
                 </div>
-            </section>
+            </section >
 
             {/* Footer */}
-            <footer className="py-12 md:py-20 px-4 md:px-6 border-t border-white/5 relative z-10">
+            < footer className="py-12 md:py-20 px-4 md:px-6 border-t border-white/5 relative z-10" >
                 <div className="mx-auto max-w-7xl">
                     <div className="grid grid-cols-1 md:grid-cols-2 justify-between items-center gap-10 md:gap-12 mb-12 md:mb-20">
                         <div className="text-center md:text-left">
@@ -1151,7 +1354,26 @@ export default function VendeMasPage() {
                         </div>
                     </div>
                 </div>
-            </footer>
-        </div>
+            </footer >
+
+            {/* Sticky mobile CTA */}
+            < div className="fixed bottom-0 inset-x-0 z-40 sm:hidden" >
+                <div className="bg-[#0A0A0B]/90 backdrop-blur-xl border-t border-white/10 px-5 py-3 flex items-center gap-4">
+                    <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                            <p className="text-[9px] font-black uppercase tracking-widest text-cima-gold">Últimos cupos</p>
+                        </div>
+                        <p className="text-[10px] text-white font-bold leading-tight">Solo 2 slots en Monterrey</p>
+                    </div>
+                    <Link
+                        href="/onboarding"
+                        className="shrink-0 px-4 py-2.5 rounded-xl bg-cima-gold text-black text-[10px] font-black uppercase tracking-widest shadow-lg shadow-cima-gold/20"
+                    >
+                        Asegurar lugar
+                    </Link>
+                </div>
+            </div >
+        </div >
     );
 }
