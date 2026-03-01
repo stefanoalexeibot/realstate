@@ -9,7 +9,7 @@ import {
     Calendar, Clock, CheckCircle2, AlertCircle, MapPin,
     ArrowUpRight, ArrowDownRight, Mail, ChevronRight, Lock,
     X, Sparkles, Upload, Image, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
-    UserCircle, ChevronDown
+    UserCircle, ChevronDown, ArrowRight
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 
@@ -18,6 +18,9 @@ type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes
 
 interface DemoAdminLiveProps {
     plan: PlanConfig;
+    agentName?: string;
+    onNavigateToLeads?: () => void;
+    externalTab?: SidebarTab;
 }
 
 /* ─── Mock Data ────────────────────────────────────────────── */
@@ -110,8 +113,36 @@ function MiniChart({ data, color = "#C8A96E", height = 32 }: { data: number[]; c
     );
 }
 
+/* ─── Animated Counter ─────────────────────────────────────── */
+function Counter({ value, prefix = "", suffix = "" }: { value: string; prefix?: string; suffix?: string }) {
+    const numericValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+    const [displayValue, setDisplayValue] = useState(0);
+
+    useEffect(() => {
+        let start = displayValue;
+        const end = numericValue;
+        const duration = 1000;
+        let startTime: number | null = null;
+
+        const animate = (currentTime: number) => {
+            if (!startTime) startTime = currentTime;
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            const current = Math.floor(progress * (end - start) + start);
+            setDisplayValue(current);
+            if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+    }, [value]);
+
+    const formatted = numericValue >= 1000
+        ? displayValue.toLocaleString()
+        : value.includes('.') ? displayValue.toFixed(1) : displayValue;
+
+    return <span>{prefix}{formatted}{suffix}</span>;
+}
+
 /* ─── Rotating Notification Toast ──────────────────────────── */
-function RotatingToast() {
+function RotatingToast({ onClick }: { onClick?: () => void }) {
     const [index, setIndex] = useState(0);
     const [visible, setVisible] = useState(false);
 
@@ -143,18 +174,23 @@ function RotatingToast() {
                     animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="fixed bottom-24 right-6 z-50 bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl max-w-xs"
+                    onClick={onClick}
+                    className="fixed bottom-24 right-6 z-[100] bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl max-w-xs cursor-pointer hover:border-cima-gold/40 transition-all group"
                 >
                     <div className="flex items-start gap-3">
-                        <div className={`h-8 w-8 rounded-lg ${notif.color} flex items-center justify-center shrink-0`}>
+                        <div className={`h-8 w-8 rounded-lg ${notif.color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                             <notif.icon className="h-4 w-4" />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-[10px] font-black text-white uppercase tracking-wider mb-1">{notif.text}</p>
+                            <div className="flex items-center gap-2 mb-1">
+                                <p className="text-[10px] font-black text-white uppercase tracking-wider">{notif.text}</p>
+                                <span className="text-[7px] bg-cima-gold/20 text-cima-gold px-1 rounded font-bold">NUEVO</span>
+                            </div>
                             <p className="text-[9px] text-white/40">{notif.sub}</p>
-                            <p className="text-[8px] text-white/20 mt-1 font-mono">Ahora mismo</p>
+                            <p className="text-[8px] text-cima-gold/60 mt-1 font-bold flex items-center gap-1">
+                                Click para ver detalle <ArrowRight className="h-2 w-2" />
+                            </p>
                         </div>
-                        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shrink-0 mt-1" />
                     </div>
                 </motion.div>
             )}
@@ -184,17 +220,22 @@ function BarChart({ data, labels }: { data: number[]; labels: string[] }) {
 }
 
 /* ═══ MAIN COMPONENT ═══════════════════════════════════════ */
-export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
+export default function DemoAdminLive({ plan, agentName, onNavigateToLeads, externalTab }: DemoAdminLiveProps) {
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
 
     // Reset to propiedades if current tab becomes unavailable
+    // OR if externalTab changes (Auto Demo)
     React.useEffect(() => {
+        if (externalTab) {
+            setActiveTab(externalTab);
+            return;
+        }
         if (activeTab === "leads" || activeTab === "visitas" && !f.visits) setActiveTab("propiedades");
         if (activeTab === "analiticos" && !f.analytics) setActiveTab("propiedades");
         if (activeTab === "mensajes" && !f.messages) setActiveTab("propiedades");
         setSelectedProperty(null);
-    }, [plan.tier]);
+    }, [plan.tier, externalTab]);
 
     const maxProps = plan.maxProperties === -1 ? PROPERTIES.length : plan.maxProperties;
     const visibleProps = PROPERTIES.slice(0, maxProps);
@@ -215,12 +256,28 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
         { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: "3", locked: !f.messages },
     ];
 
-    const STATS = [
-        { label: "Vistas Totales", value: "1,247", change: "+12%", icon: Eye, data: [180, 220, 195, 310, 280, 350, 420] },
-        { label: "Leads Activos", value: "23", change: "+5", icon: Users, data: [8, 10, 12, 15, 14, 18, 23] },
-        { label: "Visitas Mes", value: f.visits ? "18" : "—", change: f.visits ? "+3" : "🔒", icon: Target, data: [5, 7, 6, 9, 11, 14, 18] },
-        { label: "Conversión", value: f.analytics ? "4.2%" : "—", change: f.analytics ? "+0.8%" : "🔒", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
-    ];
+    const tierStats = {
+        basico: [
+            { label: "Vistas Totales", value: "148", change: "+5%", icon: Eye, data: [20, 35, 25, 40, 30, 45, 50] },
+            { label: "Leads Activos", value: "3", change: "+1", icon: Users, data: [1, 0, 1, 2, 1, 2, 3] },
+            { label: "Visitas Mes", value: "2", change: "+1", icon: Target, data: [0, 1, 0, 1, 1, 1, 2] },
+            { label: "Conversión", value: "0.8%", change: "+0.2%", icon: TrendingUp, data: [0.4, 0.5, 0.6, 0.5, 0.7, 0.7, 0.8] },
+        ],
+        profesional: [
+            { label: "Vistas Totales", value: "589", change: "+8%", icon: Eye, data: [100, 120, 110, 150, 140, 170, 190] },
+            { label: "Leads Activos", value: "12", change: "+3", icon: Users, data: [4, 6, 5, 8, 7, 10, 12] },
+            { label: "Visitas Mes", value: "8", change: "+2", icon: Target, data: [2, 3, 3, 5, 4, 6, 8] },
+            { label: "Conversión", value: "2.1%", change: "+0.5%", icon: TrendingUp, data: [1.2, 1.4, 1.6, 1.5, 1.8, 1.9, 2.1] },
+        ],
+        premium: [
+            { label: "Vistas Totales", value: "1247", change: "+12%", icon: Eye, data: [180, 220, 195, 310, 280, 350, 420] },
+            { label: "Leads Activos", value: "23", change: "+5", icon: Users, data: [8, 10, 12, 15, 14, 18, 23] },
+            { label: "Visitas Mes", value: "18", change: "+3", icon: Target, data: [5, 7, 6, 9, 11, 14, 18] },
+            { label: "Conversión", value: "4.2%", change: "+0.8%", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
+        ]
+    };
+
+    const STATS = tierStats[plan.tier] || tierStats.premium;
 
     return (
         <div className="min-h-screen bg-[#0A0A0B] text-white">
@@ -232,7 +289,9 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
                             <Layout className="h-4 w-4 text-black" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-white">Panel</span>
+                            <span className="text-[10px] font-black uppercase tracking-wider text-white">
+                                {agentName ? `Panel de ${agentName.split(' ')[0]}` : "Panel"}
+                            </span>
                             <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">{PLAN_LABELS[plan.tier] || plan.name}</span>
                         </div>
                     </div>
@@ -337,7 +396,7 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
                     </div>
 
                     {/* Analytics Row — always visible */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8" key={plan.tier}>
                         {STATS.map((stat, i) => (
                             <motion.div
                                 key={i}
@@ -352,7 +411,12 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
                                 </div>
                                 <div className="flex items-end justify-between gap-2">
                                     <div>
-                                        <p className="text-lg font-heading font-bold text-white">{stat.value}</p>
+                                        <div className="text-lg font-heading font-black text-white">
+                                            <Counter
+                                                value={stat.value}
+                                                suffix={stat.label === "Conversión" ? "%" : ""}
+                                            />
+                                        </div>
                                         <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
                                     </div>
                                     <MiniChart data={stat.data} />
@@ -395,7 +459,10 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
             </div>
 
             {/* Rotating notification toast */}
-            <RotatingToast />
+            <RotatingToast onClick={() => {
+                setActiveTab("leads");
+                if (onNavigateToLeads) onNavigateToLeads();
+            }} />
         </div>
     );
 }

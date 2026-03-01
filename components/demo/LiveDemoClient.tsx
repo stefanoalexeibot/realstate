@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Layout, Home, Globe, ChevronRight, Monitor, Maximize2, Eye,
-    Timer, QrCode, Play, Pause, RotateCcw
+    Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle
 } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
@@ -109,9 +109,50 @@ export default function LiveDemoClient() {
     const [showQR, setShowQR] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [upgradeFlash, setUpgradeFlash] = useState(false);
+    const [agentName, setAgentName] = useState("");
+    const [editingName, setEditingName] = useState(false);
+    const [autoDemo, setAutoDemo] = useState(false);
+    const autoDemoRef = useRef<NodeJS.Timeout | null>(null);
+    const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
+    const nameInputRef = useRef<HTMLInputElement>(null);
 
     const TIER_ORDER: PlanTier[] = ["basico", "profesional", "premium"];
+
+    // Auto-demo sequence
+    const AUTO_STEPS: { view: View; tab?: any; duration: number; label: string }[] = [
+        { view: "landing", duration: 5000, label: "Landing" },
+        { view: "admin", tab: "propiedades", duration: 5000, label: "Propiedades" },
+        { view: "admin", tab: "leads", duration: 4000, label: "Leads" },
+        { view: "admin", tab: "analiticos", duration: 4000, label: "Analíticos" },
+        { view: "portal", duration: 5000, label: "Portal" },
+    ];
+
+    const startAutoDemo = useCallback(() => {
+        setAutoDemo(true);
+        setAutoDemoStep(0);
+        setView(AUTO_STEPS[0].view);
+    }, []);
+
+    const stopAutoDemo = useCallback(() => {
+        setAutoDemo(false);
+        if (autoDemoRef.current) clearTimeout(autoDemoRef.current);
+    }, []);
+
+    useEffect(() => {
+        if (!autoDemo) return;
+        const step = AUTO_STEPS[autoDemoStep];
+        if (!step) { setAutoDemo(false); return; }
+        setView(step.view);
+        autoDemoRef.current = setTimeout(() => {
+            if (autoDemoStep < AUTO_STEPS.length - 1) {
+                setAutoDemoStep(s => s + 1);
+            } else {
+                setAutoDemo(false);
+            }
+        }, step.duration);
+        return () => { if (autoDemoRef.current) clearTimeout(autoDemoRef.current); };
+    }, [autoDemo, autoDemoStep]);
 
     function switchTier(newTier: PlanTier) {
         const oldIdx = TIER_ORDER.indexOf(tier);
@@ -132,6 +173,14 @@ export default function LiveDemoClient() {
             setIsFullscreen(false);
         }
     }
+
+    function handleNavigateToLeads() {
+        setView("admin");
+    }
+
+    useEffect(() => {
+        if (editingName && nameInputRef.current) nameInputRef.current.focus();
+    }, [editingName]);
 
     const VIEW_LABELS: Record<View, string> = {
         admin: "👨‍💼 Esto es lo que VE EL ASESOR — gestión de propiedades, leads, visitas y analíticos",
@@ -164,7 +213,25 @@ export default function LiveDemoClient() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black uppercase tracking-wider text-white">Demo en Vivo</span>
-                            <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">Plataforma Inmobiliaria</span>
+                            {editingName ? (
+                                <input
+                                    ref={nameInputRef}
+                                    value={agentName}
+                                    onChange={(e) => setAgentName(e.target.value)}
+                                    onBlur={() => setEditingName(false)}
+                                    onKeyDown={(e) => e.key === "Enter" && setEditingName(false)}
+                                    placeholder="Nombre del asesor"
+                                    className="text-[8px] font-mono text-cima-gold uppercase tracking-widest bg-transparent border-b border-cima-gold/30 outline-none w-32 pb-0.5"
+                                />
+                            ) : (
+                                <button
+                                    onClick={() => setEditingName(true)}
+                                    className="flex items-center gap-1 text-[8px] font-mono text-cima-gold uppercase tracking-widest hover:text-white transition-all text-left"
+                                >
+                                    {agentName || "Plataforma Inmobiliaria"}
+                                    <Pencil className="h-2 w-2 opacity-30" />
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -205,8 +272,8 @@ export default function LiveDemoClient() {
                                     key={t.id}
                                     onClick={() => switchTier(t.id)}
                                     className={`px-2.5 py-1.5 rounded-md text-[8px] font-bold uppercase tracking-wider transition-all ${tier === t.id
-                                            ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
-                                            : "text-white/30 hover:text-white/50 hover:bg-white/5"
+                                        ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
+                                        : "text-white/30 hover:text-white/50 hover:bg-white/5"
                                         }`}
                                 >
                                     <span>{t.label}</span>
@@ -238,6 +305,19 @@ export default function LiveDemoClient() {
                             title="Mostrar QR"
                         >
                             <QrCode className="h-3.5 w-3.5 text-white/40" />
+                        </button>
+
+                        {/* Auto Demo */}
+                        <button
+                            onClick={autoDemo ? stopAutoDemo : startAutoDemo}
+                            className={`hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all ${autoDemo
+                                ? "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20"
+                                : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"
+                                }`}
+                            title={autoDemo ? "Detener Auto Demo" : "Iniciar Auto Demo"}
+                        >
+                            {autoDemo ? <StopCircle className="h-3 w-3" /> : <PlayCircle className="h-3 w-3" />}
+                            {autoDemo ? `Auto (${AUTO_STEPS[autoDemoStep]?.label})` : "Auto Demo"}
                         </button>
 
                         {/* Fullscreen */}
@@ -277,9 +357,16 @@ export default function LiveDemoClient() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
                 >
-                    {view === "admin" && <DemoAdminLive plan={plan} />}
+                    {view === "admin" && (
+                        <DemoAdminLive
+                            plan={plan}
+                            agentName={agentName}
+                            onNavigateToLeads={handleNavigateToLeads}
+                            externalTab={AUTO_STEPS[autoDemoStep]?.tab}
+                        />
+                    )}
                     {view === "portal" && <DemoPortal plan={plan} />}
-                    {view === "landing" && <DemoLandingExample />}
+                    {view === "landing" && <DemoLandingExample plan={plan} />}
                 </motion.div>
             </AnimatePresence>
 
@@ -288,12 +375,12 @@ export default function LiveDemoClient() {
                 <div className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-black via-black/90 to-transparent pt-8 pb-4 px-4 pointer-events-none">
                     <div className="max-w-lg mx-auto flex items-center gap-3 pointer-events-auto">
                         <a
-                            href={`https://wa.me/${process.env.NEXT_PUBLIC_CIMA_WA || "528100000000"}?text=${encodeURIComponent("Hola, vi el demo en vivo y me interesa activar mi cuenta.")}`}
+                            href={`https://wa.me/${process.env.NEXT_PUBLIC_CIMA_WA || "528100000000"}?text=${encodeURIComponent(`Hola, vi el demo en vivo y me interesa el plan ${plan.name} (${plan.price}). ${agentName ? `Soy ${agentName}.` : ""}`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
                         >
-                            Activar mi cuenta
+                            Activar mi cuenta · {plan.name}
                         </a>
                         <button
                             onClick={() => setShowQR(true)}
