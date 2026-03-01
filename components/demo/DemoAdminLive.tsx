@@ -8,7 +8,8 @@ import {
     Bell, Zap, Phone, Instagram, Globe, Facebook,
     Calendar, Clock, CheckCircle2, AlertCircle, MapPin,
     ArrowUpRight, ArrowDownRight, Mail, ChevronRight, Lock,
-    X, Sparkles, Upload, Image, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler
+    X, Sparkles, Upload, Image, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
+    UserCircle, ChevronDown
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 
@@ -374,6 +375,7 @@ export default function DemoAdminLive({ plan }: DemoAdminLiveProps) {
                                     <PropertyDetailPanel
                                         property={visibleProps[selectedProperty]}
                                         onBack={() => setSelectedProperty(null)}
+                                        isTeam={plan.tier === "premium"}
                                     />
                                 ) : (
                                     <PropertiesView
@@ -458,11 +460,24 @@ function PropertiesView({ properties, canEdit, onSelect }: { properties: typeof 
     );
 }
 
+/* ── Mock Agents (Team tier) ───────────────────────────────── */
+const AGENTS = [
+    { name: "Carlos Mendoza", role: "Asesor Senior", avatar: "CM", color: "bg-blue-500", props: 5 },
+    { name: "María González", role: "Asesora Comercial", avatar: "MG", color: "bg-pink-500", props: 4 },
+    { name: "Roberto Treviño", role: "Coordinador", avatar: "RT", color: "bg-emerald-500", props: 3 },
+    { name: "Sofía Villarreal", role: "Asesora Jr.", avatar: "SV", color: "bg-purple-500", props: 1 },
+];
+
 /* ── Property Detail Panel ─────────────────────────────────── */
-function PropertyDetailPanel({ property, onBack }: { property: (typeof PROPERTIES)[0]; onBack: () => void }) {
+function PropertyDetailPanel({ property, onBack, isTeam }: { property: (typeof PROPERTIES)[0]; onBack: () => void; isTeam: boolean }) {
     const [isPublished, setIsPublished] = useState(true);
     const [aiGenerating, setAiGenerating] = useState(false);
     const [aiText, setAiText] = useState("");
+    const [selectedAgent, setSelectedAgent] = useState(0);
+    const [agentDropdownOpen, setAgentDropdownOpen] = useState(false);
+    const [editedName, setEditedName] = useState(property.name);
+    const [editedPrice, setEditedPrice] = useState(property.price);
+    const [editedAddress, setEditedAddress] = useState(property.address);
 
     const FULL_AI_TEXT = `Descubre esta impresionante ${property.name.toLowerCase()} ubicada en ${property.address}. Con ${property.beds} amplias recámaras, ${property.baths} baños de lujo y ${property.m2}m² de construcción, esta propiedad ofrece el espacio ideal para tu familia. Acabados de primera calidad, iluminación natural excepcional y una ubicación privilegiada que garantiza plusvalía. Agenda tu visita hoy.`;
 
@@ -526,18 +541,39 @@ function PropertyDetailPanel({ property, onBack }: { property: (typeof PROPERTIE
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Nombre</label>
-                            <input className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none focus:border-cima-gold/40 transition-all" defaultValue={property.name} readOnly />
+                            <input
+                                className={`w-full bg-white/5 border rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none transition-all ${isTeam ? "border-cima-gold/20 focus:border-cima-gold/60" : "border-white/10 focus:border-cima-gold/40"}`}
+                                value={editedName}
+                                onChange={(e) => setEditedName(e.target.value)}
+                                readOnly={!isTeam}
+                            />
                         </div>
                         <div>
                             <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Precio</label>
-                            <input className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none focus:border-cima-gold/40 transition-all" defaultValue={property.price} readOnly />
+                            <input
+                                className={`w-full bg-white/5 border rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none transition-all ${isTeam ? "border-cima-gold/20 focus:border-cima-gold/60" : "border-white/10 focus:border-cima-gold/40"}`}
+                                value={editedPrice}
+                                onChange={(e) => setEditedPrice(e.target.value)}
+                                readOnly={!isTeam}
+                            />
                         </div>
                     </div>
 
                     <div>
                         <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Dirección</label>
-                        <input className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white outline-none focus:border-cima-gold/40 transition-all" defaultValue={property.address} readOnly />
+                        <input
+                            className={`w-full bg-white/5 border rounded-lg px-3 py-2.5 text-xs text-white outline-none transition-all ${isTeam ? "border-cima-gold/20 focus:border-cima-gold/60" : "border-white/10 focus:border-cima-gold/40"}`}
+                            value={editedAddress}
+                            onChange={(e) => setEditedAddress(e.target.value)}
+                            readOnly={!isTeam}
+                        />
                     </div>
+
+                    {isTeam && (
+                        <p className="text-[7px] text-cima-gold/40 font-bold uppercase tracking-widest flex items-center gap-1">
+                            <Edit3 className="h-2.5 w-2.5" /> Los campos son editables en tiempo real
+                        </p>
+                    )}
 
                     {/* Specs */}
                     <div className="grid grid-cols-3 gap-3">
@@ -617,6 +653,58 @@ function PropertyDetailPanel({ property, onBack }: { property: (typeof PROPERTIE
                             </button>
                         ))}
                     </div>
+
+                    {/* Agent selector (Team only) */}
+                    {isTeam && (
+                        <div>
+                            <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-2">Asesor Asignado</p>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setAgentDropdownOpen(!agentDropdownOpen)}
+                                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl hover:border-cima-gold/30 transition-all"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div className={`h-7 w-7 rounded-lg ${AGENTS[selectedAgent].color} flex items-center justify-center text-[8px] font-black text-white`}>
+                                            {AGENTS[selectedAgent].avatar}
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-[10px] font-bold text-white">{AGENTS[selectedAgent].name}</p>
+                                            <p className="text-[7px] text-white/30">{AGENTS[selectedAgent].role} · {AGENTS[selectedAgent].props} propiedades</p>
+                                        </div>
+                                    </div>
+                                    <ChevronDown className={`h-3.5 w-3.5 text-white/30 transition-transform ${agentDropdownOpen ? "rotate-180" : ""}`} />
+                                </button>
+                                <AnimatePresence>
+                                    {agentDropdownOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -5, height: 0 }}
+                                            animate={{ opacity: 1, y: 0, height: "auto" }}
+                                            exit={{ opacity: 0, y: -5, height: 0 }}
+                                            className="absolute top-full left-0 right-0 z-20 mt-1 bg-[#111] border border-white/10 rounded-xl overflow-hidden shadow-2xl"
+                                        >
+                                            {AGENTS.map((agent, j) => (
+                                                <button
+                                                    key={j}
+                                                    onClick={() => { setSelectedAgent(j); setAgentDropdownOpen(false); }}
+                                                    className={`w-full flex items-center gap-2 px-3 py-2.5 hover:bg-white/5 transition-all ${j === selectedAgent ? "bg-cima-gold/5 border-l-2 border-cima-gold" : "border-l-2 border-transparent"
+                                                        }`}
+                                                >
+                                                    <div className={`h-6 w-6 rounded-lg ${agent.color} flex items-center justify-center text-[7px] font-black text-white shrink-0`}>
+                                                        {agent.avatar}
+                                                    </div>
+                                                    <div className="text-left flex-1">
+                                                        <p className="text-[9px] font-bold text-white">{agent.name}</p>
+                                                        <p className="text-[7px] text-white/30">{agent.role}</p>
+                                                    </div>
+                                                    <span className="text-[7px] text-white/20 font-mono">{agent.props} props</span>
+                                                </button>
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Owner info */}
                     <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3">
