@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { verifyAdminStatus } from "@/lib/auth-utils";
 
 // GET /api/visit-photos?visit_id=xxx
 export async function GET(req: Request) {
     try {
+        const auth = await verifyAdminStatus();
+        if (!auth.authorized) {
+            return NextResponse.json({ error: auth.error }, { status: 401 });
+        }
+
         const { searchParams } = new URL(req.url);
         const visitId = searchParams.get("visit_id");
         if (!visitId) return NextResponse.json({ error: "visit_id requerido" }, { status: 400 });
@@ -26,6 +32,11 @@ export async function GET(req: Request) {
 // POST /api/visit-photos — multipart form with visit_id + file
 export async function POST(req: Request) {
     try {
+        const auth = await verifyAdminStatus();
+        if (!auth.authorized) {
+            return NextResponse.json({ error: auth.error }, { status: 401 });
+        }
+
         const formData = await req.formData();
         const visitId = formData.get("visit_id") as string | null;
         const file = formData.get("file") as File | null;

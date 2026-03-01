@@ -29,6 +29,10 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# sensitive files
+passwords.json
+results.txt
+
 # vercel
 .vercel
 

@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
+import { verifyAdminStatus } from "@/lib/auth-utils";
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
   try {
+    const auth = await verifyAdminStatus();
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: 401 });
+    }
+
     const supabase = createServiceClient();
 
     // Get photo record

@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
+import { verifyAdminStatus } from "@/lib/auth-utils";
 
 export async function POST(req: Request) {
   try {
+    const auth = await verifyAdminStatus();
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: 401 });
+    }
+
     const { email, name, phone, property_id, temp_password } = await req.json();
     if (!email || !name || !temp_password) {
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
