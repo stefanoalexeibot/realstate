@@ -11,7 +11,7 @@ import {
     Lock, X, Upload, Image as ImageIcon, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
     UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell, Wand2, RotateCcw, Download,
     ShieldCheck, FileSearch, ShieldAlert, FileCheck, FileSignature, FilePenLine, ScrollText, Briefcase,
-    Smartphone, Monitor
+    Smartphone, Monitor, Moon, MoonStar
 } from "lucide-react";
 import NextImage from "next/image";
 import type { PlanConfig } from "@/lib/config/demo-plans";
@@ -242,6 +242,7 @@ export default function DemoAdminLive({
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
     const [isMobilePreview, setIsMobilePreview] = useState(false);
+    const [isDND, setIsDND] = useState(false);
 
     // Reset to propiedades if current tab becomes unavailable
     // OR if externalTab changes (Auto Demo)
@@ -369,8 +370,8 @@ export default function DemoAdminLive({
                         layout
                         initial={false}
                         animate={{
-                            width: isMobilePreview ? 375 : "100%",
-                            height: isMobilePreview ? 760 : "auto",
+                            width: isMobilePreview ? 414 : "100%",
+                            height: isMobilePreview ? 850 : "auto",
                         }}
                         className={`transition-all duration-700 relative flex flex-col ${isMobilePreview
                             ? "border-[12px] border-[#1A1A1C] rounded-[3.5rem] shadow-[0_0_100px_rgba(200,169,110,0.1)] overflow-hidden bg-[#0A0A0B] ring-1 ring-white/10"
@@ -414,7 +415,7 @@ export default function DemoAdminLive({
                             {/* Header */}
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                                 <div>
-                                    <h1 className={`font-serif font-black tracking-tight mb-1 transition-all ${isMobilePreview ? "text-lg" : "text-2xl"}`}>
+                                    <h1 className={`font-heading font-black tracking-tight mb-1 transition-all ${isMobilePreview ? "text-lg" : "text-2xl"}`}>
                                         {activeTab === "propiedades" && "Mis Propiedades"}
                                         {activeTab === "leads" && "Leads Recientes"}
                                         {activeTab === "visitas" && "Agenda de Visitas"}
@@ -451,6 +452,18 @@ export default function DemoAdminLive({
                                         </span>
                                     </button>
 
+                                    {/* DND Toggle */}
+                                    <button
+                                        onClick={() => setIsDND(!isDND)}
+                                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isDND ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
+                                        title={isDND ? "Desactivar No Molestar" : "Activar No Molestar"}
+                                    >
+                                        {isDND ? <MoonStar className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+                                        <span className="text-[8px] font-black uppercase tracking-widest hidden md:inline">
+                                            {isDND ? "Activo" : "Silencio"}
+                                        </span>
+                                    </button>
+
                                     <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
                                         <Plus className="h-3.5 w-3.5" /> Nueva
                                     </button>
@@ -473,7 +486,7 @@ export default function DemoAdminLive({
                                         </div>
                                         <div className="flex items-end justify-between gap-2">
                                             <div>
-                                                <div className={`font-serif font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
+                                                <div className={`font-heading font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
                                                     <Counter
                                                         value={stat.value}
                                                         suffix={stat.label === "Conversión" ? "%" : ""}
@@ -534,10 +547,12 @@ export default function DemoAdminLive({
                 </div>
             </div>
 
-            <RotatingToast onClick={() => {
-                setActiveTab("leads");
-                if (onNavigateToLeads) onNavigateToLeads();
-            }} />
+            {!isDND && (
+                <RotatingToast onClick={() => {
+                    setActiveTab("leads");
+                    if (onNavigateToLeads) onNavigateToLeads();
+                }} />
+            )}
         </div>
     );
 }
@@ -1572,7 +1587,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                 <div className="flex-1 overflow-y-auto p-8 sm:p-12 bg-white space-y-8 select-none custom-scrollbar-light">
                     <div className="flex justify-between items-start border-b-2 border-slate-50 pb-8">
                         <div className="h-10 w-24 bg-cima-gold/10 rounded flex items-center justify-center border border-cima-gold/20">
-                            <span className="text-[9px] font-serif font-black text-cima-gold italic uppercase">Cima Pro</span>
+                            <span className="text-[9px] font-heading font-black text-cima-gold italic uppercase">Cima Pro</span>
                         </div>
                         <div className="text-right">
                             <p className="text-[9px] font-black uppercase text-slate-900">Folio: CS-2024-089</p>
@@ -1581,9 +1596,9 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                     </div>
 
                     <div className="space-y-6">
-                        <h2 className="text-center font-serif text-lg font-black text-slate-800 underline decoration-cima-gold/30 underline-offset-8 uppercase tracking-widest">{selectedT?.label}</h2>
+                        <h2 className="text-center font-heading text-lg font-black text-slate-800 underline decoration-cima-gold/30 underline-offset-8 uppercase tracking-widest">{selectedT?.label}</h2>
 
-                        <div className="space-y-4 text-slate-700 leading-relaxed text-[10px] text-justify font-serif">
+                        <div className="space-y-4 text-slate-700 leading-relaxed text-[10px] text-justify font-heading">
                             <p>En la ciudad de Monterrey, Nuevo León, comparecen por una parte el <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.cliente || "[Nombre del Cliente]"}</span> y por la otra parte <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">CIMA PRO S.A. DE C.V.</span> representado por <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">Asesor Elite</span>.</p>
 
                             <p>Las partes acuerdan establecer el precio de la operación en la cantidad de <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">${formData.precio || "0.00"} MXN</span>, bajo los términos de exclusividad profesional para la propiedad <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.propiedad || "la ubicación indicada"}</span>.</p>
@@ -1826,7 +1841,7 @@ function MessagesView({ messages }: { messages: LiveMessage[] }) {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2 px-1">
-                <h3 className="font-serif text-[18px] font-black text-white tracking-tight">Bandeja de Entrada</h3>
+                <h3 className="font-heading text-[18px] font-black text-white tracking-tight">Bandeja de Entrada</h3>
                 <div className="flex gap-2">
                     <button
                         onClick={startNurtureSimulation}
@@ -1861,7 +1876,7 @@ function MessagesView({ messages }: { messages: LiveMessage[] }) {
                             </div>
                             <div className="flex-1 space-y-3">
                                 <div>
-                                    <h4 className="font-serif text-white font-bold text-sm">Cima AI Nurture en Proceso</h4>
+                                    <h4 className="font-heading text-white font-bold text-sm">Cima AI Nurture en Proceso</h4>
                                     <p className="text-[10px] text-cima-gold/60 font-medium">Automatizando el cierre con Roberto G.</p>
                                 </div>
 

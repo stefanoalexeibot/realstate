@@ -6,18 +6,28 @@ import {
     Home, TrendingUp, FileText, Camera, Share2,
     Star, MessageSquare, Clock, CheckCircle2,
     AlertCircle, ThumbsUp, ThumbsDown, Minus,
-    Facebook, Send, Calendar, Eye, Shield, User
+    Facebook, Send, Calendar, Eye, Shield, User, Smartphone, Monitor, Moon, MoonStar
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import UpgradeBanner from "./UpgradeBanner";
 
 interface DemoPortalProps {
     plan: PlanConfig;
+    isMobilePreview?: boolean;
+    setIsMobilePreview?: (v: boolean) => void;
+    isDND?: boolean;
+    setIsDND?: (v: boolean) => void;
 }
 
 type TabId = "dashboard" | "feedback" | "documents" | "evidence";
 
-export default function DemoPortal({ plan }: DemoPortalProps) {
+export default function DemoPortal({
+    plan,
+    isMobilePreview = false,
+    setIsMobilePreview,
+    isDND = false,
+    setIsDND
+}: DemoPortalProps) {
     const f = plan.features.portal;
     const [activeTab, setActiveTab] = useState<TabId>("dashboard");
 
@@ -29,47 +39,85 @@ export default function DemoPortal({ plan }: DemoPortalProps) {
     ];
 
     return (
-        <div className="min-h-screen bg-[#0A0A0B] text-white pb-20 sm:pb-0">
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                {/* Header */}
-                <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="h-10 w-10 rounded-2xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
-                            <Home className="h-5 w-5 text-cima-gold" />
-                        </div>
-                        <div>
-                            <h1 className="text-lg font-heading font-black tracking-tight">Portal del Propietario</h1>
-                            <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">Residencia Las Misiones • {plan.name}</p>
+        <div className="min-h-screen bg-[#0A0A0B] text-white flex flex-col items-center pb-20 sm:pb-0">
+            {/* Header with Toggles (only if setter is provided) */}
+            {setIsMobilePreview && setIsDND && (
+                <div className="w-full max-w-4xl px-4 py-4 flex justify-end gap-2 border-b border-white/5 bg-black/50 backdrop-blur-md sticky top-0 z-[120]">
+                    <button
+                        onClick={() => setIsMobilePreview(!isMobilePreview)}
+                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
+                    >
+                        {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
+                        <span className="text-[8px] font-black uppercase tracking-widest">
+                            {isMobilePreview ? "Escritorio" : "Móvil"}
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => setIsDND(!isDND)}
+                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isDND ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
+                    >
+                        {isDND ? <MoonStar className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+                        <span className="text-[8px] font-black uppercase tracking-widest">
+                            {isDND ? "Silencio" : "Notificar"}
+                        </span>
+                    </button>
+                </div>
+            )}
+
+            <motion.div
+                layout
+                animate={{
+                    width: isMobilePreview ? 414 : "100%",
+                    height: isMobilePreview ? 850 : "auto",
+                    marginTop: isMobilePreview ? 40 : 0,
+                    marginBottom: isMobilePreview ? 40 : 0,
+                }}
+                className={`transition-all duration-700 relative overflow-hidden ${isMobilePreview
+                    ? "border-[12px] border-[#1A1A1C] rounded-[3.5rem] shadow-[0_0_100px_rgba(200,169,110,0.1)] bg-[#0A0A0B] ring-1 ring-white/10 custom-scrollbar"
+                    : "w-full"
+                    }`}
+            >
+                <div className={isMobilePreview ? "h-full overflow-y-auto custom-scrollbar" : "max-w-4xl mx-auto px-4 py-8"}>
+                    {/* Header */}
+                    <div className="mb-8">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="h-10 w-10 rounded-2xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
+                                <Home className="h-5 w-5 text-cima-gold" />
+                            </div>
+                            <div>
+                                <h1 className="text-lg font-heading font-black tracking-tight">Portal del Propietario</h1>
+                                <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">Residencia Las Misiones • {plan.name}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Tabs */}
-                <div className="flex flex-wrap gap-1 mb-8 bg-white/[0.03] p-1 rounded-xl border border-white/5">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => tab.available && setActiveTab(tab.id)}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${activeTab === tab.id
-                                ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
-                                : tab.available
-                                    ? "text-white/40 hover:text-white/60 hover:bg-white/5"
-                                    : "text-white/10 cursor-not-allowed"
-                                }`}
-                        >
-                            <tab.icon className="h-3.5 w-3.5" />
-                            <span className="hidden sm:inline">{tab.label}</span>
-                            {!tab.available && <span className="text-[6px] opacity-60">🔒</span>}
-                        </button>
-                    ))}
-                </div>
+                    {/* Tabs */}
+                    <div className="flex flex-wrap gap-1 mb-8 bg-white/[0.03] p-1 rounded-xl border border-white/5">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => tab.available && setActiveTab(tab.id)}
+                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${activeTab === tab.id
+                                    ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
+                                    : tab.available
+                                        ? "text-white/40 hover:text-white/60 hover:bg-white/5"
+                                        : "text-white/10 cursor-not-allowed"
+                                    }`}
+                            >
+                                <tab.icon className="h-3.5 w-3.5" />
+                                <span className="hidden sm:inline">{tab.label}</span>
+                                {!tab.available && <span className="text-[6px] opacity-60">🔒</span>}
+                            </button>
+                        ))}
+                    </div>
 
-                {/* Tab Content */}
-                {activeTab === "dashboard" && <DashboardTab plan={plan} />}
-                {activeTab === "feedback" && (f.feedback ? <FeedbackTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Seguimiento y Feedback" />)}
-                {activeTab === "documents" && (f.documents ? <DocumentsTab /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Expediente Digital" />)}
-                {activeTab === "evidence" && (f.evidence ? <EvidenceTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="premium" featureName="Evidencia Fotográfica" />)}
-            </div>
+                    {/* Tab Content */}
+                    {activeTab === "dashboard" && <DashboardTab plan={plan} />}
+                    {activeTab === "feedback" && (f.feedback ? <FeedbackTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Seguimiento y Feedback" />)}
+                    {activeTab === "documents" && (f.documents ? <DocumentsTab /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Expediente Digital" />)}
+                    {activeTab === "evidence" && (f.evidence ? <EvidenceTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="premium" featureName="Evidencia Fotográfica" />)}
+                </div>
+            </motion.div>
         </div>
     );
 }

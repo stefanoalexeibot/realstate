@@ -175,6 +175,8 @@ export default function LiveDemoClient() {
     const [editingName, setEditingName] = useState(false);
     const [autoDemo, setAutoDemo] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
+    const [isMobilePreview, setIsMobilePreview] = useState(false);
+    const [isDND, setIsDND] = useState(false);
     const autoDemoRef = useRef<NodeJS.Timeout | null>(null);
     const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
@@ -524,15 +526,28 @@ export default function LiveDemoClient() {
                             newLeadId={lastLeadId}
                             messages={messages}
                             onAddMessage={handleAddMessage}
+                        // isMobilePreview and isDND handled internally but can be synced if needed
                         />
                     )}
-                    {view === "portal" && <DemoPortal plan={plan} />}
+                    {view === "portal" && (
+                        <DemoPortal
+                            plan={plan}
+                            isMobilePreview={isMobilePreview}
+                            setIsMobilePreview={setIsMobilePreview}
+                            isDND={isDND}
+                            setIsDND={setIsDND}
+                        />
+                    )}
                     {view === "landing" && (
                         <DemoLandingExample
                             plan={plan}
                             onLeadCapture={handleAddLead}
                             onSendMessage={handleAddMessage}
                             messages={messages}
+                            isMobilePreview={isMobilePreview}
+                            setIsMobilePreview={setIsMobilePreview}
+                            isDND={isDND}
+                            setIsDND={setIsDND}
                         />
                     )}
                 </motion.div>
