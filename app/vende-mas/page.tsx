@@ -928,6 +928,223 @@ function EliteFaq() {
     );
 }
 
+/* ─── Package Deep Dive (Expandable Comparison) ───────────────────── */
+function PackageDeepDive() {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const categories = [
+        {
+            icon: "🌐",
+            name: "Landing Page",
+            tagline: "La primera impresión es la ÚNICA impresión",
+            features: [
+                { name: "Diseño de ultra-lujo", desc: "Tu propiedad merece verse como una mansión de Beverly Hills, no como un post de Facebook", starter: true, pro: true, team: true },
+                { name: "Animaciones Aurora Premium", desc: "El efecto 'WOW' que hace que el comprador se quede 3x más tiempo", starter: false, pro: true, team: true },
+                { name: "Galería Interactiva", desc: "El comprador se enamora en los primeros 3 segundos", starter: false, pro: true, team: true },
+                { name: "Calculadora ROI integrada", desc: "Tu prospecto se convence solo con los números", starter: false, pro: false, team: true },
+                { name: "Social Proof en vivo", desc: "\"14 personas viendo ahora\" — urgencia que cierra ventas", starter: false, pro: false, team: true },
+            ]
+        },
+        {
+            icon: "📊",
+            name: "Panel del Asesor",
+            tagline: "El centro de comando que te hace parecer una agencia de $10M",
+            features: [
+                { name: "Pipeline visual de leads", desc: "Nunca más pierdas un prospecto en un chat olvidado", starter: true, pro: true, team: true },
+                { name: "Dashboard de Analíticos", desc: "Los datos que te dan el poder de negociar exclusivas", starter: false, pro: true, team: true },
+                { name: "Bandeja de Mensajes Unificada", desc: "Instagram, WhatsApp, Landing — todo en un solo inbox", starter: false, pro: true, team: true },
+                { name: "IA Nurture Automático", desc: "La IA detecta interés, responde y agenda citas mientras tú duermes", starter: false, pro: true, team: true },
+                { name: "Multi-Agentes", desc: "Tu equipo completo operando desde un solo sistema profesional", starter: false, pro: false, team: true },
+            ]
+        },
+        {
+            icon: "🏠",
+            name: "Portal del Propietario",
+            tagline: "El motivo #1 por el que los clientes te dan la exclusiva",
+            features: [
+                { name: "Dashboard 24/7 en tiempo real", desc: "Tu cliente nunca te vuelve a llamar a las 10pm para preguntar '¿cómo va?'", starter: true, pro: true, team: true },
+                { name: "Feedback de Visitas con Sentimiento", desc: "El propietario sabe exactamente qué pensó cada comprador", starter: false, pro: true, team: true },
+                { name: "Expediente Digital Completo", desc: "Adiós al caos de PDFs por WhatsApp — todo organizado", starter: false, pro: true, team: true },
+                { name: "Evidencia Fotográfica por visita", desc: "Prueba irrefutable de que estás trabajando su propiedad", starter: false, pro: false, team: true },
+                { name: "Compartir en Redes con 1 click", desc: "Facebook, WhatsApp, Instagram — tu cliente amplifica tu alcance gratis", starter: false, pro: false, team: true },
+            ]
+        },
+        {
+            icon: "🎁",
+            name: "Herramientas Exclusivas",
+            tagline: "Lo que ningún otro asesor en tu zona tiene",
+            features: [
+                { name: "Generador de Contratos PDF", desc: "4 tipos de contrato listos en segundos, sin abrir Word jamás", starter: true, pro: true, team: true },
+                { name: "Vista Previa Móvil Premium", desc: "Muestra cómo se ve en iPhone antes de publicar — impresiona en el acto", starter: true, pro: true, team: true },
+                { name: "Modo No Molestar", desc: "Silencia notificaciones durante presentaciones, con un solo click", starter: true, pro: true, team: true },
+                { name: "QR Inteligente por propiedad", desc: "Imprime QRs para open houses que redirigen a tu Landing de lujo", starter: true, pro: true, team: true },
+                { name: "Dominio .com propio", desc: "tuinmobiliaria.com — la diferencia entre asesor y empresa", starter: false, pro: false, team: true },
+            ]
+        }
+    ];
+
+    return (
+        <section className="py-8 md:py-12 px-4 md:px-6 bg-[#0A0A0B] relative">
+            <div className="mx-auto max-w-6xl">
+                {/* Toggle Button */}
+                <div className="flex justify-center mb-8">
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="group relative flex items-center gap-3 px-8 py-4 md:px-10 md:py-5 bg-gradient-to-r from-cima-gold/10 to-cima-gold/5 border border-cima-gold/30 rounded-2xl hover:border-cima-gold/60 transition-all duration-500 overflow-hidden"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        <Sparkles className="h-4 w-4 text-cima-gold relative z-10" />
+                        <span className="text-xs md:text-sm font-heading font-bold text-white relative z-10">
+                            {isOpen ? "Ocultar comparativa detallada" : "Descubre todo lo que recibes en cada plan"}
+                        </span>
+                        <motion.div
+                            animate={{ rotate: isOpen ? 180 : 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <ChevronDown className="h-4 w-4 text-cima-gold relative z-10" />
+                        </motion.div>
+                    </button>
+                </div>
+
+                {/* Expandable Content */}
+                <AnimatePresence>
+                    {isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                        >
+                            {/* Header Row */}
+                            <div className="grid grid-cols-4 gap-0 mb-6 sticky top-0 z-20 bg-[#0A0A0B]/95 backdrop-blur-md pb-4 border-b border-white/5">
+                                <div className="p-3" />
+                                {[
+                                    { name: "Starter", price: "$14,900", color: "text-white/60" },
+                                    { name: "Professional", price: "$29,900", color: "text-cima-gold", highlight: true },
+                                    { name: "Team / Agency", price: "$49,900", color: "text-cima-gold" }
+                                ].map((plan) => (
+                                    <div key={plan.name} className={`text-center p-3 md:p-4 rounded-xl ${plan.highlight ? "bg-cima-gold/5 border border-cima-gold/20" : ""}`}>
+                                        <p className={`text-xs md:text-sm font-heading font-bold ${plan.color} mb-1`}>{plan.name}</p>
+                                        <p className="text-lg md:text-2xl font-black text-white tracking-tight">{plan.price}</p>
+                                        <p className="text-[8px] text-white/30 font-mono uppercase tracking-widest">MXN</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Categories */}
+                            <div className="space-y-8 md:space-y-10">
+                                {categories.map((cat, catIdx) => (
+                                    <motion.div
+                                        key={cat.name}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: catIdx * 0.1 }}
+                                    >
+                                        {/* Category Header */}
+                                        <div className="mb-4 md:mb-5">
+                                            <div className="flex items-center gap-3 mb-1.5">
+                                                <span className="text-lg md:text-xl">{cat.icon}</span>
+                                                <h3 className="text-sm md:text-lg font-heading font-bold text-white tracking-tight">{cat.name}</h3>
+                                            </div>
+                                            <p className="text-[10px] md:text-xs text-cima-gold/60 italic font-medium ml-9">{cat.tagline}</p>
+                                        </div>
+
+                                        {/* Feature Rows */}
+                                        <div className="space-y-1">
+                                            {cat.features.map((feat, featIdx) => (
+                                                <div
+                                                    key={featIdx}
+                                                    className="grid grid-cols-4 gap-0 group hover:bg-white/[0.02] rounded-xl transition-all"
+                                                >
+                                                    {/* Feature Name + Description */}
+                                                    <div className="p-3 md:p-4">
+                                                        <p className="text-[10px] md:text-xs font-bold text-white/80 mb-0.5">{feat.name}</p>
+                                                        <p className="text-[8px] md:text-[10px] text-white/30 leading-relaxed hidden md:block">{feat.desc}</p>
+                                                    </div>
+
+                                                    {/* Starter */}
+                                                    <div className="flex items-center justify-center p-3">
+                                                        {feat.starter ? (
+                                                            <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                                                                <CheckCircle2 className="h-3 w-3 md:h-3.5 md:w-3.5 text-green-400" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center">
+                                                                <MinusCircle className="h-3 w-3 md:h-3.5 md:w-3.5 text-white/10" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Pro */}
+                                                    <div className="flex items-center justify-center p-3 bg-cima-gold/[0.02] border-x border-cima-gold/5">
+                                                        {feat.pro ? (
+                                                            <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
+                                                                <CheckCircle2 className="h-3 w-3 md:h-3.5 md:w-3.5 text-cima-gold" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center">
+                                                                <MinusCircle className="h-3 w-3 md:h-3.5 md:w-3.5 text-white/10" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Team */}
+                                                    <div className="flex items-center justify-center p-3">
+                                                        {feat.team ? (
+                                                            <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                                                                <CheckCircle2 className="h-3 w-3 md:h-3.5 md:w-3.5 text-green-400" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center">
+                                                                <MinusCircle className="h-3 w-3 md:h-3.5 md:w-3.5 text-white/10" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* Bottom Value Anchor + CTA */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                                className="mt-12 md:mt-16 text-center"
+                            >
+                                <div className="inline-flex items-center gap-3 bg-gradient-to-r from-cima-gold/5 via-cima-gold/10 to-cima-gold/5 border border-cima-gold/20 rounded-2xl px-6 py-4 md:px-8 md:py-5 mb-8">
+                                    <div className="text-left">
+                                        <p className="text-[8px] md:text-[9px] font-mono text-cima-gold/50 uppercase tracking-widest mb-1">Valor real de esta infraestructura</p>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-xl md:text-3xl font-black text-white/20 line-through">$200,000+</span>
+                                            <ArrowRight className="h-3 w-3 text-cima-gold" />
+                                            <span className="text-xl md:text-3xl font-black text-cima-gold">Desde $14,900</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <Link
+                                        href="/onboarding"
+                                        className="inline-flex items-center gap-3 px-10 py-5 bg-cima-gold text-black font-heading font-bold rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_-15px_rgba(200,169,110,0.4)] text-xs md:text-sm uppercase tracking-widest"
+                                    >
+                                        Activar mi plataforma ahora
+                                        <ArrowRight className="h-4 w-4" />
+                                    </Link>
+                                    <p className="text-[8px] text-white/20 font-mono uppercase tracking-widest mt-4">Sin contratos a largo plazo · Resultados desde el día 5</p>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </section>
+    );
+}
+
 export default function VendeMasPage() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -1220,8 +1437,15 @@ export default function VendeMasPage() {
                             {
                                 name: "Starter",
                                 price: "$14,900",
-                                desc: "Para el asesor que busca diferenciarse hoy mismo.",
-                                features: ["Landing Page Elite", "1 Portal Propietario Activo", "QR de Venta Inteligente", "Hosting Incluido"],
+                                desc: "Para el asesor que quiere dejar de parecer improvisado desde hoy.",
+                                features: [
+                                    "Landing Page con diseño de ultra-lujo",
+                                    "1 Portal del Propietario en tiempo real",
+                                    "QR Inteligente para cada propiedad",
+                                    "Generador de Contratos PDF al instante",
+                                    "Vista Previa Móvil Premium",
+                                    "Hosting + Soporte 30 días"
+                                ],
                                 cta: "Comenzar hoy mismo",
                                 popular: false,
                                 slots: "2/3 disponibles",
@@ -1230,8 +1454,16 @@ export default function VendeMasPage() {
                             {
                                 name: "Professional",
                                 price: "$29,900",
-                                desc: "Para el asesor Top manejando exclusivas constantes.",
-                                features: ["Todo en Starter", "5 Portales Propietarios", "Feedback IA Automatico", "Soporte VIP WhatsApp"],
+                                desc: "Para el asesor Top que cierra exclusivas todos los meses.",
+                                features: [
+                                    "Todo en Starter +",
+                                    "Hasta 5 propiedades activas",
+                                    "IA que nurtura y agenda citas sola",
+                                    "Bandeja de Mensajes Unificada",
+                                    "Dashboard con Analíticos en vivo",
+                                    "Feedback de Visitas con Sentimiento",
+                                    "Soporte VIP por WhatsApp"
+                                ],
                                 highlight: true,
                                 popular: true,
                                 cta: "Activar Licencia Pro",
@@ -1241,8 +1473,16 @@ export default function VendeMasPage() {
                             {
                                 name: "Team / Agency",
                                 price: "$49,900",
-                                desc: "La estructura para inmobiliarias que dominan zonas.",
-                                features: ["Todo en Pro", "Multi-Asesores (Hasta 3)", "Inventario Ilimitado", "Dominio .com Propio"],
+                                desc: "La infraestructura completa para inmobiliarias que dominan zonas.",
+                                features: [
+                                    "Todo en Professional +",
+                                    "Propiedades Ilimitadas",
+                                    "Multi-Agentes (hasta 3 asesores)",
+                                    "Calculadora ROI para prospectos",
+                                    "Evidencia Fotográfica de visitas",
+                                    "Social Proof en vivo en Landing",
+                                    "Dominio .com propio + Branding"
+                                ],
                                 cta: "Escalar mi Agencia",
                                 popular: false,
                                 slots: "Bajo solicitud",
@@ -1306,6 +1546,9 @@ export default function VendeMasPage() {
                     </div>
                 </div>
             </section>
+
+            {/* ── Package Deep Dive (Expandable) ──────────────────── */}
+            <PackageDeepDive />
 
             {/* Enterprise Bridge */}
             < section className="py-16 md:py-24 px-4 md:px-6 border-y border-white/5 bg-gradient-to-b from-transparent to-cima-gold/[0.02] relative" >
