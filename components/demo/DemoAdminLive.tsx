@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+// Vercel Redeploy Trigger: Phase 5 - Digital Vault
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Layout, Home, Users, BarChart3, MessageSquare, Plus, Search,
@@ -1380,8 +1381,8 @@ function DocumentsView() {
                         className="group flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:border-white/10 hover:bg-white/[0.04] transition-all"
                     >
                         <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${doc.status === "verificado" ? "bg-green-500/10 text-green-400" :
-                                doc.status === "advertencia" ? "bg-red-500/10 text-red-400" :
-                                    "bg-white/5 text-white/20"
+                            doc.status === "advertencia" ? "bg-red-500/10 text-red-400" :
+                                "bg-white/5 text-white/20"
                             }`}>
                             <FileCheck className="h-5 w-5" />
                         </div>
@@ -1407,8 +1408,8 @@ function DocumentsView() {
                                     </div>
                                 ) : (
                                     <div className={`flex items-center gap-1.5 ${doc.status === "verificado" ? "text-green-400" :
-                                            doc.status === "advertencia" ? "text-red-400" :
-                                                "text-white/20"
+                                        doc.status === "advertencia" ? "text-red-400" :
+                                            "text-white/20"
                                         }`}>
                                         {doc.status === "verificado" ? <ShieldCheck className="h-3.5 w-3.5" /> :
                                             doc.status === "advertencia" ? <ShieldAlert className="h-3.5 w-3.5" /> :
