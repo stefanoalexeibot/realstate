@@ -10,14 +10,14 @@ import {
     CheckCircle2, AlertCircle, Eye, Target, Calendar, Sparkles, Send, Zap, Loader2, Share2,
     Lock, X, Upload, Image as ImageIcon, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
     UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell, Wand2, RotateCcw, Download,
-    ShieldCheck, FileSearch, ShieldAlert, FileCheck
+    ShieldCheck, FileSearch, ShieldAlert, FileCheck, FileSignature, FilePenLine, ScrollText, Briefcase
 } from "lucide-react";
 import NextImage from "next/image";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { type LiveLead, type LiveMessage } from "./LiveDemoClient";
 
 /* ─── Types ────────────────────────────────────────────────── */
-type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos";
+type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos" | "contratos";
 
 interface DemoAdminLiveProps {
     plan: PlanConfig;
@@ -273,6 +273,7 @@ export default function DemoAdminLive({
         { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: messages.filter(m => m.unread).length > 0 ? messages.filter(m => m.unread).length.toString() : undefined, locked: !f.messages },
         { id: "ia_studio", icon: Wand2, label: "IA Studio", locked: plan.tier === "basico" },
         { id: "documentos", icon: ShieldCheck, label: "Documentos", locked: plan.tier === "basico" },
+        { id: "contratos", icon: FileSignature, label: "Contratos", locked: plan.tier === "basico" },
     ];
 
     const tierStats = {
@@ -483,6 +484,7 @@ export default function DemoAdminLive({
                             {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
                             {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
                             {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView />}
+                            {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -1451,6 +1453,222 @@ function DocumentsView() {
                     <p className="text-[9px] text-white/50 leading-relaxed font-medium">Todos los documentos son analizados mediante **Integridad Biométrica** y **OCR Inteligente** para garantizar transacciones de ultra-lujo sin riesgos legales.</p>
                 </div>
             </div>
+        </div>
+    );
+}
+
+/* ── Contract Generator View ───────────────────────────────── */
+function ContractGeneratorView() {
+    const [step, setStep] = useState<"select" | "data" | "generating" | "result">("select");
+    const [template, setTemplate] = useState<string | null>(null);
+    const [formData, setFormData] = useState({
+        propiedad: "Residencia Las Misiones",
+        cliente: "Carlos Vargas",
+        precio: "$12,500,000",
+        comision: "5%",
+        fecha: new Date().toLocaleDateString()
+    });
+    const [progress, setProgress] = useState(0);
+
+    const TEMPLATES = [
+        { id: "exclusividad", label: "Contrato de Exclusividad", icon: FileSignature, desc: "Para captación de propiedades Premium" },
+        { id: "arrendamiento", label: "Contrato de Arrendamiento", icon: ScrollText, desc: "Renta residencial y comercial" },
+        { id: "intencion", label: "Carta de Intención de Compra", icon: FilePenLine, desc: "Cierre rápido de ofertas" },
+        { id: "aviso", label: "Aviso de Privacidad", icon: Briefcase, desc: "Cumplimiento legal de datos" },
+    ];
+
+    const handleGenerate = () => {
+        setStep("generating");
+        setProgress(0);
+        const interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(interval);
+                    setStep("result");
+                    return 100;
+                }
+                return prev + 4;
+            });
+        }, 80);
+    };
+
+    const handleReset = () => {
+        setStep("select");
+        setTemplate(null);
+        setProgress(0);
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between px-1">
+                <div>
+                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">Generador de Contratos</h3>
+                    <p className="text-[10px] text-white/40 font-medium">Crea documentos legales en segundos sin salir de Cima</p>
+                </div>
+                {step === "result" && (
+                    <button
+                        onClick={handleReset}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[9px] font-bold text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                    >
+                        <RotateCcw className="h-3 w-3" /> Crear Otro
+                    </button>
+                )}
+            </div>
+
+            {step === "select" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {TEMPLATES.map((t) => (
+                        <button
+                            key={t.id}
+                            onClick={() => { setTemplate(t.id); setStep("data"); }}
+                            className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:border-cima-gold/40 hover:bg-white/[0.05] transition-all text-left flex gap-4 group"
+                        >
+                            <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-cima-gold group-hover:text-black transition-all">
+                                <t.icon className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h4 className="text-xs font-black text-white mb-1">{t.label}</h4>
+                                <p className="text-[9px] text-white/30 leading-relaxed">{t.desc}</p>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            {step === "data" && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 space-y-6"
+                >
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="h-8 w-8 rounded-lg bg-cima-gold/10 flex items-center justify-center text-cima-gold">
+                            <FilePenLine className="h-4 w-4" />
+                        </div>
+                        <h4 className="text-[11px] font-black text-white uppercase tracking-widest">Datos del Documento</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Propiedad</label>
+                            <input
+                                type="text"
+                                value={formData.propiedad}
+                                onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
+                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Cliente / Dueño</label>
+                            <input
+                                type="text"
+                                value={formData.cliente}
+                                onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
+                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Precio de Cierre</label>
+                            <input
+                                type="text"
+                                value={formData.precio}
+                                onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
+                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Comisión Pactada</label>
+                            <input
+                                type="text"
+                                value={formData.comision}
+                                onChange={(e) => setFormData({ ...formData, comision: e.target.value })}
+                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="pt-4 flex gap-3">
+                        <button
+                            onClick={() => setStep("select")}
+                            className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl font-black text-xs text-white/40 uppercase tracking-widest hover:bg-white/10 transition-all"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={handleGenerate}
+                            className="flex-[2] py-4 bg-cima-gold text-black rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] active:scale-95 transition-all"
+                        >
+                            Generar PDF Profesional
+                        </button>
+                    </div>
+                </motion.div>
+            )}
+
+            {step === "generating" && (
+                <div className="flex flex-col items-center justify-center py-20 space-y-8">
+                    <div className="relative">
+                        <div className="h-32 w-32 rounded-full border-4 border-white/5 border-t-cima-gold animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Sparkles className="h-10 w-10 text-cima-gold animate-pulse" />
+                        </div>
+                    </div>
+                    <div className="text-center space-y-4">
+                        <p className="text-sm font-black text-white uppercase tracking-tighter">Renderizando Contrato Legal</p>
+                        <div className="w-64 h-2 bg-white/5 rounded-full overflow-hidden mx-auto">
+                            <motion.div
+                                className="h-full bg-cima-gold shadow-[0_0_15px_rgba(200,169,110,0.5)]"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${progress}%` }}
+                            />
+                        </div>
+                        <p className="text-[9px] text-white/30 font-mono uppercase tracking-widest">Inyectando datos con arquitectura Cima-Sign...</p>
+                    </div>
+                </div>
+            )}
+
+            {step === "result" && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-6"
+                >
+                    <div className="bg-gradient-to-br from-cima-gold/20 to-transparent border border-cima-gold/30 rounded-3xl p-10 flex flex-col items-center text-center space-y-6">
+                        <div className="h-20 w-16 bg-white rounded-lg shadow-2xl relative overflow-hidden group">
+                            <div className="p-2 space-y-1">
+                                <div className="h-1 w-full bg-slate-200 rounded" />
+                                <div className="h-1 w-3/4 bg-slate-200 rounded" />
+                                <div className="h-1 w-full bg-slate-200 rounded" />
+                                <div className="h-4 w-full bg-cima-gold/20 rounded mt-4" />
+                                <div className="h-1 w-1/2 bg-slate-200 rounded mt-4 ml-auto" />
+                            </div>
+                            <div className="absolute inset-0 bg-cima-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+
+                        <div>
+                            <h4 className="text-lg font-black text-white mb-2">¡Documento Generado con Éxito!</h4>
+                            <p className="text-[10px] text-white/40 font-medium">El archivo PDF está listo para descarga y firma digital.</p>
+                        </div>
+
+                        <div className="w-full max-w-sm grid grid-cols-2 gap-4">
+                            <button className="py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-white/60 uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                                <Eye className="h-4 w-4" /> Previsualizar
+                            </button>
+                            <button className="py-4 bg-cima-gold text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                <Download className="h-4 w-4" /> Descargar PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-bold text-white/40 hover:text-white hover:bg-white/[0.05] transition-all">
+                            <Globe className="h-4 w-4" /> Enviar por Correo
+                        </button>
+                        <button className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-bold text-white/40 hover:text-white hover:bg-white/[0.05] transition-all">
+                            <MessageSquare className="h-4 w-4" /> Enviar WhatsApp
+                        </button>
+                    </div>
+                </motion.div>
+            )}
         </div>
     );
 }
