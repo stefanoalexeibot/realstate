@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { Syne, DM_Sans, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const syne = Syne({
@@ -17,6 +17,12 @@ const dmSans = DM_Sans({
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -46,7 +52,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${syne.variable} ${dmSans.variable} ${jetbrains.variable}`}>
+    <html lang="es" className={`${syne.variable} ${dmSans.variable} ${jetbrains.variable} ${playfair.variable}`}>
       <body className="bg-cima-bg text-cima-text font-sans antialiased">
         {children}
       </body>

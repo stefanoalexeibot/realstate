@@ -414,12 +414,15 @@ export default function DemoAdminLive({
                             {/* Header */}
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                                 <div>
-                                    <h1 className="text-xl font-heading font-black tracking-tight mb-1">
+                                    <h1 className={`font-serif font-black tracking-tight mb-1 transition-all ${isMobilePreview ? "text-lg" : "text-2xl"}`}>
                                         {activeTab === "propiedades" && "Mis Propiedades"}
                                         {activeTab === "leads" && "Leads Recientes"}
                                         {activeTab === "visitas" && "Agenda de Visitas"}
                                         {activeTab === "analiticos" && "Analíticos"}
                                         {activeTab === "mensajes" && "Mensajes"}
+                                        {activeTab === "ia_studio" && "IA Studio"}
+                                        {activeTab === "documentos" && "Documentos"}
+                                        {activeTab === "contratos" && "Contratos"}
                                     </h1>
                                     <p className="text-xs text-white/40">
                                         {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> · Límite: {maxProps}</span>}</>}
@@ -455,30 +458,30 @@ export default function DemoAdminLive({
                             </div>
 
                             {/* Analytics Row — always visible */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8" key={plan.tier}>
+                            <div className={`grid transition-all duration-500 ${isMobilePreview ? "grid-cols-1 gap-2" : "grid-cols-2 md:grid-cols-4 gap-3"} mb-8`} key={plan.tier}>
                                 {STATS.map((stat, i) => (
                                     <motion.div
                                         key={i}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: i * 0.1 }}
-                                        className="bg-white/[0.03] border border-white/5 rounded-xl p-4 hover:border-white/10 transition-all"
+                                        className={`bg-white/[0.03] border border-white/5 rounded-2xl hover:border-cima-gold/20 hover:bg-white/[0.05] transition-all shadow-2xl shadow-black/40 ${isMobilePreview ? "p-3" : "p-4"}`}
                                     >
                                         <div className="flex items-center justify-between mb-3">
-                                            <stat.icon className="h-3.5 w-3.5 text-white/20" />
+                                            <stat.icon className="h-3.5 w-3.5 text-cima-gold/40" />
                                             <span className="text-[8px] font-bold text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded-full">{stat.change}</span>
                                         </div>
                                         <div className="flex items-end justify-between gap-2">
                                             <div>
-                                                <div className="text-lg font-heading font-black text-white">
+                                                <div className={`font-serif font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
                                                     <Counter
                                                         value={stat.value}
                                                         suffix={stat.label === "Conversión" ? "%" : ""}
                                                     />
                                                 </div>
-                                                <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
+                                                <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">{stat.label}</p>
                                             </div>
-                                            <MiniChart data={stat.data} />
+                                            {!isMobilePreview && <MiniChart data={stat.data} />}
                                         </div>
                                     </motion.div>
                                 ))}
@@ -523,7 +526,7 @@ export default function DemoAdminLive({
                                     {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
                                     {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
                                     {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView />}
-                                    {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView />}
+                                    {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView isMobilePreview={isMobilePreview} />}
                                 </motion.div>
                             </AnimatePresence>
                         </div>
@@ -1498,7 +1501,7 @@ function DocumentsView() {
 }
 
 /* ── Contract Generator View ───────────────────────────────── */
-function ContractGeneratorView() {
+function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }) {
     const [step, setStep] = useState<"select" | "data" | "generating" | "result">("select");
     const [template, setTemplate] = useState<string | null>(null);
     const [formData, setFormData] = useState({
@@ -1509,6 +1512,7 @@ function ContractGeneratorView() {
         fecha: new Date().toLocaleDateString()
     });
     const [progress, setProgress] = useState(0);
+    const [showPreview, setShowPreview] = useState(false);
 
     const TEMPLATES = [
         { id: "exclusividad", label: "Contrato de Exclusividad", icon: FileSignature, desc: "Para captación de propiedades Premium" },
@@ -1536,8 +1540,94 @@ function ContractGeneratorView() {
         setStep("select");
         setTemplate(null);
         setProgress(0);
+        setShowPreview(false);
     };
 
+    if (showPreview) {
+        const selectedT = TEMPLATES.find(t => t.id === template);
+        return (
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[500px] border border-white/10"
+            >
+                <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center">
+                            <FileText className="h-4 w-4 text-black" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-slate-900 uppercase tracking-tighter shrink-0">Vista Previa: {selectedT?.label}</p>
+                            <p className="text-[8px] text-slate-500 font-medium whitespace-nowrap">Documento generado por Cima Sign</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setShowPreview(false)}
+                        className="h-8 w-8 rounded-full hover:bg-slate-200 flex items-center justify-center transition-all shrink-0"
+                    >
+                        <X className="h-4 w-4 text-slate-400" />
+                    </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-8 sm:p-12 bg-white space-y-8 select-none custom-scrollbar-light">
+                    <div className="flex justify-between items-start border-b-2 border-slate-50 pb-8">
+                        <div className="h-10 w-24 bg-cima-gold/10 rounded flex items-center justify-center border border-cima-gold/20">
+                            <span className="text-[9px] font-serif font-black text-cima-gold italic uppercase">Cima Pro</span>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[9px] font-black uppercase text-slate-900">Folio: CS-2024-089</p>
+                            <p className="text-[8px] text-slate-400">Fecha: {new Date().toLocaleDateString()}</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        <h2 className="text-center font-serif text-lg font-black text-slate-800 underline decoration-cima-gold/30 underline-offset-8 uppercase tracking-widest">{selectedT?.label}</h2>
+
+                        <div className="space-y-4 text-slate-700 leading-relaxed text-[10px] text-justify font-serif">
+                            <p>En la ciudad de Monterrey, Nuevo León, comparecen por una parte el <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.cliente || "[Nombre del Cliente]"}</span> y por la otra parte <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">CIMA PRO S.A. DE C.V.</span> representado por <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">Asesor Elite</span>.</p>
+
+                            <p>Las partes acuerdan establecer el precio de la operación en la cantidad de <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">${formData.precio || "0.00"} MXN</span>, bajo los términos de exclusividad profesional para la propiedad <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.propiedad || "la ubicación indicada"}</span>.</p>
+
+                            <div className="p-4 bg-slate-50 border-l-4 border-cima-gold rounded-r-xl">
+                                <p className="text-[8px] font-black uppercase text-slate-500 mb-1 italic">Cláusula de Honorarios</p>
+                                <p className="font-bold text-slate-900">Se pacta una comisión del {formData.comision || "0"}% sobre el valor total de la transacción, pagadera al momento de la firma ante Fedatario Público.</p>
+                            </div>
+
+                            <p>Ambas partes manifiestan su conformidad y voluntad para la firma del presente instrumento digital, validado mediante la infraestructura tecnológica de Cima Sign...</p>
+                        </div>
+                    </div>
+
+                    <div className="pt-12 grid grid-cols-2 gap-8 border-t border-slate-50 mt-12">
+                        <div className="text-center space-y-2">
+                            <div className="h-12 w-full bg-slate-50 rounded-lg border border-dashed border-slate-200 flex items-center justify-center">
+                                <span className="text-[7px] text-slate-300 font-mono uppercase tracking-widest">Firma Cliente</span>
+                            </div>
+                            <p className="text-[8px] font-bold text-slate-900 uppercase truncate px-2">{formData.cliente || "EL CLIENTE"}</p>
+                        </div>
+                        <div className="text-center space-y-2">
+                            <div className="h-12 w-full bg-cima-gold/5 rounded-lg border border-cima-gold/20 flex items-center justify-center relative overflow-hidden">
+                                <Sparkles className="absolute -right-1 -bottom-1 h-8 w-8 text-cima-gold/10" />
+                                <span className="text-[7px] text-cima-gold font-mono font-black uppercase tracking-tighter">CIMA SIGN</span>
+                            </div>
+                            <p className="text-[8px] font-bold text-slate-900 uppercase">CIMA PRO ELITE</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="p-4 bg-slate-900 flex justify-end gap-3 shrink-0">
+                    <button
+                        onClick={() => setShowPreview(false)}
+                        className="px-6 py-2 rounded-xl text-[9px] font-black text-white hover:bg-white/10 transition-all uppercase"
+                    >
+                        Cerrar
+                    </button>
+                    <button className="px-6 py-2 bg-cima-gold rounded-xl text-[9px] font-black text-black hover:bg-white transition-all uppercase shadow-lg shadow-cima-gold/20">
+                        Confirmar y Enviar
+                    </button>
+                </div>
+            </motion.div>
+        );
+    }
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between px-1">
@@ -1689,8 +1779,11 @@ function ContractGeneratorView() {
                             <p className="text-[10px] text-white/40 font-medium">El archivo PDF está listo para descarga y firma digital.</p>
                         </div>
 
-                        <div className="w-full max-w-sm grid grid-cols-2 gap-4">
-                            <button className="py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-white/60 uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                        <div className={`w-full max-w-sm grid transition-all ${isMobilePreview ? "grid-cols-1 gap-2" : "grid-cols-2 gap-4"}`}>
+                            <button
+                                onClick={() => setShowPreview(true)}
+                                className="py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-white/60 uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                            >
                                 <Eye className="h-4 w-4" /> Previsualizar
                             </button>
                             <button className="py-4 bg-cima-gold text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
@@ -1714,45 +1807,114 @@ function ContractGeneratorView() {
 }
 
 /* ── Messages View ─────────────────────────────────────────── */
+/* ── Messages View ─────────────────────────────────────────── */
 function MessagesView({ messages }: { messages: LiveMessage[] }) {
+    const [isNurturing, setIsNurturing] = useState(false);
+    const [nurtureStep, setNurtureStep] = useState(0);
+
+    const startNurtureSimulation = () => {
+        setIsNurturing(true);
+        setNurtureStep(1);
+        setTimeout(() => setNurtureStep(2), 2000);
+        setTimeout(() => setNurtureStep(3), 4500);
+        setTimeout(() => {
+            setIsNurturing(false);
+            setNurtureStep(0);
+        }, 7000);
+    };
+
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             <div className="flex items-center justify-between mb-2 px-1">
-                <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">Bandeja de Entrada</h3>
-                <span className="px-2 py-0.5 rounded-full bg-cima-gold/20 border border-cima-gold/30 text-[8px] font-black text-cima-gold uppercase">
-                    {messages.filter(m => m.unread).length} No leídos
-                </span>
+                <h3 className="font-serif text-[18px] font-black text-white tracking-tight">Bandeja de Entrada</h3>
+                <div className="flex gap-2">
+                    <button
+                        onClick={startNurtureSimulation}
+                        disabled={isNurturing}
+                        className={`px-3 py-1.5 rounded-full flex items-center gap-2 text-[8px] font-black uppercase tracking-widest transition-all ${isNurturing ? "bg-cima-gold/50 text-black animate-pulse cursor-not-allowed" : "bg-cima-gold text-black hover:bg-white shadow-lg shadow-cima-gold/20"}`}
+                    >
+                        <Sparkles className="h-3 w-3" />
+                        {isNurturing ? "Nutriendo Lead..." : "Simular Nutrición IA"}
+                    </button>
+                    <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[8px] font-black text-white/40 uppercase tracking-widest">
+                        {messages.filter(m => m.unread).length} No leídos
+                    </span>
+                </div>
             </div>
-            <div className="space-y-2">
+
+            {/* AI Nurture Simulator Banner */}
+            <AnimatePresence>
+                {isNurturing && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={{ opacity: 0, y: -20, height: 0 }}
+                        className="bg-cima-gold/10 border border-cima-gold/30 rounded-2xl p-6 overflow-hidden relative group"
+                    >
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Sparkles className="h-20 w-20 text-cima-gold" />
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <div className="h-10 w-10 rounded-full bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/40 shrink-0">
+                                <Zap className="h-5 w-5 text-black animate-pulse" />
+                            </div>
+                            <div className="flex-1 space-y-3">
+                                <div>
+                                    <h4 className="font-serif text-white font-bold text-sm">Cima AI Nurture en Proceso</h4>
+                                    <p className="text-[10px] text-cima-gold/60 font-medium">Automatizando el cierre con Roberto G.</p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className={`p-3 rounded-xl rounded-tl-none border transition-all duration-500 ${nurtureStep >= 1 ? "bg-white/10 border-white/20 opacity-100" : "opacity-0"}`}>
+                                        <p className="text-[11px] text-white/80 italic">"Hola Roberto, vi que te interesó el Penthouse. El asesor está en camino a una firma, ¿te gustaría que te agende una visita hoy mismo?"</p>
+                                    </div>
+                                    <div className={`p-3 rounded-xl rounded-tr-none border ml-auto max-w-[80%] transition-all duration-500 ${nurtureStep >= 2 ? "bg-cima-gold/20 border-cima-gold/40 opacity-100 translate-x-0" : "opacity-0 translate-x-4"}`}>
+                                        <p className="text-[11px] text-cima-gold font-bold">"¡Excelente! A las 5:00 PM me queda perfecto."</p>
+                                    </div>
+                                    <div className={`p-3 rounded-xl rounded-tl-none border bg-green-500/20 border-green-500/40 transition-all duration-500 ${nurtureStep >= 3 ? "opacity-100" : "opacity-0"}`}>
+                                        <div className="flex items-center gap-2">
+                                            <Calendar className="h-3 w-3 text-green-500" />
+                                            <p className="text-[11px] text-green-500 font-black uppercase">¡Cita Agendada y sincronizada!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className="grid gap-3">
                 {messages.map((msg, i) => (
                     <motion.div
                         key={msg.id || i}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.06 }}
-                        className={`p-4 rounded-xl transition-all cursor-pointer ${msg.unread
-                            ? "bg-cima-gold/5 border border-cima-gold/20 hover:border-cima-gold/40 shadow-lg shadow-cima-gold/5"
-                            : "bg-white/[0.02] border border-white/5 hover:border-white/10 opacity-60"
+                        className={`p-5 rounded-2xl transition-all cursor-pointer group shadow-2xl shadow-black/20 ${msg.unread
+                            ? "bg-cima-gold/[0.03] border border-cima-gold/20 hover:border-cima-gold/40"
+                            : "bg-white/[0.02] border border-white/5 hover:border-white/10 opacity-70"
                             }`}
                     >
-                        <div className="flex items-start gap-3">
-                            <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${msg.unread ? "bg-cima-gold text-black" : "bg-white/5 text-white/20"}`}>
-                                {msg.isAi ? <Sparkles className="h-4 w-4" /> : <span className="text-xs font-bold">{msg.from.charAt(0)}</span>}
+                        <div className="flex items-start gap-4">
+                            <div className={`h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${msg.unread ? "bg-cima-gold text-black" : "bg-white/5 text-white/20"}`}>
+                                {msg.isAi ? <Sparkles className="h-5 w-5" /> : <span className="text-sm font-bold">{msg.from.charAt(0)}</span>}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center justify-between mb-1.5">
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-xs font-bold ${msg.unread ? "text-white" : "text-white/50"}`}>{msg.from}</span>
-                                        {msg.isAi && <span className="text-[7px] font-black text-cima-gold uppercase bg-cima-gold/10 px-1 rounded border border-cima-gold/20">Cima AI</span>}
+                                        <span className={`text-[13px] font-bold ${msg.unread ? "text-white" : "text-white/50"}`}>{msg.from}</span>
+                                        {msg.isAi && <span className="text-[8px] font-black text-cima-gold uppercase bg-cima-gold/10 px-2 py-0.5 rounded border border-cima-gold/20">Cima AI</span>}
                                     </div>
-                                    <span className="text-[8px] font-mono text-white/20 whitespace-nowrap">{msg.time}</span>
+                                    <span className="text-[9px] font-medium text-white/20 whitespace-nowrap">{msg.time}</span>
                                 </div>
-                                <p className={`text-[11px] leading-relaxed ${msg.unread ? "text-white/70" : "text-white/30"}`}>{msg.message}</p>
+                                <p className={`text-[12px] leading-relaxed line-clamp-2 ${msg.unread ? "text-white/70 font-medium" : "text-white/30"}`}>{msg.message}</p>
                             </div>
                             {msg.unread && (
-                                <div className="flex flex-col items-center gap-2 mt-1">
-                                    <div className="h-2 w-2 rounded-full bg-cima-gold shadow-[0_0_8px_rgba(200,169,110,0.8)]" />
-                                    {msg.isAi && <Zap className="h-2.5 w-2.5 text-cima-gold animate-pulse" />}
+                                <div className="flex flex-col items-center gap-3 mt-1">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-cima-gold shadow-[0_0_12px_rgba(200,169,110,1)]" />
+                                    {msg.isAi && <Zap className="h-3 w-3 text-cima-gold animate-pulse" />}
                                 </div>
                             )}
                         </div>
