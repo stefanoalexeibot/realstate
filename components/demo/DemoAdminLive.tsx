@@ -7,14 +7,15 @@ import {
     Filter, MoreVertical, Globe, Facebook, Instagram, Mail,
     Phone, ChevronRight, ArrowUpRight, ArrowDownRight, Clock,
     CheckCircle2, AlertCircle, Eye, Target, Calendar, Sparkles, Send, Zap, Loader2, Share2,
-    Lock, X, Upload, Image, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
-    UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell
+    Lock, X, Upload, Image as ImageIcon, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
+    UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell, Wand2, RotateCcw, Download
 } from "lucide-react";
+import NextImage from "next/image";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { type LiveLead, type LiveMessage } from "./LiveDemoClient";
 
 /* ─── Types ────────────────────────────────────────────────── */
-type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes";
+type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio";
 
 interface DemoAdminLiveProps {
     plan: PlanConfig;
@@ -268,6 +269,7 @@ export default function DemoAdminLive({
         { id: "visitas", icon: Target, label: "Visitas", badge: "2", locked: !f.visits },
         { id: "analiticos", icon: TrendingUp, label: "Analíticos", locked: !f.analytics },
         { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: messages.filter(m => m.unread).length > 0 ? messages.filter(m => m.unread).length.toString() : undefined, locked: !f.messages },
+        { id: "ia_studio", icon: Wand2, label: "IA Studio", locked: plan.tier === "basico" },
     ];
 
     const tierStats = {
@@ -476,6 +478,7 @@ export default function DemoAdminLive({
                             {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
                             {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
                             {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
+                            {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -785,7 +788,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                         {[
                             { icon: FileText, label: "Generar ficha PDF", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
                             { icon: Share2, label: "Compartir WhatsApp", color: "text-green-400 bg-green-500/10 border-green-500/20" },
-                            { icon: Image, label: "Generar anuncio redes", color: "text-pink-400 bg-pink-500/10 border-pink-500/20" },
+                            { icon: ImageIcon, label: "Generar anuncio redes", color: "text-pink-400 bg-pink-500/10 border-pink-500/20" },
                             { icon: Sparkles, label: "Llenado completo con IA", color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
                         ].map((action, j) => (
                             <button key={j} className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all hover:scale-[1.02] ${action.color}`}>
@@ -1144,6 +1147,171 @@ function AnalyticsView() {
                     })}
                 </div>
             </div>
+        </div>
+    );
+}
+
+/* ── IA Studio View ────────────────────────────────────────── */
+function IaStudioView() {
+    const [status, setStatus] = useState<"idle" | "uploading" | "processing" | "ready">("idle");
+    const [mode, setMode] = useState<"clean" | "stage" | "remodel">("stage");
+    const [progress, setProgress] = useState(0);
+
+    const MODES = [
+        { id: "clean", label: "Limpiar Espacio", icon: Sparkles, desc: "Elimina objetos y desorden" },
+        { id: "stage", label: "Amueblar (Staging)", icon: Home, desc: "Añade muebles y decoración" },
+        { id: "remodel", label: "Remodelar", icon: Wand2, desc: "Cambia acabados y estilo" },
+    ];
+
+    const handleProcess = () => {
+        setStatus("processing");
+        setProgress(0);
+        const interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(interval);
+                    setStatus("ready");
+                    return 100;
+                }
+                return prev + 2;
+            });
+        }, 50);
+    };
+
+    const handleReset = () => {
+        setStatus("idle");
+        setProgress(0);
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between px-1">
+                <div>
+                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">IA Studio</h3>
+                    <p className="text-[10px] text-white/40 font-medium">Transformación de espacios en un clic</p>
+                </div>
+                {status === "ready" && (
+                    <button
+                        onClick={handleReset}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[9px] font-bold text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                    >
+                        <RotateCcw className="h-3 w-3" /> Reiniciar
+                    </button>
+                )}
+            </div>
+
+            {status === "idle" && (
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="aspect-video bg-white/[0.02] border border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center gap-4 group cursor-pointer hover:bg-white/[0.04] transition-all"
+                    onClick={() => setStatus("uploading")}
+                >
+                    <div className="h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center text-white/20 group-hover:scale-110 group-hover:text-cima-gold transition-all">
+                        <Upload className="h-8 w-8" />
+                    </div>
+                    <div className="text-center">
+                        <p className="text-xs font-bold text-white/60">Haz clic para subir una foto</p>
+                        <p className="text-[8px] text-white/20 uppercase font-black tracking-widest mt-1">Soporte: JPG, PNG · Max 10MB</p>
+                    </div>
+                </motion.div>
+            )}
+
+            {status === "uploading" && (
+                <div className="space-y-6">
+                    <div className="aspect-video bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden relative">
+                        <NextImage src="/cocina-antes.png" alt="Original" fill className="object-cover" />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-[8px] font-black text-white uppercase tracking-widest">Foto Original</div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {MODES.map((m) => (
+                            <button
+                                key={m.id}
+                                onClick={() => setMode(m.id as any)}
+                                className={`p-4 rounded-2xl border transition-all text-left ${mode === m.id ? "bg-cima-gold/10 border-cima-gold shadow-lg shadow-cima-gold/5" : "bg-white/[0.02] border-white/5 hover:border-white/20"}`}
+                            >
+                                <m.icon className={`h-5 w-5 mb-3 ${mode === m.id ? "text-cima-gold" : "text-white/40"}`} />
+                                <p className={`text-[11px] font-black mb-1 ${mode === m.id ? "text-white" : "text-white/60"}`}>{m.label}</p>
+                                <p className="text-[9px] text-white/30 leading-tight">{m.desc}</p>
+                            </button>
+                        ))}
+                    </div>
+
+                    <button
+                        onClick={handleProcess}
+                        className="w-full py-4 bg-cima-gold text-black rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cima-gold/20"
+                    >
+                        <Sparkles className="h-4 w-4" /> Transformar con IA
+                    </button>
+                </div>
+            )}
+
+            {status === "processing" && (
+                <div className="flex flex-col items-center justify-center py-12 space-y-6">
+                    <div className="relative">
+                        <div className="h-24 w-24 rounded-full border-4 border-white/5 border-t-cima-gold animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <Sparkles className="h-8 w-8 text-cima-gold animate-pulse" />
+                        </div>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-sm font-black text-white uppercase tracking-tighter mb-2">Procesando {mode === "clean" ? "Limpieza" : mode === "stage" ? "Amueblado" : "Remodelación"}</p>
+                        <div className="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden mx-auto">
+                            <motion.div
+                                className="h-full bg-cima-gold"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${progress}%` }}
+                            />
+                        </div>
+                        <p className="text-[10px] text-white/30 font-mono mt-3 uppercase tracking-widest">Generando nuevas capas visuales...</p>
+                    </div>
+                </div>
+            )}
+
+            {status === "ready" && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="space-y-4"
+                >
+                    <div className="aspect-video bg-white/5 border border-white/10 rounded-3xl overflow-hidden relative group">
+                        <NextImage src="/cocina-despues.png" alt="Result" fill className="object-cover" />
+
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+
+                        <div className="absolute bottom-6 left-6 flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-cima-gold/10 flex items-center justify-center text-cima-gold shadow-lg shadow-cima-gold/5">
+                                <ImageIcon className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-white uppercase tracking-widest">Resultado Final</p>
+                                <p className="text-[8px] text-cima-gold/80 font-bold uppercase tracking-widest">Generado con Cima IA engine</p>
+                            </div>
+                        </div>
+
+                        {/* Comparative Badge */}
+                        <div className="absolute top-6 right-6 flex items-center gap-2">
+                            <div className="bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
+                                <span className="text-[8px] font-black text-white/40 uppercase">IA Studio</span>
+                                <div className="h-1 w-8 bg-cima-gold/30 rounded-full" />
+                                <span className="text-[8px] font-black text-cima-gold uppercase">Éxito</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                        <button className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                            <Download className="h-3 w-3" /> Descargar HD
+                        </button>
+                        <button className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                            <Share2 className="h-3 h-3" /> Compartir
+                        </button>
+                    </div>
+                </motion.div>
+            )}
         </div>
     );
 }
