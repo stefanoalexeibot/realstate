@@ -8,14 +8,15 @@ import {
     Phone, ChevronRight, ArrowUpRight, ArrowDownRight, Clock,
     CheckCircle2, AlertCircle, Eye, Target, Calendar, Sparkles, Send, Zap, Loader2, Share2,
     Lock, X, Upload, Image as ImageIcon, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
-    UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell, Wand2, RotateCcw, Download
+    UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell, Wand2, RotateCcw, Download,
+    ShieldCheck, FileSearch, ShieldAlert, FileCheck
 } from "lucide-react";
 import NextImage from "next/image";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { type LiveLead, type LiveMessage } from "./LiveDemoClient";
 
 /* ─── Types ────────────────────────────────────────────────── */
-type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio";
+type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos";
 
 interface DemoAdminLiveProps {
     plan: PlanConfig;
@@ -270,6 +271,7 @@ export default function DemoAdminLive({
         { id: "analiticos", icon: TrendingUp, label: "Analíticos", locked: !f.analytics },
         { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: messages.filter(m => m.unread).length > 0 ? messages.filter(m => m.unread).length.toString() : undefined, locked: !f.messages },
         { id: "ia_studio", icon: Wand2, label: "IA Studio", locked: plan.tier === "basico" },
+        { id: "documentos", icon: ShieldCheck, label: "Documentos", locked: plan.tier === "basico" },
     ];
 
     const tierStats = {
@@ -479,6 +481,7 @@ export default function DemoAdminLive({
                             {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
                             {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
                             {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
+                            {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -1312,6 +1315,141 @@ function IaStudioView() {
                     </div>
                 </motion.div>
             )}
+        </div>
+    );
+}
+
+/* ── Documents View ────────────────────────────────────────── */
+function DocumentsView() {
+    const [docs, setDocs] = useState([
+        { id: 1, name: "Escritura_Residencia_Magnolia.pdf", type: "Escritura", date: "12/02/2026", status: "verificado", size: "4.2 MB" },
+        { id: 2, name: "ID_Propietario_Vargas.jpg", type: "Identificación", date: "15/02/2026", status: "pendiente", size: "1.8 MB" },
+        { id: 3, name: "Predial_2026_Pagado.pdf", type: "Impuestos", date: "18/02/2026", status: "advertencia", size: "0.9 MB" },
+        { id: 4, name: "Contrato_Exclusividad_Cima.doc", type: "Contrato", date: "20/02/2026", status: "verificando", size: "2.1 MB" },
+    ]);
+
+    const [verifyingId, setVerifyingId] = useState<number | null>(null);
+
+    const handleVerify = (id: number) => {
+        setVerifyingId(id);
+        // Simular proceso de IA
+        setTimeout(() => {
+            setDocs(prev => prev.map(d =>
+                d.id === id ? { ...d, status: "verificado" } : d
+            ));
+            setVerifyingId(null);
+        }, 3000);
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between px-1">
+                <div>
+                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">Bóveda Digital</h3>
+                    <p className="text-[10px] text-white/40 font-medium">Gestión documental con respaldo jurídico e IA</p>
+                </div>
+                <div className="flex gap-2">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[9px] font-bold uppercase hover:bg-white transition-all">
+                        <Plus className="h-3 w-3" /> Nuevo Documento
+                    </button>
+                </div>
+            </div>
+
+            {/* Stats bar */}
+            <div className="grid grid-cols-3 gap-3">
+                {[
+                    { label: "Integridad", val: "94%", color: "text-green-400" },
+                    { label: "Pendientes", val: "2", color: "text-amber-400" },
+                    { label: "Almacenado", val: "12.8 GB", color: "text-white/40" },
+                ].map((s, i) => (
+                    <div key={i} className="bg-white/[0.02] border border-white/5 p-3 rounded-2xl">
+                        <p className="text-[7px] font-black uppercase tracking-widest text-white/20 mb-1">{s.label}</p>
+                        <p className={`text-sm font-black ${s.color}`}>{s.val}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Document List */}
+            <div className="space-y-2">
+                {docs.map((doc, i) => (
+                    <motion.div
+                        key={doc.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="group flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                    >
+                        <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${doc.status === "verificado" ? "bg-green-500/10 text-green-400" :
+                                doc.status === "advertencia" ? "bg-red-500/10 text-red-400" :
+                                    "bg-white/5 text-white/20"
+                            }`}>
+                            <FileCheck className="h-5 w-5" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-0.5">
+                                <span className="text-[11px] font-bold text-white/90 truncate">{doc.name}</span>
+                                <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-white/5 text-white/40 uppercase tracking-widest">{doc.type}</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-[9px] text-white/25 font-medium">
+                                <span>{doc.date}</span>
+                                <span>•</span>
+                                <span>{doc.size}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 shrink-0">
+                            <div className="text-right">
+                                {verifyingId === doc.id ? (
+                                    <div className="flex items-center gap-2 text-cima-gold">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest animate-pulse">Analizando IA...</span>
+                                    </div>
+                                ) : (
+                                    <div className={`flex items-center gap-1.5 ${doc.status === "verificado" ? "text-green-400" :
+                                            doc.status === "advertencia" ? "text-red-400" :
+                                                "text-white/20"
+                                        }`}>
+                                        {doc.status === "verificado" ? <ShieldCheck className="h-3.5 w-3.5" /> :
+                                            doc.status === "advertencia" ? <ShieldAlert className="h-3.5 w-3.5" /> :
+                                                <FileSearch className="h-3.5 w-3.5" />}
+                                        <span className="text-[8px] font-black uppercase tracking-widest">
+                                            {doc.status === "verificado" ? "Verificado" :
+                                                doc.status === "advertencia" ? "Vencido" :
+                                                    "Pendiente"}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {doc.status !== "verificado" && verifyingId !== doc.id && (
+                                <button
+                                    onClick={() => handleVerify(doc.id)}
+                                    className="p-2 bg-cima-gold/10 border border-cima-gold/20 rounded-lg group-hover:bg-cima-gold group-hover:text-black transition-all text-cima-gold"
+                                    title="Verificar con IA"
+                                >
+                                    <Sparkles className="h-3.5 w-3.5" />
+                                </button>
+                            )}
+
+                            <button className="p-2 bg-white/5 border border-white/5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-white/10 transition-all text-white/40">
+                                <ExternalLink className="h-3.5 w-3.5" />
+                            </button>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* AI Trust Message */}
+            <div className="p-4 rounded-2xl bg-cima-gold/5 border border-cima-gold/20 flex gap-3">
+                <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center shrink-0 shadow-lg shadow-cima-gold/20">
+                    <ShieldCheck className="h-4 w-4 text-black" />
+                </div>
+                <div>
+                    <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Cima Legal Compliance · ON</h4>
+                    <p className="text-[9px] text-white/50 leading-relaxed font-medium">Todos los documentos son analizados mediante **Integridad Biométrica** y **OCR Inteligente** para garantizar transacciones de ultra-lujo sin riesgos legales.</p>
+                </div>
+            </div>
         </div>
     );
 }
