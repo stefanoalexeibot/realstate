@@ -22,6 +22,15 @@ export interface LiveLead {
     isAiQualified?: boolean;
 }
 
+export interface LiveMessage {
+    id: string;
+    from: string;
+    message: string;
+    time: string;
+    unread: boolean;
+    isAi?: boolean;
+}
+
 const INITIAL_LEADS: LiveLead[] = [
     { id: "1", name: "Ana Martínez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
     { id: "2", name: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
@@ -30,6 +39,14 @@ const INITIAL_LEADS: LiveLead[] = [
     { id: "5", name: "Sofía Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 días", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10", score: 95, isAiQualified: true },
     { id: "6", name: "Familia Rodríguez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10", score: 64 },
     { id: "7", name: "Ing. Pedro Salazar", phone: "81 1111 7890", source: "Landing", sourceIcon: Globe, status: "contactado", date: "Hace 4 horas", property: "Depto. Torre LOVFT", color: "text-emerald-400 bg-emerald-500/10", score: 88 },
+];
+
+const INITIAL_MESSAGES: LiveMessage[] = [
+    { id: "1", from: "Familia Rodríguez", message: "Hola, ¿podemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
+    { id: "2", from: "Ing. Roberto M.", message: "Ya firmé el contrato, ¿cuándo hacemos las fotos?", time: "Hace 20 min", unread: true },
+    { id: "3", from: "Dra. Sofía L.", message: "¿Hubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
+    { id: "4", from: "Carlos López", message: "Me interesa mucho, ¿pueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
+    { id: "5", from: "Sr. Hernández", message: "Gracias por las fotos, se ven increíbles 👏", time: "Ayer", unread: false },
 ];
 
 const NARRATIVE: Record<View, { title: string; desc: string }> = {
@@ -163,8 +180,9 @@ export default function LiveDemoClient() {
     const plan = DEMO_PLANS[tier];
     const nameInputRef = useRef<HTMLInputElement>(null);
 
-    // Shared Leads State
+    // Shared State
     const [leads, setLeads] = useState<LiveLead[]>(INITIAL_LEADS);
+    const [messages, setMessages] = useState<LiveMessage[]>(INITIAL_MESSAGES);
     const [lastLeadId, setLastLeadId] = useState("");
 
     const handleAddLead = useCallback((newLeadData?: Partial<LiveLead>) => {
@@ -200,6 +218,33 @@ export default function LiveDemoClient() {
 
     const handleUpdateLeadStatus = useCallback((leadId: string, newStatus: string) => {
         setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l));
+    }, []);
+
+    const handleAddMessage = useCallback((from: string, text: string, isAi: boolean = false) => {
+        const newMessage: LiveMessage = {
+            id: Math.random().toString(36).substr(2, 9),
+            from,
+            message: text,
+            time: "Justo ahora",
+            unread: !isAi,
+            isAi
+        };
+        setMessages(prev => [newMessage, ...prev]);
+
+        // Simulated AI Response if it was a user message
+        if (!isAi) {
+            setTimeout(() => {
+                const aiResponse: LiveMessage = {
+                    id: Math.random().toString(36).substr(2, 9),
+                    from: "Cima AI Assistant",
+                    message: `¡Hola ${from}! Gracias por tu interés. Un asesor se pondrá en contacto contigo pronto. ¿Te gustaría agendar una visita guiada?`,
+                    time: "Justo ahora",
+                    unread: true,
+                    isAi: true
+                };
+                setMessages(prev => [aiResponse, ...prev]);
+            }, 2000);
+        }
     }, []);
 
     const TIER_ORDER: PlanTier[] = ["basico", "profesional", "premium"];
@@ -452,8 +497,8 @@ export default function LiveDemoClient() {
             <button
                 onClick={() => setFocusMode(!focusMode)}
                 className={`fixed top-20 right-6 z-[101] p-3 rounded-2xl border transition-all ${focusMode
-                        ? "bg-cima-gold text-black border-cima-gold shadow-2xl scale-110"
-                        : "bg-black/40 backdrop-blur-md border-white/5 text-white/20 hover:text-white hover:border-white/20"
+                    ? "bg-cima-gold text-black border-cima-gold shadow-2xl scale-110"
+                    : "bg-black/40 backdrop-blur-md border-white/5 text-white/20 hover:text-white hover:border-white/20"
                     }`}
                 title={focusMode ? "Salir de Modo Enfoque" : "Modo Enfoque (Ocultar UI)"}
             >
@@ -477,6 +522,8 @@ export default function LiveDemoClient() {
                             leads={leads}
                             onUpdateLeadStatus={handleUpdateLeadStatus}
                             newLeadId={lastLeadId}
+                            messages={messages}
+                            onAddMessage={handleAddMessage}
                         />
                     )}
                     {view === "portal" && <DemoPortal plan={plan} />}
@@ -484,6 +531,8 @@ export default function LiveDemoClient() {
                         <DemoLandingExample
                             plan={plan}
                             onLeadCapture={handleAddLead}
+                            onSendMessage={handleAddMessage}
+                            messages={messages}
                         />
                     )}
                 </motion.div>

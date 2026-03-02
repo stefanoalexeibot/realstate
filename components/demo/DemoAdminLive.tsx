@@ -11,7 +11,7 @@ import {
     UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
-import { type LiveLead } from "./LiveDemoClient";
+import { type LiveLead, type LiveMessage } from "./LiveDemoClient";
 
 /* ─── Types ────────────────────────────────────────────────── */
 type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes";
@@ -24,6 +24,8 @@ interface DemoAdminLiveProps {
     agentName?: string;
     onNavigateToLeads?: () => void;
     externalTab?: SidebarTab;
+    messages: LiveMessage[];
+    onAddMessage: (from: string, text: string, isAi?: boolean) => void;
 }
 
 /* ─── Mock Data ────────────────────────────────────────────── */
@@ -56,13 +58,8 @@ const VISITS = [
     { prospect: "Lic. Pérez (familiar)", property: "Casa Valle Poniente", date: "26 Feb", time: "3:00 PM", status: "cancelada", sentiment: null },
 ];
 
-const MESSAGES = [
-    { from: "Familia Rodríguez", message: "Hola, ¿podemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
-    { from: "Ing. Roberto M.", message: "Ya firmé el contrato, ¿cuándo hacemos las fotos?", time: "Hace 20 min", unread: true },
-    { from: "Dra. Sofía L.", message: "¿Hubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
-    { from: "Carlos López", message: "Me interesa mucho, ¿pueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
-    { from: "Sr. Hernández", message: "Gracias por las fotos, se ven increíbles 👏", time: "Ayer", unread: false },
-];
+// (Moved to shared state in LiveDemoClient)
+// const MESSAGES = [...]
 
 const NOTIFICATIONS = [
     { icon: Zap, text: "Nuevo lead desde Instagram", sub: "Ana Martínez — Residencia Las Misiones", color: "text-pink-400 bg-pink-500/20" },
@@ -234,7 +231,9 @@ export default function DemoAdminLive({
     newLeadId,
     agentName,
     onNavigateToLeads,
-    externalTab
+    externalTab,
+    messages,
+    onAddMessage
 }: DemoAdminLiveProps) {
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
@@ -268,7 +267,7 @@ export default function DemoAdminLive({
         { id: "leads", icon: Users, label: "Leads", badge: "7", locked: false },
         { id: "visitas", icon: Target, label: "Visitas", badge: "2", locked: !f.visits },
         { id: "analiticos", icon: TrendingUp, label: "Analíticos", locked: !f.analytics },
-        { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: "3", locked: !f.messages },
+        { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: messages.filter(m => m.unread).length > 0 ? messages.filter(m => m.unread).length.toString() : undefined, locked: !f.messages },
     ];
 
     const tierStats = {
@@ -395,7 +394,7 @@ export default function DemoAdminLive({
                                 {activeTab === "leads" && <>Tienes <span className="text-white font-bold">7 leads</span> esta semana</>}
                                 {activeTab === "visitas" && <>Próximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
                                 {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">últimos 30 días</span></>}
-                                {activeTab === "mensajes" && <><span className="text-white font-bold">3 sin leer</span> · 5 conversaciones</>}
+                                {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> · {messages.length} conversaciones</>}
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -476,7 +475,7 @@ export default function DemoAdminLive({
                             )}
                             {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
                             {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
-                            {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView />}
+                            {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -1150,35 +1149,51 @@ function AnalyticsView() {
 }
 
 /* ── Messages View ─────────────────────────────────────────── */
-function MessagesView() {
+function MessagesView({ messages }: { messages: LiveMessage[] }) {
     return (
-        <div className="space-y-2">
-            {MESSAGES.map((msg, i) => (
-                <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06 }}
-                    className={`p-4 rounded-xl transition-all cursor-pointer ${msg.unread
-                        ? "bg-cima-gold/5 border border-cima-gold/20 hover:border-cima-gold/40"
-                        : "bg-white/[0.02] border border-white/5 hover:border-white/10"
-                        }`}
-                >
-                    <div className="flex items-start gap-3">
-                        <div className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${msg.unread ? "bg-cima-gold/20 text-cima-gold" : "bg-white/5 text-white/20"}`}>
-                            <span className="text-xs font-bold">{msg.from.charAt(0)}</span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1">
-                                <span className={`text-xs font-bold ${msg.unread ? "text-white" : "text-white/50"}`}>{msg.from}</span>
-                                <span className="text-[8px] text-white/20 font-mono">{msg.time}</span>
+        <div className="space-y-4">
+            <div className="flex items-center justify-between mb-2 px-1">
+                <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">Bandeja de Entrada</h3>
+                <span className="px-2 py-0.5 rounded-full bg-cima-gold/20 border border-cima-gold/30 text-[8px] font-black text-cima-gold uppercase">
+                    {messages.filter(m => m.unread).length} No leídos
+                </span>
+            </div>
+            <div className="space-y-2">
+                {messages.map((msg, i) => (
+                    <motion.div
+                        key={msg.id || i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.06 }}
+                        className={`p-4 rounded-xl transition-all cursor-pointer ${msg.unread
+                            ? "bg-cima-gold/5 border border-cima-gold/20 hover:border-cima-gold/40 shadow-lg shadow-cima-gold/5"
+                            : "bg-white/[0.02] border border-white/5 hover:border-white/10 opacity-60"
+                            }`}
+                    >
+                        <div className="flex items-start gap-3">
+                            <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${msg.unread ? "bg-cima-gold text-black" : "bg-white/5 text-white/20"}`}>
+                                {msg.isAi ? <Sparkles className="h-4 w-4" /> : <span className="text-xs font-bold">{msg.from.charAt(0)}</span>}
                             </div>
-                            <p className={`text-[11px] truncate ${msg.unread ? "text-white/60" : "text-white/30"}`}>{msg.message}</p>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className={`text-xs font-bold ${msg.unread ? "text-white" : "text-white/50"}`}>{msg.from}</span>
+                                        {msg.isAi && <span className="text-[7px] font-black text-cima-gold uppercase bg-cima-gold/10 px-1 rounded border border-cima-gold/20">Cima AI</span>}
+                                    </div>
+                                    <span className="text-[8px] font-mono text-white/20 whitespace-nowrap">{msg.time}</span>
+                                </div>
+                                <p className={`text-[11px] leading-relaxed ${msg.unread ? "text-white/70" : "text-white/30"}`}>{msg.message}</p>
+                            </div>
+                            {msg.unread && (
+                                <div className="flex flex-col items-center gap-2 mt-1">
+                                    <div className="h-2 w-2 rounded-full bg-cima-gold shadow-[0_0_8px_rgba(200,169,110,0.8)]" />
+                                    {msg.isAi && <Zap className="h-2.5 w-2.5 text-cima-gold animate-pulse" />}
+                                </div>
+                            )}
                         </div>
-                        {msg.unread && <div className="h-2 w-2 rounded-full bg-cima-gold shrink-0 mt-2" />}
-                    </div>
-                </motion.div>
-            ))}
+                    </motion.div>
+                ))}
+            </div>
         </div>
     );
 }

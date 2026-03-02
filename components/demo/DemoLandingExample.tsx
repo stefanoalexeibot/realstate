@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Home, Phone, MapPin, BedDouble, Bath, Ruler,
     Camera, Calendar, Shield, Star, ArrowRight, CheckCircle2,
-    TrendingUp, Users, Zap, ChevronLeft, ChevronRight, MessageSquare, Award
+    TrendingUp, Users as UsersIcon, Zap, ChevronLeft, ChevronRight, MessageSquare, Award, Eye, X, Send, Sparkles
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
-import { Users as UsersIcon, Eye } from "lucide-react";
+import { type LiveMessage } from "./LiveDemoClient";
 
 /**
  * Social proof component for Pro/Team plans
@@ -66,10 +66,14 @@ function SocialProofToast({ tier }: { tier: string }) {
  */
 export default function DemoLandingExample({
     plan,
-    onLeadCapture
+    onLeadCapture,
+    onSendMessage,
+    messages
 }: {
     plan: PlanConfig;
     onLeadCapture?: (data: any) => void;
+    onSendMessage?: (from: string, text: string, isAi?: boolean) => void;
+    messages?: LiveMessage[];
 }) {
     const f = plan.features.landing;
     const isTeam = plan.tier === "premium";
@@ -484,18 +488,134 @@ export default function DemoLandingExample({
             </div>
 
             {/* ── Footer ───────────────────────────────── */}
-            <div className="border-t border-white/5 py-6 text-center">
-                <p className="text-[9px] text-white/20 uppercase tracking-widest">
-                    {isTeam
-                        ? "Landing Premium · Diseño exclusivo con tu marca"
-                        : isPro
-                            ? "Landing Profesional · Incluida con tu plan"
-                            : "Landing Básica · Actualiza a Pro para más funciones"
-                    }
-                </p>
+            <div className="h-40 bg-black border-t border-white/5 flex flex-col items-center justify-center gap-2">
+                <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">Cima Propiedades · {new Date().getFullYear()}</p>
+                <div className="h-1 w-20 bg-cima-gold/20 rounded-full" />
             </div>
+
+            {/* Chat Widget */}
+            <ChatWidget onSendMessage={onSendMessage} messages={messages || []} />
+
             {/* ── Social Proof (Pro/Team only) ────────── */}
             {!isStarter && <SocialProofToast tier={plan.tier} />}
+        </div>
+    );
+}
+
+/**
+ * Interactive Chat Widget with AI Simulation
+ */
+function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t: string, ai?: boolean) => void; messages: LiveMessage[] }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [inputValue, setInputValue] = useState("");
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll to bottom
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messages, isOpen]);
+
+    const handleSend = () => {
+        if (!inputValue.trim() || !onSendMessage) return;
+        onSendMessage("Interesado (Tú)", inputValue);
+        setInputValue("");
+    };
+
+    return (
+        <div className="fixed bottom-6 right-6 z-[110]">
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        className="absolute bottom-20 right-0 w-80 bg-black border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+                    >
+                        {/* Header */}
+                        <div className="p-4 bg-cima-gold flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="h-8 w-8 rounded-full bg-black/20 flex items-center justify-center">
+                                    <Sparkles className="h-4 w-4 text-black" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black text-black uppercase tracking-tighter">Asistente Cima AI</p>
+                                    <div className="flex items-center gap-1">
+                                        <div className="h-1.5 w-1.5 rounded-full bg-black/60 animate-pulse" />
+                                        <span className="text-[7px] text-black/60 font-bold uppercase">En línea ahora</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsOpen(false)} className="text-black/40 hover:text-black p-1">
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+
+                        {/* Messages Area */}
+                        <div
+                            ref={scrollRef}
+                            className="h-72 overflow-y-auto p-4 space-y-3 bg-white/[0.02] flex flex-col"
+                        >
+                            <div className="text-center py-4 mb-2">
+                                <span className="text-[8px] text-white/20 font-bold uppercase tracking-widest px-2 py-1 border border-white/5 rounded-full">Chat Privado con IA</span>
+                            </div>
+
+                            {messages.map((msg, i) => (
+                                <motion.div
+                                    key={msg.id || i}
+                                    initial={{ opacity: 0, x: msg.from.includes("Tú") ? 10 : -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className={`flex ${msg.from.includes("Tú") ? "justify-end" : "justify-start"}`}
+                                >
+                                    <div className={`max-w-[85%] p-3 rounded-2xl text-[10px] ${msg.from.includes("Tú")
+                                        ? "bg-cima-gold text-black font-medium rounded-tr-none shadow-lg shadow-cima-gold/10"
+                                        : "bg-white/5 text-white/80 border border-white/10 rounded-tl-none"
+                                        }`}>
+                                        <p className="leading-relaxed">{msg.message}</p>
+                                        <span className={`text-[7px] mt-1 block opacity-40 ${msg.from.includes("Tú") ? "text-right" : ""}`}>{msg.time}</span>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        {/* Input Area */}
+                        <div className="p-4 border-t border-white/5 bg-black">
+                            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 pl-4 focus-within:border-cima-gold/30 transition-all">
+                                <input
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                                    placeholder="Escribe tu duda..."
+                                    className="flex-1 bg-transparent border-none outline-none text-[10px] text-white placeholder:text-white/20"
+                                />
+                                <button
+                                    onClick={handleSend}
+                                    className="h-8 w-8 rounded-xl bg-cima-gold flex items-center justify-center text-black hover:scale-105 transition-all shadow-lg shadow-cima-gold/20"
+                                >
+                                    <Send className="h-3.5 w-3.5" />
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Chat Toggle Button */}
+            <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsOpen(!isOpen)}
+                className={`h-14 w-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all relative ${isOpen ? "bg-white text-black" : "bg-cima-gold text-black shadow-cima-gold/20"
+                    }`}
+            >
+                {isOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
+                {!isOpen && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-black text-white animate-bounce">
+                        1
+                    </span>
+                )}
+            </motion.button>
         </div>
     );
 }
