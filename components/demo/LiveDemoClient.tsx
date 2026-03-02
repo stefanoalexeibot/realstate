@@ -2,14 +2,48 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    Layout, Home, Globe, ChevronRight, Monitor, Maximize2, Eye,
-    Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle
-} from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
 import { DEMO_PLANS, type PlanTier } from "@/lib/config/demo-plans";
+
+export interface LiveLead {
+    id: string;
+    name: string;
+    phone: string;
+    source: string;
+    sourceIcon: any;
+    status: string;
+    date: string;
+    property: string;
+    color: string;
+}
+
+const INITIAL_LEADS: LiveLead[] = [
+    { id: "1", name: "Ana Martínez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10" },
+    { id: "2", name: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10" },
+    { id: "3", name: "María Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10" },
+    { id: "4", name: "Roberto Treviño", phone: "81 4444 9876", source: "Referido", sourceIcon: UsersIcon, status: "visita_agendada", date: "Ayer", property: "Pent. Santa María", color: "text-amber-400 bg-amber-500/10" },
+    { id: "5", name: "Sofía Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 días", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10" },
+    { id: "6", name: "Familia Rodríguez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10" },
+    { id: "7", name: "Ing. Pedro Salazar", phone: "81 1111 7890", source: "Landing", sourceIcon: Globe, status: "contactado", date: "Hace 4 horas", property: "Depto. Torre LOVFT", color: "text-emerald-400 bg-emerald-500/10" },
+];
+
+const NARRATIVE: Record<View, { title: string; desc: string }> = {
+    landing: {
+        title: "Captación Automática",
+        desc: "Cada propiedad tiene su propia Landing Page de alto impacto diseñada para convertir visitantes en leads cualificados."
+    },
+    admin: {
+        title: "Control Total de Operaciones",
+        desc: "El centro neurálgico del asesor. Aquí se gestiona el pipeline de ventas, los analíticos y la comunicación con el cliente."
+    },
+    portal: {
+        title: "Transparencia que Enamora",
+        desc: "El Portal del Dueño reduce el estrés del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
+    }
+};
 
 type View = "admin" | "portal" | "landing";
 
@@ -69,34 +103,43 @@ function PresentationTimer() {
 }
 
 /* ─── QR Code (SVG pattern) ────────────────────────────────── */
-function QROverlay({ onClose }: { onClose: () => void }) {
+function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: string; desc?: string }) {
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99] bg-black/80 backdrop-blur-sm flex items-center justify-center"
+            className="fixed inset-0 z-[99] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 text-center"
             onClick={onClose}
         >
             <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-3xl p-8 text-center max-w-xs"
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-[0_0_50px_rgba(200,169,110,0.3)] border border-cima-gold/20"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="mb-4">
-                    {/* Simple QR-like visual pointing to vende-mas */}
-                    <div className="h-48 w-48 mx-auto bg-white border-2 border-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden">
+                <div className="mb-6 relative">
+                    <div className="absolute inset-0 bg-cima-gold/10 blur-3xl rounded-full" />
+                    <div className="h-56 w-56 mx-auto bg-white border border-gray-100 rounded-3xl flex items-center justify-center relative shadow-inner p-4">
                         <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("https://propiedades-mty.vercel.app/vende-mas")}&margin=10`}
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent("https://propiedades-mty.vercel.app/vende-mas")}&margin=10&color=C8A96E`}
                             alt="QR Code"
                             className="w-full h-full"
                         />
+                        <div className="absolute inset-0 border-[12px] border-white pointer-events-none rounded-[1.4rem]" />
                     </div>
                 </div>
-                <p className="text-sm font-bold text-gray-900 mb-1">Escanea para más información</p>
-                <p className="text-xs text-gray-500">Planes y precios disponibles</p>
+                <h3 className="text-lg font-heading font-black text-gray-900 mb-2">{title || "Mobile Mirroring"}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed opacity-80">{desc || "Escanea este código para ver cómo se adapta la experiencia a un dispositivo móvil en tiempo real."}</p>
+
+                <button
+                    onClick={onClose}
+                    className="mt-8 w-full bg-black text-white py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-900 transition-all border border-transparent active:scale-95"
+                >
+                    Entiendo, cerrar
+                </button>
+                <p className="mt-4 text-[8px] text-gray-400 font-bold uppercase tracking-widest">Powered by Cima Pro Technology</p>
             </motion.div>
         </motion.div>
     );
@@ -116,6 +159,43 @@ export default function LiveDemoClient() {
     const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
     const nameInputRef = useRef<HTMLInputElement>(null);
+
+    // Shared Leads State
+    const [leads, setLeads] = useState<LiveLead[]>(INITIAL_LEADS);
+    const [lastLeadId, setLastLeadId] = useState("");
+
+    const handleAddLead = useCallback((newLeadData?: Partial<LiveLead>) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        const sourceOptions = [
+            { name: "Instagram", icon: Instagram, color: "text-pink-400 bg-pink-500/10" },
+            { name: "Marketplace", icon: Facebook, color: "text-blue-400 bg-blue-500/10" },
+            { name: "Landing", icon: Globe, color: "text-emerald-400 bg-emerald-500/10" }
+        ];
+        const source = sourceOptions[Math.floor(Math.random() * sourceOptions.length)];
+
+        const lead: LiveLead = {
+            id,
+            name: newLeadData?.name || "Nuevo Interesado",
+            phone: newLeadData?.phone || "81 0000 0000",
+            source: source.name,
+            sourceIcon: source.icon,
+            status: "nuevo",
+            date: "Justo ahora",
+            property: "Residencia Las Misiones",
+            color: source.color,
+            ...newLeadData
+        };
+
+        setLeads(prev => [lead, ...prev]);
+        setLastLeadId(id);
+
+        // Automaticaly clear last lead ID after some time
+        setTimeout(() => setLastLeadId(""), 5000);
+    }, []);
+
+    const handleUpdateLeadStatus = useCallback((leadId: string, newStatus: string) => {
+        setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l));
+    }, []);
 
     const TIER_ORDER: PlanTier[] = ["basico", "profesional", "premium"];
 
@@ -333,10 +413,6 @@ export default function LiveDemoClient() {
 
                 {/* Context bar */}
                 <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Eye className="h-3 w-3 text-white/20" />
-                        <p className="text-[9px] text-white/30">{VIEW_LABELS[view]}</p>
-                    </div>
                     <div className="flex items-center gap-1.5">
                         <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
                         <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
@@ -345,6 +421,30 @@ export default function LiveDemoClient() {
                         <span className="text-[7px] text-white/15">•</span>
                         <span className="text-[7px] text-white/20">{plan.deliveryDays}d</span>
                     </div>
+                </div>
+
+                {/* ── Narrative Caption ─────────────────────── */}
+                <div className="bg-cima-gold/5 border-b border-cima-gold/10 px-4 py-2 relative overflow-hidden">
+                    <motion.div
+                        key={view}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex items-baseline gap-3"
+                    >
+                        <span className="text-[10px] font-black text-cima-gold uppercase tracking-tighter whitespace-nowrap">
+                            {NARRATIVE[view].title}
+                        </span>
+                        <span className="text-[9px] text-white/60 font-medium leading-tight">
+                            {NARRATIVE[view].desc}
+                        </span>
+                    </motion.div>
+                    {/* Animated scanning line */}
+                    <motion.div
+                        initial={{ left: "-10%" }}
+                        animate={{ left: "110%" }}
+                        transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                        className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent skew-x-12"
+                    />
                 </div>
             </div>
 
@@ -363,10 +463,18 @@ export default function LiveDemoClient() {
                             agentName={agentName}
                             onNavigateToLeads={handleNavigateToLeads}
                             externalTab={AUTO_STEPS[autoDemoStep]?.tab}
+                            leads={leads}
+                            onUpdateLeadStatus={handleUpdateLeadStatus}
+                            newLeadId={lastLeadId}
                         />
                     )}
                     {view === "portal" && <DemoPortal plan={plan} />}
-                    {view === "landing" && <DemoLandingExample plan={plan} />}
+                    {view === "landing" && (
+                        <DemoLandingExample
+                            plan={plan}
+                            onLeadCapture={handleAddLead}
+                        />
+                    )}
                 </motion.div>
             </AnimatePresence>
 
@@ -395,7 +503,18 @@ export default function LiveDemoClient() {
 
             {/* ── QR Overlay ──────────────────────────── */}
             <AnimatePresence>
-                {showQR && <QROverlay onClose={() => setShowQR(false)} />}
+                {showQR && (
+                    <QROverlay
+                        onClose={() => setShowQR(false)}
+                        title={view === "landing" ? "Vista Móvil del Comprador" : view === "admin" ? "Notificaciones en tu Móvil" : "Portal para el Dueño (Móvil)"}
+                        desc={view === "landing"
+                            ? "Escanea con tu celular para ver cómo interactúa un comprador real con esta propiedad."
+                            : view === "admin"
+                                ? "Manten el control de tus propiedades y recibe alertas de nuevos leads estés donde estés."
+                                : "Tu cliente podrá seguir el progreso de su venta cómodamente desde su smartphone."
+                        }
+                    />
+                )}
             </AnimatePresence>
         </div>
     );

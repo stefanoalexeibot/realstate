@@ -12,12 +12,16 @@ import {
     UserCircle, ChevronDown, ArrowRight
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
+import { type LiveLead } from "./LiveDemoClient";
 
 /* ─── Types ────────────────────────────────────────────────── */
 type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes";
 
 interface DemoAdminLiveProps {
     plan: PlanConfig;
+    leads: LiveLead[];
+    onUpdateLeadStatus: (id: string, newStatus: string) => void;
+    newLeadId?: string;
     agentName?: string;
     onNavigateToLeads?: () => void;
     externalTab?: SidebarTab;
@@ -40,21 +44,14 @@ const PROPERTIES = [
     { name: "Residencia Chipinque", price: "$22.0M", status: "Exclusiva", owner: "Fam. Garza", img: "/cocina-despues.png", hits: 225, trend: [55, 65, 60, 78, 88, 82, 95], beds: 5, baths: 5, m2: 550, address: "Paseo de Chipinque 100, San Pedro" },
 ];
 
-const LEADS = [
-    { name: "Ana Martínez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10" },
-    { name: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10" },
-    { name: "María Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10" },
-    { name: "Roberto Treviño", phone: "81 4444 9876", source: "Referido", sourceIcon: Users, status: "visita_agendada", date: "Ayer", property: "Pent. Santa María", color: "text-amber-400 bg-amber-500/10" },
-    { name: "Sofía Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 días", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10" },
-    { name: "Familia Rodríguez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10" },
-    { name: "Ing. Pedro Salazar", phone: "81 1111 7890", source: "Landing", sourceIcon: Globe, status: "contactado", date: "Hace 4 horas", property: "Depto. Torre LOVFT", color: "text-emerald-400 bg-emerald-500/10" },
-];
+// (Moved to shared state in LiveDemoClient)
+// const LEADS = [...]
 
 const VISITS = [
     { prospect: "Familia Rodríguez", property: "Residencia Las Misiones", date: "Hoy", time: "11:00 AM", status: "confirmada", sentiment: "positive" },
     { prospect: "Ing. Luis Garza", property: "Depto. Torre LOVFT", date: "Hoy", time: "4:30 PM", status: "pendiente", sentiment: null },
     { prospect: "Sra. Ana Treviño", property: "Residencia Las Misiones", date: "Mañana", time: "10:00 AM", status: "confirmada", sentiment: null },
-    { prospect: "Carlos López", property: "Pent. Santa María", date: "Mañana", time: "2:00 PM", status: "confirmada", sentiment: null },
+    { prospect: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10" },
     { prospect: "María Elena Ramos", property: "Residencia Contry Sol", date: "28 Feb", time: "11:30 AM", status: "realizada", sentiment: "positive" },
     { prospect: "Roberto Treviño", property: "Pent. Santa María", date: "27 Feb", time: "5:00 PM", status: "realizada", sentiment: "neutral" },
     { prospect: "Lic. Pérez (familiar)", property: "Casa Valle Poniente", date: "26 Feb", time: "3:00 PM", status: "cancelada", sentiment: null },
@@ -188,7 +185,7 @@ function RotatingToast({ onClick }: { onClick?: () => void }) {
                             </div>
                             <p className="text-[9px] text-white/40">{notif.sub}</p>
                             <p className="text-[8px] text-cima-gold/60 mt-1 font-bold flex items-center gap-1">
-                                Click para ver detalle <ArrowRight className="h-2 w-2" />
+                                Click para ver detalle <ChevronRight className="h-2 w-2" />
                             </p>
                         </div>
                     </div>
@@ -220,7 +217,15 @@ function BarChart({ data, labels }: { data: number[]; labels: string[] }) {
 }
 
 /* ═══ MAIN COMPONENT ═══════════════════════════════════════ */
-export default function DemoAdminLive({ plan, agentName, onNavigateToLeads, externalTab }: DemoAdminLiveProps) {
+export default function DemoAdminLive({
+    plan,
+    leads,
+    onUpdateLeadStatus,
+    newLeadId,
+    agentName,
+    onNavigateToLeads,
+    externalTab
+}: DemoAdminLiveProps) {
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
 
@@ -449,7 +454,14 @@ export default function DemoAdminLive({ plan, agentName, onNavigateToLeads, exte
                                     />
                                 )
                             )}
-                            {activeTab === "leads" && <LeadsView />}
+                            {activeTab === "leads" && (
+                                <LeadsView
+                                    leads={leads}
+                                    newLeadId={newLeadId}
+                                    onUpdateStatus={onUpdateLeadStatus}
+                                    tier={plan.tier}
+                                />
+                            )}
                             {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
                             {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
                             {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView />}
@@ -786,68 +798,113 @@ function PropertyDetailPanel({ property, onBack, isTeam }: { property: (typeof P
 }
 
 /* ── Leads View ────────────────────────────────────────────── */
-function LeadsView() {
+function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
+    leads: LiveLead[];
+    newLeadId?: string;
+    onUpdateStatus: (id: string, s: string) => void;
+    tier: string;
+}) {
+    const isStarter = tier === "basico";
+    const [upgradeAlert, setUpgradeAlert] = useState(false);
+
+    const handleStageClick = (leadId: string, currentStatus: string) => {
+        if (isStarter) {
+            setUpgradeAlert(true);
+            setTimeout(() => setUpgradeAlert(false), 3000);
+            return;
+        }
+
+        // Cycle through statuses for demo simplicity
+        const statuses = Object.keys(STATUS_MAP);
+        const currentIndex = statuses.indexOf(currentStatus);
+        const nextStatus = statuses[(currentIndex + 1) % statuses.length];
+        onUpdateStatus(leadId, nextStatus);
+    };
+
     return (
-        <div className="space-y-3">
+        <div className="space-y-3 relative">
+            {/* Upgrade Alert Overlay */}
+            <AnimatePresence>
+                {upgradeAlert && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-x-0 top-0 z-50 flex justify-center py-4"
+                    >
+                        <div className="bg-cima-gold text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl flex items-center gap-2">
+                            <Lock className="h-3 w-3" /> Función disponible en planes Pro / Team
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Pipeline summary */}
             <div className="grid grid-cols-5 gap-2 mb-4">
                 {[
-                    { label: "Nuevos", count: 2, color: "bg-blue-500/20 border-blue-500/30 text-blue-400" },
-                    { label: "Contactados", count: 2, color: "bg-yellow-500/20 border-yellow-500/30 text-yellow-400" },
-                    { label: "Calificados", count: 1, color: "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" },
-                    { label: "Visita", count: 1, color: "bg-purple-500/20 border-purple-500/30 text-purple-400" },
-                    { label: "Negociación", count: 1, color: "bg-cima-gold/20 border-cima-gold/30 text-cima-gold" },
-                ].map((stage, i) => (
-                    <div key={i} className={`border rounded-xl p-3 text-center ${stage.color}`}>
-                        <p className="text-xl font-heading font-bold">{stage.count}</p>
-                        <p className="text-[7px] font-bold uppercase tracking-wider opacity-70">{stage.label}</p>
-                    </div>
-                ))}
+                    { id: "nuevo", label: "Nuevos", color: "bg-blue-500/20 border-blue-500/30 text-blue-400" },
+                    { id: "contactado", label: "Contactados", color: "bg-yellow-500/20 border-yellow-500/30 text-yellow-400" },
+                    { id: "calificado", label: "Calificados", color: "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" },
+                    { id: "visita_agendada", label: "Visita", color: "bg-purple-500/20 border-purple-500/30 text-purple-400" },
+                    { id: "en_negociacion", label: "Negociación", color: "bg-cima-gold/20 border-cima-gold/30 text-cima-gold" },
+                ].map((stage, i) => {
+                    const count = leads.filter(l => l.status === stage.id).length;
+                    return (
+                        <div key={i} className={`p-2 rounded-lg border flex flex-col items-center transition-all ${stage.color}`}>
+                            <span className="text-[10px] font-black">{count}</span>
+                            <span className="text-[7px] uppercase font-bold tracking-tighter opacity-70">{stage.label}</span>
+                        </div>
+                    );
+                })}
             </div>
 
-            {/* Lead cards */}
-            {LEADS.map((lead, i) => (
-                <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -15 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06 }}
-                    className="bg-white/[0.03] border border-white/5 p-4 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group"
-                >
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${lead.color}`}>
-                                <lead.sourceIcon className="h-4 w-4" />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2 mb-0.5">
-                                    <p className="text-xs font-bold text-white">{lead.name}</p>
-                                    <span className={`px-1.5 py-0.5 rounded-full text-[6px] font-black uppercase border ${STATUS_MAP[lead.status].class}`}>
-                                        {STATUS_MAP[lead.status].label}
-                                    </span>
+            {/* Leads list */}
+            <div className="space-y-2">
+                {leads.map((lead) => (
+                    <motion.div
+                        key={lead.id}
+                        layout
+                        initial={lead.id === newLeadId ? { scale: 0.9, opacity: 0 } : false}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className={`p-3 rounded-xl border transition-all ${lead.id === newLeadId
+                            ? "bg-cima-gold/10 border-cima-gold shadow-[0_0_15px_rgba(200,169,110,0.2)]"
+                            : "bg-white/[0.03] border-white/5 hover:border-white/10"
+                            }`}
+                    >
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className={`h-8 w-8 rounded-lg ${lead.color} flex items-center justify-center shrink-0`}>
+                                    <lead.sourceIcon className="h-4 w-4" />
                                 </div>
-                                <div className="flex items-center gap-3 text-[9px]">
-                                    <span className="text-white/40 flex items-center gap-1">
-                                        <Phone className="h-2.5 w-2.5" /> {lead.phone}
-                                    </span>
-                                    <span className="text-white/20">•</span>
-                                    <span className="text-white/30">{lead.source}</span>
-                                    <span className="text-white/20">•</span>
-                                    <span className="text-white/20 font-mono">{lead.date}</span>
+                                <div>
+                                    <p className="text-[11px] font-bold text-white flex items-center gap-2">
+                                        {lead.name}
+                                        {lead.id === newLeadId && (
+                                            <span className="text-[6px] bg-cima-gold text-black px-1 rounded font-black animate-pulse">JUSTO AHORA</span>
+                                        )}
+                                    </p>
+                                    <p className="text-[8px] text-white/30 font-mono italic">{lead.property}</p>
                                 </div>
                             </div>
-                        </div>
-                        <div className="text-right hidden sm:block">
-                            <p className="text-[9px] text-white/30 mb-0.5">{lead.property}</p>
-                            <div className="flex items-center gap-1 justify-end">
-                                <Mail className="h-3 w-3 text-white/20 cursor-pointer hover:text-cima-gold transition-colors" />
-                                <Phone className="h-3 w-3 text-white/20 cursor-pointer hover:text-green-400 transition-colors" />
-                                <ChevronRight className="h-3 w-3 text-white/10" />
+
+                            <div className="flex items-center gap-3">
+                                <div className="hidden sm:block text-right">
+                                    <p className="text-[9px] text-white/40 font-mono">{lead.phone}</p>
+                                    <p className="text-[7px] text-white/20 uppercase font-bold tracking-widest">{lead.date}</p>
+                                </div>
+
+                                <button
+                                    onClick={() => handleStageClick(lead.id, lead.status)}
+                                    className={`px-3 py-1.5 rounded-lg border text-[8px] font-black uppercase tracking-wider transition-all min-w-[100px] text-center ${STATUS_MAP[lead.status].class} ${!isStarter ? "hover:scale-105 active:scale-95 cursor-pointer shadow-lg shadow-black/20" : "cursor-default opacity-80"}`}
+                                >
+                                    {STATUS_MAP[lead.status].label}
+                                    {!isStarter && <span className="ml-2 opacity-30 text-[6px]">Siguiente etapa →</span>}
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </motion.div>
-            ))}
+                    </motion.div>
+                ))}
+            </div>
         </div>
     );
 }
@@ -898,7 +955,7 @@ function VisitsView() {
                                     <div className="flex items-center gap-3">
                                         <div className="h-10 w-10 rounded-xl bg-white/[0.05] border border-white/10 flex flex-col items-center justify-center shrink-0">
                                             <Clock className="h-3 w-3 text-cima-gold mb-0.5" />
-                                            <span className="text-[8px] font-bold text-white/60">{visit.time.split(" ")[0]}</span>
+                                            <span className="text-[8px] font-bold text-white/60">{visit.time?.split(" ")[0]}</span>
                                         </div>
                                         <div>
                                             <p className="text-xs font-bold text-white">{visit.prospect}</p>

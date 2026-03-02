@@ -12,7 +12,13 @@ import type { PlanConfig } from "@/lib/config/demo-plans";
 /**
  * Tier-aware example landing. Starter=basic, Pro=animated, Team=premium.
  */
-export default function DemoLandingExample({ plan }: { plan: PlanConfig }) {
+export default function DemoLandingExample({
+    plan,
+    onLeadCapture
+}: {
+    plan: PlanConfig;
+    onLeadCapture?: (data: any) => void;
+}) {
     const f = plan.features.landing;
     const isTeam = plan.tier === "premium";
     const isPro = plan.tier === "profesional";
@@ -26,6 +32,22 @@ export default function DemoLandingExample({ plan }: { plan: PlanConfig }) {
 
     const [activePhoto, setActivePhoto] = useState(0);
     const photos = ["/cocina-despues.png", "/estancia-despues.png", "/recamara-despues.png", "/cocina-despues.png"];
+
+    // ROI Calculator State
+    const [propertyValue, setPropertyValue] = useState(8500000);
+    const commissionTraditional = propertyValue * 0.05;
+    const commissionCima = propertyValue * 0.03;
+    const savings = commissionTraditional - commissionCima;
+
+    const handleTriggerLead = () => {
+        if (onLeadCapture) {
+            onLeadCapture({
+                name: "Lead de Prueba (Demo)",
+                phone: "81 0000 " + Math.floor(1000 + Math.random() * 9000),
+                property: "Residencia Premium — " + plan.name
+            });
+        }
+    };
 
     const Wrapper = f.animations ? motion.div : "div";
     const anim = f.animations ? { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } } : {};
@@ -107,9 +129,12 @@ export default function DemoLandingExample({ plan }: { plan: PlanConfig }) {
 
                             {/* CTA */}
                             <div className="flex gap-3">
-                                <button className={`flex-1 flex items-center justify-center gap-2 ${isTeam ? "bg-cima-gold text-black hover:bg-white" : "bg-white text-black hover:bg-blue-400"} px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all`}>
-                                    <Calendar className="h-4 w-4" />
-                                    Agendar Visita
+                                <button
+                                    onClick={handleTriggerLead}
+                                    className={`flex-1 flex items-center justify-center gap-2 ${isTeam ? "bg-cima-gold text-black hover:bg-white" : "bg-white text-black hover:bg-blue-400"} px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg active:scale-95`}
+                                >
+                                    <Zap className="h-4 w-4" />
+                                    Generar Lead Pruebas
                                 </button>
                                 <button className="flex items-center gap-2 border border-white/10 bg-white/5 text-white/60 px-5 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-all">
                                     <Phone className="h-4 w-4" />
@@ -315,24 +340,52 @@ export default function DemoLandingExample({ plan }: { plan: PlanConfig }) {
                 {/* ── ROI Section (Team only) ────────────────── */}
                 {f.roiCalculator && (
                     <div className="mb-16">
-                        <div className="text-center mb-8">
+                        <div className="text-center mb-10">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cima-gold/10 border border-cima-gold/20 text-[8px] font-bold text-cima-gold uppercase tracking-widest mb-3">
-                                <TrendingUp className="h-3 w-3" /> Retorno de inversión
+                                <TrendingUp className="h-3 w-3" /> Calculadora de Impacto
                             </span>
                             <h2 className="text-xl font-heading font-bold">Tu inversión se paga sola</h2>
                         </div>
+
+                        <div className="max-w-xl mx-auto mb-10 bg-white/[0.02] border border-white/10 rounded-2xl p-6">
+                            <div className="flex justify-between mb-4">
+                                <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Valor de tu propiedad</label>
+                                <span className="text-sm font-bold text-cima-gold font-heading">${(propertyValue / 1000000).toFixed(1)}M</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="1000000"
+                                max="25000000"
+                                step="500000"
+                                value={propertyValue}
+                                onChange={(e) => setPropertyValue(Number(e.target.value))}
+                                className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cima-gold mb-6"
+                            />
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-white/[0.03] border border-white/5 rounded-lg p-3">
+                                    <p className="text-[7px] text-white/30 uppercase font-black mb-1">Ahorro en Comisiones</p>
+                                    <p className="text-lg font-heading font-bold text-green-400">${(savings / 1000).toFixed(0)}k</p>
+                                </div>
+                                <div className="bg-white/[0.03] border border-white/5 rounded-lg p-3">
+                                    <p className="text-[7px] text-white/30 uppercase font-black mb-1">Ahorro en Tiempo</p>
+                                    <p className="text-lg font-heading font-bold text-cima-gold">-60 días</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
                             {[
-                                { icon: Zap, label: "Venta tradicional", value: "90+ días", sublabel: "Promedio sin marketing" },
-                                { icon: TrendingUp, label: "Con plataforma", value: "< 30 días", sublabel: "Con estrategia digital" },
-                                { icon: Award, label: "Ahorro neto", value: "+$150K", sublabel: "Vs. comisiones altas" },
+                                { icon: Zap, label: "Venta tradicional", value: "90+ días", sublabel: "Sin estrategia digital", color: "text-white/40" },
+                                { icon: TrendingUp, label: "Con Cima Pro", value: "< 30 días", sublabel: "Marketing Predictivo", color: "text-cima-gold" },
+                                { icon: Award, label: "Inversión Neta", value: "Nivel Pro", sublabel: "Retorno 10x garantizado", color: "text-green-400" },
                             ].map((item, i) => (
                                 <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 + i * 0.1 }}
                                     className="bg-cima-gold/[0.03] border border-cima-gold/10 rounded-xl p-4 text-center">
-                                    <item.icon className="h-5 w-5 text-cima-gold mx-auto mb-2" />
-                                    <p className="text-xs text-white/30 mb-1">{item.label}</p>
-                                    <p className="text-lg font-heading font-bold text-cima-gold">{item.value}</p>
-                                    <p className="text-[7px] text-white/20">{item.sublabel}</p>
+                                    <item.icon className={`h-5 w-5 ${item.color} mx-auto mb-2`} />
+                                    <p className="text-[8px] text-white/30 mb-1 uppercase font-bold">{item.label}</p>
+                                    <p className={`text-sm font-heading font-bold ${item.color}`}>{item.value}</p>
+                                    <p className="text-[6px] text-white/20 mt-1">{item.sublabel}</p>
                                 </motion.div>
                             ))}
                         </div>
