@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, Sun, Moon as MoonIcon } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
@@ -177,6 +177,7 @@ export default function LiveDemoClient() {
     const [focusMode, setFocusMode] = useState(false);
     const [isMobilePreview, setIsMobilePreview] = useState(false);
     const [isDND, setIsDND] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(true);
     const autoDemoRef = useRef<NodeJS.Timeout | null>(null);
     const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
@@ -445,6 +446,37 @@ export default function LiveDemoClient() {
                                     {autoDemo ? `Auto` : "Auto Demo"}
                                 </button>
 
+                                {/* Dark Mode Toggle */}
+                                <button
+                                    onClick={() => setIsDarkMode(!isDarkMode)}
+                                    className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all group"
+                                    title={isDarkMode ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
+                                >
+                                    <AnimatePresence mode="wait">
+                                        {isDarkMode ? (
+                                            <motion.div
+                                                key="sun"
+                                                initial={{ rotate: -90, opacity: 0 }}
+                                                animate={{ rotate: 0, opacity: 1 }}
+                                                exit={{ rotate: 90, opacity: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <Sun className="h-3.5 w-3.5 text-cima-gold" />
+                                            </motion.div>
+                                        ) : (
+                                            <motion.div
+                                                key="moon"
+                                                initial={{ rotate: -90, opacity: 0 }}
+                                                animate={{ rotate: 0, opacity: 1 }}
+                                                exit={{ rotate: 90, opacity: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <MoonIcon className="h-3.5 w-3.5 text-white/40" />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </button>
+
                                 {/* Fullscreen */}
                                 <button
                                     onClick={toggleFullscreen}
@@ -526,7 +558,8 @@ export default function LiveDemoClient() {
                             newLeadId={lastLeadId}
                             messages={messages}
                             onAddMessage={handleAddMessage}
-                        // isMobilePreview and isDND handled internally but can be synced if needed
+                            isDarkMode={isDarkMode}
+                            setIsDarkMode={setIsDarkMode}
                         />
                     )}
                     {view === "portal" && (
@@ -536,6 +569,8 @@ export default function LiveDemoClient() {
                             setIsMobilePreview={setIsMobilePreview}
                             isDND={isDND}
                             setIsDND={setIsDND}
+                            isDarkMode={isDarkMode}
+                            setIsDarkMode={setIsDarkMode}
                         />
                     )}
                     {view === "landing" && (
@@ -548,6 +583,8 @@ export default function LiveDemoClient() {
                             setIsMobilePreview={setIsMobilePreview}
                             isDND={isDND}
                             setIsDND={setIsDND}
+                            isDarkMode={isDarkMode}
+                            setIsDarkMode={setIsDarkMode}
                         />
                     )}
                 </motion.div>

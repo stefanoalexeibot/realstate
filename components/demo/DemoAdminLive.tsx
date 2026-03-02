@@ -30,6 +30,8 @@ interface DemoAdminLiveProps {
     externalTab?: SidebarTab;
     messages: LiveMessage[];
     onAddMessage: (from: string, text: string, isAi?: boolean) => void;
+    isDarkMode?: boolean;
+    setIsDarkMode?: (v: boolean) => void;
 }
 
 /* ─── Mock Data ────────────────────────────────────────────── */
@@ -237,7 +239,9 @@ export default function DemoAdminLive({
     onNavigateToLeads,
     externalTab,
     messages,
-    onAddMessage
+    onAddMessage,
+    isDarkMode = true,
+    setIsDarkMode
 }: DemoAdminLiveProps) {
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
@@ -303,8 +307,8 @@ export default function DemoAdminLive({
     const STATS = tierStats[plan.tier] || tierStats.premium;
 
     return (
-        <div className="min-h-screen bg-[#0A0A0B] text-white">
-            <div className="flex">
+        <div className={`transition-all duration-500 min-h-screen ${isDarkMode ? "bg-[#0A0A0B] text-white" : "bg-gray-50 text-gray-900"}`}>
+            <div className={`flex h-screen overflow-hidden ${isDarkMode ? "" : "bg-white"}`}>
                 {/* ── Sidebar ─────────────────────────────── */}
                 <div className="hidden lg:flex flex-col w-56 min-h-screen border-r border-white/5 bg-black/40 p-5">
                     <div className="flex items-center gap-2.5 mb-10">
@@ -536,7 +540,7 @@ export default function DemoAdminLive({
                                     )}
                                     {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
                                     {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
-                                    {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
+                                    {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} isDarkMode={isDarkMode} />}
                                     {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
                                     {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView />}
                                     {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView isMobilePreview={isMobilePreview} />}
@@ -1822,20 +1826,63 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
 }
 
 /* ── Messages View ─────────────────────────────────────────── */
+/* ── Typing Indicator ─────────────────────────────────────── */
+function TypingIndicator() {
+    return (
+        <div className="flex gap-1 items-center px-1 py-2">
+            <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 0.6 }}
+                className="h-1 w-1 rounded-full bg-cima-gold"
+            />
+            <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }}
+                className="h-1 w-1 rounded-full bg-cima-gold"
+            />
+            <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }}
+                className="h-1 w-1 rounded-full bg-cima-gold"
+            />
+        </div>
+    );
+}
+
 /* ── Messages View ─────────────────────────────────────────── */
-function MessagesView({ messages }: { messages: LiveMessage[] }) {
+function MessagesView({ messages, isDarkMode }: { messages: LiveMessage[]; isDarkMode: boolean }) {
     const [isNurturing, setIsNurturing] = useState(false);
     const [nurtureStep, setNurtureStep] = useState(0);
+    const [isTyping, setIsTyping] = useState(false);
 
     const startNurtureSimulation = () => {
         setIsNurturing(true);
-        setNurtureStep(1);
-        setTimeout(() => setNurtureStep(2), 2000);
-        setTimeout(() => setNurtureStep(3), 4500);
+        setNurtureStep(0);
+        setIsTyping(true);
+
+        // Step 1: Typing -> Message 1
+        setTimeout(() => {
+            setIsTyping(false);
+            setNurtureStep(1);
+        }, 2000);
+
+        // Step 2: Delay -> Typing -> Message 2
+        setTimeout(() => {
+            setIsTyping(true);
+        }, 4000);
+
+        setTimeout(() => {
+            setIsTyping(false);
+            setNurtureStep(2);
+        }, 6000);
+
+        // Step 3: Success
+        setTimeout(() => setNurtureStep(3), 8000);
+
         setTimeout(() => {
             setIsNurturing(false);
             setNurtureStep(0);
-        }, 7000);
+        }, 11000);
     };
 
     return (
@@ -1881,13 +1928,14 @@ function MessagesView({ messages }: { messages: LiveMessage[] }) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <div className={`p-3 rounded-xl rounded-tl-none border transition-all duration-500 ${nurtureStep >= 1 ? "bg-white/10 border-white/20 opacity-100" : "opacity-0"}`}>
-                                        <p className="text-[11px] text-white/80 italic">"Hola Roberto, vi que te interesó el Penthouse. El asesor está en camino a una firma, ¿te gustaría que te agende una visita hoy mismo?"</p>
+                                    {isTyping && <TypingIndicator />}
+                                    <div className={`p-3 rounded-xl rounded-tl-none border transition-all duration-500 ${nurtureStep >= 1 ? "bg-white/10 border-white/20 opacity-100" : "opacity-0 absolute pointer-events-none"}`}>
+                                        <p className={`text-[11px] italic ${isDarkMode ? "text-white/80" : "text-gray-700"}`}>"Hola Roberto, vi que te interesó el Penthouse. El asesor está en camino a una firma, ¿te gustaría que te agende una visita hoy mismo?"</p>
                                     </div>
-                                    <div className={`p-3 rounded-xl rounded-tr-none border ml-auto max-w-[80%] transition-all duration-500 ${nurtureStep >= 2 ? "bg-cima-gold/20 border-cima-gold/40 opacity-100 translate-x-0" : "opacity-0 translate-x-4"}`}>
+                                    <div className={`p-3 rounded-xl rounded-tr-none border ml-auto max-w-[80%] transition-all duration-500 ${nurtureStep >= 2 ? "bg-cima-gold/20 border-cima-gold/40 opacity-100 translate-x-0" : "opacity-0 translate-x-4 absolute pointer-events-none"}`}>
                                         <p className="text-[11px] text-cima-gold font-bold">"¡Excelente! A las 5:00 PM me queda perfecto."</p>
                                     </div>
-                                    <div className={`p-3 rounded-xl rounded-tl-none border bg-green-500/20 border-green-500/40 transition-all duration-500 ${nurtureStep >= 3 ? "opacity-100" : "opacity-0"}`}>
+                                    <div className={`p-3 rounded-xl rounded-tl-none border bg-green-500/20 border-green-500/40 transition-all duration-500 ${nurtureStep >= 3 ? "opacity-100" : "opacity-0 absolute pointer-events-none"}`}>
                                         <div className="flex items-center gap-2">
                                             <Calendar className="h-3 w-3 text-green-500" />
                                             <p className="text-[11px] text-green-500 font-black uppercase">¡Cita Agendada y sincronizada!</p>

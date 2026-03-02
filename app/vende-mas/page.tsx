@@ -13,7 +13,7 @@ import {
     Building2, Search, Info, Trash2, Edit3, Filter,
     ChevronRight, ChevronLeft, Calendar, UserPlus,
     DollarSign, Briefcase as Portfolio, Bell, Eye, LogOut,
-    Check, ArrowUpRight, MinusCircle, ChevronDown
+    Check, ArrowUpRight, MinusCircle, ChevronDown, Play, Sun, Moon as MoonIcon
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MotionDiv, MotionSpan } from "@/components/landing/motion-wrapper";
@@ -928,6 +928,136 @@ function EliteFaq() {
     );
 }
 
+/* ─── Interactive Demo Embed (Image → Click → Live iFrame) ────────── */
+function InteractiveDemoEmbed() {
+    const [isLive, setIsLive] = useState(false);
+
+    return (
+        <div className="relative w-full">
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 bg-[#0A0A0B] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
+                {!isLive ? (
+                    /* Static Preview with Play Button */
+                    <div className="relative aspect-[16/10] cursor-pointer group" onClick={() => setIsLive(true)}>
+                        {/* Simulated screenshot */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#0A0A0B] to-[#111113]">
+                            <AgentCommandCenterPreview />
+                        </div>
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="flex flex-col items-center gap-3"
+                            >
+                                <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-cima-gold/20 border-2 border-cima-gold/40 flex items-center justify-center backdrop-blur-md shadow-[0_0_40px_rgba(200,169,110,0.3)] group-hover:bg-cima-gold/30 transition-all">
+                                    <Play className="h-7 w-7 md:h-8 md:w-8 text-cima-gold ml-1" />
+                                </div>
+                                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-white/80 bg-black/50 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
+                                    Ver Demo en Vivo
+                                </span>
+                            </motion.div>
+                        </div>
+                        {/* Live Badge */}
+                        <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                            <span className="text-[8px] font-mono font-bold text-white/60 uppercase tracking-widest">Preview</span>
+                        </div>
+                    </div>
+                ) : (
+                    /* Live iFrame */
+                    <div className="relative aspect-[16/10]">
+                        <iframe
+                            src="/demo/live"
+                            className="w-full h-full border-0"
+                            title="Demo en Vivo"
+                            allow="fullscreen"
+                        />
+                        {/* Close button */}
+                        <button
+                            onClick={() => setIsLive(false)}
+                            className="absolute top-3 right-3 p-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-xl text-white/60 hover:text-white hover:bg-black transition-all z-10"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                        {/* Live indicator */}
+                        <div className="absolute top-3 left-3 flex items-center gap-2 bg-red-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-500/30">
+                            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                            <span className="text-[8px] font-mono font-bold text-red-400 uppercase tracking-widest">En Vivo</span>
+                        </div>
+                    </div>
+                )}
+            </div>
+            {/* Caption */}
+            <p className="text-center text-[8px] md:text-[9px] text-white/20 font-mono uppercase tracking-widest mt-3">
+                {isLive ? "Estás viendo el demo real · Interactúa con la plataforma" : "Haz click para explorar la plataforma en vivo"}
+            </p>
+        </div>
+    );
+}
+
+/* ─── Countdown Timer (Urgency for Pricing) ───────────────────────── */
+function CountdownTimer() {
+    const [timeLeft, setTimeLeft] = useState({ hours: 71, minutes: 59, seconds: 59 });
+
+    useEffect(() => {
+        // Get or set deadline in localStorage
+        const storedDeadline = localStorage.getItem("cima-pricing-deadline");
+        let deadline: number;
+
+        if (storedDeadline) {
+            deadline = parseInt(storedDeadline);
+        } else {
+            deadline = Date.now() + 72 * 60 * 60 * 1000; // 72 hours from now
+            localStorage.setItem("cima-pricing-deadline", deadline.toString());
+        }
+
+        const tick = () => {
+            const now = Date.now();
+            const diff = Math.max(0, deadline - now);
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            setTimeLeft({ hours, minutes, seconds });
+
+            if (diff <= 0) {
+                // Reset to 72 hours
+                const newDeadline = Date.now() + 72 * 60 * 60 * 1000;
+                localStorage.setItem("cima-pricing-deadline", newDeadline.toString());
+            }
+        };
+
+        tick();
+        const interval = setInterval(tick, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const pad = (n: number) => String(n).padStart(2, "0");
+
+    return (
+        <div className="inline-flex items-center gap-3 bg-gradient-to-r from-red-500/5 via-red-500/10 to-red-500/5 border border-red-500/20 rounded-2xl px-5 py-3 md:px-6 md:py-3.5">
+            <div className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-red-400" />
+                <span className="text-[9px] md:text-[10px] font-bold text-red-400/80 uppercase tracking-widest">Precio especial termina en:</span>
+            </div>
+            <div className="flex items-center gap-1 font-mono">
+                {[
+                    { val: pad(timeLeft.hours), label: "h" },
+                    { val: pad(timeLeft.minutes), label: "m" },
+                    { val: pad(timeLeft.seconds), label: "s" },
+                ].map((t, i) => (
+                    <React.Fragment key={i}>
+                        {i > 0 && <span className="text-red-500/30 text-xs font-bold">:</span>}
+                        <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-2 py-1">
+                            <span className="text-sm md:text-base font-black text-red-400 tabular-nums">{t.val}</span>
+                            <span className="text-[6px] text-red-400/50 uppercase ml-0.5">{t.label}</span>
+                        </div>
+                    </React.Fragment>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 /* ─── Package Deep Dive (Expandable Comparison) ───────────────────── */
 function PackageDeepDive() {
     const [isOpen, setIsOpen] = useState(false);
@@ -1334,7 +1464,7 @@ export default function VendeMasPage() {
                         </FadeIn>
 
                         <FadeIn direction="left" className="w-full">
-                            <AgentCommandCenterPreview />
+                            <InteractiveDemoEmbed />
                         </FadeIn>
                     </div>
                 </div>
@@ -1429,7 +1559,8 @@ export default function VendeMasPage() {
                 <div className="mx-auto max-w-6xl">
                     <div className="text-center mb-12 md:mb-16">
                         <h2 className="text-3xl md:text-5xl lg:text-6xl font-heading font-bold mb-4 tracking-tight">Elige tu Nivel de Servicio</h2>
-                        <p className="text-white/40 max-w-2xl mx-auto italic font-medium text-sm md:text-base">Solo aceptamos 3 asesores por zona para garantizar exclusividad tecnológica.</p>
+                        <p className="text-white/40 max-w-2xl mx-auto italic font-medium text-sm md:text-base mb-6">Solo aceptamos 3 asesores por zona para garantizar exclusividad tecnológica.</p>
+                        <CountdownTimer />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative z-10">

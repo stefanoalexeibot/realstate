@@ -75,7 +75,9 @@ export default function DemoLandingExample({
     isMobilePreview = false,
     setIsMobilePreview,
     isDND = false,
-    setIsDND
+    setIsDND,
+    isDarkMode = true,
+    setIsDarkMode
 }: {
     plan: PlanConfig;
     onLeadCapture?: (data: any) => void;
@@ -85,6 +87,8 @@ export default function DemoLandingExample({
     setIsMobilePreview?: (v: boolean) => void;
     isDND?: boolean;
     setIsDND?: (v: boolean) => void;
+    isDarkMode?: boolean;
+    setIsDarkMode?: (v: boolean) => void;
 }) {
     const f = plan.features.landing;
     const isTeam = plan.tier === "premium";

@@ -17,6 +17,8 @@ interface DemoPortalProps {
     setIsMobilePreview?: (v: boolean) => void;
     isDND?: boolean;
     setIsDND?: (v: boolean) => void;
+    isDarkMode?: boolean;
+    setIsDarkMode?: (v: boolean) => void;
 }
 
 type TabId = "dashboard" | "feedback" | "documents" | "evidence";
@@ -26,7 +28,9 @@ export default function DemoPortal({
     isMobilePreview = false,
     setIsMobilePreview,
     isDND = false,
-    setIsDND
+    setIsDND,
+    isDarkMode = true,
+    setIsDarkMode
 }: DemoPortalProps) {
     const f = plan.features.portal;
     const [activeTab, setActiveTab] = useState<TabId>("dashboard");
