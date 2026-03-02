@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Home, Phone, MapPin, BedDouble, Bath, Ruler,
@@ -8,6 +8,58 @@ import {
     TrendingUp, Users, Zap, ChevronLeft, ChevronRight, MessageSquare, Award
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
+import { Users as UsersIcon, Eye } from "lucide-react";
+
+/**
+ * Social proof component for Pro/Team plans
+ */
+function SocialProofToast({ tier }: { tier: string }) {
+    const [visible, setVisible] = useState(false);
+    const [count, setCount] = useState(12);
+
+    useEffect(() => {
+        if (tier === "basico") return;
+
+        const timer = setTimeout(() => {
+            setCount(Math.floor(8 + Math.random() * 8));
+            setVisible(true);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [tier]);
+
+    return (
+        <AnimatePresence>
+            {visible && (
+                <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    className="fixed bottom-6 left-6 z-[100] bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-3 max-w-[200px]"
+                >
+                    <div className="h-10 w-10 rounded-full bg-cima-gold/20 flex items-center justify-center shrink-0">
+                        <UsersIcon className="h-5 w-5 text-cima-gold" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-bold text-white leading-tight">
+                            <span className="text-cima-gold">{count} personas</span> viendo esta propiedad ahora
+                        </p>
+                        <div className="flex items-center gap-1 mt-1">
+                            <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-[7px] text-white/40 font-bold uppercase tracking-widest">En tiempo real</span>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setVisible(false)}
+                        className="absolute top-2 right-2 text-white/20 hover:text-white transition-colors"
+                    >
+                        <Zap className="h-2 w-2" />
+                    </button>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+}
 
 /**
  * Tier-aware example landing. Starter=basic, Pro=animated, Team=premium.
@@ -442,6 +494,8 @@ export default function DemoLandingExample({
                     }
                 </p>
             </div>
+            {/* ── Social Proof (Pro/Team only) ────────── */}
+            {!isStarter && <SocialProofToast tier={plan.tier} />}
         </div>
     );
 }

@@ -3,13 +3,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    Layout, Users, Target, TrendingUp, MessageSquare,
-    Settings, Plus, Eye, Share2, BarChart3,
-    Bell, Zap, Phone, Instagram, Globe, Facebook,
-    Calendar, Clock, CheckCircle2, AlertCircle, MapPin,
-    ArrowUpRight, ArrowDownRight, Mail, ChevronRight, Lock,
-    X, Sparkles, Upload, Image, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
-    UserCircle, ChevronDown, ArrowRight
+    Layout, Home, Users, BarChart3, MessageSquare, Plus, Search,
+    Filter, MoreVertical, Globe, Facebook, Instagram, Mail,
+    Phone, ChevronRight, ArrowUpRight, ArrowDownRight, Clock,
+    CheckCircle2, AlertCircle, Eye, Target, Calendar, Sparkles, Send, Zap, Loader2, Share2,
+    Lock, X, Upload, Image, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
+    UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { type LiveLead } from "./LiveDemoClient";
@@ -103,9 +102,20 @@ function MiniChart({ data, color = "#C8A96E", height = 32 }: { data: number[]; c
                     <stop offset="100%" stopColor={color} stopOpacity="0" />
                 </linearGradient>
             </defs>
-            <path d={areaD} fill={`url(#grad-${color.replace("#", "")})`} />
-            <path d={pathD} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx={points[points.length - 1].x} cy={points[points.length - 1].y} r="2" fill={color} />
+            <path
+                d={areaD}
+                fill={`url(#grad-${color.replace("#", "")})`}
+            />
+            <motion.path
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                d={pathD}
+                fill="none"
+                stroke={color}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
         </svg>
     );
 }
@@ -295,7 +305,7 @@ export default function DemoAdminLive({
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black uppercase tracking-wider text-white">
-                                {agentName ? `Panel de ${agentName.split(' ')[0]}` : "Panel"}
+                                {agentName ? `Panel de ${agentName.split(' ')[0]} ` : "Panel"}
                             </span>
                             <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">{PLAN_LABELS[plan.tier] || plan.name}</span>
                         </div>
@@ -445,12 +455,14 @@ export default function DemoAdminLive({
                                         property={visibleProps[selectedProperty]}
                                         onBack={() => setSelectedProperty(null)}
                                         isTeam={plan.tier === "premium"}
+                                        plan={plan}
                                     />
                                 ) : (
                                     <PropertiesView
                                         properties={visibleProps}
                                         canEdit={canEdit}
                                         onSelect={(i) => setSelectedProperty(i)}
+                                        plan={plan}
                                     />
                                 )
                             )}
@@ -481,8 +493,53 @@ export default function DemoAdminLive({
 
 /* ═══ VIEWS ════════════════════════════════════════════════ */
 
+/* ── Diffusion Button (for PropertiesView) ─────────────────── */
+function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: string }) {
+    const [loading, setLoading] = useState(false);
+    const [upgradeAlert, setUpgradeAlert] = useState(false);
+    const isStarter = tier === "basico";
+
+    const handleClick = () => {
+        if (isStarter) {
+            setUpgradeAlert(true);
+            setTimeout(() => setUpgradeAlert(false), 3000);
+            return;
+        }
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            alert(`Propiedad "${propertyName}" difundida con éxito!`);
+        }, 1500);
+    };
+
+    return (
+        <div className="relative">
+            <button
+                onClick={handleClick}
+                disabled={loading}
+                className={`flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${isStarter ? "opacity-50 cursor-not-allowed" : "hover:bg-white shadow-lg"}`}
+            >
+                {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                Difundir
+            </button>
+            <AnimatePresence>
+                {upgradeAlert && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute -top-10 left-1/2 -translate-x-1/2 z-50 bg-cima-gold text-black px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest shadow-2xl flex items-center gap-1 whitespace-nowrap"
+                    >
+                        <Lock className="h-2.5 w-2.5" /> Disponible en planes Pro / Team
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
 /* ── Properties View ───────────────────────────────────────── */
-function PropertiesView({ properties, canEdit, onSelect }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void }) {
+function PropertiesView({ properties, canEdit, onSelect, plan }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void; plan: PlanConfig }) {
     return (
         <div className="space-y-3">
             {properties.map((prop, i) => (
@@ -533,6 +590,12 @@ function PropertiesView({ properties, canEdit, onSelect }: { properties: typeof 
                             </div>
                         </div>
                     </div>
+                    <div className="flex items-center gap-2 mt-4">
+                        <button className="flex-1 bg-white/[0.05] hover:bg-white/10 text-white/60 hover:text-white border border-white/5 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
+                            Editar
+                        </button>
+                        <DiffusionButton propertyName={prop.name} tier={plan.tier} />
+                    </div>
                 </motion.div>
             ))}
         </div>
@@ -548,7 +611,7 @@ const AGENTS = [
 ];
 
 /* ── Property Detail Panel ─────────────────────────────────── */
-function PropertyDetailPanel({ property, onBack, isTeam }: { property: (typeof PROPERTIES)[0]; onBack: () => void; isTeam: boolean }) {
+function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (typeof PROPERTIES)[0]; onBack: () => void; isTeam: boolean; plan: PlanConfig }) {
     const [isPublished, setIsPublished] = useState(true);
     const [aiGenerating, setAiGenerating] = useState(false);
     const [aiText, setAiText] = useState("");
@@ -558,7 +621,7 @@ function PropertyDetailPanel({ property, onBack, isTeam }: { property: (typeof P
     const [editedPrice, setEditedPrice] = useState(property.price);
     const [editedAddress, setEditedAddress] = useState(property.address);
 
-    const FULL_AI_TEXT = `Descubre esta impresionante ${property.name.toLowerCase()} ubicada en ${property.address}. Con ${property.beds} amplias recámaras, ${property.baths} baños de lujo y ${property.m2}m² de construcción, esta propiedad ofrece el espacio ideal para tu familia. Acabados de primera calidad, iluminación natural excepcional y una ubicación privilegiada que garantiza plusvalía. Agenda tu visita hoy.`;
+    const FULL_AI_TEXT = `Descubre esta impresionante ${property.name.toLowerCase()} ubicada en ${property.address}. Con ${property.beds} amplias recámaras, ${property.baths} baños de lujo y ${property.m2} m² de construcción, esta propiedad ofrece el espacio ideal para tu familia.Acabados de primera calidad, iluminación natural excepcional y una ubicación privilegiada que garantiza plusvalía.Agenda tu visita hoy.`;
 
     function handleAIGenerate() {
         setAiGenerating(true);
@@ -595,7 +658,7 @@ function PropertyDetailPanel({ property, onBack, isTeam }: { property: (typeof P
                             </div>
                         </button>
                     </div>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[8px] font-black uppercase tracking-wider hover:bg-white transition-all">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[8px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
                         <ExternalLink className="h-3 w-3" /> Ver Landing
                     </button>
                 </div>
@@ -877,12 +940,20 @@ function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
                                     <lead.sourceIcon className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <p className="text-[11px] font-bold text-white flex items-center gap-2">
-                                        {lead.name}
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <p className="text-[11px] font-bold text-white">
+                                            {lead.name}
+                                        </p>
                                         {lead.id === newLeadId && (
-                                            <span className="text-[6px] bg-cima-gold text-black px-1 rounded font-black animate-pulse">JUSTO AHORA</span>
+                                            <span className="text-[6px] bg-cima-gold text-black px-1 rounded font-black animate-pulse shrink-0">JUSTO AHORA</span>
                                         )}
-                                    </p>
+                                        {lead.score && tier !== "basico" && (
+                                            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-cima-gold/10 border border-cima-gold/20 rounded-md shrink-0">
+                                                <Sparkles className="h-2 w-2 text-cima-gold" />
+                                                <span className="text-[8px] font-black text-cima-gold">{lead.score}</span>
+                                            </div>
+                                        )}
+                                    </div>
                                     <p className="text-[8px] text-white/30 font-mono italic">{lead.property}</p>
                                 </div>
                             </div>
