@@ -10,7 +10,8 @@ import {
     CheckCircle2, AlertCircle, Eye, Target, Calendar, Sparkles, Send, Zap, Loader2, Share2,
     Lock, X, Upload, Image as ImageIcon, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
     UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell, Wand2, RotateCcw, Download,
-    ShieldCheck, FileSearch, ShieldAlert, FileCheck, FileSignature, FilePenLine, ScrollText, Briefcase
+    ShieldCheck, FileSearch, ShieldAlert, FileCheck, FileSignature, FilePenLine, ScrollText, Briefcase,
+    Smartphone, Monitor
 } from "lucide-react";
 import NextImage from "next/image";
 import type { PlanConfig } from "@/lib/config/demo-plans";
@@ -240,6 +241,7 @@ export default function DemoAdminLive({
 }: DemoAdminLiveProps) {
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
+    const [isMobilePreview, setIsMobilePreview] = useState(false);
 
     // Reset to propiedades if current tab becomes unavailable
     // OR if externalTab changes (Auto Demo)
@@ -361,136 +363,174 @@ export default function DemoAdminLive({
                     </div>
                 </div>
 
-                {/* ── Main Content ─────────────────────────── */}
-                <div className="flex-1 p-6 lg:p-8">
-                    {/* Mobile tabs */}
-                    <div className="lg:hidden flex gap-1 mb-6 overflow-x-auto pb-2">
-                        {navItems.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => !item.locked && setActiveTab(item.id)}
-                                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[8px] font-bold uppercase whitespace-nowrap transition-all ${item.locked
-                                    ? "bg-white/5 text-white/15 cursor-not-allowed"
-                                    : activeTab === item.id
-                                        ? "bg-cima-gold text-black"
-                                        : "bg-white/5 text-white/40"
-                                    }`}
-                            >
-                                {item.locked ? <Lock className="h-3 w-3" /> : <item.icon className="h-3 w-3" />}
-                                {item.label}
-                                {!item.locked && item.badge && (
-                                    <span className="h-3.5 w-3.5 rounded-full bg-red-500 text-white text-[6px] font-black flex items-center justify-center">{item.badge}</span>
-                                )}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                        <div>
-                            <h1 className="text-xl font-heading font-black tracking-tight mb-1">
-                                {activeTab === "propiedades" && "Mis Propiedades"}
-                                {activeTab === "leads" && "Leads Recientes"}
-                                {activeTab === "visitas" && "Agenda de Visitas"}
-                                {activeTab === "analiticos" && "Analíticos"}
-                                {activeTab === "mensajes" && "Mensajes"}
-                            </h1>
-                            <p className="text-xs text-white/40">
-                                {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> · Límite: {maxProps}</span>}</>}
-                                {activeTab === "leads" && <>Tienes <span className="text-white font-bold">7 leads</span> esta semana</>}
-                                {activeTab === "visitas" && <>Próximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
-                                {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">últimos 30 días</span></>}
-                                {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> · {messages.length} conversaciones</>}
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="relative p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
-                                <Bell className="h-3.5 w-3.5 text-white/40" />
-                                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[7px] font-black text-white flex items-center justify-center">5</span>
-                                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 animate-ping opacity-30" />
+                {/* ── Main Content Area (Wrappable for Mobile) ─────────── */}
+                <div className={`flex-1 transition-all duration-700 flex flex-col items-center ${isMobilePreview ? "py-10 bg-[#050505]" : "p-0"}`}>
+                    <motion.div
+                        layout
+                        initial={false}
+                        animate={{
+                            width: isMobilePreview ? 375 : "100%",
+                            height: isMobilePreview ? 760 : "auto",
+                        }}
+                        className={`transition-all duration-700 relative flex flex-col ${isMobilePreview
+                            ? "border-[12px] border-[#1A1A1C] rounded-[3.5rem] shadow-[0_0_100px_rgba(200,169,110,0.1)] overflow-hidden bg-[#0A0A0B] ring-1 ring-white/10"
+                            : "min-h-screen"}`}
+                    >
+                        {/* Smartphone Notch / Top Bar */}
+                        {isMobilePreview && (
+                            <div className="h-10 w-full bg-[#1A1A1C] flex items-center justify-center relative">
+                                <div className="h-4 w-24 bg-black rounded-full" />
+                                <div className="absolute right-6 flex items-center gap-1.5 opacity-40">
+                                    <div className="h-2 w-2 rounded-[1px] bg-white" />
+                                    <div className="h-2 w-3 rounded-[1px] bg-white" />
+                                    <div className="h-2 w-4 rounded-[1px] bg-white" />
+                                </div>
                             </div>
-                            <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
-                                <Plus className="h-3.5 w-3.5" /> Nueva
-                            </button>
-                        </div>
-                    </div>
+                        )}
 
-                    {/* Analytics Row — always visible */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8" key={plan.tier}>
-                        {STATS.map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                className="bg-white/[0.03] border border-white/5 rounded-xl p-4 hover:border-white/10 transition-all"
-                            >
-                                <div className="flex items-center justify-between mb-3">
-                                    <stat.icon className="h-3.5 w-3.5 text-white/20" />
-                                    <span className="text-[8px] font-bold text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded-full">{stat.change}</span>
+                        <div className={`flex-1 overflow-y-auto custom-scrollbar ${isMobilePreview ? "p-4" : "p-6 lg:p-8"}`}>
+                            {/* Mobile tabs */}
+                            <div className="lg:hidden flex gap-1 mb-6 overflow-x-auto pb-2">
+                                {navItems.map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => !item.locked && setActiveTab(item.id)}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[8px] font-bold uppercase whitespace-nowrap transition-all ${item.locked
+                                            ? "bg-white/5 text-white/15 cursor-not-allowed"
+                                            : activeTab === item.id
+                                                ? "bg-cima-gold text-black"
+                                                : "bg-white/5 text-white/40"
+                                            }`}
+                                    >
+                                        {item.locked ? <Lock className="h-3 w-3" /> : <item.icon className="h-3 w-3" />}
+                                        {item.label}
+                                        {!item.locked && item.badge && (
+                                            <span className="h-3.5 w-3.5 rounded-full bg-red-500 text-white text-[6px] font-black flex items-center justify-center">{item.badge}</span>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Header */}
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                                <div>
+                                    <h1 className="text-xl font-heading font-black tracking-tight mb-1">
+                                        {activeTab === "propiedades" && "Mis Propiedades"}
+                                        {activeTab === "leads" && "Leads Recientes"}
+                                        {activeTab === "visitas" && "Agenda de Visitas"}
+                                        {activeTab === "analiticos" && "Analíticos"}
+                                        {activeTab === "mensajes" && "Mensajes"}
+                                    </h1>
+                                    <p className="text-xs text-white/40">
+                                        {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> · Límite: {maxProps}</span>}</>}
+                                        {activeTab === "leads" && <>Tienes <span className="text-white font-bold">7 leads</span> esta semana</>}
+                                        {activeTab === "visitas" && <>Próximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
+                                        {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">últimos 30 días</span></>}
+                                        {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> · {messages.length} conversaciones</>}
+                                    </p>
                                 </div>
-                                <div className="flex items-end justify-between gap-2">
-                                    <div>
-                                        <div className="text-lg font-heading font-black text-white">
-                                            <Counter
-                                                value={stat.value}
-                                                suffix={stat.label === "Conversión" ? "%" : ""}
-                                            />
-                                        </div>
-                                        <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
+                                <div className="flex items-center gap-2">
+                                    <div className="relative p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
+                                        <Bell className="h-3.5 w-3.5 text-white/40" />
+                                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[7px] font-black text-white flex items-center justify-center">5</span>
+                                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 animate-ping opacity-30" />
                                     </div>
-                                    <MiniChart data={stat.data} />
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
 
-                    {/* ── Tab Content ──────────────────────── */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={activeTab}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            {activeTab === "propiedades" && (
-                                selectedProperty !== null && canEdit ? (
-                                    <PropertyDetailPanel
-                                        property={visibleProps[selectedProperty]}
-                                        onBack={() => setSelectedProperty(null)}
-                                        isTeam={plan.tier === "premium"}
-                                        plan={plan}
-                                    />
-                                ) : (
-                                    <PropertiesView
-                                        properties={visibleProps}
-                                        canEdit={canEdit}
-                                        onSelect={(i) => setSelectedProperty(i)}
-                                        plan={plan}
-                                    />
-                                )
-                            )}
-                            {activeTab === "leads" && (
-                                <LeadsView
-                                    leads={leads}
-                                    newLeadId={newLeadId}
-                                    onUpdateStatus={onUpdateLeadStatus}
-                                    tier={plan.tier}
-                                />
-                            )}
-                            {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
-                            {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
-                            {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
-                            {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
-                            {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView />}
-                            {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView />}
-                        </motion.div>
-                    </AnimatePresence>
+                                    {/* Mobile Preview Toggle */}
+                                    <button
+                                        onClick={() => setIsMobilePreview(!isMobilePreview)}
+                                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
+                                        title={isMobilePreview ? "Volver a Escritorio" : "Ver en Móvil"}
+                                    >
+                                        {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
+                                        <span className="text-[8px] font-black uppercase tracking-widest hidden md:inline">
+                                            {isMobilePreview ? "Escritorio" : "Móvil"}
+                                        </span>
+                                    </button>
+
+                                    <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
+                                        <Plus className="h-3.5 w-3.5" /> Nueva
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Analytics Row — always visible */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8" key={plan.tier}>
+                                {STATS.map((stat, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.1 }}
+                                        className="bg-white/[0.03] border border-white/5 rounded-xl p-4 hover:border-white/10 transition-all"
+                                    >
+                                        <div className="flex items-center justify-between mb-3">
+                                            <stat.icon className="h-3.5 w-3.5 text-white/20" />
+                                            <span className="text-[8px] font-bold text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded-full">{stat.change}</span>
+                                        </div>
+                                        <div className="flex items-end justify-between gap-2">
+                                            <div>
+                                                <div className="text-lg font-heading font-black text-white">
+                                                    <Counter
+                                                        value={stat.value}
+                                                        suffix={stat.label === "Conversión" ? "%" : ""}
+                                                    />
+                                                </div>
+                                                <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
+                                            </div>
+                                            <MiniChart data={stat.data} />
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* ── Tab Content ──────────────────────── */}
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={activeTab}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -5 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    {activeTab === "propiedades" && (
+                                        selectedProperty !== null && canEdit ? (
+                                            <PropertyDetailPanel
+                                                property={visibleProps[selectedProperty]}
+                                                onBack={() => setSelectedProperty(null)}
+                                                isTeam={plan.tier === "premium"}
+                                                plan={plan}
+                                            />
+                                        ) : (
+                                            <PropertiesView
+                                                properties={visibleProps}
+                                                canEdit={canEdit}
+                                                onSelect={(i) => setSelectedProperty(i)}
+                                                plan={plan}
+                                            />
+                                        )
+                                    )}
+                                    {activeTab === "leads" && (
+                                        <LeadsView
+                                            leads={leads}
+                                            newLeadId={newLeadId}
+                                            onUpdateStatus={onUpdateLeadStatus}
+                                            tier={plan.tier}
+                                        />
+                                    )}
+                                    {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
+                                    {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
+                                    {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} />}
+                                    {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
+                                    {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView />}
+                                    {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView />}
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </motion.div>
                 </div>
             </div>
 
-            {/* Rotating notification toast */}
             <RotatingToast onClick={() => {
                 setActiveTab("leads");
                 if (onNavigateToLeads) onNavigateToLeads();
