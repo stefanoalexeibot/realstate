@@ -15,11 +15,11 @@ interface DemoAdminProps {
 }
 
 const PROPERTIES = [
-    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. Garc\u00eda", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72] },
+    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72] },
     { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45] },
-    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sof\u00eda L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28] },
-    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hern\u00e1ndez", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20] },
-    { name: "Pent. Santa Mar\u00eda", price: "$15.8M", status: "Exclusiva", owner: "Lic. P\u00e9rez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90] },
+    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28] },
+    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20] },
+    { name: "Pent. Santa María", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90] },
 ];
 
 /* ─── Mini Sparkline Chart ─────────────────────────────────── */
@@ -65,7 +65,7 @@ function NotificationToast() {
                 </div>
                 <div className="min-w-0">
                     <p className="text-[10px] font-black text-white uppercase tracking-wider mb-1">Nueva Visita Agendada</p>
-                    <p className="text-[9px] text-white/40">Familia L\u00f3pez \u2014 Residencia Las Misiones</p>
+                    <p className="text-[9px] text-white/40">Familia López — Residencia Las Misiones</p>
                     <p className="text-[8px] text-white/20 mt-1 font-mono">Hace 2 min</p>
                 </div>
                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shrink-0 mt-1" />
@@ -83,7 +83,7 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
         { icon: Layout, label: "Propiedades", active: true, always: true },
         { icon: Users, label: "Clientes", active: false, always: true },
         { icon: Target, label: "Visitas", active: false, always: false, requires: f.visits },
-        { icon: TrendingUp, label: "Anal\u00edticos", active: false, always: false, requires: f.analytics },
+        { icon: TrendingUp, label: "Analíticos", active: false, always: false, requires: f.analytics },
         { icon: MessageSquare, label: "Mensajes", active: false, always: false, requires: f.messages, badge: "3" },
         { icon: Settings, label: "Config", active: false, always: true },
     ];
@@ -160,7 +160,7 @@ export default function DemoAdmin({ plan }: DemoAdminProps) {
                             <h1 className="text-xl font-heading font-black tracking-tight mb-1">Mis Propiedades</h1>
                             <p className="text-xs text-white/40">
                                 Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>
-                                {plan.maxProperties !== -1 && <span className="text-white/20"> (l\u00edmite: {plan.maxProperties})</span>}
+                                {plan.maxProperties !== -1 && <span className="text-white/20"> (límite: {plan.maxProperties})</span>}
                             </p>
                         </div>
                         <div className="flex items-center gap-2">

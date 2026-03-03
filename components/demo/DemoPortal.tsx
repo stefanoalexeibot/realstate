@@ -68,7 +68,7 @@ export default function DemoPortal({ plan }: DemoPortalProps) {
                 {activeTab === "dashboard" && <DashboardTab plan={plan} />}
                 {activeTab === "feedback" && (f.feedback ? <FeedbackTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Seguimiento y Feedback" />)}
                 {activeTab === "documents" && (f.documents ? <DocumentsTab /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Expediente Digital" />)}
-                {activeTab === "evidence" && (f.evidence ? <EvidenceTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="premium" featureName="Evidencia Fotogr\u00e1fica" />)}
+                {activeTab === "evidence" && (f.evidence ? <EvidenceTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="premium" featureName="Evidencia Fotográfica" />)}
             </div>
         </div>
     );
@@ -80,7 +80,7 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
         { label: "Publicada", complete: true },
         { label: "Visitas", complete: true },
         { label: "Oferta", complete: false, active: true },
-        { label: "Negociaci\u00f3n", complete: false },
+        { label: "Negociación", complete: false },
         { label: "Cierre", complete: false },
     ];
 
@@ -99,9 +99,9 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                     <Clock className="h-4 w-4 text-green-400" />
                     <div>
                         <p className="text-xs font-bold text-white">
-                            <span className="text-green-400 font-heading text-lg">{daysActive}</span> d\u00edas activos
+                            <span className="text-green-400 font-heading text-lg">{daysActive}</span> días activos
                         </p>
-                        <p className="text-[8px] text-white/30">de {daysGuarantee} d\u00edas de garant\u00eda</p>
+                        <p className="text-[8px] text-white/30">de {daysGuarantee} días de garantía</p>
                     </div>
                 </div>
                 {/* Mini progress bar */}
@@ -114,7 +114,7 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                     />
                 </div>
                 <span className="text-[8px] font-black text-green-400 uppercase bg-green-500/10 px-2 py-1 rounded-full border border-green-500/20 shrink-0">
-                    En Garant\u00eda
+                    En Garantía
                 </span>
             </motion.div>
 
@@ -123,14 +123,14 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                 <div className="flex items-start justify-between mb-6">
                     <div>
                         <p className="text-xs text-white/40 mb-1">Bienvenido</p>
-                        <h2 className="text-xl font-heading font-bold">Familia Garc\u00eda</h2>
+                        <h2 className="text-xl font-heading font-bold">Familia García</h2>
                         {/* Advisor with photo */}
                         <div className="flex items-center gap-2 mt-2">
                             <div className="h-7 w-7 rounded-full bg-gradient-to-br from-cima-gold/30 to-cima-gold/10 border border-cima-gold/20 flex items-center justify-center overflow-hidden">
                                 <User className="h-3.5 w-3.5 text-cima-gold" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-white/60">Carlos Mart\u00ednez</p>
+                                <p className="text-[10px] font-bold text-white/60">Carlos Martínez</p>
                                 <p className="text-[8px] text-white/20">Tu asesor asignado</p>
                             </div>
                             <div className="h-2 w-2 rounded-full bg-green-500 ml-1" />
@@ -145,10 +145,10 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                 {/* Property Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
-                        { label: "Rec\u00e1maras", value: "4", icon: "\ud83d\udecf\ufe0f" },
-                        { label: "Ba\u00f1os", value: "3", icon: "\ud83d\udebf" },
-                        { label: "m\u00b2 Terreno", value: "320", icon: "\ud83d\udcc0" },
-                        { label: "Tipo", value: "Residencial", icon: "\ud83c\udfe0" },
+                        { label: "Recámaras", value: "4", icon: "🛏️" },
+                        { label: "Baños", value: "3", icon: "🚿" },
+                        { label: "m² Terreno", value: "320", icon: "📀" },
+                        { label: "Tipo", value: "Residencial", icon: "🏠" },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
                             <span className="text-lg mb-1 block">{stat.icon}</span>
@@ -219,16 +219,16 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
 /* ΓöÇΓöÇΓöÇ Feedback Tab ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function FeedbackTab({ plan }: { plan: PlanConfig }) {
     const sentiments = [
-        { label: "Le encant\u00f3", count: 3, icon: ThumbsUp, color: "text-green-400 bg-green-500/10 border-green-500/20" },
-        { label: "Lo pensar\u00e1", count: 2, icon: Minus, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
+        { label: "Le encantó", count: 3, icon: ThumbsUp, color: "text-green-400 bg-green-500/10 border-green-500/20" },
+        { label: "Lo pensará", count: 2, icon: Minus, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
         { label: "Precio alto", count: 1, icon: ThumbsDown, color: "text-red-400 bg-red-500/10 border-red-500/20" },
     ];
 
     const prospects = [
-        { name: "Familia Rodr\u00edguez", date: "25 Feb", rating: 5, comment: "Excelente ubicaci\u00f3n, les encant\u00f3 la cocina y el jard\u00edn.", sentiment: "positive" },
-        { name: "Ing. Luis Garza", date: "23 Feb", rating: 4, comment: "Interesado pero quiere negociar el precio. Volver\u00e1 con oferta.", sentiment: "neutral" },
-        { name: "Sra. Ana Trevi\u00f1o", date: "20 Feb", rating: 5, comment: "Le fascin\u00f3 la distribuci\u00f3n, pidi\u00f3 segunda visita con su esposo.", sentiment: "positive" },
-        { name: "Lic. Pedro Salazar", date: "18 Feb", rating: 3, comment: "Buscaba algo m\u00e1s peque\u00f1o, pero agradece la visita.", sentiment: "negative" },
+        { name: "Familia Rodríguez", date: "25 Feb", rating: 5, comment: "Excelente ubicación, les encantó la cocina y el jardín.", sentiment: "positive" },
+        { name: "Ing. Luis Garza", date: "23 Feb", rating: 4, comment: "Interesado pero quiere negociar el precio. Volverá con oferta.", sentiment: "neutral" },
+        { name: "Sra. Ana Treviño", date: "20 Feb", rating: 5, comment: "Le fascinó la distribución, pidió segunda visita con su esposo.", sentiment: "positive" },
+        { name: "Lic. Pedro Salazar", date: "18 Feb", rating: 3, comment: "Buscaba algo más pequeño, pero agradece la visita.", sentiment: "negative" },
     ];
 
     return (
@@ -310,7 +310,7 @@ function DocumentsTab() {
         { name: "Predial 2025", status: "pending", date: "Pendiente" },
         { name: "Certificado de Libertad de Gravamen", status: "verified", date: "20 Ene 2025" },
         { name: "Acta de Matrimonio", status: "verified", date: "15 Ene 2025" },
-        { name: "INE / Identificaci\u00f3n Oficial", status: "verified", date: "15 Ene 2025" },
+        { name: "INE / Identificación Oficial", status: "verified", date: "15 Ene 2025" },
         { name: "CFE / Agua / Gas", status: "pending", date: "Pendiente" },
     ];
 
@@ -397,7 +397,7 @@ function EvidenceTab({ plan }: { plan: PlanConfig }) {
             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6">
                 <h3 className="text-xs font-black uppercase tracking-wider text-white/60 mb-4 flex items-center gap-2">
                     <Camera className="h-3.5 w-3.5 text-cima-gold" />
-                    Evidencia Fotogr\u00e1fica de Visitas
+                    Evidencia Fotográfica de Visitas
                 </h3>
 
                 <div className="space-y-6">
