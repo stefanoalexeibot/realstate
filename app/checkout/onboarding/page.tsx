@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ChevronRight, ChevronLeft, Calendar, Sparkles, Zap, ShieldCheck,
@@ -9,6 +9,8 @@ import {
     Share2, X, MessageCircle, Link as LinkIcon, Mail
 } from "lucide-react";
 import Link from "next/link";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 /* ─── Types ─── */
 type OnboardingData = {
@@ -117,7 +119,7 @@ function Confetti() {
 }
 
 /* ─── Share Modal ─── */
-function ShareModal({ data, plan, sessions, anticipo, invoiceNum, today, onClose }: {
+function ShareModal({ data, plan, sessions, anticipo, invoiceNum, today, onClose, onDownloadPDF }: {
     data: OnboardingData;
     plan: PlanInfo;
     sessions: SessionItem[];
@@ -125,8 +127,16 @@ function ShareModal({ data, plan, sessions, anticipo, invoiceNum, today, onClose
     invoiceNum: string;
     today: string;
     onClose: () => void;
+    onDownloadPDF: () => void;
 }) {
     const [copied, setCopied] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    const handleDownload = async () => {
+        setIsDownloading(true);
+        await onDownloadPDF();
+        setIsDownloading(false);
+    };
 
     const summaryText = `
 ╔══════════════════════════════╗
@@ -222,6 +232,23 @@ ${data.growthGoal || "—"}
                     </button>
                 </div>
 
+                <div className="mt-4">
+                    <button
+                        onClick={handleDownload}
+                        disabled={isDownloading}
+                        className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl bg-cima-gold text-black hover:bg-white transition-all shadow-lg shadow-cima-gold/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isDownloading ? (
+                            <div className="h-4 w-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                        ) : (
+                            <FileText className="h-4 w-4" />
+                        )}
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                            {isDownloading ? "Generando..." : "Descargar Nota de Venta (PDF)"}
+                        </span>
+                    </button>
+                </div>
+
                 <p className="text-center text-[8px] text-white/20 uppercase tracking-widest mt-6">
                     El cliente recibirá todos los detalles del proyecto
                 </p>
@@ -285,6 +312,38 @@ export default function OnboardingPortal() {
     const anticipo = Math.round(currentPlan.setup * 0.3);
     const today = new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
     const invoiceNum = useMemo(() => `NV-${Date.now().toString().slice(-6)}`, []);
+    const invoiceRef = useRef<HTMLDivElement>(null);
+
+    const handleDownloadPDF = async () => {
+        if (!invoiceRef.current) return;
+
+        try {
+            const canvas = await html2canvas(invoiceRef.current, {
+                scale: 3, // Higher quality
+                useCORS: true,
+                backgroundColor: "#ffffff",
+                logging: false,
+            });
+
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4",
+            });
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            // Center image in A4 if requested, or just place it at top
+            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`${invoiceNum}_CimaPro_${data.clientName || 'Resumen'}.pdf`);
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+            alert("Hubo un error al generar el PDF. Por favor, intenta de nuevo.");
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#0A0A0B] text-white selection:bg-cima-gold selection:text-black font-sans overflow-hidden">
@@ -293,7 +352,7 @@ export default function OnboardingPortal() {
                 {showShare && (
                     <ShareModal data={data} plan={currentPlan} sessions={sessions}
                         anticipo={anticipo} invoiceNum={invoiceNum} today={today}
-                        onClose={() => setShowShare(false)} />
+                        onClose={() => setShowShare(false)} onDownloadPDF={handleDownloadPDF} />
                 )}
             </AnimatePresence>
 
@@ -521,6 +580,7 @@ export default function OnboardingPortal() {
                 <div className="lg:col-span-5">
                     <div className="lg:sticky lg:top-8">
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                            ref={invoiceRef}
                             className="bg-white rounded-3xl md:rounded-[2.5rem] p-7 md:p-9 text-black shadow-2xl relative overflow-hidden">
                             <div className="absolute top-8 right-8 opacity-[0.03] select-none pointer-events-none">
                                 <Star className="h-56 w-56 fill-current rotate-12" />
