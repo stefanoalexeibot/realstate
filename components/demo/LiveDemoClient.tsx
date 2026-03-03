@@ -564,172 +564,191 @@ export default function LiveDemoClient() {
                                 >
                                     <Maximize2 className="h-3.5 w-3.5 text-white/40" />
                                 </button>
+
+                                {/* No Molestar */}
+                                <button
+                                    onClick={() => setFocusMode(!focusMode)}
+                                    className={`p-2 rounded-lg border transition-all ${focusMode
+                                        ? "bg-cima-gold border-cima-gold text-black shadow-lg"
+                                        : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
+                                        }`}
+                                    title={focusMode ? "Desactivar No Molestar" : "Activar No Molestar (Ocultar UI)"}
+                                >
+                                    <BellOff className="h-3.5 w-3.5" />
+                                </button>
                             </div>
                         </div>
 
                         {/* Context bar + ROI widget */}
-                        <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between relative">
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
-                                <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
-                                <span className="text-[7px] text-white/15">&middot;</span>
-                                <span className="text-[7px] text-white/20">{plan.price}</span>
-                                <span className="text-[7px] text-white/15">&middot;</span>
-                                <span className="text-[7px] text-white/20">{plan.deliveryDays}d entrega</span>
-                            </div>
-
-                            {/* ROI Widget - Centered */}
-                            <div className="absolute left-1/2 -translate-x-1/2 hidden sm:flex items-center gap-2">
-                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/20 shadow-lg shadow-green-500/5">
-                                    <TrendingUp className="h-3 w-3 text-green-400" />
-                                    <span className="text-[8px] font-black text-green-400 uppercase tracking-wider">
-                                        ROI Estimado: {ROI_DATA[tier].potentialRevenue}
-                                    </span>
-                                    <span className="text-[7px] text-green-400/50 font-bold">
-                                        ({ROI_DATA[tier].leadsPerMonth} leads/mes)
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Right side empty space for balance or other future tools */}
-                            <div className="w-[100px] hidden sm:block" />
-                        </div>
-
-                        {/* Narrative Caption */}
-                        <div className="bg-cima-gold/5 border-b border-cima-gold/10 px-4 py-2 relative overflow-hidden">
-                            <motion.div
-                                key={view}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="flex items-baseline gap-3"
-                            >
-                                <span className="text-[10px] font-black text-cima-gold uppercase tracking-tighter whitespace-nowrap">
-                                    {NARRATIVE[view].title}
-                                </span>
-                                <span className="text-[9px] text-white/60 font-medium leading-tight">
-                                    {NARRATIVE[view].desc}
-                                </span>
-                            </motion.div>
-                            <motion.div
-                                initial={{ left: "-10%" }}
-                                animate={{ left: "110%" }}
-                                transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                                className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent skew-x-12"
-                            />
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* No Molestar Toggle */}
-            <button
-                onClick={() => setFocusMode(!focusMode)}
-                className={`fixed top-20 right-6 z-[101] p-3 rounded-2xl border transition-all ${focusMode
-                    ? "bg-cima-gold text-black border-cima-gold shadow-2xl scale-110"
-                    : "bg-black/40 backdrop-blur-md border-white/5 text-white/20 hover:text-white hover:border-white/20"
-                    }`}
-                title={focusMode ? "Desactivar No Molestar" : "Activar No Molestar (Ocultar UI)"}
-            >
-                {focusMode ? <BellOff className="h-4 w-4" /> : <BellOff className="h-4 w-4 opacity-50" />}
-            </button>
-            {/* ΓöÇΓöÇ Content Area ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={view}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                >
-                    {view === "admin" && (
-                        <DemoAdminLive
-                            plan={plan}
-                            agentName={agentName}
-                            onNavigateToLeads={handleNavigateToLeads}
-                            externalTab={AUTO_STEPS[autoDemoStep]?.tab}
-                            leads={leads}
-                            onUpdateLeadStatus={handleUpdateLeadStatus}
-                            newLeadId={lastLeadId}
-                            messages={messages}
-                            onAddMessage={handleAddMessage}
-                        />
-                    )}
-                    {view === "portal" && <DemoPortal plan={plan} />}
-                    {view === "landing" && (
-                        <DemoLandingExample
-                            plan={plan}
-                            onLeadCapture={handleAddLead}
-                            onSendMessage={handleAddMessage}
-                            messages={messages}
-                        />
-                    )}
-                </motion.div>
-            </AnimatePresence>
-
-            {/* Bottom CTA bar */}
-            {view !== "landing" && !focusMode && (
-                <div className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-black via-black/90 to-transparent pt-8 pb-4 px-4 pointer-events-none">
-                    <div className="max-w-lg mx-auto flex items-center gap-3 pointer-events-auto">
-                        <a
-                            href="https://propiedades-mty.vercel.app/checkout/onboarding"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
-                        >
-                            <DollarSign className="h-4 w-4" />
-                            ¡Lo Quiero! &middot; {plan.name}
-                        </a>
-                        <button
-                            onClick={() => setShowQR(true)}
-                            className="flex items-center gap-2 border border-white/10 bg-white/5 text-white/60 px-5 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-white/10 hover:text-white transition-all"
-                        >
-                            <QrCode className="h-3.5 w-3.5" />
-                            QR
-                        </button>
+                <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between relative">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
+                        <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
+                        <span className="text-[7px] text-white/15">&middot;</span>
+                        <span className="text-[7px] text-white/20">{plan.price}</span>
+                        <span className="text-[7px] text-white/15">&middot;</span>
+                        <span className="text-[7px] text-white/20">{plan.deliveryDays}d entrega</span>
                     </div>
+
+                    {/* ROI Widget - Centered */}
+                    <div className="absolute left-1/2 -translate-x-1/2 hidden sm:flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/20 shadow-lg shadow-green-500/5">
+                            <TrendingUp className="h-3 w-3 text-green-400" />
+                            <span className="text-[8px] font-black text-green-400 uppercase tracking-wider">
+                                ROI Estimado: {ROI_DATA[tier].potentialRevenue}
+                            </span>
+                            <span className="text-[7px] text-green-400/50 font-bold">
+                                ({ROI_DATA[tier].leadsPerMonth} leads/mes)
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Right side empty space for balance or other future tools */}
+                    <div className="w-[100px] hidden sm:block" />
                 </div>
-            )}
 
-            {/* ΓöÇΓöÇ QR Overlay ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
-            <AnimatePresence>
-                {showQR && (
-                    <QROverlay
-                        onClose={() => setShowQR(false)}
-                        title={view === "landing" ? "Vista Móvil del Comprador" : view === "admin" ? "Notificaciones en tu Móvil" : "Portal para el Dueño (Móvil)"}
-                        desc={view === "landing"
-                            ? "Escanea con tu celular para ver cómo interactúa un comprador real con esta propiedad."
-                            : view === "admin"
-                                ? "Manten el control de tus propiedades y recibe alertas de nuevos leads estés donde estés."
-                                : "Tu cliente podríá seguir el progreso de su venta cómodamente desde su smartphone."
-                        }
-                    />
-                )}
-            </AnimatePresence>
-
-            {/* Comparison Modal */}
-            <AnimatePresence>
-                {showComparison && <ComparisonModal onClose={() => setShowComparison(false)} />}
-            </AnimatePresence>
-
-            {/* Upgrade glow flash */}
-            <AnimatePresence>
-                {upgradeFlash && (
+                {/* Narrative Caption */}
+                <div className="bg-cima-gold/5 border-b border-cima-gold/10 px-4 py-2 relative overflow-hidden">
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="fixed inset-0 z-[60] pointer-events-none"
+                        key={view}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex items-baseline gap-3"
                     >
-                        <motion.div
-                            initial={{ top: "0%" }}
-                            animate={{ top: "100%" }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cima-gold to-transparent shadow-[0_0_30px_10px_rgba(200,169,110,0.4)]"
-                        />
+                        <span className="text-[10px] font-black text-cima-gold uppercase tracking-tighter whitespace-nowrap">
+                            {NARRATIVE[view].title}
+                        </span>
+                        <span className="text-[9px] text-white/60 font-medium leading-tight">
+                            {NARRATIVE[view].desc}
+                        </span>
                     </motion.div>
+                    <motion.div
+                        initial={{ left: "-10%" }}
+                        animate={{ left: "110%" }}
+                        transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                        className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent skew-x-12"
+                    />
+                </div>
+            </motion.div>
                 )}
-            </AnimatePresence>
-        </div>
+        </AnimatePresence>
+
+            {/* Exit No Molestar floating button (only when UI is hidden) */ }
+    <AnimatePresence>
+        {focusMode && (
+            <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                onClick={() => setFocusMode(false)}
+                className="fixed top-6 right-6 z-[101] p-4 bg-cima-gold text-black rounded-2xl shadow-2xl shadow-cima-gold/30 hover:scale-110 active:scale-95 transition-all flex items-center gap-2"
+                title="Desactivar Modo No Molestar"
+            >
+                <BellOff className="h-4 w-4" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Salir de No Molestar</span>
+            </motion.button>
+        )}
+    </AnimatePresence>
+    {/* ΓöÇΓöÇ Content Area ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */ }
+    <AnimatePresence mode="wait">
+        <motion.div
+            key={view}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+        >
+            {view === "admin" && (
+                <DemoAdminLive
+                    plan={plan}
+                    agentName={agentName}
+                    onNavigateToLeads={handleNavigateToLeads}
+                    externalTab={AUTO_STEPS[autoDemoStep]?.tab}
+                    leads={leads}
+                    onUpdateLeadStatus={handleUpdateLeadStatus}
+                    newLeadId={lastLeadId}
+                    messages={messages}
+                    onAddMessage={handleAddMessage}
+                />
+            )}
+            {view === "portal" && <DemoPortal plan={plan} />}
+            {view === "landing" && (
+                <DemoLandingExample
+                    plan={plan}
+                    onLeadCapture={handleAddLead}
+                    onSendMessage={handleAddMessage}
+                    messages={messages}
+                />
+            )}
+        </motion.div>
+    </AnimatePresence>
+
+    {/* Bottom CTA bar */ }
+    {
+        view !== "landing" && !focusMode && (
+            <div className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-black via-black/90 to-transparent pt-8 pb-4 px-4 pointer-events-none">
+                <div className="max-w-lg mx-auto flex items-center gap-3 pointer-events-auto">
+                    <a
+                        href="https://propiedades-mty.vercel.app/checkout/onboarding"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
+                    >
+                        <DollarSign className="h-4 w-4" />
+                        ¡Lo Quiero! &middot; {plan.name}
+                    </a>
+                    <button
+                        onClick={() => setShowQR(true)}
+                        className="flex items-center gap-2 border border-white/10 bg-white/5 text-white/60 px-5 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-white/10 hover:text-white transition-all"
+                    >
+                        <QrCode className="h-3.5 w-3.5" />
+                        QR
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    {/* ΓöÇΓöÇ QR Overlay ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */ }
+    <AnimatePresence>
+        {showQR && (
+            <QROverlay
+                onClose={() => setShowQR(false)}
+                title={view === "landing" ? "Vista Móvil del Comprador" : view === "admin" ? "Notificaciones en tu Móvil" : "Portal para el Dueño (Móvil)"}
+                desc={view === "landing"
+                    ? "Escanea con tu celular para ver cómo interactúa un comprador real con esta propiedad."
+                    : view === "admin"
+                        ? "Manten el control de tus propiedades y recibe alertas de nuevos leads estés donde estés."
+                        : "Tu cliente podríá seguir el progreso de su venta cómodamente desde su smartphone."
+                }
+            />
+        )}
+    </AnimatePresence>
+
+    {/* Comparison Modal */ }
+    <AnimatePresence>
+        {showComparison && <ComparisonModal onClose={() => setShowComparison(false)} />}
+    </AnimatePresence>
+
+    {/* Upgrade glow flash */ }
+    <AnimatePresence>
+        {upgradeFlash && (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="fixed inset-0 z-[60] pointer-events-none"
+            >
+                <motion.div
+                    initial={{ top: "0%" }}
+                    animate={{ top: "100%" }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cima-gold to-transparent shadow-[0_0_30px_10px_rgba(200,169,110,0.4)]"
+                />
+            </motion.div>
+        )}
+    </AnimatePresence>
+        </div >
     );
 }
