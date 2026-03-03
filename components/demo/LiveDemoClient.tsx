@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
@@ -237,7 +237,7 @@ export default function LiveDemoClient() {
                 const aiResponse: LiveMessage = {
                     id: Math.random().toString(36).substr(2, 9),
                     from: "Cima AI Assistant",
-                    message: `┬íHola ${from}! Gracias por tu inter├⌐s. Un asesor se pondr├í en contacto contigo pronto. ┬┐Te gustar├¡a agendar una visita guiada?`,
+                    message: `¡Hola ${from}! Gracias por tu interés. Un asesor se pondrá en contacto contigo pronto. ¿Te gustaría agendar una visita guiada?`,
                     time: "Justo ahora",
                     unread: true,
                     isAi: true
@@ -254,7 +254,7 @@ export default function LiveDemoClient() {
         { view: "landing", duration: 5000, label: "Landing" },
         { view: "admin", tab: "propiedades", duration: 5000, label: "Propiedades" },
         { view: "admin", tab: "leads", duration: 4000, label: "Leads" },
-        { view: "admin", tab: "analiticos", duration: 4000, label: "Anal├¡ticos" },
+        { view: "admin", tab: "analiticos", duration: 4000, label: "Analíticos" },
         { view: "portal", duration: 5000, label: "Portal" },
     ];
 
@@ -313,9 +313,9 @@ export default function LiveDemoClient() {
     }, [editingName]);
 
     const VIEW_LABELS: Record<View, string> = {
-        admin: "≡ƒæ¿ΓÇì≡ƒÆ╝ Esto es lo que VE EL ASESOR ΓÇö gesti├│n de propiedades, leads, visitas y anal├¡ticos",
-        portal: "≡ƒÅá Esto es lo que VE EL PROPIETARIO ΓÇö transparencia total sobre el progreso de venta",
-        landing: "≡ƒîÉ Esta es la LANDING PAGE para cada propiedad ΓÇö captura de leads autom├ítica",
+        admin: "Esto es lo que VE EL ASESOR — gestión de propiedades, leads, visitas y analíticos",
+        portal: "Esto es lo que VE EL PROPIETARIO — transparencia total sobre el progreso de venta",
+        landing: "Esta es la LANDING PAGE para cada propiedad — captura de leads automática",
     };
 
     return (
@@ -416,6 +416,18 @@ export default function LiveDemoClient() {
                                     ))}
                                 </div>
 
+                                {/* Checkout / Cerrar button */}
+                                <a
+                                    href="https://propiedades-mty.vercel.app/checkout/onboarding"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg text-[8px] font-black uppercase tracking-wider text-green-400 hover:bg-green-500/20 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-green-500/5"
+                                    title="Cerrar venta — Ir a Checkout"
+                                >
+                                    <DollarSign className="h-3.5 w-3.5" />
+                                    Cerrar
+                                </a>
+
                                 {/* Timer */}
                                 <div className="hidden xl:flex">
                                     <PresentationTimer />
@@ -459,9 +471,9 @@ export default function LiveDemoClient() {
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
                                 <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
-                                <span className="text-[7px] text-white/15">ΓÇó</span>
+                                <span className="text-[7px] text-white/15">·</span>
                                 <span className="text-[7px] text-white/20">{plan.price}</span>
-                                <span className="text-[7px] text-white/15">ΓÇó</span>
+                                <span className="text-[7px] text-white/15">·</span>
                                 <span className="text-[7px] text-white/20">{plan.deliveryDays}d</span>
                             </div>
                         </div>
