@@ -3,6 +3,14 @@ import { notFound } from "next/navigation";
 import { DEMO_PLANS, VALID_PLANS, type PlanTier } from "@/lib/config/demo-plans";
 import DemoNavbar from "@/components/demo/DemoNavbar";
 
+export async function generateStaticParams() {
+    return [
+        { plan: "basico" },
+        { plan: "profesional" },
+        { plan: "premium" },
+    ];
+}
+
 export default async function DemoLayout({
     children,
     params,

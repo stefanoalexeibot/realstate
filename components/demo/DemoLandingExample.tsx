@@ -88,24 +88,38 @@ function LandingContent({
                 </nav>
                 <div className="max-w-4xl mx-auto px-6 py-20">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div className="rounded-2xl overflow-hidden aspect-video bg-gray-100">
-                            <img src={photos[0]} className="w-full h-full object-cover" alt="Property" />
-                        </div>
-                        <div className="space-y-6">
-                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full uppercase tracking-widest">Disponible</span>
-                            <h1 className="text-3xl font-bold leading-tight">Residencia en San Jerónimo</h1>
-                            <p className="text-2xl font-light text-gray-500">$8,500,000</p>
-                            <div className="grid grid-cols-2 gap-4 pt-4">
-                                <div className="flex items-center gap-2 text-gray-400">
-                                    <BedDouble className="h-4 w-4" /> <span className="text-xs font-semibold">4 Rec.</span>
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="rounded-3xl overflow-hidden aspect-video bg-gray-100 shadow-2xl border border-gray-100 relative group"
+                        >
+                            <img src={photos[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Property" />
+                            <div className="absolute top-4 left-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest text-blue-600 border border-blue-100">Starter Plan</div>
+                        </motion.div>
+                        <div className="space-y-8">
+                            <div>
+                                <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full uppercase tracking-widest border border-blue-100">Oportunidad Única</span>
+                                <h1 className="text-4xl font-black leading-tight mt-4 text-gray-900">Residencia en San Jerónimo</h1>
+                                <p className="text-2xl font-light text-gray-400 mt-2">$8,500,000 MXN</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-xl bg-white flex items-center justify-center text-blue-600 shadow-sm"><BedDouble className="h-4 w-4" /></div>
+                                    <div><p className="text-[7px] font-black uppercase text-gray-400">Recámaras</p><p className="text-xs font-bold text-gray-900">4 Unidades</p></div>
                                 </div>
-                                <div className="flex items-center gap-2 text-gray-400">
-                                    <Ruler className="h-4 w-4" /> <span className="text-xs font-semibold">320 m²</span>
+                                <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-xl bg-white flex items-center justify-center text-blue-600 shadow-sm"><Ruler className="h-4 w-4" /></div>
+                                    <div><p className="text-[7px] font-black uppercase text-gray-400">Dimensión</p><p className="text-xs font-bold text-gray-900">320 m² Totales</p></div>
                                 </div>
                             </div>
-                            <button onClick={handleTriggerLead} className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all">
-                                Solicitar Información
-                            </button>
+
+                            <div className="space-y-3">
+                                <button onClick={handleTriggerLead} className="w-full py-4 bg-blue-600 text-white rounded-[1.2rem] font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-blue-600/20">
+                                    Solicitar Información
+                                </button>
+                                <p className="text-center text-[8px] font-bold text-gray-400 uppercase tracking-widest">Respuesta en menos de 24 horas</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -181,23 +195,49 @@ function LandingContent({
                         </div>
 
                         <div className="relative">
-                            <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative">
-                                <img src={photos[activePhoto]} className="w-full h-full object-cover" />
+                            <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative group">
+                                <img src={photos[activePhoto]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-transparent" />
                                 <div className="absolute bottom-8 inset-x-8">
-                                    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl">
-                                        <p className="text-xs font-bold text-white/80 line-clamp-2 italic">&quot;La mejor inversión en San Jerónimo por metro cuadrado.&quot;</p>
+                                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl shadow-2xl">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
+                                            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-blue-400">Vista en Directo</p>
+                                        </div>
+                                        <p className="text-sm font-bold text-white line-clamp-2 leading-relaxed italic">&quot;San Jerónimo está experimentando un incremento del 12% anual en plusvalía. Esta es una inversión estratégica.&quot;</p>
+                                    </div>
+                                </div>
+                                <div className="absolute top-8 right-8 flex flex-col gap-2">
+                                    <div className="bg-black/40 backdrop-blur-md border border-white/20 h-10 w-10 rounded-2xl flex items-center justify-center text-white cursor-pointer hover:bg-blue-500 transition-colors">
+                                        <Camera className="h-4 w-4" />
+                                    </div>
+                                    <div className="bg-black/40 backdrop-blur-md border border-white/20 h-10 w-10 rounded-2xl flex items-center justify-center text-white cursor-pointer hover:bg-blue-500 transition-colors">
+                                        <MapPin className="h-4 w-4" />
                                     </div>
                                 </div>
                             </div>
-                            {/* ROI Calculator Preview */}
-                            <div className="absolute -bottom-10 -left-10 bg-white p-6 rounded-3xl shadow-2xl text-gray-900 w-48 hidden xl:block animate-bounce-slow">
-                                <p className="text-[10px] font-black text-blue-500 uppercase mb-2">Calculadora ROI</p>
-                                <div className="space-y-2">
-                                    <div className="h-1.5 w-full bg-gray-100 rounded-full"><div className="h-full w-3/4 bg-blue-500 rounded-full" /></div>
-                                    <p className="text-lg font-black">$24,500 <span className="text-[10px] font-normal text-gray-400">/mo</span></p>
+                            {/* ROI Calculator Preview (Improved) */}
+                            <motion.div
+                                initial={{ x: 20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ delay: 0.8 }}
+                                className="absolute -bottom-6 -left-10 bg-white p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] text-gray-900 w-56 hidden xl:block"
+                            >
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Cima Pulse IA</p>
+                                    <TrendingUp className="h-3 w-3 text-blue-600" />
                                 </div>
-                            </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="flex justify-between text-[8px] font-black uppercase opacity-40 mb-1"><span>Mercado</span><span>Caliente</span></div>
+                                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                            <motion.div initial={{ width: 0 }} animate={{ width: "85%" }} transition={{ delay: 1, duration: 1.5 }} className="h-full bg-blue-600 rounded-full" />
+                                        </div>
+                                    </div>
+                                    <p className="text-2xl font-black tracking-tight">$24,500 <span className="text-[10px] font-normal text-gray-400">MXN/mes</span></p>
+                                    <p className="text-[8px] font-bold text-green-600 uppercase tracking-widest">Renta sugerida optima</p>
+                                </div>
+                            </motion.div>
                         </div>
                     </div>
                 </div>
@@ -271,18 +311,38 @@ function LandingContent({
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="col-span-2 aspect-[16/9] rounded-[3rem] overflow-hidden border border-white/10 relative group"
+                            className="col-span-2 aspect-[16/9] rounded-[3.5rem] overflow-hidden border border-white/10 relative group shadow-[0_30px_100px_rgba(0,0,0,0.5)]"
                         >
-                            <img src={photos[activePhoto]} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                            <img src={photos[activePhoto]} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+
+                            {/* DIGITAL TWIN IA SCANNER EFFECT */}
+                            <motion.div
+                                className="absolute inset-0 pointer-events-none"
+                                animate={{ top: ["0%", "100%", "0%"] }}
+                                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                            >
+                                <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-cima-gold/60 to-transparent shadow-[0_0_20px_rgba(200,169,110,0.8)]" />
+                            </motion.div>
+
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+
                             <div className="absolute bottom-10 left-10 flex gap-4">
                                 {photos.map((_: any, i: number) => (
-                                    <button key={i} onClick={() => setActivePhoto(i)} className={`h-1 rounded-full transition-all ${activePhoto === i ? "w-10 bg-cima-gold" : "w-2 bg-white/20"}`} />
+                                    <button
+                                        key={i}
+                                        onClick={() => setActivePhoto(i)}
+                                        className={`h-1.5 rounded-full transition-all duration-500 ${activePhoto === i ? "w-12 bg-cima-gold" : "w-3 bg-white/20 hover:bg-white/40"}`}
+                                    />
                                 ))}
                             </div>
-                            <div className="absolute top-10 right-10">
-                                <div className="h-12 w-12 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
-                                    <Sparkles className="h-5 w-5 text-cima-gold" />
+
+                            <div className="absolute top-10 right-10 flex flex-col items-end gap-3">
+                                <div className="h-12 w-12 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-2xl group/btn hover:border-cima-gold transition-all">
+                                    <Sparkles className="h-5 w-5 text-cima-gold animate-pulse" />
+                                </div>
+                                <div className="bg-black/60 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-2xl flex items-center gap-3">
+                                    <div className="h-2 w-2 rounded-full bg-cima-gold animate-ping" />
+                                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/80">Digital Twin Activo</span>
                                 </div>
                             </div>
                         </motion.div>

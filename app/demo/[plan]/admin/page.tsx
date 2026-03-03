@@ -2,6 +2,14 @@ import React from "react";
 import { DEMO_PLANS, type PlanTier } from "@/lib/config/demo-plans";
 import DemoAdmin from "@/components/demo/DemoAdmin";
 
+export async function generateStaticParams() {
+    return [
+        { plan: "basico" },
+        { plan: "profesional" },
+        { plan: "premium" },
+    ];
+}
+
 export default async function DemoAdminPage({
     params,
 }: {

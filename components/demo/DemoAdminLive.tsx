@@ -15,9 +15,23 @@ import {
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { MobileFrame } from "./MobileFrame";
 import Image from "next/image";
+import DemoLandingExample from "./DemoLandingExample";
 
-/* ─── Types ───────────────────────────────────────────────────────────────── */
-export type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos" | "contratos";
+export type SidebarTab = "propiedades" | "leads" | "pipeline" | "calendario" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos" | "contratos";
+
+interface Agent {
+    id: number;
+    name: string;
+    role: string;
+    avatar: string;
+    status: string;
+}
+
+const AGENTS: Agent[] = [
+    { id: 1, name: "Stefano Alexei", role: "Director Comercial", avatar: "/users/1.jpg", status: "Activo" },
+    { id: 2, name: "Mariana L.", role: "Asesor Senior", avatar: "/users/2.jpg", status: "En Visita" },
+    { id: 3, name: "Roberto M.", role: "Asesor Comercial", avatar: "/users/3.jpg", status: "Activo" },
+];
 
 interface DemoAdminLiveProps {
     plan: PlanConfig;
@@ -199,6 +213,12 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
     } = props;
 
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
+    const [currentAgent, setCurrentAgent] = useState<Agent>(AGENTS[0]);
+    const [localProperties, setLocalProperties] = useState(PROPERTIES);
+    const [isAddPropertyOpen, setIsAddPropertyOpen] = useState(false);
+    const [isAgentSelectorOpen, setIsAgentSelectorOpen] = useState(false);
+    const [isAiFilling, setIsAiFilling] = useState(false);
+
     const f = plan.features.admin;
 
     React.useEffect(() => {
@@ -211,12 +231,14 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
         }
     }, [plan.tier, externalTab, f.analytics, f.aiStudio, activeTab]);
 
-    const maxProps = plan.maxProperties === -1 ? PROPERTIES.length : plan.maxProperties;
-    const visibleProps = PROPERTIES.slice(0, maxProps);
+    const maxProps = plan.maxProperties === -1 ? localProperties.length : plan.maxProperties;
+    const visibleProps = localProperties.slice(0, maxProps);
 
     const navItems: { id: SidebarTab; icon: React.ElementType; label: string; badge?: string; locked: boolean }[] = [
         { id: "propiedades", icon: Layout, label: "Propiedades", locked: false },
         { id: "leads", icon: Users, label: "Leads", badge: leads.length > 0 ? leads.length.toString() : "7", locked: false },
+        { id: "pipeline", icon: BarChart3, label: "Pipeline", locked: false },
+        { id: "calendario", icon: Calendar, label: "Agenda", locked: plan.tier === "basico" },
         { id: "visitas", icon: Target, label: "Visitas", badge: "2", locked: !f.visits },
         { id: "analiticos", icon: TrendingUp, label: "Analíticos", locked: !f.analytics },
         { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: messages.filter(m => m.unread).length > 0 ? messages.filter(m => m.unread).length.toString() : undefined, locked: !f.messages },
@@ -260,9 +282,20 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
+                    <button
+                        onClick={() => setIsAddPropertyOpen(true)}
+                        className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0"
+                    >
                         <Plus className="h-3.5 w-3.5" /> Nueva
                     </button>
+                    {plan.tier === "premium" && (
+                        <button
+                            onClick={() => setIsAgentSelectorOpen(true)}
+                            className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 text-white/60 px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white/10 transition-all shrink-0"
+                        >
+                            <Users className="h-3.5 w-3.5" /> Asesores
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -303,8 +336,10 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                 >
                     {activeTab === "propiedades" && <PropertiesView properties={visibleProps} isDarkMode={isDarkMode} isMobilePreview={isMobilePreview} />}
                     {activeTab === "leads" && <LeadsView leads={leads} isDarkMode={isDarkMode} onUpdate={onUpdateLeadStatus} />}
+                    {activeTab === "pipeline" && <PipelineView isDarkMode={isDarkMode} />}
+                    {activeTab === "calendario" && <CalendarView isDarkMode={isDarkMode} />}
                     {activeTab === "visitas" && <VisitsView isDarkMode={isDarkMode} />}
-                    {activeTab === "analiticos" && <AnalyticsView isDarkMode={isDarkMode} />}
+                    {activeTab === "analiticos" && <AnalyticsView stats={tierStats} plan={plan} isDarkMode={isDarkMode} />}
                     {activeTab === "ia_studio" && <IaStudioView isDarkMode={isDarkMode} />}
                     {activeTab === "documentos" && <DocumentsView isDarkMode={isDarkMode} />}
                     {activeTab === "contratos" && <ContractGeneratorView isDarkMode={isDarkMode} />}
@@ -323,7 +358,7 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                         <Layout className="h-4 w-4 text-black" />
                     </div>
                     <div className="flex flex-col">
-                        <h1 className="text-xs font-black uppercase tracking-widest whitespace-nowrap">Cima Pro Admin</h1>
+                        <h1 className="text-xs font-black uppercase tracking-widest whitespace-nowrap">{currentAgent.name}</h1>
                         <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest leading-none">{plan.name}</span>
                     </div>
                 </div>
@@ -402,14 +437,19 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 px-2">
+                        <div className="flex items-center gap-3 px-2 cursor-pointer group" onClick={() => plan.tier === "premium" && setIsAgentSelectorOpen(true)}>
                             <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-cima-gold/40 to-cima-gold/10 border border-cima-gold/20 flex items-center justify-center overflow-hidden">
-                                <Users className="h-4 w-4 text-cima-gold" />
+                                {currentAgent.avatar ? (
+                                    <div className="font-black text-cima-gold">{currentAgent.name.charAt(0)}</div>
+                                ) : (
+                                    <Users className="h-4 w-4 text-cima-gold" />
+                                )}
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[10px] font-black uppercase tracking-wider text-white/80 truncate">{agentName || "Asesor Elite"}</p>
-                                <p className="text-[8px] font-bold text-cima-gold/60 uppercase">Estado: Activo</p>
+                                <p className="text-[10px] font-black uppercase tracking-wider text-white/80 truncate">{currentAgent.name}</p>
+                                <p className="text-[8px] font-bold text-cima-gold/60 uppercase">Estado: {currentAgent.status}</p>
                             </div>
+                            {plan.tier === "premium" && <ChevronDown className="h-3 w-3 ml-auto opacity-20 group-hover:opacity-100 transition-all" />}
                         </div>
                     </div>
                 </aside>
@@ -426,6 +466,11 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                                             <p className="text-[10px] text-cima-gold font-mono uppercase tracking-widest leading-none">{plan.name}</p>
                                         </div>
                                         <div className="flex gap-2">
+                                            {setIsMobilePreview && (
+                                                <button onClick={() => setIsMobilePreview(false)} className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/40">
+                                                    <Monitor className="h-4 w-4" />
+                                                </button>
+                                            )}
                                             {setIsDND && (
                                                 <button onClick={() => setIsDND(!isDND)} className={`p-2 rounded-xl border transition-all ${isDND ? "bg-cima-gold border-cima-gold text-black" : "bg-white/5 border-white/10 text-white/40"}`}>
                                                     {isDND ? <MoonStar className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
@@ -477,12 +522,258 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                 </div>
             </div>
 
+            {/* Modals */}
+            <AddPropertyModal
+                isOpen={isAddPropertyOpen}
+                onClose={() => setIsAddPropertyOpen(false)}
+                isDarkMode={isDarkMode}
+                onAdd={(p: any) => setLocalProperties([p, ...localProperties])}
+            />
+            <AgentSelectorModal
+                isOpen={isAgentSelectorOpen}
+                onClose={() => setIsAgentSelectorOpen(false)}
+                isDarkMode={isDarkMode}
+                currentAgent={currentAgent}
+                onSelect={(a: Agent) => setCurrentAgent(a)}
+            />
+
             {!isDND && (
                 <RotatingToast onClick={() => {
                     setActiveTab("leads");
                     if (onNavigateToLeads) onNavigateToLeads();
                 }} />
             )}
+        </div>
+    );
+}
+
+/* ─── MODALS ──────────────────────────────────────────────────────────────── */
+
+function AddPropertyModal({ isOpen, onClose, isDarkMode, onAdd }: any) {
+    const [isAiFilling, setIsAiFilling] = useState(false);
+
+    const handleAiFill = () => {
+        setIsAiFilling(true);
+        setTimeout(() => {
+            setIsAiFilling(false);
+        }, 1500);
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center px-4">
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={onClose}
+            />
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className={`relative w-full max-w-lg rounded-[2.5rem] border p-8 ${isDarkMode ? "bg-[#0A0A0B] border-white/10" : "bg-white border-gray-200"}`}
+            >
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 className="text-xl font-black uppercase tracking-tight">Nueva Propiedad</h3>
+                        <p className="text-[10px] text-cima-gold font-bold uppercase tracking-widest mt-1">Gestión de Inventario Elite</p>
+                    </div>
+                    <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full"><X className="h-5 w-5 opacity-40" /></button>
+                </div>
+
+                <div className="space-y-4">
+                    <button
+                        onClick={handleAiFill}
+                        disabled={isAiFilling}
+                        className="w-full py-4 bg-cima-gold/10 border border-cima-gold/20 rounded-2xl flex items-center justify-center gap-3 group hover:bg-cima-gold/20 transition-all"
+                    >
+                        {isAiFilling ? (
+                            <Loader2 className="h-4 w-4 text-cima-gold animate-spin" />
+                        ) : (
+                            <Sparkles className="h-4 w-4 text-cima-gold" />
+                        )}
+                        <span className="text-[10px] font-black uppercase tracking-widest text-cima-gold">Llenado con IA</span>
+                    </button>
+
+                    <div className="grid grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-1">Nombre de la Propiedad</label>
+                            <input
+                                placeholder={isAiFilling ? "Analizando imágenes..." : "Ej: Loft en Santa María"}
+                                className={`w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs outline-none focus:border-cima-gold/40 transition-all ${isAiFilling ? "opacity-50 animate-pulse" : ""}`}
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-1">Precio</label>
+                                <input
+                                    placeholder="$0.00"
+                                    className={`w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs outline-none focus:border-cima-gold/40 transition-all ${isAiFilling ? "opacity-50 animate-pulse" : ""}`}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-1">Metros²</label>
+                                <input
+                                    placeholder="0"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs outline-none focus:border-cima-gold/40 transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-6 flex gap-3">
+                        <button onClick={onClose} className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest">Cancelar</button>
+                        <button
+                            onClick={() => {
+                                onAdd({ id: Date.now(), name: "Nueva Propiedad IA", price: "$5.5M", status: "Venta", owner: "Stefano", img: "/estancia-antes.png", hits: 0, trend: [0, 0, 0, 0], beds: 3, baths: 2, m2: 150, address: "Dirección Mock" });
+                                onClose();
+                            }}
+                            className="flex-[2] py-4 bg-cima-gold text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-cima-gold/20"
+                        >
+                            Guardar Propiedad
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
+
+function AgentSelectorModal({ isOpen, onClose, isDarkMode, currentAgent, onSelect }: any) {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center px-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={`relative w-full max-w-sm rounded-[2.5rem] border p-8 ${isDarkMode ? "bg-[#0A0A0B] border-white/10" : "bg-white border-gray-200"}`}
+            >
+                <h3 className="text-xl font-black uppercase tracking-tight mb-6">Gestionar Equipo</h3>
+
+                <div className="space-y-3">
+                    {AGENTS.map((agent) => (
+                        <button
+                            key={agent.id}
+                            onClick={() => { onSelect(agent); onClose(); }}
+                            className={`w-full flex items-center gap-4 p-4 rounded-3xl border transition-all ${currentAgent.id === agent.id ? "bg-cima-gold/10 border-cima-gold" : "bg-white/5 border-white/5 hover:bg-white/10"}`}
+                        >
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-cima-gold to-blue-500 overflow-hidden border border-white/10 flex items-center justify-center font-black text-black">
+                                {agent.name.charAt(0)}
+                            </div>
+                            <div className="text-left">
+                                <p className={`text-xs font-black uppercase tracking-wider ${currentAgent.id === agent.id ? "text-cima-gold" : "text-white"}`}>{agent.name}</p>
+                                <p className="text-[8px] font-bold text-white/40 uppercase leading-none">{agent.role}</p>
+                            </div>
+                            {currentAgent.id === agent.id && <CheckCircle2 className="h-4 w-4 text-cima-gold ml-auto" />}
+                        </button>
+                    ))}
+                </div>
+            </motion.div>
+        </div>
+    );
+}
+
+/* ─── NEW VIEWS ───────────────────────────────────────────────────────────── */
+
+function PipelineView({ isDarkMode }: { isDarkMode: boolean }) {
+    const COLUMNS = [
+        { id: "nuevo", label: "Nuevo", count: 3, color: "bg-blue-500" },
+        { id: "calificado", label: "Calificado", count: 2, color: "bg-cima-gold" },
+        { id: "visita", label: "Visita", count: 1, color: "bg-pink-500" },
+        { id: "cierre", label: "Cierre", count: 4, color: "bg-green-500" },
+    ];
+
+    const CARDS = [
+        { id: 1, name: "Fam. García", property: "Residencia Las Misiones", col: "nuevo", score: 85 },
+        { id: 2, name: "Roberto M.", property: "Torre LOVFT", col: "calificado", score: 92 },
+        { id: 3, name: "Lic. Pérez", property: "Penthouse Nubes", col: "visita", score: 88 },
+        { id: 4, name: "Dra. Sofía", property: "Casa Valle", col: "cierre", score: 99 },
+    ];
+
+    return (
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-none">
+            {COLUMNS.map((col) => (
+                <div key={col.id} className="min-w-[280px] flex-1 flex flex-col gap-4">
+                    <div className="flex items-center justify-between px-2">
+                        <div className="flex items-center gap-2">
+                            <div className={`h-2 w-2 rounded-full ${col.color}`} />
+                            <h4 className="text-[10px] font-black uppercase tracking-widest opacity-60">{col.label}</h4>
+                        </div>
+                        <span className="text-[9px] font-mono opacity-40">{col.count}</span>
+                    </div>
+
+                    <div className="space-y-3">
+                        {CARDS.filter(c => c.col === col.id).map((card) => (
+                            <motion.div
+                                key={card.id}
+                                layoutId={card.id.toString()}
+                                className={`p-4 rounded-3xl border ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-100 shadow-sm"}`}
+                            >
+                                <div className="flex justify-between items-start mb-2">
+                                    <h5 className="text-[11px] font-bold">{card.name}</h5>
+                                    <span className="text-[8px] font-black text-cima-gold">{card.score}%</span>
+                                </div>
+                                <p className="text-[9px] opacity-40 truncate mb-3">{card.property}</p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex -space-x-2">
+                                        <div className="h-5 w-5 rounded-full border border-black bg-gray-600 flex items-center justify-center text-[6px]">AI</div>
+                                    </div>
+                                    <button className="h-6 w-6 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10">
+                                        <MoreVertical className="h-3.5 w-3.5 opacity-40" />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ))}
+                        <button className="w-full py-3 border-2 border-dashed border-white/5 rounded-2xl flex items-center justify-center gap-2 group hover:border-white/10 transition-all">
+                            <Plus className="h-3 w-3 opacity-20 group-hover:opacity-40" />
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function CalendarView({ isDarkMode }: { isDarkMode: boolean }) {
+    const DAYS = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
+    const dates = Array.from({ length: 31 }, (_, i) => i + 1);
+
+    return (
+        <div className={`p-6 rounded-[2.5rem] border ${isDarkMode ? "bg-white/[0.02] border-white/5" : "bg-white border-gray-200"}`}>
+            <div className="flex items-center justify-between mb-8">
+                <div>
+                    <h3 className="text-xl font-heading font-black">Marzo 2026</h3>
+                    <p className="text-[10px] text-cima-gold font-bold uppercase tracking-widest mt-1">4 eventos próximos</p>
+                </div>
+                <div className="flex gap-2">
+                    <button className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center"><ChevronLeft className="h-4 w-4" /></button>
+                    <button className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center"><ChevronRight className="h-4 w-4" /></button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 mb-4">
+                {DAYS.map(d => <div key={d} className="text-center text-[9px] font-black uppercase tracking-widest opacity-30 py-2">{d}</div>)}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1">
+                {dates.map(date => {
+                    const hasEvent = [4, 12, 18, 25].includes(date);
+                    return (
+                        <div
+                            key={date}
+                            className={`aspect-square p-2 border border-white/5 flex flex-col items-center justify-between rounded-xl relative group cursor-pointer hover:bg-cima-gold/10 transition-all ${date === 3 ? "bg-cima-gold text-black border-cima-gold" : ""}`}
+                        >
+                            <span className="text-[10px] font-bold">{date}</span>
+                            {hasEvent && (
+                                <div className={`h-1 w-1 rounded-full ${date === 3 ? "bg-black" : "bg-cima-gold"}`} />
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }
@@ -655,7 +946,7 @@ function BarChart({ data, labels, isDarkMode }: any) {
     );
 }
 
-function AnalyticsView({ isDarkMode }: { isDarkMode: boolean }) {
+function AnalyticsView({ stats, plan, isDarkMode }: { stats: any; plan: PlanConfig; isDarkMode: boolean }) {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -855,6 +1146,28 @@ function ContractGeneratorView({ isDarkMode }: { isDarkMode: boolean }) {
                         className={`p-8 rounded-[2.5rem] border ${isDarkMode ? "bg-white/[0.02] border-white/5" : "bg-white border-gray-100 shadow-xl"}`}
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-2">
+                                <button
+                                    onClick={() => {
+                                        setIsSigning(true);
+                                        setTimeout(() => {
+                                            setFormData({
+                                                client: "Lic. Roberto Martínez",
+                                                property: "Condominio Torre LOVFT",
+                                                price: "$15,200,000 MXN",
+                                                date: new Date().toLocaleDateString(),
+                                                witness: "Sofía Elena R."
+                                            });
+                                            setIsSigning(false);
+                                        }, 1000);
+                                    }}
+                                    disabled={isSigning}
+                                    className="w-full py-4 bg-cima-gold/10 border border-cima-gold/20 rounded-2xl flex items-center justify-center gap-3 group hover:bg-cima-gold/20 transition-all mb-4"
+                                >
+                                    {isSigning ? <Loader2 className="h-4 w-4 text-cima-gold animate-spin" /> : <Sparkles className="h-4 w-4 text-cima-gold" />}
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-cima-gold">Llenado Inteligente con IA</span>
+                                </button>
+                            </div>
                             <div className="space-y-4">
                                 <div>
                                     <label className="text-[8px] font-black uppercase tracking-widest text-cima-gold block mb-2">Nombre del Cliente</label>
