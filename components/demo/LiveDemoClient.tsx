@@ -290,11 +290,15 @@ export default function LiveDemoClient() {
     function switchTier(newTier: PlanTier) {
         const oldIdx = TIER_ORDER.indexOf(tier);
         const newIdx = TIER_ORDER.indexOf(newTier);
+
+        // Intensified effects
+        setUpgradeFlash(true);
         setTier(newTier);
-        if (newIdx > oldIdx) {
-            setUpgradeFlash(true);
-            setTimeout(() => setUpgradeFlash(false), 600);
-        }
+
+        // Different effect duration based on "impact" (going up vs down)
+        const duration = newIdx > oldIdx ? 1200 : 600;
+
+        setTimeout(() => setUpgradeFlash(false), duration);
     }
 
     function toggleFullscreen() {
@@ -327,12 +331,25 @@ export default function LiveDemoClient() {
             <AnimatePresence>
                 {upgradeFlash && (
                     <motion.div
-                        initial={{ opacity: 0.7 }}
-                        animate={{ opacity: 0 }}
+                        initial={{ opacity: 0, scale: 1 }}
+                        animate={{
+                            opacity: [0, 0.8, 0],
+                            scale: [1, 1.05, 1],
+                            backgroundColor: tier === "premium" ? ["rgba(200,169,110,0)", "rgba(200,169,110,0.4)", "rgba(200,169,110,0)"] : ["rgba(59,130,246,0)", "rgba(59,130,246,0.3)", "rgba(59,130,246,0)"]
+                        }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="fixed inset-0 z-[60] bg-cima-gold/5 pointer-events-none"
-                    />
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
+                    >
+                        <div className="absolute inset-0 bg-gradient-radial from-white/20 to-transparent" />
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1.2, opacity: 1 }}
+                            className="text-6xl font-black uppercase tracking-[2em] text-white/5 whitespace-nowrap"
+                        >
+                            {plan.name}
+                        </motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
 

@@ -26,6 +26,8 @@ export interface PlanConfig {
             messages: boolean;
             visits: boolean;
             multiAgent: boolean;
+            aiStudio: boolean;
+            digitalVault: boolean;
         };
         portal: {
             feedback: boolean;
@@ -59,6 +61,8 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
                 messages: false,
                 visits: false,
                 multiAgent: false,
+                aiStudio: false,
+                digitalVault: false,
             },
             portal: {
                 feedback: false,
@@ -90,6 +94,8 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
                 messages: true,
                 visits: true,
                 multiAgent: false,
+                aiStudio: true,
+                digitalVault: true,
             },
             portal: {
                 feedback: true,
@@ -121,6 +127,8 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
                 messages: true,
                 visits: true,
                 multiAgent: true,
+                aiStudio: true,
+                digitalVault: true,
             },
             portal: {
                 feedback: true,
