@@ -173,15 +173,15 @@ export default function DemoAdminLive({
         if (externalTab) setActiveTab(externalTab);
     }, [externalTab]);
 
-    const maxProps = f.maxProperties === "unlimited" ? PROPERTIES.length : f.maxProperties;
+    const maxProps = plan.maxProperties === -1 ? PROPERTIES.length : plan.maxProperties;
     const visibleProps = PROPERTIES.slice(0, maxProps);
 
     const navItems = [
         { id: "propiedades", label: "Propiedades", icon: Home, locked: false },
-        { id: "leads", label: "Leads", icon: Users, locked: !f.crm, badge: leads.length },
+        { id: "leads", label: "Leads", icon: Users, locked: !f.analytics, badge: leads.length },
         { id: "visitas", label: "Visitas", icon: Calendar, locked: !f.visits },
         { id: "analiticos", label: "Analíticos", icon: BarChart3, locked: !f.analytics },
-        { id: "ia_studio", label: "IA Studio", icon: Sparkles, locked: !f.aiStudio },
+        { id: "ia_studio", label: "IA Studio", icon: Sparkles, locked: !f.multiAgent },
     ];
 
     const contentProps = {
@@ -241,7 +241,7 @@ export default function DemoAdminLive({
                         </span>
                     </button>
                     <button
-                        onClick={() => setIsDarkMode(!isDarkMode)}
+                        onClick={() => setIsDarkMode && setIsDarkMode(!isDarkMode)}
                         className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-white/40 hover:text-white transition-all"
                     >
                         {isDarkMode ? <Sun className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
