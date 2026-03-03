@@ -8,7 +8,7 @@ import {
     MessageSquare, Sparkles, Smartphone,
     Target, TrendingUp, ShieldAlert,
     CheckCircle2, X, Plus, Clock, Key, Share2, PlusCircle,
-    Camera, FileText, Settings, Menu, Briefcase, MousePointer2, Rocket, Share,
+    Camera, FileText, Settings, Menu, Briefcase, MousePointer2, Rocket, Share, Gem,
     AlertCircle, Globe, Heart, Mail, Phone,
     Building2, Search, Info, Trash2, Edit3, Filter,
     ChevronRight, ChevronLeft, Calendar, UserPlus,
@@ -1437,7 +1437,7 @@ export default function VendeMasPage() {
                                 {[
                                     { t: "Gestión Centralizada", d: "Sube y actualiza propiedades en segundos.", icon: Layout },
                                     { t: "Generador de Portales", d: "Un clic para activar el portal del dueño.", icon: Key },
-                                    { t: "Tracking de Visitas", d: "Registra feedback real y genera reportes IA.", icon: Target }
+                                    { t: "Cierre de Onboarding", d: "Formaliza la venta con un portal interactivo.", icon: Gem }
                                 ].map((item, i) => (
                                     <li key={i} className="flex gap-4 group items-start">
                                         <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center group-hover:bg-cima-gold/20 transition-all shrink-0 mt-0.5">
@@ -1450,6 +1450,19 @@ export default function VendeMasPage() {
                                     </li>
                                 ))}
                             </ul>
+
+                            <div className="flex flex-col sm:flex-row gap-4 mt-8 md:mt-10 max-w-md mx-auto lg:mx-0">
+                                <Link
+                                    href="/checkout/onboarding"
+                                    className="group bg-cima-gold text-black px-6 py-4 rounded-full font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-white transition-all shadow-[0_20px_40px_rgba(200,169,110,0.2)]"
+                                >
+                                    Abrir Portal Onboarding <Rocket className="h-4 w-4" />
+                                </Link>
+                                <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 opacity-50">
+                                    <ShieldCheck className="h-4 w-4 text-cima-gold" />
+                                    <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest">Cierre Seguro SSL</span>
+                                </div>
+                            </div>
                         </FadeIn>
 
                         <FadeIn direction="left" className="w-full">
