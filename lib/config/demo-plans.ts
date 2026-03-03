@@ -11,7 +11,7 @@ export interface PlanConfig {
     price: string;
     tagline: string;
     maxProperties: number; // -1 = ilimitado
-    deliveryDays: number; // d├¡as de entrega
+    deliveryDays: number; // días de entrega
     color: string; // accent color
     features: {
         landing: {

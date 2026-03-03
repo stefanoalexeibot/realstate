@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign, Flame, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
@@ -65,6 +65,93 @@ const NARRATIVE: Record<View, { title: string; desc: string }> = {
 };
 
 type View = "admin" | "portal" | "landing";
+
+const ROI_DATA: Record<PlanTier, { avgComission: string; leadsPerMonth: string; potentialRevenue: string }> = {
+    basico: { avgComission: "$150K", leadsPerMonth: "5-10", potentialRevenue: "$150K/mes" },
+    profesional: { avgComission: "$300K", leadsPerMonth: "15-30", potentialRevenue: "$450K/mes" },
+    premium: { avgComission: "$500K", leadsPerMonth: "30-60", potentialRevenue: "$1.2M/mes" },
+};
+
+/* --- Comparison Modal ---------------------------------------- */
+function ComparisonModal({ onClose }: { onClose: () => void }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[99] bg-black/90 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={onClose}
+        >
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="bg-[#111] rounded-3xl p-8 max-w-2xl w-full border border-white/10 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex items-center justify-between mb-8">
+                    <h3 className="text-lg font-black text-white uppercase tracking-tight">¿Por qué Cima?</h3>
+                    <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/10 transition-all">
+                        <X className="h-5 w-5 text-white/40" />
+                    </button>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                    {/* Sin Cima */}
+                    <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="h-8 w-8 rounded-lg bg-red-500/20 flex items-center justify-center">
+                                <X className="h-4 w-4 text-red-400" />
+                            </div>
+                            <span className="text-sm font-black text-red-400 uppercase">Sin Plataforma</span>
+                        </div>
+                        {[
+                            { icon: Smartphone, text: "Fotos por WhatsApp sin orden" },
+                            { icon: FileSpreadsheet, text: "Seguimiento en Excel o papel" },
+                            { icon: PhoneCall, text: "Clientes llamando cada semana" },
+                            { icon: ImageIcon, text: "Sin landing page profesional" },
+                            { icon: BarChart3, text: "Sin datos ni analíticos" },
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center gap-3">
+                                <item.icon className="h-4 w-4 text-red-400/60 shrink-0" />
+                                <span className="text-[11px] text-white/50">{item.text}</span>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Con Cima */}
+                    <div className="bg-cima-gold/5 border border-cima-gold/20 rounded-2xl p-6 space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="h-8 w-8 rounded-lg bg-cima-gold/20 flex items-center justify-center">
+                                <CheckCircle2 className="h-4 w-4 text-cima-gold" />
+                            </div>
+                            <span className="text-sm font-black text-cima-gold uppercase">Con Cima Pro</span>
+                        </div>
+                        {[
+                            { icon: Globe, text: "Landing profesional por propiedad" },
+                            { icon: UserCheck, text: "Leads automáticos con IA" },
+                            { icon: Shield, text: "Portal del dueño 24/7" },
+                            { icon: TrendingUp, text: "Analíticos en tiempo real" },
+                            { icon: Zap, text: "Cierre 3x más rápido" },
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center gap-3">
+                                <item.icon className="h-4 w-4 text-cima-gold/80 shrink-0" />
+                                <span className="text-[11px] text-white/70 font-medium">{item.text}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <a
+                    href="https://propiedades-mty.vercel.app/checkout/onboarding"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-8 w-full flex items-center justify-center gap-2 bg-cima-gold text-black py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-cima-gold/20 active:scale-95"
+                >
+                    <DollarSign className="h-4 w-4" />
+                    ¡Comenzar Ahora!
+                </a>
+            </motion.div>
+        </motion.div>
+    );
+}
 
 /* ΓöÇΓöÇΓöÇ Presentation Timer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function PresentationTimer() {
@@ -175,6 +262,8 @@ export default function LiveDemoClient() {
     const [editingName, setEditingName] = useState(false);
     const [autoDemo, setAutoDemo] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
+    const [showComparison, setShowComparison] = useState(false);
+    const [leadPulse, setLeadPulse] = useState(false);
     const autoDemoRef = useRef<NodeJS.Timeout | null>(null);
     const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
@@ -397,35 +486,48 @@ export default function LiveDemoClient() {
                             {/* Actions */}
                             <div className="flex items-center gap-2">
                                 {/* Plan Selector */}
+                                {/* Plan Selector with prices */}
                                 <div className="hidden md:flex items-center gap-0.5 bg-white/[0.03] p-0.5 rounded-lg border border-white/10">
                                     {([
-                                        { id: "basico" as PlanTier, label: "Starter", price: plan.tier === "basico" ? plan.price : DEMO_PLANS.basico.price },
-                                        { id: "profesional" as PlanTier, label: "Pro", price: plan.tier === "profesional" ? plan.price : DEMO_PLANS.profesional.price },
-                                        { id: "premium" as PlanTier, label: "Team", price: plan.tier === "premium" ? plan.price : DEMO_PLANS.premium.price },
+                                        { id: "basico" as PlanTier, label: "Starter", price: DEMO_PLANS.basico.price },
+                                        { id: "profesional" as PlanTier, label: "Pro", price: DEMO_PLANS.profesional.price },
+                                        { id: "premium" as PlanTier, label: "Team", price: DEMO_PLANS.premium.price },
                                     ]).map((t) => (
                                         <button
                                             key={t.id}
                                             onClick={() => switchTier(t.id)}
-                                            className={`px-2.5 py-1.5 rounded-md text-[8px] font-bold uppercase tracking-wider transition-all ${tier === t.id
+                                            className={`px-2.5 py-1.5 rounded-md text-[8px] font-bold uppercase tracking-wider transition-all flex items-center gap-1 ${tier === t.id
                                                 ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
                                                 : "text-white/30 hover:text-white/50 hover:bg-white/5"
                                                 }`}
                                         >
                                             <span>{t.label}</span>
+                                            <span className={`text-[7px] font-mono ${tier === t.id ? "text-black/60" : "text-white/20"}`}>{t.price}</span>
                                         </button>
                                     ))}
                                 </div>
 
-                                {/* Checkout / Cerrar button */}
+                                {/* Comparison button */}
+                                <button
+                                    onClick={() => setShowComparison(true)}
+                                    className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[8px] font-bold uppercase tracking-wider text-white/40 hover:text-white hover:bg-white/10 transition-all"
+                                    title="Ver comparativa"
+                                >
+                                    <Shield className="h-3 w-3" />
+                                    VS
+                                </button>
+
+                                {/* ¡Lo Quiero! CTA */}
                                 <a
                                     href="https://propiedades-mty.vercel.app/checkout/onboarding"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg text-[8px] font-black uppercase tracking-wider text-green-400 hover:bg-green-500/20 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-green-500/5"
-                                    title="Cerrar venta — Ir a Checkout"
+                                    className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cima-gold to-amber-500 text-black rounded-xl text-[9px] font-black uppercase tracking-wider hover:from-white hover:to-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cima-gold/30 animate-pulse"
+                                    title="Cerrar venta"
+                                    style={{ animationDuration: '3s' }}
                                 >
                                     <DollarSign className="h-3.5 w-3.5" />
-                                    Cerrar
+                                    ¡Lo Quiero!
                                 </a>
 
                                 {/* Timer */}
@@ -466,19 +568,47 @@ export default function LiveDemoClient() {
                             </div>
                         </div>
 
-                        {/* Context bar */}
+                        {/* Context bar + ROI widget */}
                         <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between">
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
                                 <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
-                                <span className="text-[7px] text-white/15">·</span>
+                                <span className="text-[7px] text-white/15">&middot;</span>
                                 <span className="text-[7px] text-white/20">{plan.price}</span>
-                                <span className="text-[7px] text-white/15">·</span>
-                                <span className="text-[7px] text-white/20">{plan.deliveryDays}d</span>
+                                <span className="text-[7px] text-white/15">&middot;</span>
+                                <span className="text-[7px] text-white/20">{plan.deliveryDays}d entrega</span>
+                            </div>
+                            {/* ROI Widget */}
+                            <div className="hidden sm:flex items-center gap-2">
+                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20">
+                                    <TrendingUp className="h-3 w-3 text-green-400" />
+                                    <span className="text-[8px] font-black text-green-400">
+                                        ROI: {ROI_DATA[tier].potentialRevenue}
+                                    </span>
+                                    <span className="text-[7px] text-green-400/50">
+                                        ({ROI_DATA[tier].leadsPerMonth} leads)
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* ΓöÇΓöÇ Narrative Caption ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+                        {/* Urgency Banner */}
+                        <div className="border-t border-orange-500/10 bg-gradient-to-r from-orange-500/10 via-red-500/5 to-orange-500/10 px-4 py-1.5 relative overflow-hidden">
+                            <div className="flex items-center justify-center gap-2">
+                                <Flame className="h-3 w-3 text-orange-400 animate-pulse" />
+                                <span className="text-[9px] font-black text-orange-400 uppercase tracking-wider">Precio de lanzamiento</span>
+                                <span className="text-[9px] font-black text-white">— 50% OFF los primeros 3 meses</span>
+                                <Flame className="h-3 w-3 text-orange-400 animate-pulse" />
+                            </div>
+                            <motion.div
+                                initial={{ left: "-20%" }}
+                                animate={{ left: "120%" }}
+                                transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+                                className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12"
+                            />
+                        </div>
+
+                        {/* Narrative Caption */}
                         <div className="bg-cima-gold/5 border-b border-cima-gold/10 px-4 py-2 relative overflow-hidden">
                             <motion.div
                                 key={view}
@@ -493,7 +623,6 @@ export default function LiveDemoClient() {
                                     {NARRATIVE[view].desc}
                                 </span>
                             </motion.div>
-                            {/* Animated scanning line */}
                             <motion.div
                                 initial={{ left: "-10%" }}
                                 animate={{ left: "110%" }}
@@ -550,17 +679,52 @@ export default function LiveDemoClient() {
                 </motion.div>
             </AnimatePresence>
 
-            {/* ΓöÇΓöÇ Bottom CTA bar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* Simulate Lead floating button */}
+            {view === "admin" && !focusMode && (
+                <motion.button
+                    onClick={() => {
+                        setLeadPulse(true);
+                        handleAddLead();
+                        handleNavigateToLeads();
+                        setTimeout(() => setLeadPulse(false), 2000);
+                    }}
+                    className="fixed bottom-24 right-6 z-50 flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-wider shadow-2xl shadow-purple-500/30 hover:scale-110 active:scale-95 transition-all border border-white/20"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    title="Simular un nuevo lead en tiempo real"
+                >
+                    <Zap className="h-4 w-4 animate-pulse" />
+                    Simular Lead
+                </motion.button>
+            )}
+
+            {/* Lead pulse overlay */}
+            <AnimatePresence>
+                {leadPulse && (
+                    <motion.div
+                        initial={{ opacity: 0.6, scale: 1 }}
+                        animate={{ opacity: 0, scale: 2 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.5 }}
+                        className="fixed inset-0 z-[60] pointer-events-none"
+                    >
+                        <div className="absolute inset-0 border-4 border-cima-gold/40 rounded-3xl" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Bottom CTA bar */}
             {view !== "landing" && !focusMode && (
                 <div className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-black via-black/90 to-transparent pt-8 pb-4 px-4 pointer-events-none">
                     <div className="max-w-lg mx-auto flex items-center gap-3 pointer-events-auto">
                         <a
-                            href={`https://wa.me/${process.env.NEXT_PUBLIC_CIMA_WA || "528100000000"}?text=${encodeURIComponent(`Hola, vi el demo en vivo y me interesa el plan ${plan.name} (${plan.price}). ${agentName ? `Soy ${agentName}.` : ""}`)}`}
+                            href="https://propiedades-mty.vercel.app/checkout/onboarding"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
                         >
-                            Activar mi cuenta ┬╖ {plan.name}
+                            <DollarSign className="h-4 w-4" />
+                            ¡Lo Quiero! &middot; {plan.name}
                         </a>
                         <button
                             onClick={() => setShowQR(true)}
@@ -586,6 +750,31 @@ export default function LiveDemoClient() {
                                 : "Tu cliente podríá seguir el progreso de su venta cómodamente desde su smartphone."
                         }
                     />
+                )}
+            </AnimatePresence>
+
+            {/* Comparison Modal */}
+            <AnimatePresence>
+                {showComparison && <ComparisonModal onClose={() => setShowComparison(false)} />}
+            </AnimatePresence>
+
+            {/* Upgrade glow flash */}
+            <AnimatePresence>
+                {upgradeFlash && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="fixed inset-0 z-[60] pointer-events-none"
+                    >
+                        <motion.div
+                            initial={{ top: "0%" }}
+                            animate={{ top: "100%" }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cima-gold to-transparent shadow-[0_0_30px_10px_rgba(200,169,110,0.4)]"
+                        />
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>
