@@ -13,6 +13,7 @@ import UpgradeBanner from "./UpgradeBanner";
 
 interface DemoPortalProps {
     plan: PlanConfig;
+    property?: any;
     isMobilePreview?: boolean;
     setIsMobilePreview?: (v: boolean) => void;
     isDND?: boolean;
@@ -25,6 +26,7 @@ type TabId = "dashboard" | "feedback" | "documents" | "evidence";
 
 export default function DemoPortal({
     plan,
+    property,
     isMobilePreview = false,
     setIsMobilePreview,
     isDND = false,
@@ -90,7 +92,7 @@ export default function DemoPortal({
                             </div>
                             <div>
                                 <h1 className="text-lg font-heading font-black tracking-tight">Portal del Propietario</h1>
-                                <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">Residencia Las Misiones • {plan.name}</p>
+                                <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">{property?.name || "Residencia Las Misiones"} • {plan.name}</p>
                             </div>
                         </div>
                     </div>

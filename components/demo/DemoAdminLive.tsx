@@ -32,7 +32,6 @@ const AGENTS: Agent[] = [
     { id: 2, name: "Mariana L.", role: "Asesor Senior", avatar: "/users/2.jpg", status: "En Visita" },
     { id: 3, name: "Roberto M.", role: "Asesor Comercial", avatar: "/users/3.jpg", status: "Activo" },
 ];
-
 interface DemoAdminLiveProps {
     plan: PlanConfig;
     leads?: any[];
@@ -49,16 +48,12 @@ interface DemoAdminLiveProps {
     setIsMobilePreview?: (v: boolean) => void;
     isDND?: boolean;
     setIsDND?: (v: boolean) => void;
+    properties?: any[];
+    onUpdateProperty?: (updatedProp: any) => void;
 }
 
 /* ─── Mock Data ───────────────────────────────────────────────────────────── */
-const PROPERTIES = [
-    { id: 1, name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/estancia-antes.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
-    { id: 2, name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/loft-cima.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa María" },
-    { id: 3, name: "Penthouse Nubes", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/recamara-antes.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa María" },
-    { id: 4, name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-antes.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de Anáhuac 305, Valle Poniente" },
-    { id: 5, name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/estancia-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
-];
+// PROPERTIES constant removed, now controlled via props from LiveDemoClient
 
 const NOTIFICATIONS = [
     { icon: Zap, text: "Lead de Instagram calificado por IA", sub: "Rodrigo Sáenz — Interés alto en Las Misiones", color: "text-pink-400 bg-pink-500/20" },
@@ -214,25 +209,16 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
 
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
     const [currentAgent, setCurrentAgent] = useState<Agent>(AGENTS[0]);
-    const [localProperties, setLocalProperties] = useState(PROPERTIES);
+    const [editingProperty, setEditingProperty] = useState<any>(null);
     const [isAddPropertyOpen, setIsAddPropertyOpen] = useState(false);
     const [isAgentSelectorOpen, setIsAgentSelectorOpen] = useState(false);
     const [isAiFilling, setIsAiFilling] = useState(false);
 
     const f = plan.features.admin;
 
-    React.useEffect(() => {
-        if (externalTab) {
-            setActiveTab(externalTab);
-            return;
-        }
-        if ((activeTab === "analiticos" && !f.analytics) || (activeTab === "ia_studio" && !f.aiStudio)) {
-            setActiveTab("propiedades");
-        }
-    }, [plan.tier, externalTab, f.analytics, f.aiStudio, activeTab]);
-
-    const maxProps = plan.maxProperties === -1 ? localProperties.length : plan.maxProperties;
-    const visibleProps = localProperties.slice(0, maxProps);
+    const actualProperties = properties || [];
+    const maxProps = plan.maxProperties === -1 ? actualProperties.length : plan.maxProperties;
+    const visibleProps = actualProperties.slice(0, maxProps);
 
     const navItems: { id: SidebarTab; icon: React.ElementType; label: string; badge?: string; locked: boolean }[] = [
         { id: "propiedades", icon: Layout, label: "Propiedades", locked: false },
@@ -334,7 +320,14 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                     exit={{ opacity: 0, y: -5 }}
                     transition={{ duration: 0.2 }}
                 >
-                    {activeTab === "propiedades" && <PropertiesView properties={visibleProps} isDarkMode={isDarkMode} isMobilePreview={isMobilePreview} />}
+                    {activeTab === "propiedades" && (
+                        <PropertiesView
+                            properties={visibleProps}
+                            isDarkMode={isDarkMode}
+                            isMobilePreview={isMobilePreview}
+                            onEdit={(p: any) => setEditingProperty(p)}
+                        />
+                    )}
                     {activeTab === "leads" && <LeadsView leads={leads} isDarkMode={isDarkMode} onUpdate={onUpdateLeadStatus} />}
                     {activeTab === "pipeline" && <PipelineView isDarkMode={isDarkMode} />}
                     {activeTab === "calendario" && <CalendarView isDarkMode={isDarkMode} />}
@@ -427,12 +420,12 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                         <div className="p-4 bg-white/[0.03] border border-white/10 rounded-2xl">
                             <div className="flex items-center justify-between mb-2">
                                 <p className="text-[7px] text-cima-gold font-black uppercase tracking-widest">Capacidad</p>
-                                <p className="text-[7px] text-white/40 font-mono">{visibleProps.length}/{maxProps === PROPERTIES.length ? "∞" : maxProps}</p>
+                                <p className="text-[7px] text-white/40 font-mono">{visibleProps.length}/{maxProps === 999 ? "∞" : maxProps}</p>
                             </div>
                             <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-cima-gold rounded-full shadow-[0_0_8px_rgba(200,169,110,0.4)] transition-all duration-1000"
-                                    style={{ width: `${(visibleProps.length / PROPERTIES.length) * 100}%` }}
+                                    style={{ width: `${(visibleProps.length / actualProperties.length) * 100}%` }}
                                 />
                             </div>
                         </div>
@@ -516,7 +509,18 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                         </div>
                     ) : (
                         <div className="h-full p-8 overflow-y-auto custom-scrollbar">
-                            {renderContent()}
+                            {activeTab === "propiedades" ? (
+                                <PropertiesView
+                                    properties={visibleProps}
+                                    isDarkMode={isDarkMode}
+                                    isMobilePreview={isMobilePreview}
+                                    onEdit={(p: any) => setEditingProperty(p)}
+                                />
+                            ) : activeTab === "leads" ? (
+                                <LeadsView leads={leads} isDarkMode={isDarkMode} onUpdate={onUpdateLeadStatus} />
+                            ) : (
+                                <div className="flex items-center justify-center h-full opacity-20">Contenido en construcción</div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -527,7 +531,7 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
                 isOpen={isAddPropertyOpen}
                 onClose={() => setIsAddPropertyOpen(false)}
                 isDarkMode={isDarkMode}
-                onAdd={(p: any) => setLocalProperties([p, ...localProperties])}
+                onAdd={(p: any) => {/* Propiedades ahora elevadas */ }}
             />
             <AgentSelectorModal
                 isOpen={isAgentSelectorOpen}
@@ -637,6 +641,111 @@ function AddPropertyModal({ isOpen, onClose, isDarkMode, onAdd }: any) {
                 </div>
             </motion.div>
         </div>
+    );
+}
+
+function EditPropertyModal({ isOpen, onClose, isDarkMode, property, onSave }: any) {
+    const [name, setName] = useState("");
+    const [price, setPrice] = useState("");
+    const [status, setStatus] = useState("");
+    const [owner, setOwner] = useState("");
+
+    useEffect(() => {
+        if (property) {
+            setName(property.name);
+            setPrice(property.price);
+            setStatus(property.status);
+            setOwner(property.owner);
+        }
+    }, [property]);
+
+    if (!isOpen) return null;
+
+    return (
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                onClick={onClose}
+            >
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                    className={`w-full max-w-lg rounded-3xl p-8 border ${isDarkMode ? "bg-[#0A0A0B] border-white/10" : "bg-white border-gray-100"}`}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className={`text-xl font-heading font-black ${isDarkMode ? "text-white" : "text-gray-900"}`}>Editar Propiedad</h3>
+                            <p className="text-[10px] uppercase font-bold text-cima-gold tracking-widest mt-1">Sincronización en tiempo real</p>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                            <X className="h-5 w-5" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-[9px] uppercase font-black tracking-widest opacity-40">Nombre de la Propiedad</label>
+                            <input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-cima-gold/50 outline-none transition-all ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] uppercase font-black tracking-widest opacity-40">Precio</label>
+                                <input
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                    className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-cima-gold/50 outline-none transition-all ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] uppercase font-black tracking-widest opacity-40">Estado</label>
+                                <select
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                    className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-cima-gold/50 outline-none transition-all ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                                >
+                                    <option value="Venta">Venta</option>
+                                    <option value="Renta">Renta</option>
+                                    <option value="Exclusiva">Exclusiva</option>
+                                    <option value="Vendido">Vendido</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[9px] uppercase font-black tracking-widest opacity-40">Propietario / Dueño</label>
+                            <input
+                                value={owner}
+                                onChange={(e) => setOwner(e.target.value)}
+                                className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-cima-gold/50 outline-none transition-all ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mt-8 flex gap-3">
+                        <button
+                            onClick={onClose}
+                            className="flex-1 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/10 hover:bg-white/5 transition-all"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={() => onSave({ ...property, name, price, status, owner })}
+                            className="flex-1 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-cima-gold text-black hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
+                        >
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
     );
 }
 
@@ -780,7 +889,7 @@ function CalendarView({ isDarkMode }: { isDarkMode: boolean }) {
 
 /* ─── VIEWS ───────────────────────────────────────────────────────────────── */
 
-function PropertiesView({ properties, isDarkMode, isMobilePreview }: any) {
+function PropertiesView({ properties, isDarkMode, isMobilePreview, onEdit }: any) {
     return (
         <div className={`grid gap-4 ${isMobilePreview ? "grid-cols-1" : "grid-cols-1 xl:grid-cols-2"}`}>
             {properties.map((prop: any, i: number) => (
@@ -805,7 +914,10 @@ function PropertiesView({ properties, isDarkMode, isMobilePreview }: any) {
                                 <span className="px-2 py-0.5 rounded-full bg-cima-gold/10 text-cima-gold text-[7px] font-black uppercase tracking-widest border border-cima-gold/10">{prop.status}</span>
                                 <span className={`text-[8px] font-mono opacity-40 uppercase tracking-tighter ${isDarkMode ? "text-white" : "text-gray-900"}`}>{prop.owner}</span>
                             </div>
-                            <button className="h-7 w-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cima-gold hover:text-black transition-all group/btn">
+                            <button
+                                onClick={() => onEdit?.(prop)}
+                                className="h-7 w-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cima-gold hover:text-black transition-all group/btn"
+                            >
                                 <Edit3 className="h-3 w-3" />
                             </button>
                         </div>

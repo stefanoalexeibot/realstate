@@ -31,6 +31,29 @@ export interface LiveMessage {
     isAi?: boolean;
 }
 
+export interface LiveProperty {
+    id: number;
+    name: string;
+    price: string;
+    status: string;
+    owner: string;
+    img: string;
+    hits: number;
+    trend: number[];
+    beds: number;
+    baths: number;
+    m2: number;
+    address: string;
+}
+
+const INITIAL_PROPERTIES: LiveProperty[] = [
+    { id: 1, name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/estancia-antes.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
+    { id: 2, name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/loft-cima.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa María" },
+    { id: 3, name: "Penthouse Nubes", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/recamara-antes.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa María" },
+    { id: 4, name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-antes.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de Anáhuac 305, Valle Poniente" },
+    { id: 5, name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/estancia-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
+];
+
 const INITIAL_LEADS: LiveLead[] = [
     { id: "1", name: "Ana Martínez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
     { id: "2", name: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
@@ -184,9 +207,14 @@ export default function LiveDemoClient() {
     const nameInputRef = useRef<HTMLInputElement>(null);
 
     // Shared State
+    const [properties, setProperties] = useState<LiveProperty[]>(INITIAL_PROPERTIES);
     const [leads, setLeads] = useState<LiveLead[]>(INITIAL_LEADS);
     const [messages, setMessages] = useState<LiveMessage[]>(INITIAL_MESSAGES);
     const [lastLeadId, setLastLeadId] = useState("");
+
+    const handleUpdateProperty = useCallback((updatedProp: LiveProperty) => {
+        setProperties(prev => prev.map(p => p.id === updatedProp.id ? updatedProp : p));
+    }, []);
 
     const handleAddLead = useCallback((newLeadData?: Partial<LiveLead>) => {
         const id = Math.random().toString(36).substr(2, 9);
@@ -580,6 +608,8 @@ export default function LiveDemoClient() {
                             agentName={agentName}
                             onNavigateToLeads={handleNavigateToLeads}
                             externalTab={AUTO_STEPS[autoDemoStep]?.tab}
+                            properties={properties}
+                            onUpdateProperty={handleUpdateProperty}
                             leads={leads}
                             onUpdateLeadStatus={handleUpdateLeadStatus}
                             newLeadId={lastLeadId}
@@ -592,6 +622,7 @@ export default function LiveDemoClient() {
                     {view === "portal" && (
                         <DemoPortal
                             plan={plan}
+                            property={properties.find(p => p.id === 1) || properties[0]}
                             isMobilePreview={isMobilePreview}
                             setIsMobilePreview={setIsMobilePreview}
                             isDND={isDND}
@@ -603,6 +634,7 @@ export default function LiveDemoClient() {
                     {view === "landing" && (
                         <DemoLandingExample
                             plan={plan}
+                            property={properties.find(p => p.id === 1) || properties[0]}
                             onLeadCapture={handleAddLead}
                             onSendMessage={handleAddMessage}
                             messages={messages}

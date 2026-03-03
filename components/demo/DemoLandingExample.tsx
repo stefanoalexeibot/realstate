@@ -72,7 +72,7 @@ function LandingContent({
     isTeam, isPro, isStarter, f, accentText, accentBg, accentBorder,
     activePhoto, setActivePhoto, photos, handleTriggerLead,
     propertyValue, setPropertyValue, commissionTraditional, commissionCima,
-    savings, Wrapper, anim, delayAnim, onSendMessage, messages, isDND, plan
+    savings, Wrapper, anim, delayAnim, onSendMessage, messages, isDND, plan, property
 }: any) {
     // ─── RENDERING BY TIER ───
 
@@ -99,8 +99,8 @@ function LandingContent({
                         <div className="space-y-8">
                             <div>
                                 <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full uppercase tracking-widest border border-blue-100">Oportunidad Única</span>
-                                <h1 className="text-4xl font-black leading-tight mt-4 text-gray-900">Residencia en San Jerónimo</h1>
-                                <p className="text-2xl font-light text-gray-400 mt-2">$8,500,000 MXN</p>
+                                <h1 className="text-4xl font-black leading-tight mt-4 text-gray-900">{property?.name || "Residencia en San Jerónimo"}</h1>
+                                <p className="text-2xl font-light text-gray-400 mt-2">{property?.price || "$8,500,000 MXN"}</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
@@ -380,7 +380,7 @@ function LandingContent({
  * Main Demo Component
  */
 export default function DemoLandingExample({
-    plan, onLeadCapture, onSendMessage, messages,
+    plan, property, onLeadCapture, onSendMessage, messages,
     isMobilePreview = false, setIsMobilePreview,
     isDND = false, setIsDND, isDarkMode = true, setIsDarkMode
 }: any) {
@@ -419,7 +419,7 @@ export default function DemoLandingExample({
         isTeam, isPro, isStarter, f, accentText, accentBg, accentBorder,
         activePhoto, setActivePhoto, photos, handleTriggerLead,
         propertyValue, setPropertyValue, commissionTraditional, commissionCima,
-        savings, Wrapper, anim, delayAnim, onSendMessage, messages, isDND, plan
+        savings, Wrapper, anim, delayAnim, onSendMessage, messages, isDND, plan, property
     };
 
     return (
