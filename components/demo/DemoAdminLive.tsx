@@ -434,36 +434,38 @@ export default function DemoAdminLive({
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="relative p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
-                                        <Bell className="h-3.5 w-3.5 text-white/40" />
-                                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[7px] font-black text-white flex items-center justify-center">5</span>
-                                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 animate-ping opacity-30" />
+                                    <div className="flex items-center gap-2 pr-2 border-r border-white/10">
+                                        <div className="relative p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
+                                            <Bell className="h-3.5 w-3.5 text-white/40" />
+                                            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[7px] font-black text-white flex items-center justify-center">5</span>
+                                            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 animate-ping opacity-30" />
+                                        </div>
+
+                                        {/* Mobile Preview Toggle */}
+                                        <button
+                                            onClick={() => setIsMobilePreview(!isMobilePreview)}
+                                            className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
+                                            title={isMobilePreview ? "Volver a Escritorio" : "Ver en Móvil"}
+                                        >
+                                            {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
+                                        </button>
                                     </div>
 
-                                    {/* Mobile Preview Toggle */}
-                                    <button
-                                        onClick={() => setIsMobilePreview(!isMobilePreview)}
-                                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
-                                        title={isMobilePreview ? "Volver a Escritorio" : "Ver en Móvil"}
-                                    >
-                                        {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
-                                        <span className="text-[8px] font-black uppercase tracking-widest hidden md:inline">
-                                            {isMobilePreview ? "Escritorio" : "Móvil"}
-                                        </span>
-                                    </button>
+                                    <div className="flex items-center gap-2 px-1">
+                                        {/* Checkout / Close Sale Button */}
+                                        <button
+                                            onClick={() => setShowCheckoutModal(true)}
+                                            className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl hover:bg-white transition-all shadow-lg shadow-cima-gold/20 active:scale-95 shrink-0"
+                                        >
+                                            <Zap className="h-3.5 w-3.5 fill-black" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Cerrar Venta</span>
+                                        </button>
 
-                                    {/* Checkout / Close Sale Button */}
-                                    <button
-                                        onClick={() => setShowCheckoutModal(true)}
-                                        className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0"
-                                    >
-                                        <Briefcase className="h-3.5 w-3.5" />
-                                        <span className="text-[8px] font-black uppercase tracking-widest hidden md:inline">Cerrar Venta</span>
-                                    </button>
-
-                                    <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
-                                        <Plus className="h-3.5 w-3.5" /> Nueva
-                                    </button>
+                                        <button className="flex items-center gap-2 bg-white/10 text-white px-4 py-2.5 rounded-xl hover:bg-white/20 transition-all border border-white/10 shrink-0">
+                                            <Plus className="h-3.5 w-3.5" />
+                                            <span className="text-[9px] font-bold uppercase tracking-widest hidden sm:inline">Nueva</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
