@@ -1,28 +1,24 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Home, Phone, MapPin, BedDouble, Bath, Ruler,
     Camera, Calendar, Shield, Star, ArrowRight, CheckCircle2,
-    TrendingUp, Users as UsersIcon, Zap, ChevronLeft, ChevronRight, MessageSquare, Award, Eye, X, Send, Sparkles, Smartphone, Monitor, Moon, MoonStar
+    TrendingUp, Users as UsersIcon, Zap, ChevronLeft, ChevronRight, MessageSquare, Award, Eye, X, Send, Sparkles
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { type LiveMessage } from "./LiveDemoClient";
-import { MobileFrame } from "./MobileFrame";
 
 /**
  * Social proof component for Pro/Team plans
  */
-function SocialProofToast({ tier, isDND }: { tier: string; isDND: boolean }) {
+function SocialProofToast({ tier }: { tier: string }) {
     const [visible, setVisible] = useState(false);
     const [count, setCount] = useState(12);
 
     useEffect(() => {
-        if (tier === "basico" || isDND) {
-            setVisible(false);
-            return;
-        }
+        if (tier === "basico") return;
 
         const timer = setTimeout(() => {
             setCount(Math.floor(8 + Math.random() * 8));
@@ -30,7 +26,7 @@ function SocialProofToast({ tier, isDND }: { tier: string; isDND: boolean }) {
         }, 3000);
 
         return () => clearTimeout(timer);
-    }, [tier, isDND]);
+    }, [tier]);
 
     return (
         <AnimatePresence>
@@ -66,336 +62,34 @@ function SocialProofToast({ tier, isDND }: { tier: string; isDND: boolean }) {
 }
 
 /**
- * Main content of the landing page, extracted for reusability between desktop/mobile views
- */
-function LandingContent({
-    isTeam, isPro, isStarter, f, accentText, accentBg, accentBorder,
-    activePhoto, setActivePhoto, photos, handleTriggerLead,
-    propertyValue, setPropertyValue, commissionTraditional, commissionCima,
-    savings, Wrapper, anim, delayAnim, onSendMessage, messages, isDND, plan, property
-}: any) {
-    // ─── RENDERING BY TIER ───
-
-    // 1. STARTER: Minimalist & Clean
-    if (isStarter) {
-        return (
-            <div className="w-full bg-white text-gray-900 min-h-screen font-sans">
-                <nav className="p-6 flex justify-between items-center border-b border-gray-100">
-                    <div className="font-bold flex items-center gap-2">
-                        <Home className="h-5 w-5 text-gray-400" />
-                        <span className="tracking-tight">Inmuebles Direct</span>
-                    </div>
-                </nav>
-                <div className="max-w-4xl mx-auto px-6 py-20">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="rounded-3xl overflow-hidden aspect-video bg-gray-100 shadow-2xl border border-gray-100 relative group"
-                        >
-                            <img src={photos[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="Property" />
-                            <div className="absolute top-4 left-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest text-blue-600 border border-blue-100">Starter Plan</div>
-                        </motion.div>
-                        <div className="space-y-8">
-                            <div>
-                                <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full uppercase tracking-widest border border-blue-100">Oportunidad Única</span>
-                                <h1 className="text-4xl font-black leading-tight mt-4 text-gray-900">{property?.name || "Residencia en San Jerónimo"}</h1>
-                                <p className="text-2xl font-light text-gray-400 mt-2">{property?.price || "$8,500,000 MXN"}</p>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
-                                <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-xl bg-white flex items-center justify-center text-blue-600 shadow-sm"><BedDouble className="h-4 w-4" /></div>
-                                    <div><p className="text-[7px] font-black uppercase text-gray-400">Recámaras</p><p className="text-xs font-bold text-gray-900">4 Unidades</p></div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-xl bg-white flex items-center justify-center text-blue-600 shadow-sm"><Ruler className="h-4 w-4" /></div>
-                                    <div><p className="text-[7px] font-black uppercase text-gray-400">Dimensión</p><p className="text-xs font-bold text-gray-900">320 m² Totales</p></div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-3">
-                                <button onClick={handleTriggerLead} className="w-full py-4 bg-blue-600 text-white rounded-[1.2rem] font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-blue-600/20">
-                                    Solicitar Información
-                                </button>
-                                <p className="text-center text-[8px] font-bold text-gray-400 uppercase tracking-widest">Respuesta en menos de 24 horas</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // 2. PROFESIONAL: Modern & Data-Driven
-    if (isPro) {
-        return (
-            <div className="w-full bg-[#0F172A] text-white min-h-screen font-sans selection:bg-blue-500">
-                <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-blue-500/10 to-transparent" />
-                <nav className="relative p-6 max-w-6xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 bg-blue-500 rounded-lg flex items-center justify-center text-white"><Home className="h-4 w-4" /></div>
-                        <span className="font-bold tracking-tight">Cima Pro Real Estate</span>
-                    </div>
-                    <div className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-wider text-white/60">
-                        <a href="#" className="hover:text-blue-400">Galería</a>
-                        <a href="#" className="hover:text-blue-400">Calculadora</a>
-                        <a href="#" className="hover:text-blue-400 text-white">Contactar</a>
-                    </div>
-                </nav>
-
-                <div className="relative max-w-6xl mx-auto px-6 pt-12 pb-24">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                        <div className="space-y-8">
-                            <Wrapper {...anim}>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <div className="flex -space-x-2">
-                                        {[1, 2, 3].map(i => <div key={i} className="h-6 w-6 rounded-full border-2 border-[#0F172A] bg-gray-600" />)}
-                                    </div>
-                                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">+12 personas interesadas</span>
-                                </div>
-                                <h1 className="text-4xl md:text-5xl font-black leading-tight bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">
-                                    Vive el lujo en<br />San Jerónimo
-                                </h1>
-                                <div className="flex items-center gap-4 mt-6">
-                                    <p className="text-3xl font-light text-white">$8,500,000</p>
-                                    <div className="bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full text-[10px] font-bold text-green-400 uppercase tracking-widest">
-                                        Alta Plusvalía
-                                    </div>
-                                </div>
-                            </Wrapper>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                {[
-                                    { icon: BedDouble, val: "4", label: "Recámaras" },
-                                    { icon: Bath, val: "3.5", label: "Baños" },
-                                    { icon: Ruler, val: "320", label: "Metros" },
-                                    { icon: TrendingUp, val: "10%", label: "ROI Anual" },
-                                ].map((s: { icon: React.ElementType, val: string, label: string }, i: number) => (
-                                    <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
-                                        <s.icon className="h-5 w-5 text-blue-400" />
-                                        <div>
-                                            {[...Array(5)].map((_: any, i: number) => (
-                                                <Star key={i} className="h-2.5 w-2.5 text-cima-gold fill-cima-gold" />
-                                            ))}
-                                            <p className="text-[9px] font-bold text-white/30 uppercase">{s.label}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="flex gap-4">
-                                <button onClick={handleTriggerLead} className="flex-[2] bg-blue-500 hover:bg-blue-400 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all">
-                                    Agendar Cita Ahora
-                                </button>
-                                <button className="flex-1 bg-white/5 border border-white/10 hover:bg-white/10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
-                                    Llamar
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="relative">
-                            <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative group">
-                                <img src={photos[activePhoto]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-transparent" />
-                                <div className="absolute bottom-8 inset-x-8">
-                                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl shadow-2xl">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
-                                            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-blue-400">Vista en Directo</p>
-                                        </div>
-                                        <p className="text-sm font-bold text-white line-clamp-2 leading-relaxed italic">&quot;San Jerónimo está experimentando un incremento del 12% anual en plusvalía. Esta es una inversión estratégica.&quot;</p>
-                                    </div>
-                                </div>
-                                <div className="absolute top-8 right-8 flex flex-col gap-2">
-                                    <div className="bg-black/40 backdrop-blur-md border border-white/20 h-10 w-10 rounded-2xl flex items-center justify-center text-white cursor-pointer hover:bg-blue-500 transition-colors">
-                                        <Camera className="h-4 w-4" />
-                                    </div>
-                                    <div className="bg-black/40 backdrop-blur-md border border-white/20 h-10 w-10 rounded-2xl flex items-center justify-center text-white cursor-pointer hover:bg-blue-500 transition-colors">
-                                        <MapPin className="h-4 w-4" />
-                                    </div>
-                                </div>
-                            </div>
-                            {/* ROI Calculator Preview (Improved) */}
-                            <motion.div
-                                initial={{ x: 20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.8 }}
-                                className="absolute -bottom-6 -left-10 bg-white p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] text-gray-900 w-56 hidden xl:block"
-                            >
-                                <div className="flex items-center justify-between mb-4">
-                                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">Cima Pulse IA</p>
-                                    <TrendingUp className="h-3 w-3 text-blue-600" />
-                                </div>
-                                <div className="space-y-4">
-                                    <div>
-                                        <div className="flex justify-between text-[8px] font-black uppercase opacity-40 mb-1"><span>Mercado</span><span>Caliente</span></div>
-                                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                                            <motion.div initial={{ width: 0 }} animate={{ width: "85%" }} transition={{ delay: 1, duration: 1.5 }} className="h-full bg-blue-600 rounded-full" />
-                                        </div>
-                                    </div>
-                                    <p className="text-2xl font-black tracking-tight">$24,500 <span className="text-[10px] font-normal text-gray-400">MXN/mes</span></p>
-                                    <p className="text-[8px] font-bold text-green-600 uppercase tracking-widest">Renta sugerida optima</p>
-                                </div>
-                            </motion.div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // 3. TEAM: Ultra-Luxury "Cima Shield" Style
-    return (
-        <div className="relative w-full overflow-hidden bg-[#050505] text-white selection:bg-cima-gold selection:text-black min-h-screen font-sans">
-            {/* ── Aurora & Grain ───────────────────────── */}
-            <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-cima-gold/[0.05] rounded-full blur-[150px] animate-pulse" />
-            <div className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-blue-500/[0.03] rounded-full blur-[120px]" />
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
-
-            {/* Logo / Nav Overlay */}
-            <nav className="relative z-10 max-w-7xl mx-auto px-10 py-10 flex justify-between items-end">
-                <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-black text-cima-gold uppercase tracking-[0.4em]">Propiedad Exclusiva</span>
-                    <h2 className="text-2xl font-heading font-black tracking-tighter">CIMA ESTATE</h2>
-                </div>
-                <div className="flex gap-10 items-center">
-                    <div className="hidden lg:flex flex-col text-right">
-                        <span className="text-[7px] font-black text-white/40 uppercase tracking-widest">Atención Directa</span>
-                        <span className="text-[10px] font-bold">Lunes - Domingo</span>
-                    </div>
-                    <button className="h-14 w-14 rounded-full border border-white/10 bg-white/5 flex items-center justify-center hover:bg-cima-gold hover:text-black transition-all group">
-                        <Phone className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                    </button>
-                    <button onClick={handleTriggerLead} className="h-14 bg-cima-gold px-8 rounded-full text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(200,169,110,0.3)] hover:bg-white transition-all">
-                        Solicitar Dossier
-                    </button>
-                </div>
-            </nav>
-
-            <div className="relative z-10 max-w-7xl mx-auto px-10 pt-20 pb-32">
-                <div className="grid grid-cols-12 gap-10 items-stretch">
-                    {/* Hero Left */}
-                    <div className="col-span-12 lg:col-span-5 flex flex-col justify-center">
-                        <Wrapper {...anim}>
-                            <div className="flex items-center gap-3 mb-8">
-                                <span className="h-px w-12 bg-cima-gold" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-cima-gold">Mty, San Jerónimo</span>
-                            </div>
-                            <h1 className="text-6xl font-heading font-black tracking-tighter leading-[0.9] mb-10">
-                                THE<br />HIDDEN<br />PEAK
-                            </h1>
-                            <div className="space-y-6 max-w-sm mb-12">
-                                <p className="text-sm text-white/60 leading-relaxed">
-                                    Una obra maestra arquitectónica diseñada para quienes buscan la cima del confort y la exclusividad. 320 metros cuadrados de pura ingeniería estética.
-                                </p>
-                                <div className="flex items-center gap-6">
-                                    <p className="text-4xl font-heading font-black text-white">$8,500,000</p>
-                                    <div className="h-12 w-px bg-white/10" />
-                                    <p className="text-[10px] font-bold text-white/40 uppercase leading-snug">Listo para<br />Escriturar</p>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-4 gap-2">
-                                {[BedDouble, Bath, Ruler, Award].map((Icon, i) => (
-                                    <div key={i} className="aspect-square rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col items-center justify-center gap-2 group hover:border-cima-gold/40 transition-all cursor-pointer">
-                                        <Icon className="h-5 w-5 text-white/30 group-hover:text-cima-gold transition-colors" />
-                                    </div>
-                                ))}
-                            </div>
-                        </Wrapper>
-                    </div>
-
-                    {/* Image Center & Right (Complex Layout) */}
-                    <div className="col-span-12 lg:col-span-7 grid grid-cols-2 gap-6">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="col-span-2 aspect-[16/9] rounded-[3.5rem] overflow-hidden border border-white/10 relative group shadow-[0_30px_100px_rgba(0,0,0,0.5)]"
-                        >
-                            <img src={photos[activePhoto]} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-
-                            {/* DIGITAL TWIN IA SCANNER EFFECT */}
-                            <motion.div
-                                className="absolute inset-0 pointer-events-none"
-                                animate={{ top: ["0%", "100%", "0%"] }}
-                                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                            >
-                                <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-cima-gold/60 to-transparent shadow-[0_0_20px_rgba(200,169,110,0.8)]" />
-                            </motion.div>
-
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
-
-                            <div className="absolute bottom-10 left-10 flex gap-4">
-                                {photos.map((_: any, i: number) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setActivePhoto(i)}
-                                        className={`h-1.5 rounded-full transition-all duration-500 ${activePhoto === i ? "w-12 bg-cima-gold" : "w-3 bg-white/20 hover:bg-white/40"}`}
-                                    />
-                                ))}
-                            </div>
-
-                            <div className="absolute top-10 right-10 flex flex-col items-end gap-3">
-                                <div className="h-12 w-12 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-2xl group/btn hover:border-cima-gold transition-all">
-                                    <Sparkles className="h-5 w-5 text-cima-gold animate-pulse" />
-                                </div>
-                                <div className="bg-black/60 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-2xl flex items-center gap-3">
-                                    <div className="h-2 w-2 rounded-full bg-cima-gold animate-ping" />
-                                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/80">Digital Twin Activo</span>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <div className="col-span-1 aspect-square rounded-[2rem] overflow-hidden border border-white/5 relative group">
-                            <img src={photos[1]} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-                            <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all" />
-                        </div>
-                        <div className="col-span-1 bg-cima-gold/[0.03] border border-cima-gold/10 rounded-[2rem] p-8 flex flex-col justify-between">
-                            <UsersIcon className="h-8 w-8 text-cima-gold/20" />
-                            <div>
-                                <h3 className="text-[10px] font-black uppercase tracking-widest text-cima-gold mb-2">Social Proof IA</h3>
-                                <p className="text-xs font-bold leading-relaxed text-white/80">9 personas han solicitado información en las últimas 48 horas.</p>
-                            </div>
-                            <button onClick={handleTriggerLead} className="text-cima-gold text-[9px] font-black uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors">
-                                Ver Disponibilidad <ArrowRight className="h-3.5 w-3.5" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Floating Chat (Handled by ChatWidget at bottom) */}
-            <ChatWidget onSendMessage={onSendMessage} messages={messages || []} />
-            <SocialProofToast tier={plan.tier} isDND={isDND} />
-        </div>
-    );
-}
-
-/**
- * Main Demo Component
- */
-
-/**
- * Main Demo Component
+ * Tier-aware example landing. Starter=basic, Pro=animated, Team=premium.
  */
 export default function DemoLandingExample({
-    plan, property, onLeadCapture, onSendMessage, messages,
-    isMobilePreview = false, setIsMobilePreview,
-    isDND = false, setIsDND, isDarkMode = true, setIsDarkMode
-}: any) {
+    plan,
+    onLeadCapture,
+    onSendMessage,
+    messages
+}: {
+    plan: PlanConfig;
+    onLeadCapture?: (data: any) => void;
+    onSendMessage?: (from: string, text: string, isAi?: boolean) => void;
+    messages?: LiveMessage[];
+}) {
     const f = plan.features.landing;
     const isTeam = plan.tier === "premium";
     const isPro = plan.tier === "profesional";
     const isStarter = plan.tier === "basico";
 
-    const accentText = isTeam ? "text-cima-gold" : isPro ? "text-blue-400" : "text-gray-400";
+    // Accent color
+    const accent = isTeam ? "cima-gold" : isPro ? "blue-400" : "gray-400";
     const accentBg = isTeam ? "bg-cima-gold" : isPro ? "bg-blue-400" : "bg-gray-400";
+    const accentText = isTeam ? "text-cima-gold" : isPro ? "text-blue-400" : "text-gray-400";
     const accentBorder = isTeam ? "border-cima-gold/20" : isPro ? "border-blue-400/20" : "border-gray-400/20";
 
     const [activePhoto, setActivePhoto] = useState(0);
     const photos = ["/cocina-despues.png", "/estancia-despues.png", "/recamara-despues.png", "/cocina-despues.png"];
 
+    // ROI Calculator State
     const [propertyValue, setPropertyValue] = useState(8500000);
     const commissionTraditional = propertyValue * 0.05;
     const commissionCima = propertyValue * 0.03;
@@ -406,7 +100,7 @@ export default function DemoLandingExample({
             onLeadCapture({
                 name: "Lead de Prueba (Demo)",
                 phone: "81 0000 " + Math.floor(1000 + Math.random() * 9000),
-                property: "Residencia Premium — " + plan.name
+                property: "Residencia Premium ΓÇö " + plan.name
             });
         }
     };
@@ -415,59 +109,408 @@ export default function DemoLandingExample({
     const anim = f.animations ? { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } } : {};
     const delayAnim = (d: number) => f.animations ? { initial: { opacity: 0, y: 15 }, animate: { opacity: 1, y: 0 }, transition: { delay: d } } : {};
 
-    const contentProps = {
-        isTeam, isPro, isStarter, f, accentText, accentBg, accentBorder,
-        activePhoto, setActivePhoto, photos, handleTriggerLead,
-        propertyValue, setPropertyValue, commissionTraditional, commissionCima,
-        savings, Wrapper, anim, delayAnim, onSendMessage, messages, isDND, plan, property
-    };
-
     return (
-        <div className="min-h-screen bg-[#0A0A0B] text-white flex flex-col items-center">
-            {setIsMobilePreview && setIsDND && (
-                <div className="w-full max-w-6xl px-6 py-4 flex justify-end gap-2 border-b border-white/5 bg-black/50 backdrop-blur-md sticky top-0 z-[120]">
-                    <button
-                        onClick={() => setIsMobilePreview(!isMobilePreview)}
-                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
-                    >
-                        {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
-                        <span className="text-[8px] font-black uppercase tracking-widest">
-                            {isMobilePreview ? "Escritorio" : "Móvil"}
-                        </span>
-                    </button>
-                    <button
-                        onClick={() => setIsDND(!isDND)}
-                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isDND ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
-                    >
-                        {isDND ? <MoonStar className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-                        <span className="text-[8px] font-black uppercase tracking-widest">
-                            {isDND ? "Silencio" : "Notificar"}
-                        </span>
-                    </button>
+        <div className="min-h-screen bg-[#0A0A0B] text-white relative overflow-hidden">
+            {/* ΓöÇΓöÇ Aurora BG (Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {f.aurora && (
+                <>
+                    <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cima-gold/[0.04] rounded-full blur-[120px] animate-pulse" />
+                    <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-blue-500/[0.03] rounded-full blur-[100px]" />
+                </>
+            )}
+
+            {/* ΓöÇΓöÇ Hero ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            <div className="relative">
+                {/* Simple gradient bg for non-aurora */}
+                {!f.aurora && (
+                    <div className={`absolute inset-0 bg-gradient-to-br ${isPro ? "from-blue-900/30" : "from-gray-800/20"} via-[#0A0A0B] to-[#0A0A0B]`} />
+                )}
+
+                <div className="relative max-w-6xl mx-auto px-6 pt-8 pb-16">
+                    {/* Nav */}
+                    <div className="flex items-center justify-between mb-12 lg:mb-16">
+                        <div className="flex items-center gap-2">
+                            <div className={`h-8 w-8 rounded-lg ${isTeam ? "bg-cima-gold/10 border border-cima-gold/20" : "bg-white/10"} flex items-center justify-center`}>
+                                <Home className={`h-4 w-4 ${isTeam ? "text-cima-gold" : "text-white"}`} />
+                            </div>
+                            <span className="text-sm font-bold tracking-tight">Tu Marca Aqu├¡</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            {!isStarter && <span className="text-xs text-white/40 hidden sm:block">Asesor Certificado</span>}
+                            <button className={`${isTeam ? "bg-cima-gold text-black" : "bg-white text-black"} px-4 py-2 rounded-lg text-xs font-bold hover:scale-105 transition-all`}>
+                                Contactar
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Hero Content */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <Wrapper {...anim}>
+                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${isTeam ? "bg-cima-gold/10 border border-cima-gold/20" : "bg-green-500/10 border border-green-500/20"} text-[9px] font-bold ${isTeam ? "text-cima-gold" : "text-green-400"} uppercase tracking-widest mb-4`}>
+                                    <span className={`h-1.5 w-1.5 rounded-full ${isTeam ? "bg-cima-gold" : "bg-green-500"} animate-pulse`} />
+                                    Disponible
+                                </span>
+                                <h1 className="text-3xl md:text-4xl font-heading font-black tracking-tight leading-tight mb-4">
+                                    Residencia Premium
+                                    <br />
+                                    <span className="text-white/40">Colinas de San Jer├│nimo</span>
+                                </h1>
+                                <p className={`text-lg font-heading font-bold ${accentText} mb-6`}>$8,500,000 MXN</p>
+                                <p className="text-sm text-white/40 leading-relaxed mb-8 max-w-md">
+                                    {isStarter
+                                        ? "Hermosa residencia de 320m┬▓ con acabados de lujo."
+                                        : "Hermosa residencia de 320m┬▓ en una de las zonas m├ís exclusivas. Acabados de lujo, jard├¡n privado y vista panor├ímica a la monta├▒a."
+                                    }
+                                </p>
+                            </Wrapper>
+
+                            {/* Stats */}
+                            <div className="grid grid-cols-4 gap-3 mb-8">
+                                {[
+                                    { icon: BedDouble, value: "4", label: "Rec├ímaras" },
+                                    { icon: Bath, value: "3.5", label: "Ba├▒os" },
+                                    { icon: Ruler, value: "320", label: "m┬▓" },
+                                    { icon: Camera, value: "24", label: "Fotos" },
+                                ].map((stat, i) => (
+                                    <Wrapper key={i} {...delayAnim(0.2 + i * 0.1)}
+                                        className={`${isTeam ? "bg-cima-gold/[0.03] border-cima-gold/10" : "bg-white/[0.03] border-white/5"} border rounded-xl p-3 text-center`}
+                                    >
+                                        <stat.icon className={`h-4 w-4 ${isTeam ? "text-cima-gold/30" : "text-white/20"} mx-auto mb-1`} />
+                                        <p className="text-sm font-bold text-white">{stat.value}</p>
+                                        <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
+                                    </Wrapper>
+                                ))}
+                            </div>
+
+                            {/* CTA */}
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={handleTriggerLead}
+                                    className={`flex-1 flex items-center justify-center gap-2 ${isTeam ? "bg-cima-gold text-black hover:bg-white" : "bg-white text-black hover:bg-blue-400"} px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg active:scale-95`}
+                                >
+                                    <Zap className="h-4 w-4" />
+                                    Generar Lead Pruebas
+                                </button>
+                                <button className="flex items-center gap-2 border border-white/10 bg-white/5 text-white/60 px-5 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-all">
+                                    <Phone className="h-4 w-4" />
+                                    Llamar
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Image grid ΓÇö interactive for Pro/Team, static for Starter */}
+                        <div className="hidden lg:block">
+                            {f.gallery === "static" ? (
+                                /* Starter: single static image */
+                                <div className="rounded-xl overflow-hidden border border-white/5 aspect-[4/3]">
+                                    <img src="/cocina-despues.png" alt="Propiedad" className="w-full h-full object-cover opacity-70" />
+                                </div>
+                            ) : (
+                                /* Pro/Team: interactive gallery */
+                                <div className="relative">
+                                    <div className={`rounded-xl overflow-hidden border ${isTeam ? "border-cima-gold/10" : "border-white/5"} aspect-[4/3] relative`}>
+                                        <AnimatePresence mode="wait">
+                                            <motion.img
+                                                key={activePhoto}
+                                                src={photos[activePhoto]}
+                                                alt={`Foto ${activePhoto + 1}`}
+                                                className="w-full h-full object-cover"
+                                                initial={{ opacity: 0, scale: 1.05 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                            />
+                                        </AnimatePresence>
+                                        {/* Nav arrows */}
+                                        <button onClick={() => setActivePhoto((p) => (p - 1 + photos.length) % photos.length)}
+                                            className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/50 rounded-full backdrop-blur-sm hover:bg-black/70 transition-all">
+                                            <ChevronLeft className="h-4 w-4 text-white" />
+                                        </button>
+                                        <button onClick={() => setActivePhoto((p) => (p + 1) % photos.length)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/50 rounded-full backdrop-blur-sm hover:bg-black/70 transition-all">
+                                            <ChevronRight className="h-4 w-4 text-white" />
+                                        </button>
+                                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                            {photos.map((_, i) => (
+                                                <button key={i} onClick={() => setActivePhoto(i)}
+                                                    className={`h-1.5 rounded-full transition-all ${i === activePhoto ? `w-6 ${accentBg}` : "w-1.5 bg-white/30"}`} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {/* Thumbnails (Team only) */}
+                                    {isTeam && (
+                                        <div className="grid grid-cols-4 gap-2 mt-2">
+                                            {photos.map((img, i) => (
+                                                <button key={i} onClick={() => setActivePhoto(i)}
+                                                    className={`rounded-lg overflow-hidden border-2 transition-all ${i === activePhoto ? "border-cima-gold" : "border-transparent opacity-60 hover:opacity-100"}`}>
+                                                    <img src={img} alt="" className="w-full aspect-square object-cover" />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ΓöÇΓöÇ Antes vs Despu├⌐s (Pro/Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {(isPro || isTeam) && (
+                <div className="max-w-6xl mx-auto px-6 py-20 border-t border-white/5">
+                    <div className="text-center mb-12">
+                        <h2 className="text-2xl font-heading font-black mb-4">Difer├⌐nciate de la competencia</h2>
+                        <p className="text-sm text-white/40 max-w-lg mx-auto">
+                            Transformamos un anuncio gen├⌐rico en una experiencia premium que genera confianza.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                        {/* Antes: Marketplace */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 relative overflow-hidden group"
+                        >
+                            <div className="absolute top-4 right-4 bg-red-500/10 text-red-500 text-[8px] font-black px-2 py-1 rounded uppercase tracking-wider border border-red-500/20">
+                                Antes: Marketplace
+                            </div>
+                            <div className="space-y-4 opacity-40 group-hover:opacity-60 transition-opacity">
+                                <div className="aspect-video bg-white/5 rounded-lg overflow-hidden grayscale">
+                                    <img src="/cocina-despues.png" alt="Marketplace" className="w-full h-full object-cover blur-[2px]" />
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="h-4 w-3/4 bg-white/10 rounded" />
+                                    <div className="h-4 w-1/4 bg-white/10 rounded" />
+                                    <div className="space-y-1 pt-2">
+                                        <div className="h-2 w-full bg-white/5 rounded" />
+                                        <div className="h-2 w-full bg-white/5 rounded" />
+                                        <div className="h-2 w-2/3 bg-white/5 rounded" />
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="h-8 flex-1 bg-blue-600/30 rounded-lg" />
+                                    <div className="h-8 flex-1 bg-white/5 rounded-lg" />
+                                </div>
+                            </div>
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl">
+                                    <p className="text-[10px] font-bold text-white/60">Γ¥î Dise├▒o gen├⌐rico y poco profesional</p>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Despu├⌐s: Landing Pro */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className={`${isTeam ? "border-cima-gold/40 shadow-[0_0_30px_rgba(200,169,110,0.1)]" : "border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.1)]"} bg-white/[0.03] border-2 rounded-2xl p-6 relative overflow-hidden`}
+                        >
+                            <div className={`${isTeam ? "bg-cima-gold text-black" : "bg-blue-500 text-white"} absolute top-4 right-4 text-[8px] font-black px-2 py-1 rounded uppercase tracking-wider`}>
+                                Despu├⌐s: Cima Pro
+                            </div>
+                            <div className="space-y-4">
+                                <div className="aspect-video rounded-lg overflow-hidden border border-white/10 shadow-lg">
+                                    <img src="/cocina-despues.png" alt="Pro" className="w-full h-full object-cover" />
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                                        Residencia Premium
+                                        <CheckCircle2 className={`h-3 w-3 ${isTeam ? "text-cima-gold" : "text-blue-400"}`} />
+                                    </h3>
+                                    <p className={`text-xs font-bold ${accentText}`}>$8,500,000 MXN</p>
+                                    <div className="grid grid-cols-4 gap-2 py-2">
+                                        {[BedDouble, Bath, Ruler, Camera].map((Icon, i) => (
+                                            <div key={i} className="h-6 bg-white/5 border border-white/10 rounded-md flex items-center justify-center">
+                                                <Icon className="h-2.5 w-2.5 text-white/30" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className={`${accentBg} h-8 flex-1 rounded-lg flex items-center justify-center`}>
+                                        <span className="text-[8px] font-black text-black">AGENDAR VISITA</span>
+                                    </div>
+                                    <div className="h-8 w-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center">
+                                        <Phone className="h-3 w-3 text-white/40" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center pb-4">
+                                <p className="text-[10px] font-bold text-white">Γ£à Atrae leads de alto valor</p>
+                            </div>
+                        </motion.div>
+                    </div>
                 </div>
             )}
 
-            {isMobilePreview ? (
-                <div className="py-10">
-                    <MobileFrame isDarkMode={isDarkMode}>
-                        <LandingContent {...contentProps} />
-                    </MobileFrame>
+            {/* ΓöÇΓöÇ Social Proof (Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {f.socialProof && (
+                <div className="max-w-6xl mx-auto px-6 py-12 border-t border-white/5">
+                    <div className="flex items-center justify-center gap-8 mb-8">
+                        {[
+                            { value: "98%", label: "Clientes satisfechos" },
+                            { value: "+250", label: "Propiedades vendidas" },
+                            { value: "< 30 d├¡as", label: "Tiempo promedio" },
+                        ].map((stat, i) => (
+                            <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 + i * 0.1 }}
+                                className="text-center">
+                                <p className="text-2xl font-heading font-black text-cima-gold">{stat.value}</p>
+                                <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{stat.label}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                    {/* Testimonial */}
+                    <div className="max-w-lg mx-auto bg-cima-gold/[0.03] border border-cima-gold/10 rounded-2xl p-6 text-center">
+                        <MessageSquare className="h-5 w-5 text-cima-gold/30 mx-auto mb-3" />
+                        <p className="text-sm text-white/60 italic mb-3">&quot;Vendieron nuestra casa en 21 d├¡as. El portal del propietario nos mantuvo informados en todo momento.&quot;</p>
+                        <p className="text-xs font-bold text-white">Familia Trevi├▒o</p>
+                        <p className="text-[8px] text-white/30">Residencia Carretera Nacional</p>
+                    </div>
                 </div>
-            ) : (
-                <LandingContent {...contentProps} />
             )}
+
+            {/* ΓöÇΓöÇ Features / Trust ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            <div className="max-w-6xl mx-auto px-6 py-16">
+                <div className={`grid grid-cols-1 ${isStarter ? "md:grid-cols-2" : "md:grid-cols-3"} gap-4 mb-16`}>
+                    {[
+                        { icon: Shield, title: "Garant├¡a de 30 d├¡as", desc: "Si no vendemos tu propiedad, te devolvemos tu inversi├│n" },
+                        { icon: Camera, title: "Fotograf├¡a profesional", desc: "Sesi├│n HDR completa + video tour + drone a├⌐reo" },
+                        ...(!isStarter ? [{ icon: Star, title: "Portal del propietario", desc: "Sigue el progreso de tu venta en tiempo real, 24/7" }] : []),
+                    ].map((feature, i) => (
+                        <Wrapper key={i} {...delayAnim(0.5 + i * 0.1)}
+                            className={`${isTeam ? "bg-cima-gold/[0.02] border-cima-gold/10" : "bg-white/[0.03] border-white/5"} border rounded-2xl p-6 hover:border-white/10 transition-all`}
+                        >
+                            <div className={`h-10 w-10 rounded-xl ${isTeam ? "bg-cima-gold/10 border-cima-gold/20" : isPro ? "bg-blue-500/10 border-blue-500/20" : "bg-white/5 border-white/10"} border flex items-center justify-center mb-4`}>
+                                <feature.icon className={`h-5 w-5 ${isTeam ? "text-cima-gold" : isPro ? "text-blue-400" : "text-white/40"}`} />
+                            </div>
+                            <h3 className="text-sm font-bold text-white mb-2">{feature.title}</h3>
+                            <p className="text-xs text-white/40 leading-relaxed">{feature.desc}</p>
+                        </Wrapper>
+                    ))}
+                </div>
+
+                {/* ΓöÇΓöÇ ROI Section (Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+                {f.roiCalculator && (
+                    <div className="mb-16">
+                        <div className="text-center mb-10">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cima-gold/10 border border-cima-gold/20 text-[8px] font-bold text-cima-gold uppercase tracking-widest mb-3">
+                                <TrendingUp className="h-3 w-3" /> Calculadora de Impacto
+                            </span>
+                            <h2 className="text-xl font-heading font-bold">Tu inversi├│n se paga sola</h2>
+                        </div>
+
+                        <div className="max-w-xl mx-auto mb-10 bg-white/[0.02] border border-white/10 rounded-2xl p-6">
+                            <div className="flex justify-between mb-4">
+                                <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Valor de tu propiedad</label>
+                                <span className="text-sm font-bold text-cima-gold font-heading">${(propertyValue / 1000000).toFixed(1)}M</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="1000000"
+                                max="25000000"
+                                step="500000"
+                                value={propertyValue}
+                                onChange={(e) => setPropertyValue(Number(e.target.value))}
+                                className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-cima-gold mb-6"
+                            />
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-white/[0.03] border border-white/5 rounded-lg p-3">
+                                    <p className="text-[7px] text-white/30 uppercase font-black mb-1">Ahorro en Comisiones</p>
+                                    <p className="text-lg font-heading font-bold text-green-400">${(savings / 1000).toFixed(0)}k</p>
+                                </div>
+                                <div className="bg-white/[0.03] border border-white/5 rounded-lg p-3">
+                                    <p className="text-[7px] text-white/30 uppercase font-black mb-1">Ahorro en Tiempo</p>
+                                    <p className="text-lg font-heading font-bold text-cima-gold">-60 d├¡as</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
+                            {[
+                                { icon: Zap, label: "Venta tradicional", value: "90+ d├¡as", sublabel: "Sin estrategia digital", color: "text-white/40" },
+                                { icon: TrendingUp, label: "Con Cima Pro", value: "< 30 d├¡as", sublabel: "Marketing Predictivo", color: "text-cima-gold" },
+                                { icon: Award, label: "Inversi├│n Neta", value: "Nivel Pro", sublabel: "Retorno 10x garantizado", color: "text-green-400" },
+                            ].map((item, i) => (
+                                <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 + i * 0.1 }}
+                                    className="bg-cima-gold/[0.03] border border-cima-gold/10 rounded-xl p-4 text-center">
+                                    <item.icon className={`h-5 w-5 ${item.color} mx-auto mb-2`} />
+                                    <p className="text-[8px] text-white/30 mb-1 uppercase font-bold">{item.label}</p>
+                                    <p className={`text-sm font-heading font-bold ${item.color}`}>{item.value}</p>
+                                    <p className="text-[6px] text-white/20 mt-1">{item.sublabel}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Lead capture form */}
+                <div className="max-w-md mx-auto">
+                    <div className={`${isTeam ? "bg-cima-gold/[0.02] border-cima-gold/10" : "bg-white/[0.03] border-white/10"} border rounded-2xl p-8`}>
+                        <h2 className="text-lg font-heading font-bold text-center mb-2">┬┐Te interesa esta propiedad?</h2>
+                        <p className="text-xs text-white/40 text-center mb-6">D├⌐janos tus datos y te contactamos en menos de 1 hora</p>
+
+                        <div className="space-y-3">
+                            <input type="text" placeholder="Tu nombre"
+                                className={`w-full bg-white/5 border ${isTeam ? "border-cima-gold/10 focus:border-cima-gold/40" : "border-white/10 focus:border-blue-400/40"} rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition-all`}
+                                readOnly />
+                            <input type="tel" placeholder="81 1234 5678"
+                                className={`w-full bg-white/5 border ${isTeam ? "border-cima-gold/10 focus:border-cima-gold/40" : "border-white/10 focus:border-blue-400/40"} rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition-all`}
+                                readOnly />
+                            {!isStarter && (
+                                <input type="email" placeholder="tu@email.com"
+                                    className={`w-full bg-white/5 border ${isTeam ? "border-cima-gold/10 focus:border-cima-gold/40" : "border-white/10 focus:border-blue-400/40"} rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition-all`}
+                                    readOnly />
+                            )}
+                            <button className={`w-full flex items-center justify-center gap-2 ${isTeam ? "bg-cima-gold text-black hover:bg-white" : "bg-white text-black hover:bg-blue-400"} px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all`}>
+                                <ArrowRight className="h-4 w-4" />
+                                Quiero agendar una visita
+                            </button>
+                        </div>
+
+                        <div className="flex items-center justify-center gap-4 mt-6 pt-4 border-t border-white/5">
+                            {[
+                                { icon: CheckCircle2, text: "Sin compromiso" },
+                                { icon: Shield, text: "Datos protegidos" },
+                            ].map((badge, i) => (
+                                <div key={i} className="flex items-center gap-1.5">
+                                    <badge.icon className="h-3 w-3 text-green-400" />
+                                    <span className="text-[8px] text-white/30 uppercase font-bold tracking-wider">{badge.text}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ΓöÇΓöÇ Footer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            <div className="h-40 bg-black border-t border-white/5 flex flex-col items-center justify-center gap-2">
+                <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">Cima Propiedades ┬╖ {new Date().getFullYear()}</p>
+                <div className="h-1 w-20 bg-cima-gold/20 rounded-full" />
+            </div>
+
+            {/* Chat Widget */}
+            <ChatWidget onSendMessage={onSendMessage} messages={messages || []} />
+
+            {/* ΓöÇΓöÇ Social Proof (Pro/Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {!isStarter && <SocialProofToast tier={plan.tier} />}
         </div>
     );
 }
 
 /**
- * Interactive Chat Widget
+ * Interactive Chat Widget with AI Simulation
  */
 function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t: string, ai?: boolean) => void; messages: LiveMessage[] }) {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    // Auto-scroll to bottom
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -476,7 +519,7 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
 
     const handleSend = () => {
         if (!inputValue.trim() || !onSendMessage) return;
-        onSendMessage("Interesado (Tú)", inputValue);
+        onSendMessage("Interesado (T├║)", inputValue);
         setInputValue("");
     };
 
@@ -490,6 +533,7 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         className="absolute bottom-20 right-0 w-80 bg-black border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
                     >
+                        {/* Header */}
                         <div className="p-4 bg-cima-gold flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="h-8 w-8 rounded-full bg-black/20 flex items-center justify-center">
@@ -499,7 +543,7 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
                                     <p className="text-[10px] font-black text-black uppercase tracking-tighter">Asistente Cima AI</p>
                                     <div className="flex items-center gap-1">
                                         <div className="h-1.5 w-1.5 rounded-full bg-black/60 animate-pulse" />
-                                        <span className="text-[7px] text-black/60 font-bold uppercase">En línea ahora</span>
+                                        <span className="text-[7px] text-black/60 font-bold uppercase">En l├¡nea ahora</span>
                                     </div>
                                 </div>
                             </div>
@@ -507,19 +551,48 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
-                        <div ref={scrollRef} className="h-72 overflow-y-auto p-4 space-y-3 bg-white/[0.02] flex flex-col">
+
+                        {/* Messages Area */}
+                        <div
+                            ref={scrollRef}
+                            className="h-72 overflow-y-auto p-4 space-y-3 bg-white/[0.02] flex flex-col"
+                        >
+                            <div className="text-center py-4 mb-2">
+                                <span className="text-[8px] text-white/20 font-bold uppercase tracking-widest px-2 py-1 border border-white/5 rounded-full">Chat Privado con IA</span>
+                            </div>
+
                             {messages.map((msg, i) => (
-                                <motion.div key={msg.id || i} className={`flex ${msg.from.includes("Tú") ? "justify-end" : "justify-start"}`}>
-                                    <div className={`max-w-[85%] p-3 rounded-2xl text-[10px] ${msg.from.includes("Tú") ? "bg-cima-gold text-black font-medium" : "bg-white/5 text-white/80 border border-white/10"}`}>
+                                <motion.div
+                                    key={msg.id || i}
+                                    initial={{ opacity: 0, x: msg.from.includes("T├║") ? 10 : -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className={`flex ${msg.from.includes("T├║") ? "justify-end" : "justify-start"}`}
+                                >
+                                    <div className={`max-w-[85%] p-3 rounded-2xl text-[10px] ${msg.from.includes("T├║")
+                                        ? "bg-cima-gold text-black font-medium rounded-tr-none shadow-lg shadow-cima-gold/10"
+                                        : "bg-white/5 text-white/80 border border-white/10 rounded-tl-none"
+                                        }`}>
                                         <p className="leading-relaxed">{msg.message}</p>
+                                        <span className={`text-[7px] mt-1 block opacity-40 ${msg.from.includes("T├║") ? "text-right" : ""}`}>{msg.time}</span>
                                     </div>
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Input Area */}
                         <div className="p-4 border-t border-white/5 bg-black">
-                            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 pl-4">
-                                <input value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()} placeholder="Escribe tu duda..." className="flex-1 bg-transparent border-none outline-none text-[10px] text-white" />
-                                <button onClick={handleSend} className="h-8 w-8 rounded-xl bg-cima-gold flex items-center justify-center text-black">
+                            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 pl-4 focus-within:border-cima-gold/30 transition-all">
+                                <input
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                                    placeholder="Escribe tu duda..."
+                                    className="flex-1 bg-transparent border-none outline-none text-[10px] text-white placeholder:text-white/20"
+                                />
+                                <button
+                                    onClick={handleSend}
+                                    className="h-8 w-8 rounded-xl bg-cima-gold flex items-center justify-center text-black hover:scale-105 transition-all shadow-lg shadow-cima-gold/20"
+                                >
                                     <Send className="h-3.5 w-3.5" />
                                 </button>
                             </div>
@@ -527,9 +600,22 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
                     </motion.div>
                 )}
             </AnimatePresence>
-            <button onClick={() => setIsOpen(!isOpen)} className="h-14 w-14 rounded-2xl flex items-center justify-center bg-cima-gold text-black shadow-2xl transition-all">
+
+            {/* Chat Toggle Button */}
+            <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsOpen(!isOpen)}
+                className={`h-14 w-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all relative ${isOpen ? "bg-white text-black" : "bg-cima-gold text-black shadow-cima-gold/20"
+                    }`}
+            >
                 {isOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
-            </button>
+                {!isOpen && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full border-2 border-black flex items-center justify-center text-[10px] font-black text-white animate-bounce">
+                        1
+                    </span>
+                )}
+            </motion.button>
         </div>
     );
 }

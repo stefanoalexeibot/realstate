@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, Sun, Moon as MoonIcon, Banknote } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
@@ -31,65 +31,42 @@ export interface LiveMessage {
     isAi?: boolean;
 }
 
-export interface LiveProperty {
-    id: number;
-    name: string;
-    price: string;
-    status: string;
-    owner: string;
-    img: string;
-    hits: number;
-    trend: number[];
-    beds: number;
-    baths: number;
-    m2: number;
-    address: string;
-}
-
-const INITIAL_PROPERTIES: LiveProperty[] = [
-    { id: 1, name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/estancia-antes.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
-    { id: 2, name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/loft-cima.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa María" },
-    { id: 3, name: "Penthouse Nubes", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/recamara-antes.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa María" },
-    { id: 4, name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-antes.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de Anáhuac 305, Valle Poniente" },
-    { id: 5, name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/estancia-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
-];
-
 const INITIAL_LEADS: LiveLead[] = [
-    { id: "1", name: "Ana Martínez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
-    { id: "2", name: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
-    { id: "3", name: "María Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10", score: 92, isAiQualified: true },
-    { id: "4", name: "Roberto Treviño", phone: "81 4444 9876", source: "Referido", sourceIcon: UsersIcon, status: "visita_agendada", date: "Ayer", property: "Pent. Santa María", color: "text-amber-400 bg-amber-500/10", score: 78 },
-    { id: "5", name: "Sofía Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 días", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10", score: 95, isAiQualified: true },
-    { id: "6", name: "Familia Rodríguez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10", score: 64 },
+    { id: "1", name: "Ana Mart├¡nez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
+    { id: "2", name: "Carlos L├│pez", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
+    { id: "3", name: "Mar├¡a Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10", score: 92, isAiQualified: true },
+    { id: "4", name: "Roberto Trevi├▒o", phone: "81 4444 9876", source: "Referido", sourceIcon: UsersIcon, status: "visita_agendada", date: "Ayer", property: "Pent. Santa Mar├¡a", color: "text-amber-400 bg-amber-500/10", score: 78 },
+    { id: "5", name: "Sof├¡a Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 d├¡as", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10", score: 95, isAiQualified: true },
+    { id: "6", name: "Familia Rodr├¡guez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10", score: 64 },
     { id: "7", name: "Ing. Pedro Salazar", phone: "81 1111 7890", source: "Landing", sourceIcon: Globe, status: "contactado", date: "Hace 4 horas", property: "Depto. Torre LOVFT", color: "text-emerald-400 bg-emerald-500/10", score: 88 },
 ];
 
 const INITIAL_MESSAGES: LiveMessage[] = [
-    { id: "1", from: "Familia Rodríguez", message: "Hola, ¿podemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
-    { id: "2", from: "Ing. Roberto M.", message: "Ya firmé el contrato, ¿cuándo hacemos las fotos?", time: "Hace 20 min", unread: true },
-    { id: "3", from: "Dra. Sofía L.", message: "¿Hubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
-    { id: "4", from: "Carlos López", message: "Me interesa mucho, ¿pueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
-    { id: "5", from: "Sr. Hernández", message: "Gracias por las fotos, se ven increíbles 👏", time: "Ayer", unread: false },
+    { id: "1", from: "Familia Rodr├¡guez", message: "Hola, ┬┐podemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
+    { id: "2", from: "Ing. Roberto M.", message: "Ya firm├⌐ el contrato, ┬┐cu├índo hacemos las fotos?", time: "Hace 20 min", unread: true },
+    { id: "3", from: "Dra. Sof├¡a L.", message: "┬┐Hubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
+    { id: "4", from: "Carlos L├│pez", message: "Me interesa mucho, ┬┐pueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
+    { id: "5", from: "Sr. Hern├índez", message: "Gracias por las fotos, se ven incre├¡bles ≡ƒæÅ", time: "Ayer", unread: false },
 ];
 
 const NARRATIVE: Record<View, { title: string; desc: string }> = {
     landing: {
-        title: "Captación Automática",
-        desc: "Cada propiedad tiene su propia Landing Page de alto impacto diseñada para convertir visitantes en leads cualificados."
+        title: "Captaci├│n Autom├ítica",
+        desc: "Cada propiedad tiene su propia Landing Page de alto impacto dise├▒ada para convertir visitantes en leads cualificados."
     },
     admin: {
         title: "Control Total de Operaciones",
-        desc: "El centro neurálgico del asesor. Aquí se gestiona el pipeline de ventas, los analíticos y la comunicación con el cliente."
+        desc: "El centro neur├ílgico del asesor. Aqu├¡ se gestiona el pipeline de ventas, los anal├¡ticos y la comunicaci├│n con el cliente."
     },
     portal: {
         title: "Transparencia que Enamora",
-        desc: "El Portal del Dueño reduce el estrés del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
+        desc: "El Portal del Due├▒o reduce el estr├⌐s del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
     }
 };
 
 type View = "admin" | "portal" | "landing";
 
-/* ─── Presentation Timer ───────────────────────────────────── */
+/* ΓöÇΓöÇΓöÇ Presentation Timer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function PresentationTimer() {
     const [seconds, setSeconds] = useState(0);
     const [running, setRunning] = useState(false);
@@ -144,7 +121,7 @@ function PresentationTimer() {
     );
 }
 
-/* ─── QR Code (SVG pattern) ────────────────────────────────── */
+/* ΓöÇΓöÇΓöÇ QR Code (SVG pattern) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: string; desc?: string }) {
     return (
         <motion.div
@@ -173,7 +150,7 @@ function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: stri
                     </div>
                 </div>
                 <h3 className="text-lg font-heading font-black text-gray-900 mb-2">{title || "Mobile Mirroring"}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed opacity-80">{desc || "Escanea este código para ver cómo se adapta la experiencia a un dispositivo móvil en tiempo real."}</p>
+                <p className="text-xs text-gray-500 leading-relaxed opacity-80">{desc || "Escanea este c├│digo para ver c├│mo se adapta la experiencia a un dispositivo m├│vil en tiempo real."}</p>
 
                 <button
                     onClick={onClose}
@@ -187,7 +164,7 @@ function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: stri
     );
 }
 
-/* ═══ MAIN COMPONENT ═══════════════════════════════════════ */
+/* ΓòÉΓòÉΓòÉ MAIN COMPONENT ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 export default function LiveDemoClient() {
     const [view, setView] = useState<View>("admin");
     const [tier, setTier] = useState<PlanTier>("premium");
@@ -198,23 +175,15 @@ export default function LiveDemoClient() {
     const [editingName, setEditingName] = useState(false);
     const [autoDemo, setAutoDemo] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
-    const [isMobilePreview, setIsMobilePreview] = useState(false);
-    const [isDND, setIsDND] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(true);
     const autoDemoRef = useRef<NodeJS.Timeout | null>(null);
     const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
     const nameInputRef = useRef<HTMLInputElement>(null);
 
     // Shared State
-    const [properties, setProperties] = useState<LiveProperty[]>(INITIAL_PROPERTIES);
     const [leads, setLeads] = useState<LiveLead[]>(INITIAL_LEADS);
     const [messages, setMessages] = useState<LiveMessage[]>(INITIAL_MESSAGES);
     const [lastLeadId, setLastLeadId] = useState("");
-
-    const handleUpdateProperty = useCallback((updatedProp: LiveProperty) => {
-        setProperties(prev => prev.map(p => p.id === updatedProp.id ? updatedProp : p));
-    }, []);
 
     const handleAddLead = useCallback((newLeadData?: Partial<LiveLead>) => {
         const id = Math.random().toString(36).substr(2, 9);
@@ -268,7 +237,7 @@ export default function LiveDemoClient() {
                 const aiResponse: LiveMessage = {
                     id: Math.random().toString(36).substr(2, 9),
                     from: "Cima AI Assistant",
-                    message: `¡Hola ${from}! Gracias por tu interés. Un asesor se pondrá en contacto contigo pronto. ¿Te gustaría agendar una visita guiada?`,
+                    message: `┬íHola ${from}! Gracias por tu inter├⌐s. Un asesor se pondr├í en contacto contigo pronto. ┬┐Te gustar├¡a agendar una visita guiada?`,
                     time: "Justo ahora",
                     unread: true,
                     isAi: true
@@ -285,7 +254,7 @@ export default function LiveDemoClient() {
         { view: "landing", duration: 5000, label: "Landing" },
         { view: "admin", tab: "propiedades", duration: 5000, label: "Propiedades" },
         { view: "admin", tab: "leads", duration: 4000, label: "Leads" },
-        { view: "admin", tab: "analiticos", duration: 4000, label: "Analíticos" },
+        { view: "admin", tab: "analiticos", duration: 4000, label: "Anal├¡ticos" },
         { view: "portal", duration: 5000, label: "Portal" },
     ];
 
@@ -318,15 +287,11 @@ export default function LiveDemoClient() {
     function switchTier(newTier: PlanTier) {
         const oldIdx = TIER_ORDER.indexOf(tier);
         const newIdx = TIER_ORDER.indexOf(newTier);
-
-        // Intensified effects
-        setUpgradeFlash(true);
         setTier(newTier);
-
-        // Different effect duration based on "impact" (going up vs down)
-        const duration = newIdx > oldIdx ? 1200 : 600;
-
-        setTimeout(() => setUpgradeFlash(false), duration);
+        if (newIdx > oldIdx) {
+            setUpgradeFlash(true);
+            setTimeout(() => setUpgradeFlash(false), 600);
+        }
     }
 
     function toggleFullscreen() {
@@ -348,9 +313,9 @@ export default function LiveDemoClient() {
     }, [editingName]);
 
     const VIEW_LABELS: Record<View, string> = {
-        admin: "👨‍💼 Esto es lo que VE EL ASESOR — gestión de propiedades, leads, visitas y analíticos",
-        portal: "🏠 Esto es lo que VE EL PROPIETARIO — transparencia total sobre el progreso de venta",
-        landing: "🌐 Esta es la LANDING PAGE para cada propiedad — captura de leads automática",
+        admin: "≡ƒæ¿ΓÇì≡ƒÆ╝ Esto es lo que VE EL ASESOR ΓÇö gesti├│n de propiedades, leads, visitas y anal├¡ticos",
+        portal: "≡ƒÅá Esto es lo que VE EL PROPIETARIO ΓÇö transparencia total sobre el progreso de venta",
+        landing: "≡ƒîÉ Esta es la LANDING PAGE para cada propiedad ΓÇö captura de leads autom├ítica",
     };
 
     return (
@@ -359,29 +324,16 @@ export default function LiveDemoClient() {
             <AnimatePresence>
                 {upgradeFlash && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 1 }}
-                        animate={{
-                            opacity: [0, 0.8, 0],
-                            scale: [1, 1.05, 1],
-                            backgroundColor: tier === "premium" ? ["rgba(200,169,110,0)", "rgba(200,169,110,0.4)", "rgba(200,169,110,0)"] : ["rgba(59,130,246,0)", "rgba(59,130,246,0.3)", "rgba(59,130,246,0)"]
-                        }}
+                        initial={{ opacity: 0.7 }}
+                        animate={{ opacity: 0 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
-                    >
-                        <div className="absolute inset-0 bg-gradient-radial from-white/20 to-transparent" />
-                        <motion.div
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1.2, opacity: 1 }}
-                            className="text-6xl font-black uppercase tracking-[2em] text-white/5 whitespace-nowrap"
-                        >
-                            {plan.name}
-                        </motion.div>
-                    </motion.div>
+                        transition={{ duration: 0.6 }}
+                        className="fixed inset-0 z-[60] bg-cima-gold/5 pointer-events-none"
+                    />
                 )}
             </AnimatePresence>
 
-            {/* ── Top Bar / Controls ──────────────────── */}
+            {/* ΓöÇΓöÇ Top Bar / Controls ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             <AnimatePresence>
                 {!focusMode && (
                     <motion.div
@@ -464,16 +416,6 @@ export default function LiveDemoClient() {
                                     ))}
                                 </div>
 
-                                {/* Checkout Onboarding CTA */}
-                                <a
-                                    href="/checkout/onboarding"
-                                    className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cima-gold/10 border border-cima-gold/30 text-cima-gold hover:bg-cima-gold hover:text-black transition-all text-[8px] font-black uppercase tracking-wider group"
-                                    title="Abrir Portal de Onboarding"
-                                >
-                                    <Banknote className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
-                                    <span className="hidden lg:inline">Cerrar Venta</span>
-                                </a>
-
                                 {/* Timer */}
                                 <div className="hidden xl:flex">
                                     <PresentationTimer />
@@ -501,37 +443,6 @@ export default function LiveDemoClient() {
                                     {autoDemo ? `Auto` : "Auto Demo"}
                                 </button>
 
-                                {/* Dark Mode Toggle */}
-                                <button
-                                    onClick={() => setIsDarkMode(!isDarkMode)}
-                                    className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all group"
-                                    title={isDarkMode ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
-                                >
-                                    <AnimatePresence mode="wait">
-                                        {isDarkMode ? (
-                                            <motion.div
-                                                key="sun"
-                                                initial={{ rotate: -90, opacity: 0 }}
-                                                animate={{ rotate: 0, opacity: 1 }}
-                                                exit={{ rotate: 90, opacity: 0 }}
-                                                transition={{ duration: 0.2 }}
-                                            >
-                                                <Sun className="h-3.5 w-3.5 text-cima-gold" />
-                                            </motion.div>
-                                        ) : (
-                                            <motion.div
-                                                key="moon"
-                                                initial={{ rotate: -90, opacity: 0 }}
-                                                animate={{ rotate: 0, opacity: 1 }}
-                                                exit={{ rotate: 90, opacity: 0 }}
-                                                transition={{ duration: 0.2 }}
-                                            >
-                                                <MoonIcon className="h-3.5 w-3.5 text-white/40" />
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </button>
-
                                 {/* Fullscreen */}
                                 <button
                                     onClick={toggleFullscreen}
@@ -548,14 +459,14 @@ export default function LiveDemoClient() {
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
                                 <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
-                                <span className="text-[7px] text-white/15">•</span>
+                                <span className="text-[7px] text-white/15">ΓÇó</span>
                                 <span className="text-[7px] text-white/20">{plan.price}</span>
-                                <span className="text-[7px] text-white/15">•</span>
+                                <span className="text-[7px] text-white/15">ΓÇó</span>
                                 <span className="text-[7px] text-white/20">{plan.deliveryDays}d</span>
                             </div>
                         </div>
 
-                        {/* ── Narrative Caption ─────────────────────── */}
+                        {/* ΓöÇΓöÇ Narrative Caption ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
                         <div className="bg-cima-gold/5 border-b border-cima-gold/10 px-4 py-2 relative overflow-hidden">
                             <motion.div
                                 key={view}
@@ -593,7 +504,7 @@ export default function LiveDemoClient() {
             >
                 {focusMode ? <Eye className="h-4 w-4" /> : <Eye className="h-4 w-4 opacity-50" />}
             </button>
-            {/* ── Content Area ──────────────────────────── */}
+            {/* ΓöÇΓöÇ Content Area ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={view}
@@ -608,48 +519,26 @@ export default function LiveDemoClient() {
                             agentName={agentName}
                             onNavigateToLeads={handleNavigateToLeads}
                             externalTab={AUTO_STEPS[autoDemoStep]?.tab}
-                            properties={properties}
-                            onUpdateProperty={handleUpdateProperty}
                             leads={leads}
                             onUpdateLeadStatus={handleUpdateLeadStatus}
                             newLeadId={lastLeadId}
                             messages={messages}
                             onAddMessage={handleAddMessage}
-                            isDarkMode={isDarkMode}
-                            setIsDarkMode={setIsDarkMode}
                         />
                     )}
-                    {view === "portal" && (
-                        <DemoPortal
-                            plan={plan}
-                            property={properties.find(p => p.id === 1) || properties[0]}
-                            isMobilePreview={isMobilePreview}
-                            setIsMobilePreview={setIsMobilePreview}
-                            isDND={isDND}
-                            setIsDND={setIsDND}
-                            isDarkMode={isDarkMode}
-                            setIsDarkMode={setIsDarkMode}
-                        />
-                    )}
+                    {view === "portal" && <DemoPortal plan={plan} />}
                     {view === "landing" && (
                         <DemoLandingExample
                             plan={plan}
-                            property={properties.find(p => p.id === 1) || properties[0]}
                             onLeadCapture={handleAddLead}
                             onSendMessage={handleAddMessage}
                             messages={messages}
-                            isMobilePreview={isMobilePreview}
-                            setIsMobilePreview={setIsMobilePreview}
-                            isDND={isDND}
-                            setIsDND={setIsDND}
-                            isDarkMode={isDarkMode}
-                            setIsDarkMode={setIsDarkMode}
                         />
                     )}
                 </motion.div>
             </AnimatePresence>
 
-            {/* ── Bottom CTA bar ──────────────────────── */}
+            {/* ΓöÇΓöÇ Bottom CTA bar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             {view !== "landing" && !focusMode && (
                 <div className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-black via-black/90 to-transparent pt-8 pb-4 px-4 pointer-events-none">
                     <div className="max-w-lg mx-auto flex items-center gap-3 pointer-events-auto">
@@ -659,7 +548,7 @@ export default function LiveDemoClient() {
                             rel="noopener noreferrer"
                             className="flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
                         >
-                            Activar mi cuenta · {plan.name}
+                            Activar mi cuenta ┬╖ {plan.name}
                         </a>
                         <button
                             onClick={() => setShowQR(true)}
@@ -672,17 +561,17 @@ export default function LiveDemoClient() {
                 </div>
             )}
 
-            {/* ── QR Overlay ──────────────────────────── */}
+            {/* ΓöÇΓöÇ QR Overlay ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             <AnimatePresence>
                 {showQR && (
                     <QROverlay
                         onClose={() => setShowQR(false)}
-                        title={view === "landing" ? "Vista Móvil del Comprador" : view === "admin" ? "Notificaciones en tu Móvil" : "Portal para el Dueño (Móvil)"}
+                        title={view === "landing" ? "Vista M├│vil del Comprador" : view === "admin" ? "Notificaciones en tu M├│vil" : "Portal para el Due├▒o (M├│vil)"}
                         desc={view === "landing"
-                            ? "Escanea con tu celular para ver cómo interactúa un comprador real con esta propiedad."
+                            ? "Escanea con tu celular para ver c├│mo interact├║a un comprador real con esta propiedad."
                             : view === "admin"
-                                ? "Manten el control de tus propiedades y recibe alertas de nuevos leads estés donde estés."
-                                : "Tu cliente podrá seguir el progreso de su venta cómodamente desde su smartphone."
+                                ? "Manten el control de tus propiedades y recibe alertas de nuevos leads est├⌐s donde est├⌐s."
+                                : "Tu cliente podr├í seguir el progreso de su venta c├│modamente desde su smartphone."
                         }
                     />
                 )}

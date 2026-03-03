@@ -1,6 +1,6 @@
-/**
- * CONFIGURACIÓN DE DEMOS POR PAQUETE
- * Controla qué features están habilitadas en cada tier.
+﻿/**
+ * CONFIGURACI├ôN DE DEMOS POR PAQUETE
+ * Controla qu├⌐ features est├ín habilitadas en cada tier.
  */
 
 export type PlanTier = "basico" | "profesional" | "premium";
@@ -11,7 +11,7 @@ export interface PlanConfig {
     price: string;
     tagline: string;
     maxProperties: number; // -1 = ilimitado
-    deliveryDays: number; // días de entrega
+    deliveryDays: number; // d├¡as de entrega
     color: string; // accent color
     features: {
         landing: {
@@ -26,8 +26,6 @@ export interface PlanConfig {
             messages: boolean;
             visits: boolean;
             multiAgent: boolean;
-            aiStudio: boolean;
-            digitalVault: boolean;
         };
         portal: {
             feedback: boolean;
@@ -61,8 +59,6 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
                 messages: false,
                 visits: false,
                 multiAgent: false,
-                aiStudio: false,
-                digitalVault: false,
             },
             portal: {
                 feedback: false,
@@ -94,8 +90,6 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
                 messages: true,
                 visits: true,
                 multiAgent: false,
-                aiStudio: true,
-                digitalVault: true,
             },
             portal: {
                 feedback: true,
@@ -127,8 +121,6 @@ export const DEMO_PLANS: Record<PlanTier, PlanConfig> = {
                 messages: true,
                 visits: true,
                 multiAgent: true,
-                aiStudio: true,
-                digitalVault: true,
             },
             portal: {
                 feedback: true,

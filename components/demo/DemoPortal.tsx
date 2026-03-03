@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
@@ -6,34 +6,18 @@ import {
     Home, TrendingUp, FileText, Camera, Share2,
     Star, MessageSquare, Clock, CheckCircle2,
     AlertCircle, ThumbsUp, ThumbsDown, Minus,
-    Facebook, Send, Calendar, Eye, Shield, User, Smartphone, Monitor, Moon, MoonStar
+    Facebook, Send, Calendar, Eye, Shield, User
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import UpgradeBanner from "./UpgradeBanner";
 
 interface DemoPortalProps {
     plan: PlanConfig;
-    property?: any;
-    isMobilePreview?: boolean;
-    setIsMobilePreview?: (v: boolean) => void;
-    isDND?: boolean;
-    setIsDND?: (v: boolean) => void;
-    isDarkMode?: boolean;
-    setIsDarkMode?: (v: boolean) => void;
 }
 
 type TabId = "dashboard" | "feedback" | "documents" | "evidence";
 
-export default function DemoPortal({
-    plan,
-    property,
-    isMobilePreview = false,
-    setIsMobilePreview,
-    isDND = false,
-    setIsDND,
-    isDarkMode = true,
-    setIsDarkMode
-}: DemoPortalProps) {
+export default function DemoPortal({ plan }: DemoPortalProps) {
     const f = plan.features.portal;
     const [activeTab, setActiveTab] = useState<TabId>("dashboard");
 
@@ -45,112 +29,58 @@ export default function DemoPortal({
     ];
 
     return (
-        <div className="min-h-screen bg-[#0A0A0B] text-white flex flex-col items-center pb-24 sm:pb-0">
-            {/* Header with Toggles (only if setter is provided) */}
-            {setIsMobilePreview && setIsDND && (
-                <div className="w-full max-w-4xl px-4 py-4 flex justify-end gap-2 border-b border-white/5 bg-black/50 backdrop-blur-md sticky top-0 z-[120]">
-                    <button
-                        onClick={() => setIsMobilePreview(!isMobilePreview)}
-                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
-                    >
-                        {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
-                        <span className="text-[8px] font-black uppercase tracking-widest">
-                            {isMobilePreview ? "Escritorio" : "Móvil"}
-                        </span>
-                    </button>
-                    <button
-                        onClick={() => setIsDND(!isDND)}
-                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isDND ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
-                    >
-                        {isDND ? <MoonStar className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-                        <span className="text-[8px] font-black uppercase tracking-widest">
-                            {isDND ? "Silencio" : "Notificar"}
-                        </span>
-                    </button>
-                </div>
-            )}
-
-            <motion.div
-                layout
-                animate={{
-                    width: isMobilePreview ? 414 : "100%",
-                    height: isMobilePreview ? 850 : "auto",
-                    marginTop: isMobilePreview ? 40 : 0,
-                    marginBottom: isMobilePreview ? 40 : 0,
-                }}
-                className={`transition-all duration-700 relative overflow-hidden ${isMobilePreview
-                    ? "border-[12px] border-[#1A1A1C] rounded-[3.5rem] shadow-[0_0_100px_rgba(200,169,110,0.1)] bg-[#0A0A0B] ring-1 ring-white/10 custom-scrollbar"
-                    : "w-full"
-                    }`}
-            >
-                <div className={isMobilePreview ? "h-full overflow-y-auto custom-scrollbar" : "max-w-4xl mx-auto px-4 py-8"}>
-                    {/* Header */}
-                    <div className="mb-8">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="h-10 w-10 rounded-2xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
-                                <Home className="h-5 w-5 text-cima-gold" />
-                            </div>
-                            <div>
-                                <h1 className="text-lg font-heading font-black tracking-tight">Portal del Propietario</h1>
-                                <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">{property?.name || "Residencia Las Misiones"} • {plan.name}</p>
-                            </div>
+        <div className="min-h-screen bg-[#0A0A0B] text-white pb-20 sm:pb-0">
+            <div className="max-w-4xl mx-auto px-4 py-8">
+                {/* Header */}
+                <div className="mb-8">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="h-10 w-10 rounded-2xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
+                            <Home className="h-5 w-5 text-cima-gold" />
+                        </div>
+                        <div>
+                            <h1 className="text-lg font-heading font-black tracking-tight">Portal del Propietario</h1>
+                            <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">Residencia Las Misiones ΓÇó {plan.name}</p>
                         </div>
                     </div>
-
-                    {/* Tabs (Hidden on mobile frame, replaced by bottom nav) */}
-                    <div className={`${isMobilePreview ? "hidden" : "flex"} flex-wrap gap-1 mb-8 bg-white/[0.03] p-1 rounded-xl border border-white/5`}>
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => tab.available && setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${activeTab === tab.id
-                                    ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
-                                    : tab.available
-                                        ? "text-white/40 hover:text-white/60 hover:bg-white/5"
-                                        : "text-white/10 cursor-not-allowed"
-                                    }`}
-                            >
-                                <tab.icon className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">{tab.label}</span>
-                                {!tab.available && <span className="text-[6px] opacity-60">🔒</span>}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Mobile Portal Bottom Nav */}
-                    {isMobilePreview && (
-                        <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-xl border-t border-white/10 px-8 py-4 flex justify-between items-center z-[200]">
-                            {tabs.map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => tab.available && setActiveTab(tab.id)}
-                                    className={`flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? "text-cima-gold" : tab.available ? "text-white/40" : "text-white/10"}`}
-                                >
-                                    <tab.icon className={`h-5 w-5 ${activeTab === tab.id ? "scale-110" : ""}`} />
-                                    <span className="text-[7px] font-black uppercase tracking-tighter">{tab.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* Tab Content */}
-                    {activeTab === "dashboard" && <DashboardTab plan={plan} />}
-                    {activeTab === "feedback" && (f.feedback ? <FeedbackTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Seguimiento y Feedback" />)}
-                    {activeTab === "documents" && (f.documents ? <DocumentsTab /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Expediente Digital" />)}
-                    {activeTab === "evidence" && (f.evidence ? <EvidenceTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="premium" featureName="Evidencia Fotográfica" />)}
                 </div>
-            </motion.div>
+
+                {/* Tabs */}
+                <div className="flex flex-wrap gap-1 mb-8 bg-white/[0.03] p-1 rounded-xl border border-white/5">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => tab.available && setActiveTab(tab.id)}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${activeTab === tab.id
+                                ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
+                                : tab.available
+                                    ? "text-white/40 hover:text-white/60 hover:bg-white/5"
+                                    : "text-white/10 cursor-not-allowed"
+                                }`}
+                        >
+                            <tab.icon className="h-3.5 w-3.5" />
+                            <span className="hidden sm:inline">{tab.label}</span>
+                            {!tab.available && <span className="text-[6px] opacity-60">≡ƒöÆ</span>}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Tab Content */}
+                {activeTab === "dashboard" && <DashboardTab plan={plan} />}
+                {activeTab === "feedback" && (f.feedback ? <FeedbackTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Seguimiento y Feedback" />)}
+                {activeTab === "documents" && (f.documents ? <DocumentsTab /> : <UpgradeBanner currentTier={plan.tier} requiredTier="profesional" featureName="Expediente Digital" />)}
+                {activeTab === "evidence" && (f.evidence ? <EvidenceTab plan={plan} /> : <UpgradeBanner currentTier={plan.tier} requiredTier="premium" featureName="Evidencia Fotogr├ífica" />)}
+            </div>
         </div>
     );
 }
 
-/* ─── Dashboard Tab ───────────────────────────────────────────────────────── */
+/* ΓöÇΓöÇΓöÇ Dashboard Tab ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function DashboardTab({ plan }: { plan: PlanConfig }) {
     const stages = [
         { label: "Publicada", complete: true },
         { label: "Visitas", complete: true },
         { label: "Oferta", complete: false, active: true },
-        { label: "Negociación", complete: false },
+        { label: "Negociaci├│n", complete: false },
         { label: "Cierre", complete: false },
     ];
 
@@ -169,9 +99,9 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                     <Clock className="h-4 w-4 text-green-400" />
                     <div>
                         <p className="text-xs font-bold text-white">
-                            <span className="text-green-400 font-heading text-lg">{daysActive}</span> días activos
+                            <span className="text-green-400 font-heading text-lg">{daysActive}</span> d├¡as activos
                         </p>
-                        <p className="text-[8px] text-white/30">de {daysGuarantee} días de garantía</p>
+                        <p className="text-[8px] text-white/30">de {daysGuarantee} d├¡as de garant├¡a</p>
                     </div>
                 </div>
                 {/* Mini progress bar */}
@@ -184,7 +114,7 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                     />
                 </div>
                 <span className="text-[8px] font-black text-green-400 uppercase bg-green-500/10 px-2 py-1 rounded-full border border-green-500/20 shrink-0">
-                    En Garantía
+                    En Garant├¡a
                 </span>
             </motion.div>
 
@@ -193,14 +123,14 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                 <div className="flex items-start justify-between mb-6">
                     <div>
                         <p className="text-xs text-white/40 mb-1">Bienvenido</p>
-                        <h2 className="text-xl font-heading font-bold">Familia García</h2>
+                        <h2 className="text-xl font-heading font-bold">Familia Garc├¡a</h2>
                         {/* Advisor with photo */}
                         <div className="flex items-center gap-2 mt-2">
                             <div className="h-7 w-7 rounded-full bg-gradient-to-br from-cima-gold/30 to-cima-gold/10 border border-cima-gold/20 flex items-center justify-center overflow-hidden">
                                 <User className="h-3.5 w-3.5 text-cima-gold" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-white/60">Carlos Martínez</p>
+                                <p className="text-[10px] font-bold text-white/60">Carlos Mart├¡nez</p>
                                 <p className="text-[8px] text-white/20">Tu asesor asignado</p>
                             </div>
                             <div className="h-2 w-2 rounded-full bg-green-500 ml-1" />
@@ -215,10 +145,10 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
                 {/* Property Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
-                        { label: "Recámaras", value: "4", icon: "🛏️" },
-                        { label: "Baños", value: "3", icon: "🚿" },
-                        { label: "m² Terreno", value: "320", icon: "📏" },
-                        { label: "Tipo", value: "Residencial", icon: "🏠" },
+                        { label: "Rec├ímaras", value: "4", icon: "≡ƒ¢Å∩╕Å" },
+                        { label: "Ba├▒os", value: "3", icon: "≡ƒÜ┐" },
+                        { label: "m┬▓ Terreno", value: "320", icon: "≡ƒôÉ" },
+                        { label: "Tipo", value: "Residencial", icon: "≡ƒÅá" },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
                             <span className="text-lg mb-1 block">{stat.icon}</span>
@@ -286,19 +216,19 @@ function DashboardTab({ plan }: { plan: PlanConfig }) {
     );
 }
 
-/* ─── Feedback Tab ────────────────────────────────────────────────────────── */
+/* ΓöÇΓöÇΓöÇ Feedback Tab ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function FeedbackTab({ plan }: { plan: PlanConfig }) {
     const sentiments = [
-        { label: "Le encantó", count: 3, icon: ThumbsUp, color: "text-green-400 bg-green-500/10 border-green-500/20" },
-        { label: "Lo pensará", count: 2, icon: Minus, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
+        { label: "Le encant├│", count: 3, icon: ThumbsUp, color: "text-green-400 bg-green-500/10 border-green-500/20" },
+        { label: "Lo pensar├í", count: 2, icon: Minus, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
         { label: "Precio alto", count: 1, icon: ThumbsDown, color: "text-red-400 bg-red-500/10 border-red-500/20" },
     ];
 
     const prospects = [
-        { name: "Familia Rodríguez", date: "25 Feb", rating: 5, comment: "Excelente ubicación, les encantó la cocina y el jardín.", sentiment: "positive" },
-        { name: "Ing. Luis Garza", date: "23 Feb", rating: 4, comment: "Interesado pero quiere negociar el precio. Volverá con oferta.", sentiment: "neutral" },
-        { name: "Sra. Ana Treviño", date: "20 Feb", rating: 5, comment: "Le fascinó la distribución, pidió segunda visita con su esposo.", sentiment: "positive" },
-        { name: "Lic. Pedro Salazar", date: "18 Feb", rating: 3, comment: "Buscaba algo más pequeño, pero agradece la visita.", sentiment: "negative" },
+        { name: "Familia Rodr├¡guez", date: "25 Feb", rating: 5, comment: "Excelente ubicaci├│n, les encant├│ la cocina y el jard├¡n.", sentiment: "positive" },
+        { name: "Ing. Luis Garza", date: "23 Feb", rating: 4, comment: "Interesado pero quiere negociar el precio. Volver├í con oferta.", sentiment: "neutral" },
+        { name: "Sra. Ana Trevi├▒o", date: "20 Feb", rating: 5, comment: "Le fascin├│ la distribuci├│n, pidi├│ segunda visita con su esposo.", sentiment: "positive" },
+        { name: "Lic. Pedro Salazar", date: "18 Feb", rating: 3, comment: "Buscaba algo m├ís peque├▒o, pero agradece la visita.", sentiment: "negative" },
     ];
 
     return (
@@ -373,14 +303,14 @@ function FeedbackTab({ plan }: { plan: PlanConfig }) {
     );
 }
 
-/* ─── Documents Tab ────────────────────────────────────────────────────────── */
+/* ΓöÇΓöÇΓöÇ Documents Tab ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function DocumentsTab() {
     const documents = [
         { name: "Escrituras de Propiedad", status: "verified", date: "15 Ene 2025" },
         { name: "Predial 2025", status: "pending", date: "Pendiente" },
         { name: "Certificado de Libertad de Gravamen", status: "verified", date: "20 Ene 2025" },
         { name: "Acta de Matrimonio", status: "verified", date: "15 Ene 2025" },
-        { name: "INE / Identificación Oficial", status: "verified", date: "15 Ene 2025" },
+        { name: "INE / Identificaci├│n Oficial", status: "verified", date: "15 Ene 2025" },
         { name: "CFE / Agua / Gas", status: "pending", date: "Pendiente" },
     ];
 
@@ -420,7 +350,7 @@ function DocumentsTab() {
                                 ? "bg-green-500/10 text-green-400 border border-green-500/20"
                                 : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
                                 }`}>
-                                {doc.status === "verified" ? "✓ Recibido" : "⏳ Pendiente"}
+                                {doc.status === "verified" ? "Γ£ô Recibido" : "ΓÅ│ Pendiente"}
                             </span>
                         </motion.div>
                     ))}
@@ -447,18 +377,18 @@ function DocumentsTab() {
     );
 }
 
-/* ─── Evidence Tab ────────────────────────────────────────────────────────── */
+/* ΓöÇΓöÇΓöÇ Evidence Tab ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function EvidenceTab({ plan }: { plan: PlanConfig }) {
     const visits = [
         {
             date: "25 Feb 2025",
-            prospect: "Familia Rodríguez",
-            photos: ["/residencial-cima.png", "/loft-cima.png", "/penthouse-cima.png"],
+            prospect: "Familia Rodr├¡guez",
+            photos: ["/cocina-despues.png", "/estancia-despues.png", "/recamara-despues.png"],
         },
         {
             date: "23 Feb 2025",
             prospect: "Ing. Luis Garza",
-            photos: ["/loft-cima.png", "/penthouse-cima.png"],
+            photos: ["/estancia-despues.png", "/recamara-despues.png"],
         },
     ];
 
@@ -467,7 +397,7 @@ function EvidenceTab({ plan }: { plan: PlanConfig }) {
             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6">
                 <h3 className="text-xs font-black uppercase tracking-wider text-white/60 mb-4 flex items-center gap-2">
                     <Camera className="h-3.5 w-3.5 text-cima-gold" />
-                    Evidencia Fotográfica de Visitas
+                    Evidencia Fotogr├ífica de Visitas
                 </h3>
 
                 <div className="space-y-6">
@@ -511,7 +441,7 @@ function EvidenceTab({ plan }: { plan: PlanConfig }) {
                     </h3>
                     <div className="flex gap-3">
                         <a
-                            href="https://wa.me/?text=Mira%20esta%20propiedad%20en%20venta%3A%20Residencia%20Las%20Misiones%20-%20%2412%2C400%2C000%20MXN%20🏠"
+                            href="https://wa.me/?text=Mira%20esta%20propiedad%20en%20venta%3A%20Residencia%20Las%20Misiones%20-%20%2412%2C400%2C000%20MXN%20%F0%9F%8F%A0"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600/20 border border-green-600/30 rounded-xl text-green-400 text-xs font-bold uppercase hover:bg-green-600/30 transition-all"
