@@ -592,22 +592,6 @@ export default function LiveDemoClient() {
                             </div>
                         </div>
 
-                        {/* Urgency Banner */}
-                        <div className="border-t border-orange-500/10 bg-gradient-to-r from-orange-500/10 via-red-500/5 to-orange-500/10 px-4 py-1.5 relative overflow-hidden">
-                            <div className="flex items-center justify-center gap-2">
-                                <Flame className="h-3 w-3 text-orange-400 animate-pulse" />
-                                <span className="text-[9px] font-black text-orange-400 uppercase tracking-wider">Precio de lanzamiento</span>
-                                <span className="text-[9px] font-black text-white">— 50% OFF los primeros 3 meses</span>
-                                <Flame className="h-3 w-3 text-orange-400 animate-pulse" />
-                            </div>
-                            <motion.div
-                                initial={{ left: "-20%" }}
-                                animate={{ left: "120%" }}
-                                transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-                                className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12"
-                            />
-                        </div>
-
                         {/* Narrative Caption */}
                         <div className="bg-cima-gold/5 border-b border-cima-gold/10 px-4 py-2 relative overflow-hidden">
                             <motion.div
@@ -677,40 +661,6 @@ export default function LiveDemoClient() {
                         />
                     )}
                 </motion.div>
-            </AnimatePresence>
-
-            {/* Simulate Lead floating button */}
-            {view === "admin" && !focusMode && (
-                <motion.button
-                    onClick={() => {
-                        setLeadPulse(true);
-                        handleAddLead();
-                        handleNavigateToLeads();
-                        setTimeout(() => setLeadPulse(false), 2000);
-                    }}
-                    className="fixed bottom-24 right-6 z-50 flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-wider shadow-2xl shadow-purple-500/30 hover:scale-110 active:scale-95 transition-all border border-white/20"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    title="Simular un nuevo lead en tiempo real"
-                >
-                    <Zap className="h-4 w-4 animate-pulse" />
-                    Simular Lead
-                </motion.button>
-            )}
-
-            {/* Lead pulse overlay */}
-            <AnimatePresence>
-                {leadPulse && (
-                    <motion.div
-                        initial={{ opacity: 0.6, scale: 1 }}
-                        animate={{ opacity: 0, scale: 2 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1.5 }}
-                        className="fixed inset-0 z-[60] pointer-events-none"
-                    >
-                        <div className="absolute inset-0 border-4 border-cima-gold/40 rounded-3xl" />
-                    </motion.div>
-                )}
             </AnimatePresence>
 
             {/* Bottom CTA bar */}
