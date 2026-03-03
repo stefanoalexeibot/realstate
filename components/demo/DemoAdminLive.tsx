@@ -204,7 +204,9 @@ export default function DemoAdminLive(props: DemoAdminLiveProps) {
         isMobilePreview = false,
         setIsMobilePreview,
         isDND = false,
-        setIsDND
+        setIsDND,
+        properties = [],
+        onUpdateProperty
     } = props;
 
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
