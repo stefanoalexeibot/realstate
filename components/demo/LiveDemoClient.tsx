@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, Sun, Moon as MoonIcon } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, Sun, Moon as MoonIcon, Banknote } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
@@ -418,6 +418,16 @@ export default function LiveDemoClient() {
                                         </button>
                                     ))}
                                 </div>
+
+                                {/* Checkout Onboarding CTA */}
+                                <a
+                                    href="/checkout/onboarding"
+                                    className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cima-gold/10 border border-cima-gold/30 text-cima-gold hover:bg-cima-gold hover:text-black transition-all text-[8px] font-black uppercase tracking-wider group"
+                                    title="Abrir Portal de Onboarding"
+                                >
+                                    <Banknote className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
+                                    <span className="hidden lg:inline">Cerrar Venta</span>
+                                </a>
 
                                 {/* Timer */}
                                 <div className="hidden xl:flex">
