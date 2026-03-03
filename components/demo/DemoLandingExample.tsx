@@ -154,13 +154,13 @@ export default function DemoLandingExample({
                                 <h1 className="text-3xl md:text-4xl font-heading font-black tracking-tight leading-tight mb-4">
                                     Residencia Premium
                                     <br />
-                                    <span className="text-white/40">Colinas de San Jerónimo</span>
+                                    <span className="text-white/40">Colinas de San Jer\u00f3nimo</span>
                                 </h1>
                                 <p className={`text-lg font-heading font-bold ${accentText} mb-6`}>$8,500,000 MXN</p>
                                 <p className="text-sm text-white/40 leading-relaxed mb-8 max-w-md">
                                     {isStarter
-                                        ? "Hermosa residencia de 320m² con acabados de lujo."
-                                        : "Hermosa residencia de 320m² en una de las zonas más exclusivas. Acabados de lujo, jardín privado y vista panorámica a la montaña."
+                                        ? "Hermosa residencia de 320m\u00b2 con acabados de lujo."
+                                        : "Hermosa residencia de 320m\u00b2 en una de las zonas m\u00e1s exclusivas. Acabados de lujo, jard\u00edn privado y vista panor\u00e1mica a la monta\u00f1a."
                                     }
                                 </p>
                             </Wrapper>
@@ -168,9 +168,9 @@ export default function DemoLandingExample({
                             {/* Stats */}
                             <div className="grid grid-cols-4 gap-3 mb-8">
                                 {[
-                                    { icon: BedDouble, value: "4", label: "Recámaras" },
-                                    { icon: Bath, value: "3.5", label: "Baños" },
-                                    { icon: Ruler, value: "320", label: "m²" },
+                                    { icon: BedDouble, value: "4", label: "Rec\u00e1maras" },
+                                    { icon: Bath, value: "3.5", label: "Ba\u00f1os" },
+                                    { icon: Ruler, value: "320", label: "m\u00b2" },
                                     { icon: Camera, value: "24", label: "Fotos" },
                                 ].map((stat, i) => (
                                     <Wrapper key={i} {...delayAnim(0.2 + i * 0.1)}
@@ -354,7 +354,7 @@ export default function DemoLandingExample({
                         {[
                             { value: "98%", label: "Clientes satisfechos" },
                             { value: "+250", label: "Propiedades vendidas" },
-                            { value: "< 30 días", label: "Tiempo promedio" },
+                            { value: "< 30 d\u00edas", label: "Tiempo promedio" },
                         ].map((stat, i) => (
                             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 + i * 0.1 }}
                                 className="text-center">
@@ -366,8 +366,8 @@ export default function DemoLandingExample({
                     {/* Testimonial */}
                     <div className="max-w-lg mx-auto bg-cima-gold/[0.03] border border-cima-gold/10 rounded-2xl p-6 text-center">
                         <MessageSquare className="h-5 w-5 text-cima-gold/30 mx-auto mb-3" />
-                        <p className="text-sm text-white/60 italic mb-3">&quot;Vendieron nuestra casa en 21 días. El portal del propietario nos mantuvo informados en todo momento.&quot;</p>
-                        <p className="text-xs font-bold text-white">Familia Treviño</p>
+                        <p className="text-sm text-white/60 italic mb-3">&quot;Vendieron nuestra casa en 21 d\u00edas. El portal del propietario nos mantuvo informados en todo momento.&quot;</p>
+                        <p className="text-xs font-bold text-white">Familia Trevi\u00f1o</p>
                         <p className="text-[8px] text-white/30">Residencia Carretera Nacional</p>
                     </div>
                 </div>
@@ -377,8 +377,8 @@ export default function DemoLandingExample({
             <div className="max-w-6xl mx-auto px-6 py-16">
                 <div className={`grid grid-cols-1 ${isStarter ? "md:grid-cols-2" : "md:grid-cols-3"} gap-4 mb-16`}>
                     {[
-                        { icon: Shield, title: "Garantía de 30 días", desc: "Si no vendemos tu propiedad, te devolvemos tu inversión" },
-                        { icon: Camera, title: "Fotografía profesional", desc: "Sesión HDR completa + video tour + drone aéreo" },
+                        { icon: Shield, title: "Garant\u00eda de 30 d\u00edas", desc: "Si no vendemos tu propiedad, te devolvemos tu inversi\u00f3n" },
+                        { icon: Camera, title: "Fotograf\u00eda profesional", desc: "Sesi\u00f3n HDR completa + video tour + drone a\u00e9reo" },
                         ...(!isStarter ? [{ icon: Star, title: "Portal del propietario", desc: "Sigue el progreso de tu venta en tiempo real, 24/7" }] : []),
                     ].map((feature, i) => (
                         <Wrapper key={i} {...delayAnim(0.5 + i * 0.1)}
@@ -400,7 +400,7 @@ export default function DemoLandingExample({
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cima-gold/10 border border-cima-gold/20 text-[8px] font-bold text-cima-gold uppercase tracking-widest mb-3">
                                 <TrendingUp className="h-3 w-3" /> Calculadora de Impacto
                             </span>
-                            <h2 className="text-xl font-heading font-bold">Tu inversión se paga sola</h2>
+                            <h2 className="text-xl font-heading font-bold">Tu inversi\u00f3n se paga sola</h2>
                         </div>
 
                         <div className="max-w-xl mx-auto mb-10 bg-white/[0.02] border border-white/10 rounded-2xl p-6">
@@ -425,7 +425,7 @@ export default function DemoLandingExample({
                                 </div>
                                 <div className="bg-white/[0.03] border border-white/5 rounded-lg p-3">
                                     <p className="text-[7px] text-white/30 uppercase font-black mb-1">Ahorro en Tiempo</p>
-                                    <p className="text-lg font-heading font-bold text-cima-gold">-60 días</p>
+                                    <p className="text-lg font-heading font-bold text-cima-gold">-60 d\u00edas</p>
                                 </div>
                             </div>
                         </div>

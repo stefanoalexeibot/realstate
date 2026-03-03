@@ -71,7 +71,7 @@ export default function UpgradeBanner({ currentTier, requiredTier, featureName }
                     transition={{ delay: 0.3 }}
                     className="text-xs text-white/40 mb-6 max-w-xs"
                 >
-                    Esta función está disponible en el plan <span className="text-cima-gold font-bold">{planNames[requiredTier]}</span>
+                    Esta funci\u00f3n est\u00e1 disponible en el plan <span className="text-cima-gold font-bold">{planNames[requiredTier]}</span>
                 </motion.p>
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}

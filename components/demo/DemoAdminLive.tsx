@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 // Vercel Redeploy Trigger: Phase 5 - Digital Vault
@@ -34,18 +34,18 @@ interface DemoAdminLiveProps {
 
 /* --- Mock Data ------------------------------------------------------------------------------------------------- */
 const PROPERTIES = [
-    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
-    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa María" },
-    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
-    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de Anáhuac 305, Valle Poniente" },
-    { name: "Pent. Santa María", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa María" },
-    { name: "Casa Cumbres Elite", price: "$5.5M", status: "Venta", owner: "Arq. Mendoza", img: "/recamara-despues.png", hits: 67, trend: [15, 22, 18, 28, 35, 32, 40], beds: 3, baths: 2.5, m2: 210, address: "Cumbres Elite 7° Sector, Priv. Ámbar" },
-    { name: "Depto. Vía Cordillera", price: "$3.8M", status: "Venta", owner: "Sra. Lozano", img: "/cocina-despues.png", hits: 45, trend: [8, 12, 15, 11, 20, 18, 25], beds: 2, baths: 1, m2: 85, address: "Vía Cordillera 200, Col. Residencial" },
-    { name: "Residencia Carretera Nal.", price: "$18.5M", status: "Exclusiva", owner: "Fam. Treviño", img: "/estancia-despues.png", hits: 178, trend: [40, 55, 48, 65, 72, 68, 85], beds: 5, baths: 4.5, m2: 480, address: "Carr. Nacional Km 268, La Estanzuela" },
-    { name: "Townhouse San Pedro", price: "$7.2M", status: "Venta", owner: "Lic. Cavazos", img: "/recamara-despues.png", hits: 92, trend: [25, 30, 28, 38, 45, 42, 55], beds: 3, baths: 3, m2: 175, address: "San Pedro Garza García, Zona Valle" },
-    { name: "Loft Barrio Antiguo", price: "$2.9M", status: "Venta", owner: "Dis. Ramírez", img: "/cocina-despues.png", hits: 110, trend: [35, 42, 38, 50, 58, 55, 70], beds: 1, baths: 1, m2: 65, address: "Barrio Antiguo, Calle Morelos 412" },
-    { name: "Casa Bosques del Valle", price: "$9.7M", status: "Venta", owner: "Dr. González", img: "/estancia-despues.png", hits: 73, trend: [18, 25, 22, 30, 38, 35, 42], beds: 4, baths: 3, m2: 290, address: "Bosques del Valle, Priv. Roble" },
-    { name: "Pent. Distrito Tec", price: "$6.8M", status: "Exclusiva", owner: "Ing. Salinas", img: "/recamara-despues.png", hits: 156, trend: [42, 50, 45, 62, 70, 65, 82], beds: 2, baths: 2, m2: 130, address: "Blvd. Díaz Ordaz, Torre Altus, P.H." },
+    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. Garc\u00eda", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
+    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa Mar\u00eda" },
+    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sof\u00eda L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
+    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hern\u00e1ndez", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de An\u00e1huac 305, Valle Poniente" },
+    { name: "Pent. Santa Mar\u00eda", price: "$15.8M", status: "Exclusiva", owner: "Lic. P\u00e9rez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa Mar\u00eda" },
+    { name: "Casa Cumbres Elite", price: "$5.5M", status: "Venta", owner: "Arq. Mendoza", img: "/recamara-despues.png", hits: 67, trend: [15, 22, 18, 28, 35, 32, 40], beds: 3, baths: 2.5, m2: 210, address: "Cumbres Elite 7\u00b0 Sector, Priv. \u00c1mbar" },
+    { name: "Depto. V\u00eda Cordillera", price: "$3.8M", status: "Venta", owner: "Sra. Lozano", img: "/cocina-despues.png", hits: 45, trend: [8, 12, 15, 11, 20, 18, 25], beds: 2, baths: 1, m2: 85, address: "V\u00eda Cordillera 200, Col. Residencial" },
+    { name: "Residencia Carretera Nal.", price: "$18.5M", status: "Exclusiva", owner: "Fam. Trevi\u00f1o", img: "/estancia-despues.png", hits: 178, trend: [40, 55, 48, 65, 72, 68, 85], beds: 5, baths: 4.5, m2: 480, address: "Carr. Nacional Km 268, La Estanzuela" },
+    { name: "Townhouse San Pedro", price: "$7.2M", status: "Venta", owner: "Lic. Cavazos", img: "/recamara-despues.png", hits: 92, trend: [25, 30, 28, 38, 45, 42, 55], beds: 3, baths: 3, m2: 175, address: "San Pedro Garza Garc\u00eda, Zona Valle" },
+    { name: "Loft Barrio Antiguo", price: "$2.9M", status: "Venta", owner: "Dis. Ram\u00edrez", img: "/cocina-despues.png", hits: 110, trend: [35, 42, 38, 50, 58, 55, 70], beds: 1, baths: 1, m2: 65, address: "Barrio Antiguo, Calle Morelos 412" },
+    { name: "Casa Bosques del Valle", price: "$9.7M", status: "Venta", owner: "Dr. Gonz\u00e1lez", img: "/estancia-despues.png", hits: 73, trend: [18, 25, 22, 30, 38, 35, 42], beds: 4, baths: 3, m2: 290, address: "Bosques del Valle, Priv. Roble" },
+    { name: "Pent. Distrito Tec", price: "$6.8M", status: "Exclusiva", owner: "Ing. Salinas", img: "/recamara-despues.png", hits: 156, trend: [42, 50, 45, 62, 70, 65, 82], beds: 2, baths: 2, m2: 130, address: "Blvd. D\u00edaz Ordaz, Torre Altus, P.H." },
     { name: "Residencia Chipinque", price: "$22.0M", status: "Exclusiva", owner: "Fam. Garza", img: "/cocina-despues.png", hits: 225, trend: [55, 65, 60, 78, 88, 82, 95], beds: 5, baths: 5, m2: 550, address: "Paseo de Chipinque 100, San Pedro" },
 ];
 
@@ -53,25 +53,25 @@ const PROPERTIES = [
 // const LEADS = [...]
 
 const VISITS = [
-    { prospect: "Familia Rodríguez", property: "Residencia Las Misiones", date: "Hoy", time: "11:00 AM", status: "confirmada", sentiment: "positive" },
+    { prospect: "Familia Rodr\u00edguez", property: "Residencia Las Misiones", date: "Hoy", time: "11:00 AM", status: "confirmada", sentiment: "positive" },
     { prospect: "Ing. Luis Garza", property: "Depto. Torre LOVFT", date: "Hoy", time: "4:30 PM", status: "pendiente", sentiment: null },
-    { prospect: "Sra. Ana Treviño", property: "Residencia Las Misiones", date: "Mañana", time: "10:00 AM", status: "confirmada", sentiment: null },
-    { prospect: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10" },
-    { prospect: "María Elena Ramos", property: "Residencia Contry Sol", date: "28 Feb", time: "11:30 AM", status: "realizada", sentiment: "positive" },
-    { prospect: "Roberto Treviño", property: "Pent. Santa María", date: "27 Feb", time: "5:00 PM", status: "realizada", sentiment: "neutral" },
-    { prospect: "Lic. Pérez (familiar)", property: "Casa Valle Poniente", date: "26 Feb", time: "3:00 PM", status: "cancelada", sentiment: null },
+    { prospect: "Sra. Ana Trevi\u00f1o", property: "Residencia Las Misiones", date: "Ma\u00f1ana", time: "10:00 AM", status: "confirmada", sentiment: null },
+    { prospect: "Carlos L\u00f3pez", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10" },
+    { prospect: "Mar\u00eda Elena Ramos", property: "Residencia Contry Sol", date: "28 Feb", time: "11:30 AM", status: "realizada", sentiment: "positive" },
+    { prospect: "Roberto Trevi\u00f1o", property: "Pent. Santa Mar\u00eda", date: "27 Feb", time: "5:00 PM", status: "realizada", sentiment: "neutral" },
+    { prospect: "Lic. P\u00e9rez (familiar)", property: "Casa Valle Poniente", date: "26 Feb", time: "3:00 PM", status: "cancelada", sentiment: null },
 ];
 
 // (Moved to shared state in LiveDemoClient)
 // const MESSAGES = [...]
 
 const NOTIFICATIONS = [
-    { icon: Zap, text: "Nuevo lead desde Instagram", sub: "Ana Martínez — Residencia Las Misiones", color: "text-pink-400 bg-pink-500/20" },
-    { icon: Calendar, text: "Visita agendada para mañana", sub: "Sra. Treviño — 10:00 AM", color: "text-blue-400 bg-blue-500/20" },
-    { icon: MessageSquare, text: "Nuevo mensaje", sub: "Familia Rodríguez quiere reagendar", color: "text-purple-400 bg-purple-500/20" },
-    { icon: Target, text: "Oferta recibida", sub: "$11.8M — Residencia Las Misiones", color: "text-green-400 bg-green-500/20" },
-    { icon: Eye, text: "Tu propiedad tiene 50 vistas hoy", sub: "Pent. Santa María — récord semanal", color: "text-amber-400 bg-amber-500/20" },
-    { icon: Phone, text: "Lead por WhatsApp", sub: "Familia Rodríguez — Mar del Plata 123", color: "text-green-400 bg-green-500/20" },
+    { icon: Zap, text: "Nuevo lead desde Instagram", sub: "Ana Mart\u00ednez \u2014 Residencia Las Misiones", color: "text-pink-400 bg-pink-500/20" },
+    { icon: Calendar, text: "Visita agendada para ma\u00f1ana", sub: "Sra. Trevi\u00f1o \u2014 10:00 AM", color: "text-blue-400 bg-blue-500/20" },
+    { icon: MessageSquare, text: "Nuevo mensaje", sub: "Familia Rodr\u00edguez quiere reagendar", color: "text-purple-400 bg-purple-500/20" },
+    { icon: Target, text: "Oferta recibida", sub: "$11.8M \u2014 Residencia Las Misiones", color: "text-green-400 bg-green-500/20" },
+    { icon: Eye, text: "Tu propiedad tiene 50 vistas hoy", sub: "Pent. Santa Mar\u00eda \u2014 r\u00e9cord semanal", color: "text-amber-400 bg-amber-500/20" },
+    { icon: Phone, text: "Lead por WhatsApp", sub: "Familia Rodr\u00edguez \u2014 Mar del Plata 123", color: "text-green-400 bg-green-500/20" },
 ];
 
 const STATUS_MAP: Record<string, { label: string; class: string }> = {
@@ -79,7 +79,7 @@ const STATUS_MAP: Record<string, { label: string; class: string }> = {
     contactado: { label: "Contactado", class: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
     calificado: { label: "Calificado", class: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
     visita_agendada: { label: "Visita", class: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-    en_negociacion: { label: "Negociación", class: "bg-cima-gold/20 text-cima-gold border-cima-gold/30" },
+    en_negociacion: { label: "Negociaci\u00f3n", class: "bg-cima-gold/20 text-cima-gold border-cima-gold/30" },
 };
 
 /* --- Mini Sparkline ------------------------------------------------------------------------------------------ */
@@ -121,7 +121,7 @@ function MiniChart({ data, color = "#C8A96E", height = 32 }: { data: number[]; c
     );
 }
 
-/* ΓöÇΓöÇΓöÇ Animated Counter ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* --------- Animated Counter --------------------------------------------------------------------------------------------------------------------- */
 function Counter({ value, prefix = "", suffix = "" }: { value: string; prefix?: string; suffix?: string }) {
     const numericValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
     const [displayValue, setDisplayValue] = useState(0);
@@ -149,7 +149,7 @@ function Counter({ value, prefix = "", suffix = "" }: { value: string; prefix?: 
     return <span>{prefix}{formatted}{suffix}</span>;
 }
 
-/* ΓöÇΓöÇΓöÇ Rotating Notification Toast ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* --------- Rotating Notification Toast ------------------------------------------------------------------------------------ */
 function RotatingToast({ onClick }: { onClick?: () => void }) {
     const [index, setIndex] = useState(0);
     const [visible, setVisible] = useState(false);
@@ -206,7 +206,7 @@ function RotatingToast({ onClick }: { onClick?: () => void }) {
     );
 }
 
-/* ΓöÇΓöÇΓöÇ Bar Chart Component ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* --------- Bar Chart Component ------------------------------------------------------------------------------------------------------------ */
 function BarChart({ data, labels }: { data: number[]; labels: string[] }) {
     const max = Math.max(...data);
     return (
@@ -272,7 +272,7 @@ export default function DemoAdminLive({
         { id: "propiedades", icon: Layout, label: "Propiedades", locked: false },
         { id: "leads", icon: Users, label: "Leads", badge: "7", locked: false },
         { id: "visitas", icon: Target, label: "Visitas", badge: "2", locked: !f.visits },
-        { id: "analiticos", icon: TrendingUp, label: "Analíticos", locked: !f.analytics },
+        { id: "analiticos", icon: TrendingUp, label: "Anal-ticos", locked: !f.analytics },
         { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: messages.filter(m => m.unread).length > 0 ? messages.filter(m => m.unread).length.toString() : undefined, locked: !f.messages },
         { id: "ia_studio", icon: Wand2, label: "IA Studio", locked: plan.tier === "basico" },
         { id: "documentos", icon: ShieldCheck, label: "Documentos", locked: plan.tier === "basico" },
@@ -284,19 +284,19 @@ export default function DemoAdminLive({
             { label: "Vistas Totales", value: "148", change: "+5%", icon: Eye, data: [20, 35, 25, 40, 30, 45, 50] },
             { label: "Leads Activos", value: "3", change: "+1", icon: Users, data: [1, 0, 1, 2, 1, 2, 3] },
             { label: "Visitas Mes", value: "2", change: "+1", icon: Target, data: [0, 1, 0, 1, 1, 1, 2] },
-            { label: "Conversión", value: "0.8%", change: "+0.2%", icon: TrendingUp, data: [0.4, 0.5, 0.6, 0.5, 0.7, 0.7, 0.8] },
+            { label: "Conversi-n", value: "0.8%", change: "+0.2%", icon: TrendingUp, data: [0.4, 0.5, 0.6, 0.5, 0.7, 0.7, 0.8] },
         ],
         profesional: [
             { label: "Vistas Totales", value: "589", change: "+8%", icon: Eye, data: [100, 120, 110, 150, 140, 170, 190] },
             { label: "Leads Activos", value: "12", change: "+3", icon: Users, data: [4, 6, 5, 8, 7, 10, 12] },
             { label: "Visitas Mes", value: "8", change: "+2", icon: Target, data: [2, 3, 3, 5, 4, 6, 8] },
-            { label: "Conversión", value: "2.1%", change: "+0.5%", icon: TrendingUp, data: [1.2, 1.4, 1.6, 1.5, 1.8, 1.9, 2.1] },
+            { label: "Conversi-n", value: "2.1%", change: "+0.5%", icon: TrendingUp, data: [1.2, 1.4, 1.6, 1.5, 1.8, 1.9, 2.1] },
         ],
         premium: [
             { label: "Vistas Totales", value: "1247", change: "+12%", icon: Eye, data: [180, 220, 195, 310, 280, 350, 420] },
             { label: "Leads Activos", value: "23", change: "+5", icon: Users, data: [8, 10, 12, 15, 14, 18, 23] },
             { label: "Visitas Mes", value: "18", change: "+3", icon: Target, data: [5, 7, 6, 9, 11, 14, 18] },
-            { label: "Conversión", value: "4.2%", change: "+0.8%", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
+            { label: "Conversi-n", value: "4.2%", change: "+0.8%", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
         ]
     };
 
@@ -305,7 +305,7 @@ export default function DemoAdminLive({
     return (
         <div className="min-h-screen bg-[#0A0A0B] text-white">
             <div className="flex">
-                {/* ΓöÇΓöÇ Sidebar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+                {/* ------ Sidebar --------------------------------------------------------------------------------------------- */}
                 <div className="hidden lg:flex flex-col w-56 min-h-screen border-r border-white/5 bg-black/40 p-5">
                     <div className="flex items-center gap-2.5 mb-10">
                         <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/20">
@@ -360,11 +360,11 @@ export default function DemoAdminLive({
                         <div className="h-1.5 w-full bg-white/5 rounded-full mb-2">
                             <div className="h-full bg-cima-gold rounded-full shadow-[0_0_8px_rgba(200,169,110,0.4)]" style={{ width: `${Math.min((visibleProps.length / 5) * 100, 100)}%` }} />
                         </div>
-                        <p className="text-[7px] text-white/40 font-mono">{visibleProps.length}/{maxProps === PROPERTIES.length ? "Γê₧" : maxProps}</p>
+                        <p className="text-[7px] text-white/40 font-mono">{visibleProps.length}/{maxProps === PROPERTIES.length ? "---" : maxProps}</p>
                     </div>
                 </div>
 
-                {/* ΓöÇΓöÇ Main Content Area (Wrappable for Mobile) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+                {/* ------ Main Content Area (Wrappable for Mobile) --------------------------------- */}
                 <div className={`flex-1 transition-all duration-700 flex flex-col items-center ${isMobilePreview ? "py-10 bg-[#050505]" : "p-0"}`}>
                     <motion.div
                         layout
@@ -419,18 +419,18 @@ export default function DemoAdminLive({
                                         {activeTab === "propiedades" && "Mis Propiedades"}
                                         {activeTab === "leads" && "Leads Recientes"}
                                         {activeTab === "visitas" && "Agenda de Visitas"}
-                                        {activeTab === "analiticos" && "Analíticos"}
+                                        {activeTab === "analiticos" && "Anal-ticos"}
                                         {activeTab === "mensajes" && "Mensajes"}
                                         {activeTab === "ia_studio" && "IA Studio"}
                                         {activeTab === "documentos" && "Documentos"}
                                         {activeTab === "contratos" && "Contratos"}
                                     </h1>
                                     <p className="text-xs text-white/40">
-                                        {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> · Límite: {maxProps}</span>}</>}
+                                        {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> - L-mite: {maxProps}</span>}</>}
                                         {activeTab === "leads" && <>Tienes <span className="text-white font-bold">7 leads</span> esta semana</>}
-                                        {activeTab === "visitas" && <>Próximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
-                                        {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">últimos 30 días</span></>}
-                                        {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> · {messages.length} conversaciones</>}
+                                        {activeTab === "visitas" && <>Pr-ximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
+                                        {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">-ltimos 30 d-as</span></>}
+                                        {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> - {messages.length} conversaciones</>}
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -445,7 +445,7 @@ export default function DemoAdminLive({
                                         <button
                                             onClick={() => setIsMobilePreview(!isMobilePreview)}
                                             className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
-                                            title={isMobilePreview ? "Volver a Escritorio" : "Ver en Móvil"}
+                                            title={isMobilePreview ? "Volver a Escritorio" : "Ver en M-vil"}
                                         >
                                             {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
                                         </button>
@@ -469,7 +469,7 @@ export default function DemoAdminLive({
                                 </div>
                             </div>
 
-                            {/* Analytics Row ΓÇö always visible */}
+                            {/* Analytics Row --- always visible */}
                             <div className={`grid transition-all duration-500 ${isMobilePreview ? "grid-cols-1 gap-2" : "grid-cols-2 md:grid-cols-4 gap-3"} mb-8`} key={plan.tier}>
                                 {STATS.map((stat, i) => (
                                     <motion.div
@@ -488,7 +488,7 @@ export default function DemoAdminLive({
                                                 <div className={`font-heading font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
                                                     <Counter
                                                         value={stat.value}
-                                                        suffix={stat.label === "Conversión" ? "%" : ""}
+                                                        suffix={stat.label === "Conversi-n" ? "%" : ""}
                                                     />
                                                 </div>
                                                 <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">{stat.label}</p>
@@ -499,7 +499,7 @@ export default function DemoAdminLive({
                                 ))}
                             </div>
 
-                            {/* ΓöÇΓöÇ Tab Content ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+                            {/* ------ Tab Content ------------------------------------------------------------------------ */}
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={activeTab}
@@ -619,7 +619,7 @@ function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                                         <span className="text-[8px] text-white/20 font-mono">7 leads disponibles</span>
                                     </div>
                                     <div className="grid gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                                        {["Carlos López", "Ana Martínez", "Roberto García", "Elena Ramos", "Miguel Sánchez", "Sofía Luna", "Héctor Díaz"].map((lead) => (
+                                        {["Carlos L-pez", "Ana Mart-nez", "Roberto Garc-a", "Elena Ramos", "Miguel S-nchez", "Sof-a Luna", "H-ctor D-az"].map((lead) => (
                                             <button
                                                 key={lead}
                                                 onClick={() => setSelectedLeads([lead])}
@@ -650,7 +650,7 @@ function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
 
                             {step === "details" && (
                                 <div className="space-y-6">
-                                    <p className="text-[10px] font-black text-cima-gold uppercase tracking-widest">2. Detalles Económicos</p>
+                                    <p className="text-[10px] font-black text-cima-gold uppercase tracking-widest">2. Detalles Econ-micos</p>
                                     <div className="grid gap-4">
                                         <div>
                                             <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Precio de Venta Final</label>
@@ -667,7 +667,7 @@ function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Comisión %</label>
+                                                <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Comisi-n %</label>
                                                 <select
                                                     value={commission}
                                                     onChange={(e) => setCommission(e.target.value)}
@@ -680,7 +680,7 @@ function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Total Comisión</label>
+                                                <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Total Comisi-n</label>
                                                 <div className="w-full bg-cima-gold/5 border border-cima-gold/20 rounded-2xl py-4 px-4 text-cima-gold font-mono font-bold">
                                                     $620,000
                                                 </div>
@@ -693,7 +693,7 @@ function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                                             onClick={() => setStep("select")}
                                             className="flex-1 py-4 bg-white/5 border border-white/10 text-white/60 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all"
                                         >
-                                            Atrás
+                                            Atr-s
                                         </button>
                                         <button
                                             onClick={() => setStep("success")}
@@ -723,11 +723,11 @@ function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                                         />
                                     </div>
                                     <div>
-                                        <h4 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">¡Venta Cerrada!</h4>
-                                        <p className="text-sm text-white/60">Felicidades, la propiedad ha sido marcada como vendida y los analíticos se han actualizado.</p>
+                                        <h4 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">-Venta Cerrada!</h4>
+                                        <p className="text-sm text-white/60">Felicidades, la propiedad ha sido marcada como vendida y los anal-ticos se han actualizado.</p>
                                     </div>
                                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 inline-block w-full">
-                                        <p className="text-[10px] text-white/20 uppercase font-black tracking-widest mb-1">Impacto en Analíticos</p>
+                                        <p className="text-[10px] text-white/20 uppercase font-black tracking-widest mb-1">Impacto en Anal-ticos</p>
                                         <p className="text-cima-gold font-bold">+ $620,000 en comisiones proyectadas</p>
                                     </div>
                                     <button
@@ -748,7 +748,7 @@ function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
 
 /* === VIEWS ==================================================================================================== */
 
-/* ΓöÇΓöÇ Diffusion Button (for PropertiesView) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ Diffusion Button (for PropertiesView) --------------------------------------------------------- */
 function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: string }) {
     const [loading, setLoading] = useState(false);
     const [upgradeAlert, setUpgradeAlert] = useState(false);
@@ -763,7 +763,7 @@ function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: s
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            alert(`Propiedad "${propertyName}" difundida con éxito!`);
+            alert(`Propiedad "${propertyName}" difundida con -xito!`);
         }, 1500);
     };
 
@@ -793,7 +793,7 @@ function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: s
     );
 }
 
-/* ΓöÇΓöÇ Properties View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ Properties View --------------------------------------------------------------------------------------------------------------------------- */
 function PropertiesView({ properties, canEdit, onSelect, plan }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void; plan: PlanConfig }) {
     return (
         <div className="space-y-3">
@@ -817,9 +817,9 @@ function PropertiesView({ properties, canEdit, onSelect, plan }: { properties: t
                             </div>
                             <div className="flex items-center gap-3 text-[9px] font-mono">
                                 <span className="text-white/60 font-bold">{prop.price}</span>
-                                <span className="text-white/30">ΓÇó</span>
+                                <span className="text-white/30">\u2022</span>
                                 <span className="text-white/30">{prop.hits} vistas</span>
-                                <span className="text-white/30">ΓÇó</span>
+                                <span className="text-white/30">\u2022</span>
                                 <span className="text-white/40">{prop.owner}</span>
                             </div>
                         </div>
@@ -857,15 +857,15 @@ function PropertiesView({ properties, canEdit, onSelect, plan }: { properties: t
     );
 }
 
-/* ΓöÇΓöÇ Mock Agents (Team tier) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* \u2500\u2500 Mock Agents (Team tier) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 const AGENTS = [
     { name: "Carlos Mendoza", role: "Asesor Senior", avatar: "CM", color: "bg-blue-500", props: 5 },
-    { name: "Mar├¡a Gonz├ílez", role: "Asesora Comercial", avatar: "MG", color: "bg-pink-500", props: 4 },
-    { name: "Roberto Trevi├▒o", role: "Coordinador", avatar: "RT", color: "bg-emerald-500", props: 3 },
-    { name: "Sof├¡a Villarreal", role: "Asesora Jr.", avatar: "SV", color: "bg-purple-500", props: 1 },
+    { name: "Mar\u00eda Gonz\u00e1lez", role: "Asesora Comercial", avatar: "MG", color: "bg-pink-500", props: 4 },
+    { name: "Roberto Trevi\u00f1o", role: "Coordinador", avatar: "RT", color: "bg-emerald-500", props: 3 },
+    { name: "Sof\u00eda Villarreal", role: "Asesora Jr.", avatar: "SV", color: "bg-purple-500", props: 1 },
 ];
 
-/* ΓöÇΓöÇ Property Detail Panel ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ Property Detail Panel --------------------------------------------------------------------------------------------------------- */
 function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (typeof PROPERTIES)[0]; onBack: () => void; isTeam: boolean; plan: PlanConfig }) {
     const [isPublished, setIsPublished] = useState(true);
     const [aiGenerating, setAiGenerating] = useState(false);
@@ -876,7 +876,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
     const [editedPrice, setEditedPrice] = useState(property.price);
     const [editedAddress, setEditedAddress] = useState(property.address);
 
-    const FULL_AI_TEXT = `Descubre esta impresionante ${property.name.toLowerCase()} ubicada en ${property.address}. Con ${property.beds} amplias rec├ímaras, ${property.baths} ba├▒os de lujo y ${property.m2} m┬▓ de construcci├│n, esta propiedad ofrece el espacio ideal para tu familia.Acabados de primera calidad, iluminaci├│n natural excepcional y una ubicaci├│n privilegiada que garantiza plusval├¡a.Agenda tu visita hoy.`;
+    const FULL_AI_TEXT = `Descubre esta impresionante ${property.name.toLowerCase()} ubicada en ${property.address}. Con ${property.beds} amplias rec\u00e1maras, ${property.baths} ba\u00f1os de lujo y ${property.m2} m\u00b2 de construcci\u00f3n, esta propiedad ofrece el espacio ideal para tu familia.Acabados de primera calidad, iluminaci\u00f3n natural excepcional y una ubicaci\u00f3n privilegiada que garantiza plusval\u00eda.Agenda tu visita hoy.`;
 
     function handleAIGenerate() {
         setAiGenerating(true);
@@ -928,7 +928,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         <div className="absolute bottom-3 left-3 flex items-center gap-2">
                             <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase ${isPublished ? "bg-green-500/20 text-green-400 border border-green-500/30" : "bg-red-500/20 text-red-400 border border-red-500/30"}`}>
-                                {isPublished ? "En l├¡nea" : "Borrador"}
+                                {isPublished ? "En l\u00ednea" : "Borrador"}
                             </span>
                             <span className="text-[8px] text-white/60 font-mono">{property.hits} vistas</span>
                         </div>
@@ -957,7 +957,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                     </div>
 
                     <div>
-                        <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Direcci├│n</label>
+                        <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Direcci\u00f3n</label>
                         <input
                             className={`w-full bg-white/5 border rounded-lg px-3 py-2.5 text-xs text-white outline-none transition-all ${isTeam ? "border-cima-gold/20 focus:border-cima-gold/60" : "border-white/10 focus:border-cima-gold/40"}`}
                             value={editedAddress}
@@ -977,36 +977,36 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                         <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
                             <BedDouble className="h-4 w-4 text-white/20 mx-auto mb-1" />
                             <p className="text-sm font-bold text-white">{property.beds}</p>
-                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Rec├ímaras</p>
+                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Rec\u00e1maras</p>
                         </div>
                         <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
                             <Bath className="h-4 w-4 text-white/20 mx-auto mb-1" />
                             <p className="text-sm font-bold text-white">{property.baths}</p>
-                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Ba├▒os</p>
+                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Ba\u00f1os</p>
                         </div>
                         <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
                             <Ruler className="h-4 w-4 text-white/20 mx-auto mb-1" />
                             <p className="text-sm font-bold text-white">{property.m2}</p>
-                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">m┬▓</p>
+                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">m\u00b2</p>
                         </div>
                     </div>
 
                     {/* Description with AI */}
                     <div>
                         <div className="flex items-center justify-between mb-1">
-                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Descripci├│n</label>
+                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Descripci\u00f3n</label>
                             <button
                                 onClick={handleAIGenerate}
                                 disabled={aiGenerating}
                                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-[7px] font-black text-purple-400 uppercase tracking-wider hover:bg-purple-500/20 transition-all disabled:opacity-50"
                             >
                                 <Sparkles className={`h-3 w-3 ${aiGenerating ? "animate-spin" : ""}`} />
-                                {aiGenerating ? "GenerandoΓÇª" : "Generar con IA"}
+                                {aiGenerating ? "Generando..." : "Generar con IA"}
                             </button>
                         </div>
                         <textarea
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white/60 outline-none focus:border-cima-gold/40 transition-all resize-none h-28"
-                            value={aiText || `Hermosa propiedad en ${property.address}. Contacta para m├ís informaci├│n.`}
+                            value={aiText || `Hermosa propiedad en ${property.address}. Contacta para m\u00e1s informaci\u00f3n.`}
                             readOnly
                         />
                     </div>
@@ -1017,7 +1017,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                     {/* Photos */}
                     <div>
                         <div className="flex items-center justify-between mb-2">
-                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Galer├¡a de Fotos</label>
+                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Galer--a de Fotos</label>
                             <span className="text-[7px] text-white/20 font-mono">4 fotos</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
@@ -1031,7 +1031,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                             ))}
                         </div>
                         <button className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-2.5 border border-dashed border-white/10 rounded-lg text-[8px] font-bold text-white/30 uppercase tracking-wider hover:border-cima-gold/30 hover:text-cima-gold transition-all">
-                            <Upload className="h-3 w-3" /> Subir m├ís fotos
+                            <Upload className="h-3 w-3" /> Subir m--s fotos
                         </button>
                     </div>
 
@@ -1066,7 +1066,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                                         </div>
                                         <div className="text-left">
                                             <p className="text-[10px] font-bold text-white">{AGENTS[selectedAgent].name}</p>
-                                            <p className="text-[7px] text-white/30">{AGENTS[selectedAgent].role} ┬╖ {AGENTS[selectedAgent].props} propiedades</p>
+                                            <p className="text-[7px] text-white/30">{AGENTS[selectedAgent].role} -- {AGENTS[selectedAgent].props} propiedades</p>
                                         </div>
                                     </div>
                                     <ChevronDown className={`h-3.5 w-3.5 text-white/30 transition-transform ${agentDropdownOpen ? "rotate-180" : ""}`} />
@@ -1107,7 +1107,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
                     <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3">
                         <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-2">Propietario</p>
                         <p className="text-xs font-bold text-white">{property.owner}</p>
-                        <p className="text-[9px] text-white/30 mt-0.5">{property.status} ┬╖ {property.address.split(",").pop()?.trim()}</p>
+                        <p className="text-[9px] text-white/30 mt-0.5">{property.status} -- {property.address.split(",").pop()?.trim()}</p>
                     </div>
                 </div>
             </div>
@@ -1151,7 +1151,7 @@ function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
                         className="absolute inset-x-0 top-0 z-50 flex justify-center py-4"
                     >
                         <div className="bg-cima-gold text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl flex items-center gap-2">
-                            <Lock className="h-3 w-3" /> Funci├│n disponible en planes Pro / Team
+                            <Lock className="h-3 w-3" /> Funci--n disponible en planes Pro / Team
                         </div>
                     </motion.div>
                 )}
@@ -1164,7 +1164,7 @@ function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
                     { id: "contactado", label: "Contactados", color: "bg-yellow-500/20 border-yellow-500/30 text-yellow-400" },
                     { id: "calificado", label: "Calificados", color: "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" },
                     { id: "visita_agendada", label: "Visita", color: "bg-purple-500/20 border-purple-500/30 text-purple-400" },
-                    { id: "en_negociacion", label: "Negociaci├│n", color: "bg-cima-gold/20 border-cima-gold/30 text-cima-gold" },
+                    { id: "en_negociacion", label: "Negociaci--n", color: "bg-cima-gold/20 border-cima-gold/30 text-cima-gold" },
                 ].map((stage, i) => {
                     const count = leads.filter(l => l.status === stage.id).length;
                     return (
@@ -1224,7 +1224,7 @@ function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
                                     className={`px-3 py-1.5 rounded-lg border text-[8px] font-black uppercase tracking-wider transition-all min-w-[100px] text-center ${STATUS_MAP[lead.status].class} ${!isStarter ? "hover:scale-105 active:scale-95 cursor-pointer shadow-lg shadow-black/20" : "cursor-default opacity-80"}`}
                                 >
                                     {STATUS_MAP[lead.status].label}
-                                    {!isStarter && <span className="ml-2 opacity-30 text-[6px]">Siguiente etapa ΓåÆ</span>}
+                                    {!isStarter && <span className="ml-2 opacity-30 text-[6px]">Siguiente etapa ---</span>}
                                 </button>
                             </div>
                         </div>
@@ -1235,7 +1235,7 @@ function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
     );
 }
 
-/* ΓöÇΓöÇ Visits View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ Visits View --------------------------------------------------------------------------------------------------------------------------------------- */
 function VisitsView() {
     const grouped: Record<string, typeof VISITS> = {};
     VISITS.forEach((v) => {
@@ -1256,7 +1256,7 @@ function VisitsView() {
                 <div key={date}>
                     <div className="flex items-center gap-2 mb-3">
                         <Calendar className="h-3.5 w-3.5 text-cima-gold" />
-                        <span className={`text-xs font-black uppercase tracking-wider ${date === "Hoy" ? "text-cima-gold" : date === "Ma├▒ana" ? "text-white/60" : "text-white/30"}`}>
+                        <span className={`text-xs font-black uppercase tracking-wider ${date === "Hoy" ? "text-cima-gold" : date === "Ma--ana" ? "text-white/60" : "text-white/30"}`}>
                             {date}
                         </span>
                         {date === "Hoy" && (
@@ -1289,7 +1289,7 @@ function VisitsView() {
                                                 <span className="text-white/30 flex items-center gap-1">
                                                     <MapPin className="h-2.5 w-2.5" /> {visit.property}
                                                 </span>
-                                                <span className="text-white/20">ΓÇó</span>
+                                                <span className="text-white/20">---</span>
                                                 <span className="text-white/20">{visit.time}</span>
                                             </div>
                                         </div>
@@ -1297,12 +1297,12 @@ function VisitsView() {
                                     <div className="flex items-center gap-2">
                                         {visit.sentiment === "positive" && (
                                             <span className="text-[7px] font-bold bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/20">
-                                                Γ¥ñ∩╕Å Le encant├│
+                                                ------ Le encant--
                                             </span>
                                         )}
                                         {visit.sentiment === "neutral" && (
                                             <span className="text-[7px] font-bold bg-yellow-500/10 text-yellow-400 px-1.5 py-0.5 rounded-full border border-yellow-500/20">
-                                                ≡ƒñö Lo piensa
+                                                ---- Lo piensa
                                             </span>
                                         )}
                                         <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-wide border ${statusStyle[visit.status]}`}>
@@ -1319,7 +1319,7 @@ function VisitsView() {
     );
 }
 
-/* ΓöÇΓöÇ Analytics View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ Analytics View ------------------------------------------------------------------------------------------------------------------------------ */
 function AnalyticsView() {
     return (
         <div className="space-y-6">
@@ -1328,7 +1328,7 @@ function AnalyticsView() {
                 {[
                     { label: "Ingresos mes", value: "$847K", change: "+23%", up: true },
                     { label: "Ticket promedio", value: "$6.8M", change: "+$400K", up: true },
-                    { label: "D├¡as promedio venta", value: "18", change: "-4 d├¡as", up: true },
+                    { label: "D--as promedio venta", value: "18", change: "-4 d--as", up: true },
                     { label: "Tasa de cierre", value: "34%", change: "+6%", up: true },
                 ].map((stat, i) => (
                     <motion.div
@@ -1404,7 +1404,7 @@ function AnalyticsView() {
     );
 }
 
-/* ΓöÇΓöÇ IA Studio View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ IA Studio View ------------------------------------------------------------------------------------------------------------------------------ */
 function IaStudioView() {
     const [status, setStatus] = useState<"idle" | "uploading" | "processing" | "ready">("idle");
     const [mode, setMode] = useState<"clean" | "stage" | "remodel">("stage");
@@ -1412,7 +1412,7 @@ function IaStudioView() {
 
     const MODES = [
         { id: "clean", label: "Limpiar Espacio", icon: Sparkles, desc: "Elimina objetos y desorden" },
-        { id: "stage", label: "Amueblar (Staging)", icon: Home, desc: "A├▒ade muebles y decoraci├│n" },
+        { id: "stage", label: "Amueblar (Staging)", icon: Home, desc: "A--ade muebles y decoraci--n" },
         { id: "remodel", label: "Remodelar", icon: Wand2, desc: "Cambia acabados y estilo" },
     ];
 
@@ -1441,7 +1441,7 @@ function IaStudioView() {
             <div className="flex items-center justify-between px-1">
                 <div>
                     <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">IA Studio</h3>
-                    <p className="text-[10px] text-white/40 font-medium">Transformaci├│n de espacios en un clic</p>
+                    <p className="text-[10px] text-white/40 font-medium">Transformaci\u00f3n de espacios en un clic</p>
                 </div>
                 {status === "ready" && (
                     <button
@@ -1465,7 +1465,7 @@ function IaStudioView() {
                     </div>
                     <div className="text-center">
                         <p className="text-xs font-bold text-white/60">Haz clic para subir una foto</p>
-                        <p className="text-[8px] text-white/20 uppercase font-black tracking-widest mt-1">Soporte: JPG, PNG ┬╖ Max 10MB</p>
+                        <p className="text-[8px] text-white/20 uppercase font-black tracking-widest mt-1">Soporte: JPG, PNG \u00b7 Max 10MB</p>
                     </div>
                 </motion.div>
             )}
@@ -1511,7 +1511,7 @@ function IaStudioView() {
                         </div>
                     </div>
                     <div className="text-center">
-                        <p className="text-sm font-black text-white uppercase tracking-tighter mb-2">Procesando {mode === "clean" ? "Limpieza" : mode === "stage" ? "Amueblado" : "Remodelaci├│n"}</p>
+                        <p className="text-sm font-black text-white uppercase tracking-tighter mb-2">Procesando {mode === "clean" ? "Limpieza" : mode === "stage" ? "Amueblado" : "Remodelaci\u00f3n"}</p>
                         <div className="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden mx-auto">
                             <motion.div
                                 className="h-full bg-cima-gold"
@@ -1550,7 +1550,7 @@ function IaStudioView() {
                             <div className="bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
                                 <span className="text-[8px] font-black text-white/40 uppercase">IA Studio</span>
                                 <div className="h-1 w-8 bg-cima-gold/30 rounded-full" />
-                                <span className="text-[8px] font-black text-cima-gold uppercase">├ëxito</span>
+                                <span className="text-[8px] font-black text-cima-gold uppercase">\u00c9xito</span>
                             </div>
                         </div>
                     </div>
@@ -1569,11 +1569,11 @@ function IaStudioView() {
     );
 }
 
-/* ΓöÇΓöÇ Documents View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ Documents View ------------------------------------------------------------------------------------------------------------------------------ */
 function DocumentsView() {
     const [docs, setDocs] = useState([
         { id: 1, name: "Escritura_Residencia_Magnolia.pdf", type: "Escritura", date: "12/02/2026", status: "verificado", size: "4.2 MB" },
-        { id: 2, name: "ID_Propietario_Vargas.jpg", type: "Identificaci├│n", date: "15/02/2026", status: "pendiente", size: "1.8 MB" },
+        { id: 2, name: "ID_Propietario_Vargas.jpg", type: "Identificaci\u00f3n", date: "15/02/2026", status: "pendiente", size: "1.8 MB" },
         { id: 3, name: "Predial_2026_Pagado.pdf", type: "Impuestos", date: "18/02/2026", status: "advertencia", size: "0.9 MB" },
         { id: 4, name: "Contrato_Exclusividad_Cima.doc", type: "Contrato", date: "20/02/2026", status: "verificando", size: "2.1 MB" },
     ]);
@@ -1595,8 +1595,8 @@ function DocumentsView() {
         <div className="space-y-6">
             <div className="flex items-center justify-between px-1">
                 <div>
-                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">B├│veda Digital</h3>
-                    <p className="text-[10px] text-white/40 font-medium">Gesti├│n documental con respaldo jur├¡dico e IA</p>
+                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">B\u00f3veda Digital</h3>
+                    <p className="text-[10px] text-white/40 font-medium">Gesti\u00f3n documental con respaldo jur\u00eddico e IA</p>
                 </div>
                 <div className="flex gap-2">
                     <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[9px] font-bold uppercase hover:bg-white transition-all">
@@ -1643,7 +1643,7 @@ function DocumentsView() {
                             </div>
                             <div className="flex items-center gap-3 text-[9px] text-white/25 font-medium">
                                 <span>{doc.date}</span>
-                                <span>ΓÇó</span>
+                                <span>---</span>
                                 <span>{doc.size}</span>
                             </div>
                         </div>
@@ -1696,15 +1696,15 @@ function DocumentsView() {
                     <ShieldCheck className="h-4 w-4 text-black" />
                 </div>
                 <div>
-                    <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Cima Legal Compliance ┬╖ ON</h4>
-                    <p className="text-[9px] text-white/50 leading-relaxed font-medium">Todos los documentos son analizados mediante **Integridad Biom├⌐trica** y **OCR Inteligente** para garantizar transacciones de ultra-lujo sin riesgos legales.</p>
+                    <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Cima Legal Compliance \u00b7 ON</h4>
+                    <p className="text-[9px] text-white/50 leading-relaxed font-medium">Todos los documentos son analizados mediante **Integridad Biom\u00e9trica** y **OCR Inteligente** para garantizar transacciones de ultra-lujo sin riesgos legales.</p>
                 </div>
             </div>
         </div>
     );
 }
 
-/* ΓöÇΓöÇ Contract Generator View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ------ Contract Generator View --------------------------------------------------------------------------------------------------- */
 function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }) {
     const [step, setStep] = useState<"select" | "data" | "generating" | "result">("select");
     const [template, setTemplate] = useState<string | null>(null);
@@ -1719,9 +1719,9 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
     const [showPreview, setShowPreview] = useState(false);
 
     const TEMPLATES = [
-        { id: "exclusividad", label: "Contrato de Exclusividad", icon: FileSignature, desc: "Para captaci├│n de propiedades Premium" },
+        { id: "exclusividad", label: "Contrato de Exclusividad", icon: FileSignature, desc: "Para captaci\u00f3n de propiedades Premium" },
         { id: "arrendamiento", label: "Contrato de Arrendamiento", icon: ScrollText, desc: "Renta residencial y comercial" },
-        { id: "intencion", label: "Carta de Intenci├│n de Compra", icon: FilePenLine, desc: "Cierre r├ípido de ofertas" },
+        { id: "intencion", label: "Carta de Intenci\u00f3n de Compra", icon: FilePenLine, desc: "Cierre r\u00e1pido de ofertas" },
         { id: "aviso", label: "Aviso de Privacidad", icon: Briefcase, desc: "Cumplimiento legal de datos" },
     ];
 
@@ -1788,16 +1788,16 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                         <h2 className="text-center font-serif text-lg font-black text-slate-800 underline decoration-cima-gold/30 underline-offset-8 uppercase tracking-widest">{selectedT?.label}</h2>
 
                         <div className="space-y-4 text-slate-700 leading-relaxed text-[10px] text-justify font-serif">
-                            <p>En la ciudad de Monterrey, Nuevo Le├│n, comparecen por una parte el <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.cliente || "[Nombre del Cliente]"}</span> y por la otra parte <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">CIMA PRO S.A. DE C.V.</span> representado por <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">Asesor Elite</span>.</p>
+                            <p>En la ciudad de Monterrey, Nuevo Le\u00f3n, comparecen por una parte el <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.cliente || "[Nombre del Cliente]"}</span> y por la otra parte <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">CIMA PRO S.A. DE C.V.</span> representado por <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">Asesor Elite</span>.</p>
 
-                            <p>Las partes acuerdan establecer el precio de la operaci├│n en la cantidad de <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">${formData.precio || "0.00"} MXN</span>, bajo los t├⌐rminos de exclusividad profesional para la propiedad <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.propiedad || "la ubicaci├│n indicada"}</span>.</p>
+                            <p>Las partes acuerdan establecer el precio de la operaci\u00f3n en la cantidad de <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">${formData.precio || "0.00"} MXN</span>, bajo los t\u00e9rminos de exclusividad profesional para la propiedad <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.propiedad || "la ubicaci\u00f3n indicada"}</span>.</p>
 
                             <div className="p-4 bg-slate-50 border-l-4 border-cima-gold rounded-r-xl">
-                                <p className="text-[8px] font-black uppercase text-slate-500 mb-1 italic">Cl├íusula de Honorarios</p>
-                                <p className="font-bold text-slate-900">Se pacta una comisi├│n del {formData.comision || "0"}% sobre el valor total de la transacci├│n, pagadera al momento de la firma ante Fedatario P├║blico.</p>
+                                <p className="text-[8px] font-black uppercase text-slate-500 mb-1 italic">Cl\u00e1usula de Honorarios</p>
+                                <p className="font-bold text-slate-900">Se pacta una comisi\u00f3n del {formData.comision || "0"}% sobre el valor total de la transacci\u00f3n, pagadera al momento de la firma ante Fedatario P\u00fablico.</p>
                             </div>
 
-                            <p>Ambas partes manifiestan su conformidad y voluntad para la firma del presente instrumento digital, validado mediante la infraestructura tecnol├│gica de Cima Sign...</p>
+                            <p>Ambas partes manifiestan su conformidad y voluntad para la firma del presente instrumento digital, validado mediante la infraestructura tecnol\u00f3gica de Cima Sign...</p>
                         </div>
                     </div>
 
@@ -1893,7 +1893,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Cliente / Due├▒o</label>
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Cliente / Due\u00f1o</label>
                             <input
                                 type="text"
                                 value={formData.cliente}
@@ -1911,7 +1911,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Comisi├│n Pactada</label>
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Comisi\u00f3n Pactada</label>
                             <input
                                 type="text"
                                 value={formData.comision}
@@ -1979,8 +1979,8 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                         </div>
 
                         <div>
-                            <h4 className="text-lg font-black text-white mb-2">┬íDocumento Generado con ├ëxito!</h4>
-                            <p className="text-[10px] text-white/40 font-medium">El archivo PDF est├í listo para descarga y firma digital.</p>
+                            <h4 className="text-lg font-black text-white mb-2">\u00a1Documento Generado con \u00c9xito!</h4>
+                            <p className="text-[10px] text-white/40 font-medium">El archivo PDF est\u00e1 listo para descarga y firma digital.</p>
                         </div>
 
                         <div className={`w-full max-w-sm grid transition-all ${isMobilePreview ? "grid-cols-1 gap-2" : "grid-cols-2 gap-4"}`}>
@@ -2010,8 +2010,8 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
     );
 }
 
-/* ΓöÇΓöÇ Messages View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
-/* ΓöÇΓöÇ Messages View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* \u00b7\u00b7 Messages View \u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7 */
+/* \u00b7\u00b7 Messages View \u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7 */
 function MessagesView({ messages }: { messages: LiveMessage[] }) {
     const [isNurturing, setIsNurturing] = useState(false);
     const [nurtureStep, setNurtureStep] = useState(0);
@@ -2038,10 +2038,10 @@ function MessagesView({ messages }: { messages: LiveMessage[] }) {
                         className={`px-3 py-1.5 rounded-full flex items-center gap-2 text-[8px] font-black uppercase tracking-widest transition-all ${isNurturing ? "bg-cima-gold/50 text-black animate-pulse cursor-not-allowed" : "bg-cima-gold text-black hover:bg-white shadow-lg shadow-cima-gold/20"}`}
                     >
                         <Sparkles className="h-3 w-3" />
-                        {isNurturing ? "Nutriendo Lead..." : "Simular Nutrici├│n IA"}
+                        {isNurturing ? "Nutriendo Lead..." : "Simular Nutrici\u00f3n IA"}
                     </button>
                     <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[8px] font-black text-white/40 uppercase tracking-widest">
-                        {messages.filter(m => m.unread).length} No le├¡dos
+                        {messages.filter(m => m.unread).length} No le\u00eddos
                     </span>
                 </div>
             </div>
@@ -2071,15 +2071,15 @@ function MessagesView({ messages }: { messages: LiveMessage[] }) {
 
                                 <div className="space-y-2">
                                     <div className={`p-3 rounded-xl rounded-tl-none border transition-all duration-500 ${nurtureStep >= 1 ? "bg-white/10 border-white/20 opacity-100" : "opacity-0"}`}>
-                                        <p className="text-[11px] text-white/80 italic">"Hola Roberto, vi que te interes├│ el Penthouse. El asesor est├í en camino a una firma, ┬┐te gustar├¡a que te agende una visita hoy mismo?"</p>
+                                        <p className="text-[11px] text-white/80 italic">"Hola Roberto, vi que te interes\u00f3 el Penthouse. El asesor est\u00e1 en camino a una firma, \u00bfte gustar\u00eda que te agende una visita hoy mismo?"</p>
                                     </div>
                                     <div className={`p-3 rounded-xl rounded-tr-none border ml-auto max-w-[80%] transition-all duration-500 ${nurtureStep >= 2 ? "bg-cima-gold/20 border-cima-gold/40 opacity-100 translate-x-0" : "opacity-0 translate-x-4"}`}>
-                                        <p className="text-[11px] text-cima-gold font-bold">"┬íExcelente! A las 5:00 PM me queda perfecto."</p>
+                                        <p className="text-[11px] text-cima-gold font-bold">"\u00a1Excelente! A las 5:00 PM me queda perfecto."</p>
                                     </div>
                                     <div className={`p-3 rounded-xl rounded-tl-none border bg-green-500/20 border-green-500/40 transition-all duration-500 ${nurtureStep >= 3 ? "opacity-100" : "opacity-0"}`}>
                                         <div className="flex items-center gap-2">
                                             <Calendar className="h-3 w-3 text-green-500" />
-                                            <p className="text-[11px] text-green-500 font-black uppercase">┬íCita Agendada y sincronizada!</p>
+                                            <p className="text-[11px] text-green-500 font-black uppercase">\u00a1Cita Agendada y sincronizada!</p>
                                         </div>
                                     </div>
                                 </div>

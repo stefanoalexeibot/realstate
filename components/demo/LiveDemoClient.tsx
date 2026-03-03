@@ -32,35 +32,35 @@ export interface LiveMessage {
 }
 
 const INITIAL_LEADS: LiveLead[] = [
-    { id: "1", name: "Ana Martínez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
-    { id: "2", name: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
-    { id: "3", name: "María Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10", score: 92, isAiQualified: true },
-    { id: "4", name: "Roberto Treviño", phone: "81 4444 9876", source: "Referido", sourceIcon: UsersIcon, status: "visita_agendada", date: "Ayer", property: "Pent. Santa María", color: "text-amber-400 bg-amber-500/10", score: 78 },
-    { id: "5", name: "Sofía Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 días", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10", score: 95, isAiQualified: true },
-    { id: "6", name: "Familia Rodríguez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10", score: 64 },
+    { id: "1", name: "Ana Mart\u00ednez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
+    { id: "2", name: "Carlos L\u00f3pez", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
+    { id: "3", name: "Mar\u00eda Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10", score: 92, isAiQualified: true },
+    { id: "4", name: "Roberto Trevi\u00f1o", phone: "81 4444 9876", source: "Referido", sourceIcon: UsersIcon, status: "visita_agendada", date: "Ayer", property: "Pent. Santa Mar\u00eda", color: "text-amber-400 bg-amber-500/10", score: 78 },
+    { id: "5", name: "Sof\u00eda Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 d\u00edas", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10", score: 95, isAiQualified: true },
+    { id: "6", name: "Familia Rodr\u00edguez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10", score: 64 },
     { id: "7", name: "Ing. Pedro Salazar", phone: "81 1111 7890", source: "Landing", sourceIcon: Globe, status: "contactado", date: "Hace 4 horas", property: "Depto. Torre LOVFT", color: "text-emerald-400 bg-emerald-500/10", score: 88 },
 ];
 
 const INITIAL_MESSAGES: LiveMessage[] = [
-    { id: "1", from: "Familia Rodríguez", message: "Hola, ¿podemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
-    { id: "2", from: "Ing. Roberto M.", message: "Ya firmé el contrato, ¿cuándo hacemos las fotos?", time: "Hace 20 min", unread: true },
-    { id: "3", from: "Dra. Sofía L.", message: "¿Hubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
-    { id: "4", from: "Carlos López", message: "Me interesa mucho, ¿pueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
-    { id: "5", from: "Sr. Hernández", message: "Gracias por las fotos, se ven increíbles 🙌", time: "Ayer", unread: false },
+    { id: "1", from: "Familia Rodr\u00edguez", message: "Hola, \u00bfpodemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
+    { id: "2", from: "Ing. Roberto M.", message: "Ya firm\u00e9 el contrato, \u00bfcu\u00e1ndo hacemos las fotos?", time: "Hace 20 min", unread: true },
+    { id: "3", from: "Dra. Sof\u00eda L.", message: "\u00bfHubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
+    { id: "4", from: "Carlos L\u00f3pez", message: "Me interesa mucho, \u00bfpueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
+    { id: "5", from: "Sr. Hern\u00e1ndez", message: "Gracias por las fotos, se ven incre\u00edbles \ud83d\ude4c", time: "Ayer", unread: false },
 ];
 
 const NARRATIVE: Record<View, { title: string; desc: string }> = {
     landing: {
-        title: "Captación Automática",
-        desc: "Cada propiedad tiene su propia Landing Page de alto impacto diseñada para convertir visitantes en leads cualificados."
+        title: "Captaci\u00f3n Autom\u00e1tica",
+        desc: "Cada propiedad tiene su propia Landing Page de alto impacto dise\u00f1ada para convertir visitantes en leads cualificados."
     },
     admin: {
         title: "Control Total de Operaciones",
-        desc: "El centro neurálgico del asesor. Aquí se gestiona el pipeline de ventas, los analíticos y la comunicación con el cliente."
+        desc: "El centro neur\u00e1lgico del asesor. Aqu\u00ed se gestiona el pipeline de ventas, los anal\u00edticos y la comunicaci\u00f3n con el cliente."
     },
     portal: {
         title: "Transparencia que Enamora",
-        desc: "El Portal del Dueño reduce el estrés del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
+        desc: "El Portal del Due\u00f1o reduce el estr\u00e9s del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
     }
 };
 
@@ -566,12 +566,12 @@ export default function LiveDemoClient() {
                 {showQR && (
                     <QROverlay
                         onClose={() => setShowQR(false)}
-                        title={view === "landing" ? "Vista M├│vil del Comprador" : view === "admin" ? "Notificaciones en tu M├│vil" : "Portal para el Due├▒o (M├│vil)"}
+                        title={view === "landing" ? "Vista M\u00f3vil del Comprador" : view === "admin" ? "Notificaciones en tu M\u00f3vil" : "Portal para el Due\u00f1o (M\u00f3vil)"}
                         desc={view === "landing"
-                            ? "Escanea con tu celular para ver c├│mo interact├║a un comprador real con esta propiedad."
+                            ? "Escanea con tu celular para ver c\u00f3mo interact\u00faa un comprador real con esta propiedad."
                             : view === "admin"
-                                ? "Manten el control de tus propiedades y recibe alertas de nuevos leads est├⌐s donde est├⌐s."
-                                : "Tu cliente podr├í seguir el progreso de su venta c├│modamente desde su smartphone."
+                                ? "Manten el control de tus propiedades y recibe alertas de nuevos leads est\u00e9s donde est\u00e9s."
+                                : "Tu cliente podr\u00edá seguir el progreso de su venta c\u00f3modamente desde su smartphone."
                         }
                     />
                 )}
