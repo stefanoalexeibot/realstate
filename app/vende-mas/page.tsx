@@ -12,6 +12,7 @@ import {
     AlertCircle, Globe, Heart, Mail, Phone,
     Building2, Search, Info, Trash2, Edit3, Filter,
     ChevronRight, ChevronLeft, Calendar, UserPlus,
+    Monitor,
     DollarSign, Briefcase as Portfolio, Bell, Eye, LogOut,
     Check, ArrowUpRight, MinusCircle, ChevronDown, Play, Sun, Moon as MoonIcon
 } from "lucide-react";
@@ -930,66 +931,54 @@ function EliteFaq() {
 
 /* ─── Interactive Demo Embed (Image → Click → Live iFrame) ────────── */
 function InteractiveDemoEmbed() {
-    const [isLive, setIsLive] = useState(false);
-
     return (
         <div className="relative w-full">
-            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 bg-[#0A0A0B] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
-                {!isLive ? (
-                    /* Static Preview with Play Button */
-                    <div className="relative aspect-[16/10] cursor-pointer group" onClick={() => setIsLive(true)}>
-                        {/* Simulated screenshot */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#0A0A0B] to-[#111113]">
-                            <AgentCommandCenterPreview />
-                        </div>
-                        {/* Overlay */}
-                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
-                            <motion.div
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="flex flex-col items-center gap-3"
-                            >
-                                <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-cima-gold/20 border-2 border-cima-gold/40 flex items-center justify-center backdrop-blur-md shadow-[0_0_40px_rgba(200,169,110,0.3)] group-hover:bg-cima-gold/30 transition-all">
-                                    <Play className="h-7 w-7 md:h-8 md:w-8 text-cima-gold ml-1" />
-                                </div>
-                                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-white/80 bg-black/50 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10">
-                                    Ver Demo en Vivo
-                                </span>
-                            </motion.div>
-                        </div>
-                        {/* Live Badge */}
-                        <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                            <span className="text-[8px] font-mono font-bold text-white/60 uppercase tracking-widest">Preview</span>
-                        </div>
-                    </div>
-                ) : (
-                    /* Live iFrame */
-                    <div className="relative aspect-[16/10]">
-                        <iframe
-                            src="/demo/live"
-                            className="w-full h-full border-0"
-                            title="Demo en Vivo"
-                            allow="fullscreen"
-                        />
-                        {/* Close button */}
-                        <button
-                            onClick={() => setIsLive(false)}
-                            className="absolute top-3 right-3 p-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-xl text-white/60 hover:text-white hover:bg-black transition-all z-10"
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 bg-[#0A0A0B] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] group">
+                {/* Static Preview with Premium Look */}
+                <div className="relative aspect-[16/10]">
+                    {/* Real high-quality mockup image */}
+                    <img
+                        src="/mockups/admin-mockup.png"
+                        alt="Cima Agent Command Center"
+                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 group-hover:scale-[1.02]"
+                    />
+
+                    {/* Gradient Overlay for depth */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+
+                    {/* Content Overlay */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            className="bg-black/60 backdrop-blur-xl border border-white/10 p-6 md:p-8 rounded-[2rem] max-w-sm shadow-2xl"
                         >
-                            <X className="h-4 w-4" />
-                        </button>
-                        {/* Live indicator */}
-                        <div className="absolute top-3 left-3 flex items-center gap-2 bg-red-500/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-500/30">
-                            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                            <span className="text-[8px] font-mono font-bold text-red-400 uppercase tracking-widest">En Vivo</span>
-                        </div>
+                            <div className="h-12 w-12 md:h-16 md:w-16 rounded-2xl bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center mx-auto mb-4">
+                                <Monitor className="h-6 w-6 md:h-8 md:w-8 text-cima-gold" />
+                            </div>
+                            <h4 className="text-sm md:text-base font-heading font-black text-white mb-2 uppercase tracking-tight">Experiencia Total Multi-Dispositivo</h4>
+                            <p className="text-[10px] md:text-xs text-white/50 leading-relaxed mb-6">
+                                Diseñado para verse increíble en pantallas 4K y funcionar con precisión táctil en tu smartphone.
+                            </p>
+                            <Link
+                                href="/demo/live"
+                                className="inline-flex items-center gap-2 bg-cima-gold text-black px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
+                            >
+                                Experimentar Demo Full <ChevronRight className="h-3 w-3" />
+                            </Link>
+                        </motion.div>
                     </div>
-                )}
+
+                    {/* Live Badge (Static but elegant) */}
+                    <div className="absolute top-6 left-6 flex items-center gap-2 bg-cima-gold text-black px-4 py-1.5 rounded-full shadow-xl">
+                        <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
+                        <span className="text-[9px] font-black uppercase tracking-widest">Interface v2.4</span>
+                    </div>
+                </div>
             </div>
             {/* Caption */}
-            <p className="text-center text-[8px] md:text-[9px] text-white/20 font-mono uppercase tracking-widest mt-3">
-                {isLive ? "Estás viendo el demo real · Interactúa con la plataforma" : "Haz click para explorar la plataforma en vivo"}
+            <p className="text-center text-[8px] md:text-[9px] text-white/20 font-mono uppercase tracking-widest mt-6">
+                Captura de pantalla real de la plataforma · Sin ediciones ni retoques
             </p>
         </div>
     );
@@ -1464,7 +1453,7 @@ export default function VendeMasPage() {
                         </FadeIn>
 
                         <FadeIn direction="left" className="w-full">
-                            <InteractiveDemoEmbed />
+                            <AgentCommandCenterPreview />
                         </FadeIn>
                     </div>
                 </div>

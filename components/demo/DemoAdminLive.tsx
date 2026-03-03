@@ -11,14 +11,14 @@ import {
     Lock, X, Upload, Image as ImageIcon, FileText, ExternalLink, Edit3, ToggleRight, BedDouble, Bath, Ruler,
     UserCircle, ChevronDown, ArrowRight, MapPin, TrendingUp, Settings, Bell, Wand2, RotateCcw, Download,
     ShieldCheck, FileSearch, ShieldAlert, FileCheck, FileSignature, FilePenLine, ScrollText, Briefcase,
-    Smartphone, Monitor, Moon, MoonStar
+    Smartphone, Monitor, Moon, MoonStar, ChevronLeft, Trash2, PieChart
 } from "lucide-react";
 import NextImage from "next/image";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { type LiveLead, type LiveMessage } from "./LiveDemoClient";
 
 /* ─── Types ────────────────────────────────────────────────── */
-type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos" | "contratos";
+export type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos" | "contratos";
 
 interface DemoAdminLiveProps {
     plan: PlanConfig;
@@ -209,20 +209,20 @@ function RotatingToast({ onClick }: { onClick?: () => void }) {
 }
 
 /* ─── Bar Chart Component ──────────────────────────────────── */
-function BarChart({ data, labels }: { data: number[]; labels: string[] }) {
+function BarChart({ data, labels, isDarkMode }: { data: number[]; labels: string[]; isDarkMode: boolean }) {
     const max = Math.max(...data);
     return (
         <div className="flex items-end gap-2 h-32">
             {data.map((v, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-[8px] text-white/40 font-mono">{v}</span>
+                    <span className={`text-[8px] font-mono ${isDarkMode ? "text-white/40" : "text-gray-400"}`}>{v}</span>
                     <motion.div
                         initial={{ height: 0 }}
                         animate={{ height: `${(v / max) * 100}%` }}
                         transition={{ delay: i * 0.08, duration: 0.5 }}
                         className="w-full bg-gradient-to-t from-cima-gold/40 to-cima-gold rounded-t-lg min-h-[4px]"
                     />
-                    <span className="text-[7px] text-white/30 font-bold uppercase">{labels[i]}</span>
+                    <span className={`text-[7px] font-bold uppercase ${isDarkMode ? "text-white/30" : "text-gray-500"}`}>{labels[i]}</span>
                 </div>
             ))}
         </div>
@@ -308,15 +308,15 @@ export default function DemoAdminLive({
 
     return (
         <div className={`transition-all duration-500 min-h-screen ${isDarkMode ? "bg-[#0A0A0B] text-white" : "bg-gray-50 text-gray-900"}`}>
-            <div className={`flex h-screen overflow-hidden ${isDarkMode ? "" : "bg-white"}`}>
+            <div className={`flex h-screen overflow-hidden ${isDarkMode ? "bg-[#0A0A0B]" : "bg-white"}`}>
                 {/* ── Sidebar ─────────────────────────────── */}
-                <div className="hidden lg:flex flex-col w-56 min-h-screen border-r border-white/5 bg-black/40 p-5">
+                <div className={`hidden lg:flex flex-col w-56 min-h-screen border-r transition-colors duration-500 ${isDarkMode ? "border-white/5 bg-black/40" : "border-gray-200 bg-gray-50/50"} p-5`}>
                     <div className="flex items-center gap-2.5 mb-10">
-                        <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/20">
+                        <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/20 shrink-0">
                             <Layout className="h-4 w-4 text-black" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-white">
+                            <span className={`text-[10px] font-black uppercase tracking-wider ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                                 {agentName ? `Panel de ${agentName.split(' ')[0]} ` : "Panel"}
                             </span>
                             <span className="text-[8px] font-mono text-cima-gold uppercase tracking-widest">{PLAN_LABELS[plan.tier] || plan.name}</span>
@@ -329,10 +329,10 @@ export default function DemoAdminLive({
                                 key={item.id}
                                 onClick={() => !item.locked && setActiveTab(item.id)}
                                 className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all ${item.locked
-                                    ? "text-white/10 cursor-not-allowed"
+                                    ? isDarkMode ? "text-white/10 cursor-not-allowed" : "text-gray-200 cursor-not-allowed"
                                     : activeTab === item.id
                                         ? "bg-cima-gold/10 text-cima-gold border border-cima-gold/20"
-                                        : "text-white/30 hover:bg-white/[0.03] hover:text-white/60"
+                                        : isDarkMode ? "text-white/30 hover:bg-white/[0.03] hover:text-white/60" : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -419,7 +419,7 @@ export default function DemoAdminLive({
                             {/* Header */}
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                                 <div>
-                                    <h1 className={`font-heading font-black tracking-tight mb-1 transition-all ${isMobilePreview ? "text-lg" : "text-2xl"}`}>
+                                    <h1 className={`font-heading font-black tracking-tight mb-1 transition-all ${isMobilePreview ? "text-lg" : "text-2xl"} ${isDarkMode ? "text-white" : "text-gray-900"}`}>
                                         {activeTab === "propiedades" && "Mis Propiedades"}
                                         {activeTab === "leads" && "Leads Recientes"}
                                         {activeTab === "visitas" && "Agenda de Visitas"}
@@ -429,17 +429,17 @@ export default function DemoAdminLive({
                                         {activeTab === "documentos" && "Documentos"}
                                         {activeTab === "contratos" && "Contratos"}
                                     </h1>
-                                    <p className="text-xs text-white/40">
-                                        {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> · Límite: {maxProps}</span>}</>}
-                                        {activeTab === "leads" && <>Tienes <span className="text-white font-bold">7 leads</span> esta semana</>}
-                                        {activeTab === "visitas" && <>Próximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
-                                        {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">últimos 30 días</span></>}
-                                        {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> · {messages.length} conversaciones</>}
+                                    <p className={`text-xs ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>
+                                        {activeTab === "propiedades" && <>Gestionando <span className={`${isDarkMode ? "text-white" : "text-gray-900"} font-bold`}>{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className={isDarkMode ? "text-white/20" : "text-gray-300"}> · Límite: {maxProps}</span>}</>}
+                                        {activeTab === "leads" && <>Tienes <span className={`${isDarkMode ? "text-white" : "text-gray-900"} font-bold`}>7 leads</span> esta semana</>}
+                                        {activeTab === "visitas" && <>Próximas <span className={`${isDarkMode ? "text-white" : "text-gray-900"} font-bold`}>4 visitas</span> esta semana</>}
+                                        {activeTab === "analiticos" && <>Rendimiento de los <span className={`${isDarkMode ? "text-white" : "text-gray-900"} font-bold`}>últimos 30 días</span></>}
+                                        {activeTab === "mensajes" && <><span className={`${isDarkMode ? "text-white" : "text-gray-900"} font-bold`}>{messages.filter(m => m.unread).length} sin leer</span> · {messages.length} conversaciones</>}
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="relative p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all cursor-pointer">
-                                        <Bell className="h-3.5 w-3.5 text-white/40" />
+                                    <div className={`relative p-2.5 border rounded-xl transition-all cursor-pointer ${isDarkMode ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-gray-100 border-gray-200 hover:bg-gray-200"}`}>
+                                        <Bell className={`h-3.5 w-3.5 ${isDarkMode ? "text-white/40" : "text-gray-400"}`} />
                                         <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[7px] font-black text-white flex items-center justify-center">5</span>
                                         <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 animate-ping opacity-30" />
                                     </div>
@@ -447,7 +447,7 @@ export default function DemoAdminLive({
                                     {/* Mobile Preview Toggle */}
                                     <button
                                         onClick={() => setIsMobilePreview(!isMobilePreview)}
-                                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
+                                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : isDarkMode ? "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white" : "bg-gray-100 border-gray-200 text-gray-400 hover:bg-gray-200 hover:text-gray-600"}`}
                                         title={isMobilePreview ? "Volver a Escritorio" : "Ver en Móvil"}
                                     >
                                         {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
@@ -459,7 +459,7 @@ export default function DemoAdminLive({
                                     {/* DND Toggle */}
                                     <button
                                         onClick={() => setIsDND(!isDND)}
-                                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isDND ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
+                                        className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isDND ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : isDarkMode ? "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white" : "bg-gray-100 border-gray-200 text-gray-400 hover:bg-gray-200 hover:text-gray-600"}`}
                                         title={isDND ? "Desactivar No Molestar" : "Activar No Molestar"}
                                     >
                                         {isDND ? <MoonStar className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
@@ -482,7 +482,7 @@ export default function DemoAdminLive({
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: i * 0.1 }}
-                                        className={`bg-white/[0.03] border border-white/5 rounded-2xl hover:border-cima-gold/20 hover:bg-white/[0.05] transition-all shadow-2xl shadow-black/40 ${isMobilePreview ? "p-3" : "p-4"}`}
+                                        className={`transition-all ${isDarkMode ? "bg-white/[0.03] border-white/5 shadow-black/40 hover:bg-white/[0.05]" : "bg-white border-gray-200 shadow-gray-200/20 hover:border-cima-gold/40 hover:shadow-lg"} border rounded-2xl shadow-2xl ${isMobilePreview ? "p-3" : "p-4"}`}
                                     >
                                         <div className="flex items-center justify-between mb-3">
                                             <stat.icon className="h-3.5 w-3.5 text-cima-gold/40" />
@@ -490,13 +490,13 @@ export default function DemoAdminLive({
                                         </div>
                                         <div className="flex items-end justify-between gap-2">
                                             <div>
-                                                <div className={`font-heading font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
+                                                <div className={`font-heading font-black ${isDarkMode ? "text-white" : "text-gray-900"} ${isMobilePreview ? "text-base" : "text-xl"}`}>
                                                     <Counter
                                                         value={stat.value}
                                                         suffix={stat.label === "Conversión" ? "%" : ""}
                                                     />
                                                 </div>
-                                                <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">{stat.label}</p>
+                                                <p className={`text-[8px] uppercase font-black tracking-widest ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>{stat.label}</p>
                                             </div>
                                             {!isMobilePreview && <MiniChart data={stat.data} />}
                                         </div>
@@ -520,6 +520,7 @@ export default function DemoAdminLive({
                                                 onBack={() => setSelectedProperty(null)}
                                                 isTeam={plan.tier === "premium"}
                                                 plan={plan}
+                                                isDarkMode={isDarkMode}
                                             />
                                         ) : (
                                             <PropertiesView
@@ -527,6 +528,7 @@ export default function DemoAdminLive({
                                                 canEdit={canEdit}
                                                 onSelect={(i) => setSelectedProperty(i)}
                                                 plan={plan}
+                                                isDarkMode={isDarkMode}
                                             />
                                         )
                                     )}
@@ -536,14 +538,15 @@ export default function DemoAdminLive({
                                             newLeadId={newLeadId}
                                             onUpdateStatus={onUpdateLeadStatus}
                                             tier={plan.tier}
+                                            isDarkMode={isDarkMode}
                                         />
                                     )}
-                                    {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView />}
-                                    {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView />}
+                                    {activeTab === "visitas" && !navItems.find(n => n.id === "visitas")?.locked && <VisitsView isDarkMode={isDarkMode} />}
+                                    {activeTab === "analiticos" && !navItems.find(n => n.id === "analiticos")?.locked && <AnalyticsView isDarkMode={isDarkMode} />}
                                     {activeTab === "mensajes" && !navItems.find(n => n.id === "mensajes")?.locked && <MessagesView messages={messages} isDarkMode={isDarkMode} />}
-                                    {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView />}
-                                    {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView />}
-                                    {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView isMobilePreview={isMobilePreview} />}
+                                    {activeTab === "ia_studio" && !navItems.find(n => n.id === "ia_studio")?.locked && <IaStudioView isDarkMode={isDarkMode} />}
+                                    {activeTab === "documentos" && !navItems.find(n => n.id === "documentos")?.locked && <DocumentsView isDarkMode={isDarkMode} />}
+                                    {activeTab === "contratos" && !navItems.find(n => n.id === "contratos")?.locked && <ContractGeneratorView isMobilePreview={isMobilePreview} isDarkMode={isDarkMode} />}
                                 </motion.div>
                             </AnimatePresence>
                         </div>
@@ -609,62 +612,69 @@ function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: s
 }
 
 /* ── Properties View ───────────────────────────────────────── */
-function PropertiesView({ properties, canEdit, onSelect, plan }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void; plan: PlanConfig }) {
+function PropertiesView({ properties, canEdit, onSelect, plan, isDarkMode }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void; plan: PlanConfig; isDarkMode: boolean }) {
     return (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
             {properties.map((prop, i) => (
                 <motion.div
                     key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: Math.min(i * 0.05, 0.5) }}
-                    onClick={() => canEdit && onSelect(i)}
-                    className={`bg-white/[0.03] border border-white/5 p-3 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group ${canEdit ? "cursor-pointer" : ""}`}
+                    layoutId={`prop-${i}`}
+                    onClick={() => onSelect(i)}
+                    className={`group cursor-pointer border rounded-2xl overflow-hidden transition-all duration-500 flex flex-col h-full ${isDarkMode ? "bg-white/[0.03] border-white/5 hover:border-cima-gold/30 hover:bg-white/[0.05]" : "bg-white border-gray-200 hover:border-cima-gold/40 hover:shadow-xl hover:shadow-gray-200/20"}`}
                 >
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="h-10 w-14 bg-black border border-white/10 rounded-lg overflow-hidden shrink-0">
-                            <img src={prop.img} alt={prop.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 mb-0.5">
-                                <p className="text-[11px] font-bold text-white group-hover:text-cima-gold transition-colors truncate">{prop.name}</p>
-                                <span className="px-1 py-px rounded bg-cima-gold/10 border border-cima-gold/20 text-[6px] font-black text-cima-gold uppercase shrink-0">{prop.status}</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-[9px] font-mono">
-                                <span className="text-white/60 font-bold">{prop.price}</span>
-                                <span className="text-white/30">•</span>
-                                <span className="text-white/30">{prop.hits} vistas</span>
-                                <span className="text-white/30">•</span>
-                                <span className="text-white/40">{prop.owner}</span>
-                            </div>
-                        </div>
-                        <div className="hidden md:block shrink-0">
-                            <MiniChart data={prop.trend} height={24} />
+                    <div className="relative h-36 w-full overflow-hidden">
+                        <img src={prop.img} alt={prop.name} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-cima-gold text-[8px] font-black uppercase tracking-widest">
+                            {prop.status}
                         </div>
                     </div>
-                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                        {canEdit && (
-                            <span className="text-[7px] text-white/20 font-bold uppercase tracking-widest flex items-center gap-1">
-                                <Edit3 className="h-2.5 w-2.5" /> Click para editar
-                            </span>
-                        )}
-                        <div className={`flex items-center gap-1.5 ${canEdit ? "" : "ml-auto"}`}>
-                            <div className="p-1.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cima-gold/20 transition-all cursor-pointer">
-                                <Settings className="h-3 w-3 text-white/40" />
+                    <div className="p-4 flex-1 flex flex-col">
+                        <div className="flex justify-between items-start mb-2">
+                            <h3 className={`font-heading font-black text-sm group-hover:text-cima-gold transition-colors ${isDarkMode ? "text-white" : "text-gray-900"}`}>{prop.name}</h3>
+                            <span className="text-[10px] font-black text-cima-gold tracking-tighter">{prop.price}</span>
+                        </div>
+                        <p className={`text-[9px] font-medium mb-4 line-clamp-1 ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>{prop.address}</p>
+
+                        <div className={`grid grid-cols-3 gap-2 py-3 border-y mb-4 ${isDarkMode ? "border-white/5" : "border-gray-100"}`}>
+                            <div className="text-center">
+                                <p className={`text-[8px] font-black uppercase tracking-widest leading-none mb-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>Hab</p>
+                                <p className={`text-[10px] font-bold ${isDarkMode ? "text-white/70" : "text-gray-700"}`}>{prop.beds}</p>
                             </div>
-                            <div className="p-1.5 bg-cima-gold/10 border border-cima-gold/20 rounded-lg hover:bg-cima-gold transition-all cursor-pointer">
-                                <Layout className="h-3 w-3 text-cima-gold" />
+                            <div className="text-center">
+                                <p className={`text-[8px] font-black uppercase tracking-widest leading-none mb-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>Baños</p>
+                                <p className={`text-[10px] font-bold ${isDarkMode ? "text-white/70" : "text-gray-700"}`}>{prop.baths}</p>
                             </div>
-                            <div className="p-1.5 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all cursor-pointer">
-                                <Share2 className="h-3 w-3 text-white/20" />
+                            <div className="text-center">
+                                <p className={`text-[8px] font-black uppercase tracking-widest leading-none mb-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>m²</p>
+                                <p className={`text-[10px] font-bold ${isDarkMode ? "text-white/70" : "text-gray-700"}`}>{prop.m2}</p>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-4">
-                        <button className="flex-1 bg-white/[0.05] hover:bg-white/10 text-white/60 hover:text-white border border-white/5 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
-                            Editar
-                        </button>
-                        <DiffusionButton propertyName={prop.name} tier={plan.tier} />
+
+                        <div className="flex items-center justify-between mt-auto">
+                            <div className={`flex items-center gap-1.5 ${canEdit ? "" : "ml-auto"}`}>
+                                <div className={`p-1.5 rounded-lg border transition-all cursor-pointer ${isDarkMode ? "bg-white/5 border-white/10 hover:bg-cima-gold/20" : "bg-gray-50 border-gray-200 hover:bg-gray-100"}`}>
+                                    <Settings className={`h-3 w-3 ${isDarkMode ? "text-white/40" : "text-gray-400"}`} />
+                                </div>
+                                <div className={`p-1.5 rounded-lg border transition-all cursor-pointer ${isDarkMode ? "bg-cima-gold/10 border-cima-gold/20 hover:bg-cima-gold" : "bg-cima-gold/10 border-cima-gold/20 hover:bg-cima-gold"}`}>
+                                    <Layout className={`h-3 w-3 ${isDarkMode ? "text-cima-gold" : "text-cima-gold"}`} />
+                                </div>
+                                <div className={`p-1.5 rounded-lg border transition-all cursor-pointer ${isDarkMode ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-gray-50 border-gray-200 hover:bg-gray-100"}`}>
+                                    <Share2 className={`h-3 w-3 ${isDarkMode ? "text-white/20" : "text-gray-400"}`} />
+                                </div>
+                            </div>
+                            {canEdit && (
+                                <span className={`text-[7px] font-bold uppercase tracking-widest flex items-center gap-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>
+                                    <Edit3 className="h-2.5 w-2.5" /> Editar
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-4">
+                            <button className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${isDarkMode ? "bg-white/[0.05] hover:bg-white/10 text-white/60 hover:text-white border border-white/5" : "bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 border border-gray-200"}`}>
+                                Editar
+                            </button>
+                            <DiffusionButton propertyName={prop.name} tier={plan.tier} />
+                        </div>
                     </div>
                 </motion.div>
             ))}
@@ -681,9 +691,10 @@ const AGENTS = [
 ];
 
 /* ── Property Detail Panel ─────────────────────────────────── */
-function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (typeof PROPERTIES)[0]; onBack: () => void; isTeam: boolean; plan: PlanConfig }) {
+function PropertyDetailPanel({ property, onBack, isTeam, plan, isDarkMode }: { property: (typeof PROPERTIES)[0]; onBack: () => void; isTeam: boolean; plan: PlanConfig; isDarkMode: boolean }) {
+    const [activeSection, setActiveSection] = useState<"general" | "marketing" | "owner" | "visits" | "legal">("general");
     const [isPublished, setIsPublished] = useState(true);
-    const [aiGenerating, setAiGenerating] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [aiText, setAiText] = useState("");
     const [selectedAgent, setSelectedAgent] = useState(0);
     const [agentDropdownOpen, setAgentDropdownOpen] = useState(false);
@@ -694,7 +705,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
     const FULL_AI_TEXT = `Descubre esta impresionante ${property.name.toLowerCase()} ubicada en ${property.address}. Con ${property.beds} amplias recámaras, ${property.baths} baños de lujo y ${property.m2} m² de construcción, esta propiedad ofrece el espacio ideal para tu familia.Acabados de primera calidad, iluminación natural excepcional y una ubicación privilegiada que garantiza plusvalía.Agenda tu visita hoy.`;
 
     function handleAIGenerate() {
-        setAiGenerating(true);
+        setIsGenerating(true);
         setAiText("");
         let idx = 0;
         const interval = setInterval(() => {
@@ -702,240 +713,246 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
             setAiText(FULL_AI_TEXT.slice(0, idx));
             if (idx >= FULL_AI_TEXT.length) {
                 clearInterval(interval);
-                setAiGenerating(false);
+                setIsGenerating(false);
             }
         }, 15);
     }
 
     return (
-        <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-        >
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <button onClick={onBack} className="flex items-center gap-2 text-[9px] font-bold text-white/40 uppercase tracking-wider hover:text-white transition-all">
-                    <ChevronRight className="h-3.5 w-3.5 rotate-180" />
-                    Volver a propiedades
-                </button>
-                <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
-                        <span className="text-[8px] text-white/40 font-bold uppercase">Publicada</span>
-                        <button onClick={() => setIsPublished(!isPublished)} className="relative">
-                            <div className={`w-8 h-4 rounded-full transition-all ${isPublished ? "bg-green-500" : "bg-white/10"}`}>
-                                <div className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition-all ${isPublished ? "left-[18px]" : "left-0.5"}`} />
-                            </div>
-                        </button>
-                    </div>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[8px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
-                        <ExternalLink className="h-3 w-3" /> Ver Landing
-                    </button>
-                </div>
-            </div>
+        <div className="space-y-6">
+            <button
+                onClick={onBack}
+                className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-colors mb-4 ${isDarkMode ? "text-white/40 hover:text-white" : "text-gray-400 hover:text-gray-900"}`}
+            >
+                <ChevronLeft className="h-4 w-4" /> Volver a lista
+            </button>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left: Form */}
-                <div className="lg:col-span-2 space-y-4">
-                    {/* Hero image */}
-                    <div className="relative h-48 rounded-xl overflow-hidden border border-white/10">
-                        <img src={property.img} alt={property.name} className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                            <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase ${isPublished ? "bg-green-500/20 text-green-400 border border-green-500/30" : "bg-red-500/20 text-red-400 border border-red-500/30"}`}>
-                                {isPublished ? "En línea" : "Borrador"}
-                            </span>
-                            <span className="text-[8px] text-white/60 font-mono">{property.hits} vistas</span>
+                {/* Left Column: Image and Quick Stats */}
+                <div className="lg:col-span-1 space-y-6">
+                    <div className={`rounded-3xl border overflow-hidden p-3 ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-xl shadow-gray-200/20"}`}>
+                        <div className="relative aspect-square rounded-2xl overflow-hidden mb-4">
+                            <img src={property.img} alt={property.name} className="w-full h-full object-cover" />
+                            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-cima-gold text-[8px] font-black uppercase tracking-widest">
+                                {property.status}
+                            </div>
+                        </div>
+                        <h2 className={`font-heading font-black text-xl mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>{property.name}</h2>
+                        <p className={`text-xs mb-4 ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>{property.address}</p>
+                        <div className="flex items-center justify-between py-4 border-t border-white/5">
+                            <span className="text-cima-gold font-black text-2xl tracking-tighter">{property.price}</span>
+                            <div className="flex gap-2">
+                                <div className={`p-2 rounded-lg border ${isDarkMode ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200"}`}>
+                                    <Share2 className={`h-3.5 w-3.5 ${isDarkMode ? "text-white/40" : "text-gray-400"}`} />
+                                </div>
+                                <div className={`p-2 rounded-lg border ${isDarkMode ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200"}`}>
+                                    <Trash2 className="h-3.5 w-3.5 text-red-500/50" />
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    {/* Form fields */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Nombre</label>
-                            <input
-                                className={`w-full bg-white/5 border rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none transition-all ${isTeam ? "border-cima-gold/20 focus:border-cima-gold/60" : "border-white/10 focus:border-cima-gold/40"}`}
-                                value={editedName}
-                                onChange={(e) => setEditedName(e.target.value)}
-                                readOnly={!isTeam}
-                            />
-                        </div>
-                        <div>
-                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Precio</label>
-                            <input
-                                className={`w-full bg-white/5 border rounded-lg px-3 py-2.5 text-xs text-white font-bold outline-none transition-all ${isTeam ? "border-cima-gold/20 focus:border-cima-gold/60" : "border-white/10 focus:border-cima-gold/40"}`}
-                                value={editedPrice}
-                                onChange={(e) => setEditedPrice(e.target.value)}
-                                readOnly={!isTeam}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-1 block">Dirección</label>
-                        <input
-                            className={`w-full bg-white/5 border rounded-lg px-3 py-2.5 text-xs text-white outline-none transition-all ${isTeam ? "border-cima-gold/20 focus:border-cima-gold/60" : "border-white/10 focus:border-cima-gold/40"}`}
-                            value={editedAddress}
-                            onChange={(e) => setEditedAddress(e.target.value)}
-                            readOnly={!isTeam}
-                        />
-                    </div>
-
-                    {isTeam && (
-                        <p className="text-[7px] text-cima-gold/40 font-bold uppercase tracking-widest flex items-center gap-1">
-                            <Edit3 className="h-2.5 w-2.5" /> Los campos son editables en tiempo real
-                        </p>
-                    )}
 
                     {/* Specs */}
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
-                            <BedDouble className="h-4 w-4 text-white/20 mx-auto mb-1" />
-                            <p className="text-sm font-bold text-white">{property.beds}</p>
-                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Recámaras</p>
+                    <div className={`grid grid-cols-3 gap-3 p-3 rounded-3xl border ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-xl shadow-gray-200/20"}`}>
+                        <div className="text-center">
+                            <BedDouble className={`h-4 w-4 mx-auto mb-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`} />
+                            <p className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{property.beds}</p>
+                            <p className={`text-[7px] uppercase font-bold tracking-wider ${isDarkMode ? "text-white/30" : "text-gray-500"}`}>Recámaras</p>
                         </div>
-                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
-                            <Bath className="h-4 w-4 text-white/20 mx-auto mb-1" />
-                            <p className="text-sm font-bold text-white">{property.baths}</p>
-                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Baños</p>
+                        <div className="text-center">
+                            <Bath className={`h-4 w-4 mx-auto mb-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`} />
+                            <p className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{property.baths}</p>
+                            <p className={`text-[7px] uppercase font-bold tracking-wider ${isDarkMode ? "text-white/30" : "text-gray-500"}`}>Baños</p>
                         </div>
-                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 text-center">
-                            <Ruler className="h-4 w-4 text-white/20 mx-auto mb-1" />
-                            <p className="text-sm font-bold text-white">{property.m2}</p>
-                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">m²</p>
+                        <div className="text-center">
+                            <Ruler className={`h-4 w-4 mx-auto mb-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`} />
+                            <p className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{property.m2}</p>
+                            <p className={`text-[7px] uppercase font-bold tracking-wider ${isDarkMode ? "text-white/30" : "text-gray-500"}`}>m²</p>
                         </div>
                     </div>
 
-                    {/* Description with AI */}
-                    <div>
-                        <div className="flex items-center justify-between mb-1">
-                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Descripción</label>
+                    {/* Owner info */}
+                    <div className={`rounded-3xl border p-3 ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-xl shadow-gray-200/20"}`}>
+                        <p className={`text-[7px] font-bold uppercase tracking-widest mb-2 ${isDarkMode ? "text-white/30" : "text-gray-500"}`}>Propietario</p>
+                        <p className={`text-xs font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{property.owner}</p>
+                        <p className={`text-[9px] mt-0.5 ${isDarkMode ? "text-white/30" : "text-gray-500"}`}>{property.status} · {property.address.split(",").pop()?.trim()}</p>
+                    </div>
+                </div>
+
+                {/* Right Column: Main Content */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${isDarkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-200"}`}>
+                                <span className={`text-[8px] font-bold uppercase ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>Publicada</span>
+                                <button onClick={() => setIsPublished(!isPublished)} className="relative">
+                                    <div className={`w-8 h-4 rounded-full transition-all ${isPublished ? "bg-green-500" : (isDarkMode ? "bg-white/10" : "bg-gray-300")}`}>
+                                        <div className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition-all ${isPublished ? "left-[18px]" : "left-0.5"}`} />
+                                    </div>
+                                </button>
+                            </div>
+                            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[8px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
+                                <ExternalLink className="h-3 w-3" /> Ver Landing
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Section Navigation */}
+                    <div className={`flex items-center gap-2 p-1 rounded-xl border ${isDarkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-200"}`}>
+                        {[
+                            { id: "general", label: "General" },
+                            { id: "marketing", label: "Marketing" },
+                            { id: "owner", label: "Propietario" },
+                            { id: "visits", label: "Visitas" },
+                            { id: "legal", label: "Legal" },
+                        ].map((section) => (
+                            <button
+                                key={section.id}
+                                onClick={() => setActiveSection(section.id as any)}
+                                className={`flex-1 px-3 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-wider transition-all ${activeSection === section.id
+                                    ? "bg-white text-gray-900 shadow-sm"
+                                    : isDarkMode
+                                        ? "text-white/40 hover:text-white hover:bg-white/5"
+                                        : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                                    }`}
+                            >
+                                {section.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* AI Description */}
+                    <div className={`rounded-3xl border p-3 ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-xl shadow-gray-200/20"}`}>
+                        <div className="flex items-center justify-between mb-3">
+                            <p className={`text-[7px] font-bold uppercase tracking-widest ${isDarkMode ? "text-white/30" : "text-gray-500"}`}>Descripción con IA</p>
                             <button
                                 onClick={handleAIGenerate}
-                                disabled={aiGenerating}
+                                disabled={isGenerating}
                                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-[7px] font-black text-purple-400 uppercase tracking-wider hover:bg-purple-500/20 transition-all disabled:opacity-50"
                             >
-                                <Sparkles className={`h-3 w-3 ${aiGenerating ? "animate-spin" : ""}`} />
-                                {aiGenerating ? "Generando…" : "Generar con IA"}
+                                <Sparkles className={`h-3 w-3 ${isGenerating ? "animate-spin" : ""}`} />
+                                {isGenerating ? "Generando…" : "Generar con IA"}
                             </button>
                         </div>
                         <textarea
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white/60 outline-none focus:border-cima-gold/40 transition-all resize-none h-28"
+                            className={`w-full border rounded-lg px-3 py-2.5 text-xs outline-none focus:border-cima-gold/40 transition-all resize-none h-28 ${isDarkMode ? "bg-white/5 border-white/10 text-white/60" : "bg-gray-50 border-gray-200 text-gray-600"}`}
                             value={aiText || `Hermosa propiedad en ${property.address}. Contacta para más información.`}
                             readOnly
                         />
                     </div>
                 </div>
+            </div>
 
-                {/* Right: Photos & Actions */}
-                <div className="space-y-4">
-                    {/* Photos */}
-                    <div>
-                        <div className="flex items-center justify-between mb-2">
-                            <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Galería de Fotos</label>
-                            <span className="text-[7px] text-white/20 font-mono">4 fotos</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                            {[property.img, "/estancia-despues.png", "/recamara-despues.png", "/cocina-despues.png"].map((img, j) => (
-                                <div key={j} className="aspect-square rounded-lg overflow-hidden border border-white/10 relative group/photo">
-                                    <img src={img} alt="" className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                                        <Edit3 className="h-3 w-3 text-white" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <button className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-2.5 border border-dashed border-white/10 rounded-lg text-[8px] font-bold text-white/30 uppercase tracking-wider hover:border-cima-gold/30 hover:text-cima-gold transition-all">
-                            <Upload className="h-3 w-3" /> Subir más fotos
-                        </button>
+            {/* Right: Photos & Actions */}
+            <div className="space-y-4">
+                {/* Photos */}
+                <div>
+                    <div className="flex items-center justify-between mb-2">
+                        <label className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Galería de Fotos</label>
+                        <span className="text-[7px] text-white/20 font-mono">4 fotos</span>
                     </div>
-
-                    {/* Quick actions */}
-                    <div className="space-y-2">
-                        <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Acciones</p>
-                        {[
-                            { icon: FileText, label: "Generar ficha PDF", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
-                            { icon: Share2, label: "Compartir WhatsApp", color: "text-green-400 bg-green-500/10 border-green-500/20" },
-                            { icon: ImageIcon, label: "Generar anuncio redes", color: "text-pink-400 bg-pink-500/10 border-pink-500/20" },
-                            { icon: Sparkles, label: "Llenado completo con IA", color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
-                        ].map((action, j) => (
-                            <button key={j} className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all hover:scale-[1.02] ${action.color}`}>
-                                <action.icon className="h-3.5 w-3.5 shrink-0" />
-                                {action.label}
-                            </button>
+                    <div className="grid grid-cols-2 gap-2">
+                        {[property.img, "/estancia-despues.png", "/recamara-despues.png", "/cocina-despues.png"].map((img, j) => (
+                            <div key={j} className="aspect-square rounded-lg overflow-hidden border border-white/10 relative group/photo">
+                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                    <Edit3 className="h-3 w-3 text-white" />
+                                </div>
+                            </div>
                         ))}
                     </div>
+                    <button className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-2.5 border border-dashed border-white/10 rounded-lg text-[8px] font-bold text-white/30 uppercase tracking-wider hover:border-cima-gold/30 hover:text-cima-gold transition-all">
+                        <Upload className="h-3 w-3" /> Subir más fotos
+                    </button>
+                </div>
 
-                    {/* Agent selector (Team only) */}
-                    {isTeam && (
-                        <div>
-                            <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-2">Asesor Asignado</p>
-                            <div className="relative">
-                                <button
-                                    onClick={() => setAgentDropdownOpen(!agentDropdownOpen)}
-                                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl hover:border-cima-gold/30 transition-all"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <div className={`h-7 w-7 rounded-lg ${AGENTS[selectedAgent].color} flex items-center justify-center text-[8px] font-black text-white`}>
-                                            {AGENTS[selectedAgent].avatar}
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="text-[10px] font-bold text-white">{AGENTS[selectedAgent].name}</p>
-                                            <p className="text-[7px] text-white/30">{AGENTS[selectedAgent].role} · {AGENTS[selectedAgent].props} propiedades</p>
-                                        </div>
+                {/* Quick actions */}
+                <div className="space-y-2">
+                    <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Acciones</p>
+                    {[
+                        { icon: FileText, label: "Generar ficha PDF", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
+                        { icon: Share2, label: "Compartir WhatsApp", color: "text-green-400 bg-green-500/10 border-green-500/20" },
+                        { icon: ImageIcon, label: "Generar anuncio redes", color: "text-pink-400 bg-pink-500/10 border-pink-500/20" },
+                        { icon: Sparkles, label: "Llenado completo con IA", color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
+                    ].map((action, j) => (
+                        <button key={j} className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all hover:scale-[1.02] ${action.color}`}>
+                            <action.icon className="h-3.5 w-3.5 shrink-0" />
+                            {action.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Agent selector (Team only) */}
+                {isTeam && (
+                    <div>
+                        <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-2">Asesor Asignado</p>
+                        <div className="relative">
+                            <button
+                                onClick={() => setAgentDropdownOpen(!agentDropdownOpen)}
+                                className="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-white/[0.03] border border-white/10 rounded-xl hover:border-cima-gold/30 transition-all"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <div className={`h-7 w-7 rounded-lg ${AGENTS[selectedAgent].color} flex items-center justify-center text-[8px] font-black text-white`}>
+                                        {AGENTS[selectedAgent].avatar}
                                     </div>
-                                    <ChevronDown className={`h-3.5 w-3.5 text-white/30 transition-transform ${agentDropdownOpen ? "rotate-180" : ""}`} />
-                                </button>
-                                <AnimatePresence>
-                                    {agentDropdownOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: -5, height: 0 }}
-                                            animate={{ opacity: 1, y: 0, height: "auto" }}
-                                            exit={{ opacity: 0, y: -5, height: 0 }}
-                                            className="absolute top-full left-0 right-0 z-20 mt-1 bg-[#111] border border-white/10 rounded-xl overflow-hidden shadow-2xl"
-                                        >
-                                            {AGENTS.map((agent, j) => (
-                                                <button
-                                                    key={j}
-                                                    onClick={() => { setSelectedAgent(j); setAgentDropdownOpen(false); }}
-                                                    className={`w-full flex items-center gap-2 px-3 py-2.5 hover:bg-white/5 transition-all ${j === selectedAgent ? "bg-cima-gold/5 border-l-2 border-cima-gold" : "border-l-2 border-transparent"
-                                                        }`}
-                                                >
-                                                    <div className={`h-6 w-6 rounded-lg ${agent.color} flex items-center justify-center text-[7px] font-black text-white shrink-0`}>
-                                                        {agent.avatar}
-                                                    </div>
-                                                    <div className="text-left flex-1">
-                                                        <p className="text-[9px] font-bold text-white">{agent.name}</p>
-                                                        <p className="text-[7px] text-white/30">{agent.role}</p>
-                                                    </div>
-                                                    <span className="text-[7px] text-white/20 font-mono">{agent.props} props</span>
-                                                </button>
-                                            ))}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
+                                    <div className="text-left">
+                                        <p className="text-[10px] font-bold text-white">{AGENTS[selectedAgent].name}</p>
+                                        <p className="text-[7px] text-white/30">{AGENTS[selectedAgent].role} · {AGENTS[selectedAgent].props} propiedades</p>
+                                    </div>
+                                </div>
+                                <ChevronDown className={`h-3.5 w-3.5 text-white/30 transition-transform ${agentDropdownOpen ? "rotate-180" : ""}`} />
+                            </button>
+                            <AnimatePresence>
+                                {agentDropdownOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -5, height: 0 }}
+                                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                                        exit={{ opacity: 0, y: -5, height: 0 }}
+                                        className="absolute top-full left-0 right-0 z-20 mt-1 bg-[#111] border border-white/10 rounded-xl overflow-hidden shadow-2xl"
+                                    >
+                                        {AGENTS.map((agent, j) => (
+                                            <button
+                                                key={j}
+                                                onClick={() => { setSelectedAgent(j); setAgentDropdownOpen(false); }}
+                                                className={`w-full flex items-center gap-2 px-3 py-2.5 hover:bg-white/5 transition-all ${j === selectedAgent ? "bg-cima-gold/5 border-l-2 border-cima-gold" : "border-l-2 border-transparent"
+                                                    }`}
+                                            >
+                                                <div className={`h-6 w-6 rounded-lg ${agent.color} flex items-center justify-center text-[7px] font-black text-white shrink-0`}>
+                                                    {agent.avatar}
+                                                </div>
+                                                <div className="text-left flex-1">
+                                                    <p className="text-[9px] font-bold text-white">{agent.name}</p>
+                                                    <p className="text-[7px] text-white/30">{agent.role}</p>
+                                                </div>
+                                                <span className="text-[7px] text-white/20 font-mono">{agent.props} props</span>
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
-                    )}
-
-                    {/* Owner info */}
-                    <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3">
-                        <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-2">Propietario</p>
-                        <p className="text-xs font-bold text-white">{property.owner}</p>
-                        <p className="text-[9px] text-white/30 mt-0.5">{property.status} · {property.address.split(",").pop()?.trim()}</p>
                     </div>
+                )}
+
+                {/* Owner info */}
+                <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3">
+                    <p className="text-[7px] text-white/30 font-bold uppercase tracking-widest mb-2">Propietario</p>
+                    <p className="text-xs font-bold text-white">{property.owner}</p>
+                    <p className="text-[9px] text-white/30 mt-0.5">{property.status} · {property.address.split(",").pop()?.trim()}</p>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }
 
 /* ── Leads View ────────────────────────────────────────────── */
-function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
+function LeadsView({ leads, newLeadId, onUpdateStatus, tier, isDarkMode }: {
     leads: LiveLead[];
     newLeadId?: string;
     onUpdateStatus: (id: string, s: string) => void;
     tier: string;
+    isDarkMode: boolean;
 }) {
     const isStarter = tier === "basico";
     const [upgradeAlert, setUpgradeAlert] = useState(false);
@@ -992,55 +1009,57 @@ function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
             </div>
 
             {/* Leads list */}
-            <div className="space-y-2">
-                {leads.map((lead) => (
+            <div className="space-y-3">
+                {leads.map((lead, i) => (
                     <motion.div
                         key={lead.id}
-                        layout
-                        initial={lead.id === newLeadId ? { scale: 0.9, opacity: 0 } : false}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className={`p-3 rounded-xl border transition-all ${lead.id === newLeadId
-                            ? "bg-cima-gold/10 border-cima-gold shadow-[0_0_15px_rgba(200,169,110,0.2)]"
-                            : "bg-white/[0.03] border-white/5 hover:border-white/10"
-                            }`}
+                        initial={lead.id === newLeadId ? { opacity: 0, scale: 0.9, y: -20 } : { opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                        transition={{ duration: 0.4, delay: lead.id === newLeadId ? 0 : i * 0.05 }}
+                        className={`border rounded-2xl p-4 transition-all group ${lead.id === newLeadId ? "ring-2 ring-cima-gold ring-offset-4 ring-offset-black shadow-2xl shadow-cima-gold/20" : ""} ${isDarkMode ? "bg-white/[0.03] border-white/5 hover:border-white/10" : "bg-white border-gray-200 shadow-sm hover:shadow-md"}`}
                     >
                         <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3 text-left">
-                                <div className={`h-8 w-8 rounded-lg ${lead.color} flex items-center justify-center shrink-0`}>
-                                    <lead.sourceIcon className="h-4 w-4" />
+                            <div className="flex items-center gap-3">
+                                <div className={`h-10 w-10 border rounded-xl flex items-center justify-center font-black text-xs ${isDarkMode ? "bg-white/5 border-white/10 text-white" : "bg-gray-100 border-gray-200 text-gray-900"}`}>
+                                    {lead.name.split(" ").map(n => n[0]).join("")}
+                                    {lead.id === newLeadId && <span className="absolute -top-1 -right-1 h-3 w-3 bg-cima-gold rounded-full border-2 border-black animate-pulse" />}
                                 </div>
                                 <div>
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-[11px] font-bold text-white">
-                                            {lead.name}
-                                        </p>
-                                        {lead.id === newLeadId && (
-                                            <span className="text-[6px] bg-cima-gold text-black px-1 rounded font-black animate-pulse shrink-0">JUSTO AHORA</span>
-                                        )}
-                                        {lead.score && tier !== "basico" && (
-                                            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-cima-gold/10 border border-cima-gold/20 rounded-md shrink-0">
-                                                <Sparkles className="h-2 w-2 text-cima-gold" />
-                                                <span className="text-[8px] font-black text-cima-gold">{lead.score}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <p className="text-[8px] text-white/30 font-mono italic">{lead.property}</p>
+                                    <h4 className={`text-sm font-bold group-hover:text-cima-gold transition-colors ${isDarkMode ? "text-white" : "text-gray-900"}`}>{lead.name}</h4>
+                                    <p className={`text-[10px] ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>{lead.property} · {lead.source}</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3">
-                                <div className="hidden sm:block text-right">
-                                    <p className="text-[9px] text-white/40 font-mono">{lead.phone}</p>
-                                    <p className="text-[7px] text-white/20 uppercase font-bold tracking-widest">{lead.date}</p>
+                            <div className="hidden md:flex flex-col items-end gap-1.5">
+                                <div className={`px-2 py-1 rounded-lg border text-[8px] font-black uppercase tracking-wider ${STATUS_MAP[lead.status as keyof typeof STATUS_MAP]?.class ||
+                                    (isDarkMode ? "bg-white/5 text-white/40 border-white/10" : "bg-gray-100 text-gray-600 border-gray-200")
+                                    }`}>
+                                    {STATUS_MAP[lead.status as keyof typeof STATUS_MAP]?.label || lead.status}
                                 </div>
+                                <span className={`text-[9px] font-mono ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>{lead.date}</span>
+                            </div>
+                        </div>
 
+                        <div className={`mt-4 pt-4 border-t flex items-center justify-between gap-4 ${isDarkMode ? "border-white/5" : "border-gray-100"}`}>
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => handleStageClick(lead.id, lead.status)}
-                                    className={`px-3 py-1.5 rounded-lg border text-[8px] font-black uppercase tracking-wider transition-all min-w-[100px] text-center ${STATUS_MAP[lead.status].class} ${!isStarter ? "hover:scale-105 active:scale-95 cursor-pointer shadow-lg shadow-black/20" : "cursor-default opacity-80"}`}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-all ${isDarkMode ? "bg-white/5 border-white/10 text-white/40 hover:text-white" : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-900"}`}
                                 >
-                                    {STATUS_MAP[lead.status].label}
-                                    {!isStarter && <span className="ml-2 opacity-30 text-[6px]">Siguiente etapa →</span>}
+                                    <Zap className="h-3 w-3" /> Avanzar Pipeline
                                 </button>
+                                <div className="flex gap-1">
+                                    <div className={`p-1.5 border rounded-lg transition-all cursor-pointer ${isDarkMode ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-gray-50 border-gray-200 hover:bg-gray-100"}`}>
+                                        <Phone className={`h-3 w-3 ${isDarkMode ? "text-white/30" : "text-gray-400"}`} />
+                                    </div>
+                                    <div className={`p-1.5 border rounded-lg transition-all cursor-pointer ${isDarkMode ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-gray-50 border-gray-200 hover:bg-gray-100"}`}>
+                                        <Mail className={`h-3 w-3 ${isDarkMode ? "text-white/30" : "text-gray-400"}`} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                                <span className={`text-[10px] font-bold ${isDarkMode ? "text-cima-gold" : "text-cima-gold"}`}>ROI: $12k+</span>
                             </div>
                         </div>
                     </motion.div>
@@ -1051,7 +1070,7 @@ function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
 }
 
 /* ── Visits View ───────────────────────────────────────────── */
-function VisitsView() {
+function VisitsView({ isDarkMode }: { isDarkMode: boolean }) {
     const grouped: Record<string, typeof VISITS> = {};
     VISITS.forEach((v) => {
         if (!grouped[v.date]) grouped[v.date] = [];
@@ -1059,19 +1078,19 @@ function VisitsView() {
     });
 
     const statusStyle: Record<string, string> = {
-        confirmada: "bg-green-500/10 text-green-400 border-green-500/20",
-        pendiente: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-        realizada: "bg-white/5 text-white/30 border-white/10",
-        cancelada: "bg-red-500/10 text-red-400 border-red-500/20",
+        confirmada: isDarkMode ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-green-50 text-green-700 border-green-200",
+        pendiente: isDarkMode ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" : "bg-yellow-50 text-yellow-700 border-yellow-200",
+        realizada: isDarkMode ? "bg-white/5 text-white/30 border-white/10" : "bg-gray-100 text-gray-500 border-gray-200",
+        cancelada: isDarkMode ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-red-50 text-red-700 border-red-200",
     };
 
     return (
         <div className="space-y-6">
             {Object.entries(grouped).map(([date, visits], gi) => (
                 <div key={date}>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-3 px-1">
                         <Calendar className="h-3.5 w-3.5 text-cima-gold" />
-                        <span className={`text-xs font-black uppercase tracking-wider ${date === "Hoy" ? "text-cima-gold" : date === "Mañana" ? "text-white/60" : "text-white/30"}`}>
+                        <span className={`text-xs font-black uppercase tracking-wider ${date === "Hoy" ? "text-cima-gold" : isDarkMode ? "text-white/30" : "text-gray-400"}`}>
                             {date}
                         </span>
                         {date === "Hoy" && (
@@ -1087,42 +1106,41 @@ function VisitsView() {
                                 initial={{ opacity: 0, x: -15 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: gi * 0.1 + i * 0.06 }}
-                                className={`bg-white/[0.03] border rounded-xl p-4 transition-all ${visit.status === "confirmada" || visit.status === "pendiente"
-                                    ? "border-white/10 hover:border-cima-gold/30"
-                                    : "border-white/5 opacity-60"
+                                className={`border rounded-xl p-4 transition-all ${visit.status === "confirmada" || visit.status === "pendiente"
+                                    ? isDarkMode ? "bg-white/[0.03] border-white/10 hover:border-cima-gold/30" : "bg-white border-gray-200 shadow-sm hover:border-cima-gold/40 hover:shadow-md"
+                                    : isDarkMode ? "bg-white/[0.01] border-white/5 opacity-60" : "bg-gray-50 border-gray-100 opacity-60"
                                     }`}
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-xl bg-white/[0.05] border border-white/10 flex flex-col items-center justify-center shrink-0">
+                                        <div className={`h-10 w-10 rounded-xl border flex flex-col items-center justify-center shrink-0 ${isDarkMode ? "bg-white/[0.05] border-white/10" : "bg-gray-100 border-gray-200"}`}>
                                             <Clock className="h-3 w-3 text-cima-gold mb-0.5" />
-                                            <span className="text-[8px] font-bold text-white/60">{visit.time?.split(" ")[0]}</span>
+                                            <span className={`text-[8px] font-bold ${isDarkMode ? "text-white/60" : "text-gray-500"}`}>{visit.time?.split(" ")[0]}</span>
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-white">{visit.prospect}</p>
-                                            <div className="flex items-center gap-2 text-[9px]">
-                                                <span className="text-white/30 flex items-center gap-1">
-                                                    <MapPin className="h-2.5 w-2.5" /> {visit.property}
-                                                </span>
-                                                <span className="text-white/20">•</span>
-                                                <span className="text-white/20">{visit.time}</span>
+                                            <h4 className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>{visit.prospect}</h4>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <div className="flex items-center gap-1 text-[9px] text-cima-gold/80 font-medium">
+                                                    <MapPin className="h-2.5 w-2.5" />
+                                                    <span className="truncate max-w-[120px]">{visit.property}</span>
+                                                </div>
+                                                <span className={`text-[9px] ${isDarkMode ? "text-white/20" : "text-gray-300"}`}>•</span>
+                                                <span className={`text-[9px] ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>{visit.time}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {visit.sentiment === "positive" && (
-                                            <span className="text-[7px] font-bold bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/20">
+                                            <span className={`text-[7px] font-bold px-1.5 py-0.5 rounded-full border ${isDarkMode ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-green-50 text-green-700 border-green-200"
+                                                }`}>
                                                 ❤️ Le encantó
                                             </span>
                                         )}
-                                        {visit.sentiment === "neutral" && (
-                                            <span className="text-[7px] font-bold bg-yellow-500/10 text-yellow-400 px-1.5 py-0.5 rounded-full border border-yellow-500/20">
-                                                🤔 Lo piensa
+                                        {visit.status && (
+                                            <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-wide border ${statusStyle[visit.status as keyof typeof statusStyle] || ""}`}>
+                                                {visit.status}
                                             </span>
                                         )}
-                                        <span className={`px-2 py-1 rounded-lg text-[7px] font-black uppercase tracking-wide border ${statusStyle[visit.status]}`}>
-                                            {visit.status}
-                                        </span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -1135,62 +1153,101 @@ function VisitsView() {
 }
 
 /* ── Analytics View ────────────────────────────────────────── */
-function AnalyticsView() {
+function AnalyticsView({ isDarkMode }: { isDarkMode: boolean }) {
     return (
         <div className="space-y-6">
-            {/* Big numbers */}
+            <div className="flex items-center justify-between px-1">
+                <div>
+                    <h3 className={`text-[14px] font-black uppercase tracking-tighter ${isDarkMode ? "text-white" : "text-gray-900"}`}>Reportes Elite</h3>
+                    <p className={`text-[10px] font-medium ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>Rendimiento histórico de su portafolio</p>
+                </div>
+            </div>
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
                     { label: "Ingresos mes", value: "$847K", change: "+23%", up: true },
-                    { label: "Ticket promedio", value: "$6.8M", change: "+$400K", up: true },
-                    { label: "Días promedio venta", value: "18", change: "-4 días", up: true },
-                    { label: "Tasa de cierre", value: "34%", change: "+6%", up: true },
+                    { label: "Leads totales", value: "142", change: "+15%", up: true },
+                    { label: "Visitas/Cierre", value: "12%", change: "-2%", up: false },
+                    { label: "Retorno IA", value: "3.4x", change: "+0.8", up: true },
                 ].map((stat, i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bg-white/[0.03] border border-white/5 rounded-xl p-5"
-                    >
-                        <p className="text-[8px] text-white/30 uppercase font-bold tracking-wider mb-2">{stat.label}</p>
-                        <p className="text-2xl font-heading font-bold text-white mb-1">{stat.value}</p>
-                        <div className="flex items-center gap-1">
-                            {stat.up
-                                ? <ArrowUpRight className="h-3 w-3 text-green-400" />
-                                : <ArrowDownRight className="h-3 w-3 text-red-400" />
-                            }
-                            <span className={`text-[9px] font-bold ${stat.up ? "text-green-400" : "text-red-400"}`}>{stat.change}</span>
+                    <div key={i} className={`p-4 rounded-2xl border transition-all ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-sm"}`}>
+                        <p className={`text-[8px] font-black uppercase tracking-widest mb-1 ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>{stat.label}</p>
+                        <div className="flex items-end justify-between">
+                            <h3 className="text-xl font-black font-heading tracking-tighter">{stat.value}</h3>
+                            <span className={`text-[8px] font-bold ${stat.up ? "text-green-500" : "text-red-500"}`}>{stat.change}</span>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
 
             {/* Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white/[0.03] border border-white/5 rounded-xl p-5">
-                    <h3 className="text-[9px] font-black uppercase tracking-wider text-white/40 mb-4 flex items-center gap-2">
+                <div className={`border rounded-xl p-5 ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-sm"}`}>
+                    <h3 className={`text-[9px] font-black uppercase tracking-wider mb-4 flex items-center gap-2 ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>
                         <Eye className="h-3 w-3 text-cima-gold" /> Vistas por Propiedad
                     </h3>
                     <BarChart
                         data={[142, 89, 56, 34, 201]}
                         labels={["Misiones", "LOVFT", "Contry", "Valle P.", "Santa M."]}
+                        isDarkMode={isDarkMode}
                     />
                 </div>
-                <div className="bg-white/[0.03] border border-white/5 rounded-xl p-5">
-                    <h3 className="text-[9px] font-black uppercase tracking-wider text-white/40 mb-4 flex items-center gap-2">
+                <div className={`border rounded-xl p-5 ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-sm"}`}>
+                    <h3 className={`text-[9px] font-black uppercase tracking-wider mb-4 flex items-center gap-2 ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>
                         <Target className="h-3 w-3 text-cima-gold" /> Leads por Fuente
                     </h3>
                     <BarChart
                         data={[12, 8, 5, 3, 2]}
                         labels={["Instagram", "Marketplace", "Landing", "Referido", "Google"]}
+                        isDarkMode={isDarkMode}
                     />
                 </div>
             </div>
 
             {/* Source breakdown */}
-            <div className="bg-white/[0.03] border border-white/5 rounded-xl p-5">
-                <h3 className="text-[9px] font-black uppercase tracking-wider text-white/40 mb-4 flex items-center gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className={`col-span-1 md:col-span-2 p-6 rounded-3xl border ${isDarkMode ? "bg-white/[0.02] border-white/5" : "bg-white border-gray-100 shadow-sm"}`}>
+                    <div className="flex items-center justify-between mb-6">
+                        <p className={`text-[9px] font-black uppercase tracking-widest ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>Alcance por Red Social</p>
+                        <div className="flex gap-2">
+                            <div className="flex items-center gap-1.5">
+                                <span className="h-2 w-2 rounded-full bg-cima-gold" />
+                                <span className={`text-[8px] font-bold ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>Vistas</span>
+                            </div>
+                        </div>
+                    </div>
+                    <BarChart data={[45, 78, 92, 64, 88]} labels={["IG", "FB", "WEB", "TIK", "ADS"]} isDarkMode={isDarkMode} />
+                </div>
+
+                <div className={`p-6 rounded-3xl border ${isDarkMode ? "bg-white/[0.02] border-white/5" : "bg-white border-gray-100 shadow-sm"}`}>
+                    <p className={`text-[9px] font-black uppercase tracking-widest mb-6 ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>Eficiencia Legal</p>
+                    <div className="space-y-5">
+                        {[
+                            { label: "Contratos generados", val: "12", pct: 85 },
+                            { label: "Validación IA", val: "94%", pct: 94 },
+                            { label: "Promedio cierre", val: "3 días", pct: 70 },
+                        ].map((item, i) => (
+                            <motion.div key={i} className="space-y-2">
+                                <div className="flex justify-between text-[9px] font-bold">
+                                    <span className={isDarkMode ? "text-white/40" : "text-gray-500"}>{item.label}</span>
+                                    <span className={isDarkMode ? "text-white" : "text-gray-900"}>{item.val}</span>
+                                </div>
+                                <div className={`h-1 rounded-full overflow-hidden ${isDarkMode ? "bg-white/5" : "bg-gray-100"}`}>
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${item.pct}%` }}
+                                        transition={{ delay: 0.3 + i * 0.08, duration: 0.6 }}
+                                        className="h-full bg-gradient-to-r from-cima-gold/60 to-cima-gold rounded-full"
+                                    />
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className={`border rounded-xl p-5 ${isDarkMode ? "bg-white/[0.03] border-white/5" : "bg-white border-gray-200 shadow-sm"}`}>
+                <h3 className={`text-[9px] font-black uppercase tracking-wider mb-4 flex items-center gap-2 ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>
                     <BarChart3 className="h-3 w-3 text-cima-gold" /> Rendimiento por propiedad
                 </h3>
                 <div className="space-y-3">
@@ -1199,10 +1256,10 @@ function AnalyticsView() {
                         return (
                             <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.08 }}>
                                 <div className="flex items-center justify-between mb-1">
-                                    <span className="text-[10px] text-white/60 font-bold">{prop.name}</span>
-                                    <span className="text-[10px] text-white/30 font-mono">{prop.hits} vistas</span>
+                                    <span className={`text-[10px] font-bold ${isDarkMode ? "text-white/60" : "text-gray-700"}`}>{prop.name}</span>
+                                    <span className={`text-[10px] font-mono ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>{prop.hits} vistas</span>
                                 </div>
-                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                <div className={`h-1.5 rounded-full overflow-hidden ${isDarkMode ? "bg-white/5" : "bg-gray-100"}`}>
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${pct}%` }}
@@ -1219,8 +1276,8 @@ function AnalyticsView() {
     );
 }
 
-/* ── IA Studio View ────────────────────────────────────────── */
-function IaStudioView() {
+// ── IA Studio View ────────────────────────────────────────── */
+function IaStudioView({ isDarkMode }: { isDarkMode: boolean }) {
     const [status, setStatus] = useState<"idle" | "uploading" | "processing" | "ready">("idle");
     const [mode, setMode] = useState<"clean" | "stage" | "remodel">("stage");
     const [progress, setProgress] = useState(0);
@@ -1255,13 +1312,13 @@ function IaStudioView() {
         <div className="space-y-6">
             <div className="flex items-center justify-between px-1">
                 <div>
-                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">IA Studio</h3>
-                    <p className="text-[10px] text-white/40 font-medium">Transformación de espacios en un clic</p>
+                    <h3 className={`text-[14px] font-black uppercase tracking-tighter ${isDarkMode ? "text-white" : "text-gray-900"}`}>IA Studio</h3>
+                    <p className={`text-[10px] font-medium ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>Transformación de espacios en un clic</p>
                 </div>
                 {status === "ready" && (
                     <button
                         onClick={handleReset}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[9px] font-bold text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                        className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-lg text-[9px] font-bold transition-all ${isDarkMode ? "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10" : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-gray-100"}`}
                     >
                         <RotateCcw className="h-3 w-3" /> Reiniciar
                     </button>
@@ -1272,23 +1329,23 @@ function IaStudioView() {
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="aspect-video bg-white/[0.02] border border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center gap-4 group cursor-pointer hover:bg-white/[0.04] transition-all"
+                    className={`aspect-video border border-dashed rounded-3xl flex flex-col items-center justify-center gap-4 group cursor-pointer transition-all ${isDarkMode ? "bg-white/[0.02] border-white/10 hover:bg-white/[0.04]" : "bg-gray-50 border-gray-300 hover:bg-gray-100"}`}
                     onClick={() => setStatus("uploading")}
                 >
-                    <div className="h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center text-white/20 group-hover:scale-110 group-hover:text-cima-gold transition-all">
+                    <div className={`h-16 w-16 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:text-cima-gold transition-all ${isDarkMode ? "bg-white/5 text-white/20" : "bg-white text-gray-300 shadow-sm"}`}>
                         <Upload className="h-8 w-8" />
                     </div>
                     <div className="text-center">
-                        <p className="text-xs font-bold text-white/60">Haz clic para subir una foto</p>
-                        <p className="text-[8px] text-white/20 uppercase font-black tracking-widest mt-1">Soporte: JPG, PNG · Max 10MB</p>
+                        <p className={`text-xs font-bold ${isDarkMode ? "text-white/60" : "text-gray-500"}`}>Haz clic para subir una foto</p>
+                        <p className={`text-[8px] uppercase font-black tracking-widest mt-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>Soporte: JPG, PNG · Max 10MB</p>
                     </div>
                 </motion.div>
             )}
 
             {status === "uploading" && (
                 <div className="space-y-6">
-                    <div className="aspect-video bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden relative">
-                        <NextImage src="/cocina-antes.png" alt="Original" fill className="object-cover" />
+                    <div className={`aspect-video border rounded-3xl overflow-hidden relative ${isDarkMode ? "bg-white/[0.02] border-white/5" : "bg-gray-100 border-gray-200"}`}>
+                        <img src="/cocina-antes.png" alt="Original" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                             <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-[8px] font-black text-white uppercase tracking-widest">Foto Original</div>
                         </div>
@@ -1299,11 +1356,14 @@ function IaStudioView() {
                             <button
                                 key={m.id}
                                 onClick={() => setMode(m.id as any)}
-                                className={`p-4 rounded-2xl border transition-all text-left ${mode === m.id ? "bg-cima-gold/10 border-cima-gold shadow-lg shadow-cima-gold/5" : "bg-white/[0.02] border-white/5 hover:border-white/20"}`}
+                                className={`p-4 rounded-2xl border transition-all text-left ${mode === m.id
+                                    ? "bg-cima-gold/10 border-cima-gold shadow-lg shadow-cima-gold/5"
+                                    : isDarkMode ? "bg-white/[0.02] border-white/5 hover:border-white/20" : "bg-white border-gray-200 hover:border-cima-gold/40 shadow-sm"
+                                    }`}
                             >
-                                <m.icon className={`h-5 w-5 mb-3 ${mode === m.id ? "text-cima-gold" : "text-white/40"}`} />
-                                <p className={`text-[11px] font-black mb-1 ${mode === m.id ? "text-white" : "text-white/60"}`}>{m.label}</p>
-                                <p className="text-[9px] text-white/30 leading-tight">{m.desc}</p>
+                                <m.icon className={`h-5 w-5 mb-3 ${mode === m.id ? "text-cima-gold" : isDarkMode ? "text-white/40" : "text-gray-400"}`} />
+                                <p className={`text-[11px] font-black mb-1 ${mode === m.id ? isDarkMode ? "text-white" : "text-gray-900" : isDarkMode ? "text-white/60" : "text-gray-600"}`}>{m.label}</p>
+                                <p className={`text-[9px] leading-tight ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>{m.desc}</p>
                             </button>
                         ))}
                     </div>
@@ -1320,21 +1380,21 @@ function IaStudioView() {
             {status === "processing" && (
                 <div className="flex flex-col items-center justify-center py-12 space-y-6">
                     <div className="relative">
-                        <div className="h-24 w-24 rounded-full border-4 border-white/5 border-t-cima-gold animate-spin" />
+                        <div className={`h-24 w-24 rounded-full border-4 border-t-cima-gold animate-spin ${isDarkMode ? "border-white/5" : "border-gray-100"}`} />
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Sparkles className="h-8 w-8 text-cima-gold animate-pulse" />
                         </div>
                     </div>
                     <div className="text-center">
-                        <p className="text-sm font-black text-white uppercase tracking-tighter mb-2">Procesando {mode === "clean" ? "Limpieza" : mode === "stage" ? "Amueblado" : "Remodelación"}</p>
-                        <div className="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden mx-auto">
+                        <p className={`text-sm font-black uppercase tracking-tighter mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Procesando {mode === "clean" ? "Limpieza" : mode === "stage" ? "Amueblado" : "Remodelación"}</p>
+                        <div className={`w-48 h-1.5 rounded-full overflow-hidden mx-auto ${isDarkMode ? "bg-white/5" : "bg-gray-100"}`}>
                             <motion.div
                                 className="h-full bg-cima-gold"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${progress}%` }}
                             />
                         </div>
-                        <p className="text-[10px] text-white/30 font-mono mt-3 uppercase tracking-widest">Generando nuevas capas visuales...</p>
+                        <p className={`text-[10px] font-mono mt-3 uppercase tracking-widest ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>Generando nuevas capas visuales...</p>
                     </div>
                 </div>
             )}
@@ -1345,8 +1405,8 @@ function IaStudioView() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="space-y-4"
                 >
-                    <div className="aspect-video bg-white/5 border border-white/10 rounded-3xl overflow-hidden relative group">
-                        <NextImage src="/cocina-despues.png" alt="Result" fill className="object-cover" />
+                    <div className={`aspect-video border rounded-3xl overflow-hidden relative group ${isDarkMode ? "bg-white/5 border-white/10" : "bg-gray-100 border-gray-200"}`}>
+                        <img src="/cocina-despues.png" alt="Result" className="w-full h-full object-cover" />
 
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
 
@@ -1360,7 +1420,6 @@ function IaStudioView() {
                             </div>
                         </div>
 
-                        {/* Comparative Badge */}
                         <div className="absolute top-6 right-6 flex items-center gap-2">
                             <div className="bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
                                 <span className="text-[8px] font-black text-white/40 uppercase">IA Studio</span>
@@ -1371,11 +1430,11 @@ function IaStudioView() {
                     </div>
 
                     <div className="flex gap-2">
-                        <button className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                        <button className={`flex-1 py-3 border rounded-xl text-[10px] font-black uppercase transition-all flex items-center justify-center gap-2 ${isDarkMode ? "bg-white/5 border-white/10 text-white/60 hover:bg-white/10" : "bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100"}`}>
                             <Download className="h-3 w-3" /> Descargar HD
                         </button>
-                        <button className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase hover:bg-white/10 transition-all flex items-center justify-center gap-2">
-                            <Share2 className="h-3 h-3" /> Compartir
+                        <button className={`flex-1 py-3 border rounded-xl text-[10px] font-black uppercase transition-all flex items-center justify-center gap-2 ${isDarkMode ? "bg-white/5 border-white/10 text-white/60 hover:bg-white/10" : "bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100"}`}>
+                            <Share2 className="h-3 w-3" /> Compartir
                         </button>
                     </div>
                 </motion.div>
@@ -1385,7 +1444,7 @@ function IaStudioView() {
 }
 
 /* ── Documents View ────────────────────────────────────────── */
-function DocumentsView() {
+function DocumentsView({ isDarkMode }: { isDarkMode: boolean }) {
     const [docs, setDocs] = useState([
         { id: 1, name: "Escritura_Residencia_Magnolia.pdf", type: "Escritura", date: "12/02/2026", status: "verificado", size: "4.2 MB" },
         { id: 2, name: "ID_Propietario_Vargas.jpg", type: "Identificación", date: "15/02/2026", status: "pendiente", size: "1.8 MB" },
@@ -1410,11 +1469,11 @@ function DocumentsView() {
         <div className="space-y-6">
             <div className="flex items-center justify-between px-1">
                 <div>
-                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">Bóveda Digital</h3>
-                    <p className="text-[10px] text-white/40 font-medium">Gestión documental con respaldo jurídico e IA</p>
+                    <h3 className={`text-[14px] font-black uppercase tracking-tighter ${isDarkMode ? "text-white" : "text-gray-900"}`}>Bóveda Digital</h3>
+                    <p className={`text-[10px] font-medium ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>Gestión documental con respaldo jurídico e IA</p>
                 </div>
                 <div className="flex gap-2">
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[9px] font-bold uppercase hover:bg-white transition-all">
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[9px] font-bold uppercase hover:bg-white transition-all shadow-lg">
                         <Plus className="h-3 w-3" /> Nuevo Documento
                     </button>
                 </div>
@@ -1423,12 +1482,12 @@ function DocumentsView() {
             {/* Stats bar */}
             <div className="grid grid-cols-3 gap-3">
                 {[
-                    { label: "Integridad", val: "94%", color: "text-green-400" },
-                    { label: "Pendientes", val: "2", color: "text-amber-400" },
-                    { label: "Almacenado", val: "12.8 GB", color: "text-white/40" },
+                    { label: "Integridad", val: "94%", color: "text-green-500" },
+                    { label: "Pendientes", val: "2", color: "text-amber-500" },
+                    { label: "Almacenado", val: "12.8 GB", color: isDarkMode ? "text-white/40" : "text-gray-400" },
                 ].map((s, i) => (
-                    <div key={i} className="bg-white/[0.02] border border-white/5 p-3 rounded-2xl">
-                        <p className="text-[7px] font-black uppercase tracking-widest text-white/20 mb-1">{s.label}</p>
+                    <div key={i} className={`border p-3 rounded-2xl transition-all ${isDarkMode ? "bg-white/[0.02] border-white/5" : "bg-white border-gray-200 shadow-sm"}`}>
+                        <p className={`text-[7px] font-black uppercase tracking-widest mb-1 ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>{s.label}</p>
                         <p className={`text-sm font-black ${s.color}`}>{s.val}</p>
                     </div>
                 ))}
@@ -1442,21 +1501,24 @@ function DocumentsView() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="group flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                        className={`group flex items-center gap-4 p-4 border rounded-2xl transition-all ${isDarkMode
+                            ? "bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.04]"
+                            : "bg-white border-gray-100 hover:border-gray-200 hover:shadow-md"
+                            }`}
                     >
-                        <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${doc.status === "verificado" ? "bg-green-500/10 text-green-400" :
-                            doc.status === "advertencia" ? "bg-red-500/10 text-red-400" :
-                                "bg-white/5 text-white/20"
+                        <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${doc.status === "verificado" ? "bg-green-500/10 text-green-500" :
+                            doc.status === "advertencia" ? "bg-red-500/10 text-red-500" :
+                                isDarkMode ? "bg-white/5 text-white/20" : "bg-gray-100 text-gray-300"
                             }`}>
                             <FileCheck className="h-5 w-5" />
                         </div>
 
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-[11px] font-bold text-white/90 truncate">{doc.name}</span>
-                                <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-white/5 text-white/40 uppercase tracking-widest">{doc.type}</span>
+                                <span className={`text-[11px] font-bold truncate ${isDarkMode ? "text-white/90" : "text-gray-900"}`}>{doc.name}</span>
+                                <span className={`text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest ${isDarkMode ? "bg-white/5 text-white/40" : "bg-gray-100 text-gray-500"}`}>{doc.type}</span>
                             </div>
-                            <div className="flex items-center gap-3 text-[9px] text-white/25 font-medium">
+                            <div className={`flex items-center gap-3 text-[9px] font-medium ${isDarkMode ? "text-white/25" : "text-gray-400"}`}>
                                 <span>{doc.date}</span>
                                 <span>•</span>
                                 <span>{doc.size}</span>
@@ -1471,9 +1533,9 @@ function DocumentsView() {
                                         <span className="text-[8px] font-black uppercase tracking-widest animate-pulse">Analizando IA...</span>
                                     </div>
                                 ) : (
-                                    <div className={`flex items-center gap-1.5 ${doc.status === "verificado" ? "text-green-400" :
-                                        doc.status === "advertencia" ? "text-red-400" :
-                                            "text-white/20"
+                                    <div className={`flex items-center gap-1.5 ${doc.status === "verificado" ? "text-green-500" :
+                                        doc.status === "advertencia" ? "text-red-500" :
+                                            isDarkMode ? "text-white/20" : "text-gray-300"
                                         }`}>
                                         {doc.status === "verificado" ? <ShieldCheck className="h-3.5 w-3.5" /> :
                                             doc.status === "advertencia" ? <ShieldAlert className="h-3.5 w-3.5" /> :
@@ -1490,14 +1552,14 @@ function DocumentsView() {
                             {doc.status !== "verificado" && verifyingId !== doc.id && (
                                 <button
                                     onClick={() => handleVerify(doc.id)}
-                                    className="p-2 bg-cima-gold/10 border border-cima-gold/20 rounded-lg group-hover:bg-cima-gold group-hover:text-black transition-all text-cima-gold"
+                                    className="p-2 bg-cima-gold/10 border border-cima-gold/20 rounded-lg group-hover:bg-cima-gold group-hover:text-black transition-all text-cima-gold shadow-sm"
                                     title="Verificar con IA"
                                 >
                                     <Sparkles className="h-3.5 w-3.5" />
                                 </button>
                             )}
 
-                            <button className="p-2 bg-white/5 border border-white/5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-white/10 transition-all text-white/40">
+                            <button className={`p-2 border rounded-lg opacity-0 group-hover:opacity-100 transition-all ${isDarkMode ? "bg-white/5 border-white/5 text-white/40 hover:bg-white/10" : "bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100 hover:text-gray-600"}`}>
                                 <ExternalLink className="h-3.5 w-3.5" />
                             </button>
                         </div>
@@ -1506,13 +1568,13 @@ function DocumentsView() {
             </div>
 
             {/* AI Trust Message */}
-            <div className="p-4 rounded-2xl bg-cima-gold/5 border border-cima-gold/20 flex gap-3">
+            <div className={`p-4 rounded-2xl border flex gap-3 ${isDarkMode ? "bg-cima-gold/5 border-cima-gold/20" : "bg-cima-gold/10 border-cima-gold/30 shadow-sm"}`}>
                 <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center shrink-0 shadow-lg shadow-cima-gold/20">
                     <ShieldCheck className="h-4 w-4 text-black" />
                 </div>
                 <div>
-                    <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Cima Legal Compliance · ON</h4>
-                    <p className="text-[9px] text-white/50 leading-relaxed font-medium">Todos los documentos son analizados mediante **Integridad Biométrica** y **OCR Inteligente** para garantizar transacciones de ultra-lujo sin riesgos legales.</p>
+                    <h4 className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Cima Legal Compliance · ON</h4>
+                    <p className={`text-[9px] leading-relaxed font-medium ${isDarkMode ? "text-white/50" : "text-gray-600"}`}>Todos los documentos son analizados mediante **Integridad Biométrica** y **OCR Inteligente** para garantizar transacciones de ultra-lujo sin riesgos legales.</p>
                 </div>
             </div>
         </div>
@@ -1520,7 +1582,7 @@ function DocumentsView() {
 }
 
 /* ── Contract Generator View ───────────────────────────────── */
-function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }) {
+function ContractGeneratorView({ isMobilePreview, isDarkMode }: { isMobilePreview: boolean; isDarkMode: boolean }) {
     const [step, setStep] = useState<"select" | "data" | "generating" | "result">("select");
     const [template, setTemplate] = useState<string | null>(null);
     const [formData, setFormData] = useState({
@@ -1568,9 +1630,9 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[500px] border border-white/10"
+                className={`rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[500px] border transition-all ${isDarkMode ? "bg-white border-white/10" : "bg-white border-gray-200 shadow-xl"}`}
             >
-                <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div className={`p-4 border-b flex items-center justify-between transition-all ${isDarkMode ? "bg-slate-50 border-slate-200" : "bg-gray-50 border-gray-100"}`}>
                     <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center">
                             <FileText className="h-4 w-4 text-black" />
@@ -1633,15 +1695,12 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                     </div>
                 </div>
 
-                <div className="p-4 bg-slate-900 flex justify-end gap-3 shrink-0">
-                    <button
-                        onClick={() => setShowPreview(false)}
-                        className="px-6 py-2 rounded-xl text-[9px] font-black text-white hover:bg-white/10 transition-all uppercase"
-                    >
-                        Cerrar
+                <div className={`p-4 border-t flex justify-end gap-3 transition-all ${isDarkMode ? "bg-slate-50 border-slate-200" : "bg-gray-50 border-gray-200"}`}>
+                    <button className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase hover:bg-black transition-all flex items-center gap-2">
+                        <Download className="h-3 w-3" /> Descargar PDF
                     </button>
-                    <button className="px-6 py-2 bg-cima-gold rounded-xl text-[9px] font-black text-black hover:bg-white transition-all uppercase shadow-lg shadow-cima-gold/20">
-                        Confirmar y Enviar
+                    <button className="px-4 py-2 bg-cima-gold text-black rounded-xl text-[10px] font-black uppercase hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-cima-gold/20">
+                        <Send className="h-3 w-3" /> Enviar a Firma
                     </button>
                 </div>
             </motion.div>
@@ -1651,33 +1710,33 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
         <div className="space-y-6">
             <div className="flex items-center justify-between px-1">
                 <div>
-                    <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">Generador de Contratos</h3>
-                    <p className="text-[10px] text-white/40 font-medium">Crea documentos legales en segundos sin salir de Cima</p>
+                    <h3 className={`text-[14px] font-black uppercase tracking-tighter ${isDarkMode ? "text-white" : "text-gray-900"}`}>Cima Legal Sign</h3>
+                    <p className={`text-[10px] font-medium ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>Generación y firma digital de contratos con validez legal</p>
                 </div>
-                {step === "result" && (
+                {step !== "select" && (
                     <button
                         onClick={handleReset}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[9px] font-bold text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                        className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-lg text-[9px] font-bold transition-all ${isDarkMode ? "bg-white/5 border-white/10 text-white/60 hover:text-white" : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-900"}`}
                     >
-                        <RotateCcw className="h-3 w-3" /> Crear Otro
+                        <RotateCcw className="h-3 w-3" /> Reiniciar
                     </button>
                 )}
             </div>
 
             {step === "select" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {TEMPLATES.map((t) => (
                         <button
                             key={t.id}
                             onClick={() => { setTemplate(t.id); setStep("data"); }}
-                            className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:border-cima-gold/40 hover:bg-white/[0.05] transition-all text-left flex gap-4 group"
+                            className={`p-5 rounded-2xl border transition-all text-left group flex gap-4 ${isDarkMode ? "bg-white/[0.02] border-white/5 hover:border-cima-gold/40" : "bg-white border-gray-100 hover:border-cima-gold/40 shadow-sm"}`}
                         >
-                            <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center text-white/20 group-hover:bg-cima-gold group-hover:text-black transition-all">
+                            <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-all ${isDarkMode ? "bg-white/5 text-cima-gold" : "bg-gray-50 text-cima-gold"}`}>
                                 <t.icon className="h-6 w-6" />
                             </div>
                             <div>
-                                <h4 className="text-xs font-black text-white mb-1">{t.label}</h4>
-                                <p className="text-[9px] text-white/30 leading-relaxed">{t.desc}</p>
+                                <p className={`text-[11px] font-black mb-1 ${isDarkMode ? "text-white" : "text-gray-900"}`}>{t.label}</p>
+                                <p className={`text-[9px] leading-tight ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>{t.desc}</p>
                             </div>
                         </button>
                     ))}
@@ -1688,135 +1747,100 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                 <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 space-y-6"
+                    className={`p-6 rounded-3xl border ${isDarkMode ? "bg-white/[0.02] border-white/5" : "bg-white border-gray-200 shadow-sm"}`}
                 >
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="h-8 w-8 rounded-lg bg-cima-gold/10 flex items-center justify-center text-cima-gold">
-                            <FilePenLine className="h-4 w-4" />
-                        </div>
-                        <h4 className="text-[11px] font-black text-white uppercase tracking-widest">Datos del Documento</h4>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Propiedad</label>
-                            <input
-                                type="text"
-                                value={formData.propiedad}
-                                onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Cliente / Dueño</label>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="space-y-1.5">
+                            <label className={`text-[8px] font-black uppercase tracking-widest ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>Cliente</label>
                             <input
                                 type="text"
                                 value={formData.cliente}
                                 onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
+                                className={`w-full bg-transparent border rounded-xl px-3 py-2 text-xs font-bold focus:border-cima-gold transition-all outline-none ${isDarkMode ? "border-white/10 text-white" : "border-gray-200 text-gray-900"}`}
                             />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Precio de Cierre</label>
+                        <div className="space-y-1.5">
+                            <label className={`text-[8px] font-black uppercase tracking-widest ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>Propiedad</label>
+                            <input
+                                type="text"
+                                value={formData.propiedad}
+                                onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
+                                className={`w-full bg-transparent border rounded-xl px-3 py-2 text-xs font-bold focus:border-cima-gold transition-all outline-none ${isDarkMode ? "border-white/10 text-white" : "border-gray-200 text-gray-900"}`}
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className={`text-[8px] font-black uppercase tracking-widest ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>Precio</label>
                             <input
                                 type="text"
                                 value={formData.precio}
                                 onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
+                                className={`w-full bg-transparent border rounded-xl px-3 py-2 text-xs font-bold focus:border-cima-gold transition-all outline-none ${isDarkMode ? "border-white/10 text-white" : "border-gray-200 text-gray-900"}`}
                             />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Comisión Pactada</label>
+                        <div className="space-y-1.5">
+                            <label className={`text-[8px] font-black uppercase tracking-widest ${isDarkMode ? "text-white/20" : "text-gray-400"}`}>Comisión</label>
                             <input
                                 type="text"
                                 value={formData.comision}
                                 onChange={(e) => setFormData({ ...formData, comision: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
+                                className={`w-full bg-transparent border rounded-xl px-3 py-2 text-xs font-bold focus:border-cima-gold transition-all outline-none ${isDarkMode ? "border-white/10 text-white" : "border-gray-200 text-gray-900"}`}
                             />
                         </div>
                     </div>
 
-                    <div className="pt-4 flex gap-3">
-                        <button
-                            onClick={() => setStep("select")}
-                            className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl font-black text-xs text-white/40 uppercase tracking-widest hover:bg-white/10 transition-all"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            onClick={handleGenerate}
-                            className="flex-[2] py-4 bg-cima-gold text-black rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] active:scale-95 transition-all"
-                        >
-                            Generar PDF Profesional
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleGenerate}
+                        className="w-full py-4 bg-cima-gold text-black rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-cima-gold/20"
+                    >
+                        <Zap className="h-4 w-4" /> Generar Documento Legal
+                    </button>
                 </motion.div>
             )}
 
             {step === "generating" && (
-                <div className="flex flex-col items-center justify-center py-20 space-y-8">
+                <div className="flex flex-col items-center justify-center py-12 space-y-6">
                     <div className="relative">
-                        <div className="h-32 w-32 rounded-full border-4 border-white/5 border-t-cima-gold animate-spin" />
+                        <div className={`h-20 w-20 rounded-full border-4 border-t-cima-gold animate-spin ${isDarkMode ? "border-white/5" : "border-gray-100"}`} />
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <Sparkles className="h-10 w-10 text-cima-gold animate-pulse" />
+                            <FileSignature className="h-6 w-6 text-cima-gold animate-pulse" />
                         </div>
                     </div>
-                    <div className="text-center space-y-4">
-                        <p className="text-sm font-black text-white uppercase tracking-tighter">Renderizando Contrato Legal</p>
-                        <div className="w-64 h-2 bg-white/5 rounded-full overflow-hidden mx-auto">
+                    <div className="text-center">
+                        <p className={`text-sm font-black uppercase tracking-tighter mb-2 ${isDarkMode ? "text-white" : "text-gray-900"}`}>Redactando con IA Jurídica</p>
+                        <div className={`w-40 h-1 rounded-full overflow-hidden mx-auto ${isDarkMode ? "bg-white/5" : "bg-gray-100"}`}>
                             <motion.div
-                                className="h-full bg-cima-gold shadow-[0_0_15px_rgba(200,169,110,0.5)]"
+                                className="h-full bg-cima-gold"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${progress}%` }}
                             />
                         </div>
-                        <p className="text-[9px] text-white/30 font-mono uppercase tracking-widest">Inyectando datos con arquitectura Cima-Sign...</p>
+                        <p className={`text-[9px] font-mono mt-3 uppercase tracking-widest ${isDarkMode ? "text-white/30" : "text-gray-400"}`}>{progress}% - Validando cláusulas...</p>
                     </div>
                 </div>
             )}
 
             {step === "result" && (
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="space-y-6"
+                    className={`p-6 rounded-3xl border flex flex-col items-center text-center gap-4 ${isDarkMode ? "bg-white/[0.04] border-cima-gold/20" : "bg-cima-gold/5 border-cima-gold/20"}`}
                 >
-                    <div className="bg-gradient-to-br from-cima-gold/20 to-transparent border border-cima-gold/30 rounded-3xl p-10 flex flex-col items-center text-center space-y-6">
-                        <div className="h-20 w-16 bg-white rounded-lg shadow-2xl relative overflow-hidden group">
-                            <div className="p-2 space-y-1">
-                                <div className="h-1 w-full bg-slate-200 rounded" />
-                                <div className="h-1 w-3/4 bg-slate-200 rounded" />
-                                <div className="h-1 w-full bg-slate-200 rounded" />
-                                <div className="h-4 w-full bg-cima-gold/20 rounded mt-4" />
-                                <div className="h-1 w-1/2 bg-slate-200 rounded mt-4 ml-auto" />
-                            </div>
-                            <div className="absolute inset-0 bg-cima-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-
-                        <div>
-                            <h4 className="text-lg font-black text-white mb-2">¡Documento Generado con Éxito!</h4>
-                            <p className="text-[10px] text-white/40 font-medium">El archivo PDF está listo para descarga y firma digital.</p>
-                        </div>
-
-                        <div className={`w-full max-w-sm grid transition-all ${isMobilePreview ? "grid-cols-1 gap-2" : "grid-cols-2 gap-4"}`}>
-                            <button
-                                onClick={() => setShowPreview(true)}
-                                className="py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-white/60 uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2"
-                            >
-                                <Eye className="h-4 w-4" /> Previsualizar
-                            </button>
-                            <button className="py-4 bg-cima-gold text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-                                <Download className="h-4 w-4" /> Descargar PDF
-                            </button>
-                        </div>
+                    <div className="h-16 w-16 rounded-full bg-cima-gold flex items-center justify-center text-black shadow-lg shadow-cima-gold/30">
+                        <CheckCircle2 className="h-8 w-8" />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-bold text-white/40 hover:text-white hover:bg-white/[0.05] transition-all">
-                            <Globe className="h-4 w-4" /> Enviar por Correo
+                    <div>
+                        <p className={`text-base font-black uppercase tracking-tighter ${isDarkMode ? "text-white" : "text-gray-900"}`}>Contrato Listo para Firma</p>
+                        <p className={`text-[10px] ${isDarkMode ? "text-white/40" : "text-gray-500"}`}>El documento ha sido validado jurídicamente mediante Cima IA.</p>
+                    </div>
+                    <div className="flex gap-2 w-full max-w-sm mt-2">
+                        <button
+                            onClick={() => setShowPreview(true)}
+                            className={`flex-1 py-3 border rounded-xl text-[10px] font-black uppercase transition-all flex items-center justify-center gap-2 ${isDarkMode ? "bg-white/5 border-white/10 text-white hover:bg-white/10" : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"}`}
+                        >
+                            <Eye className="h-3 w-3" /> Ver Vista Previa
                         </button>
-                        <button className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-bold text-white/40 hover:text-white hover:bg-white/[0.05] transition-all">
-                            <MessageSquare className="h-4 w-4" /> Enviar WhatsApp
+                        <button className="flex-1 py-3 bg-cima-gold text-black rounded-xl text-[10px] font-black uppercase transition-all flex items-center justify-center gap-2 hover:scale-[1.02] shadow-lg shadow-cima-gold/20">
+                            <Send className="h-3 w-3" /> Enviar a Cliente
                         </button>
                     </div>
                 </motion.div>
@@ -1888,7 +1912,7 @@ function MessagesView({ messages, isDarkMode }: { messages: LiveMessage[]; isDar
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2 px-1">
-                <h3 className="font-heading text-[18px] font-black text-white tracking-tight">Bandeja de Entrada</h3>
+                <h3 className={`font-heading text-[18px] font-black tracking-tight ${isDarkMode ? "text-white" : "text-gray-900"}`}>Bandeja de Entrada</h3>
                 <div className="flex gap-2">
                     <button
                         onClick={startNurtureSimulation}
@@ -1898,7 +1922,8 @@ function MessagesView({ messages, isDarkMode }: { messages: LiveMessage[]; isDar
                         <Sparkles className="h-3 w-3" />
                         {isNurturing ? "Nutriendo Lead..." : "Simular Nutrición IA"}
                     </button>
-                    <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[8px] font-black text-white/40 uppercase tracking-widest">
+                    <span className={`px-3 py-1.5 rounded-full border text-[8px] font-black uppercase tracking-widest ${isDarkMode ? "bg-white/5 border-white/10 text-white/40" : "bg-gray-100 border-gray-200 text-gray-400"
+                        }`}>
                         {messages.filter(m => m.unread).length} No leídos
                     </span>
                 </div>
@@ -1923,8 +1948,8 @@ function MessagesView({ messages, isDarkMode }: { messages: LiveMessage[]; isDar
                             </div>
                             <div className="flex-1 space-y-3">
                                 <div>
-                                    <h4 className="font-heading text-white font-bold text-sm">Cima AI Nurture en Proceso</h4>
-                                    <p className="text-[10px] text-cima-gold/60 font-medium">Automatizando el cierre con Roberto G.</p>
+                                    <h4 className={`font-heading font-bold text-sm ${isDarkMode ? "text-white" : "text-gray-900"}`}>Cima AI Nurture en Proceso</h4>
+                                    <p className={`text-[10px] font-medium ${isDarkMode ? "text-cima-gold/60" : "text-cima-gold"}`}>Automatizando el cierre con Roberto G.</p>
                                 </div>
 
                                 <div className="space-y-2">
@@ -1957,7 +1982,7 @@ function MessagesView({ messages, isDarkMode }: { messages: LiveMessage[]; isDar
                         transition={{ delay: i * 0.06 }}
                         className={`p-5 rounded-2xl transition-all cursor-pointer group shadow-2xl shadow-black/20 ${msg.unread
                             ? "bg-cima-gold/[0.03] border border-cima-gold/20 hover:border-cima-gold/40"
-                            : "bg-white/[0.02] border border-white/5 hover:border-white/10 opacity-70"
+                            : isDarkMode ? "bg-white/[0.02] border border-white/5 hover:border-white/10 opacity-70" : "bg-gray-50 border-gray-100 hover:border-gray-200 opacity-70"
                             }`}
                     >
                         <div className="flex items-start gap-4">
@@ -1967,12 +1992,12 @@ function MessagesView({ messages, isDarkMode }: { messages: LiveMessage[]; isDar
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between mb-1.5">
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-[13px] font-bold ${msg.unread ? "text-white" : "text-white/50"}`}>{msg.from}</span>
+                                        <span className={`text-[13px] font-bold ${msg.unread ? (isDarkMode ? "text-white" : "text-gray-900") : (isDarkMode ? "text-white/50" : "text-gray-400")}`}>{msg.from}</span>
                                         {msg.isAi && <span className="text-[8px] font-black text-cima-gold uppercase bg-cima-gold/10 px-2 py-0.5 rounded border border-cima-gold/20">Cima AI</span>}
                                     </div>
-                                    <span className="text-[9px] font-medium text-white/20 whitespace-nowrap">{msg.time}</span>
+                                    <span className={`text-[9px] font-medium whitespace-nowrap ${isDarkMode ? "text-white/20" : "text-gray-300"}`}>{msg.time}</span>
                                 </div>
-                                <p className={`text-[12px] leading-relaxed line-clamp-2 ${msg.unread ? "text-white/70 font-medium" : "text-white/30"}`}>{msg.message}</p>
+                                <p className={`text-[12px] leading-relaxed line-clamp-2 ${msg.unread ? (isDarkMode ? "text-white/70 font-medium" : "text-gray-600 font-medium") : (isDarkMode ? "text-white/30" : "text-gray-400")}`}>{msg.message}</p>
                             </div>
                             {msg.unread && (
                                 <div className="flex flex-col items-center gap-3 mt-1">
