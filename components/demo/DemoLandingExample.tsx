@@ -100,7 +100,7 @@ export default function DemoLandingExample({
             onLeadCapture({
                 name: "Lead de Prueba (Demo)",
                 phone: "81 0000 " + Math.floor(1000 + Math.random() * 9000),
-                property: "Residencia Premium ΓÇö " + plan.name
+                property: "Residencia Premium — " + plan.name
             });
         }
     };
@@ -111,7 +111,7 @@ export default function DemoLandingExample({
 
     return (
         <div className="min-h-screen bg-[#0A0A0B] text-white relative overflow-hidden">
-            {/* ΓöÇΓöÇ Aurora BG (Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* —— Aurora BG (Team only) ————————————————————— */}
             {f.aurora && (
                 <>
                     <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cima-gold/[0.04] rounded-full blur-[120px] animate-pulse" />
@@ -119,7 +119,7 @@ export default function DemoLandingExample({
                 </>
             )}
 
-            {/* ΓöÇΓöÇ Hero ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* —— Hero —————————————————————————————————————— */}
             <div className="relative">
                 {/* Simple gradient bg for non-aurora */}
                 {!f.aurora && (
@@ -133,7 +133,7 @@ export default function DemoLandingExample({
                             <div className={`h-8 w-8 rounded-lg ${isTeam ? "bg-cima-gold/10 border border-cima-gold/20" : "bg-white/10"} flex items-center justify-center`}>
                                 <Home className={`h-4 w-4 ${isTeam ? "text-cima-gold" : "text-white"}`} />
                             </div>
-                            <span className="text-sm font-bold tracking-tight">Tu Marca Aqu├¡</span>
+                            <span className="text-sm font-bold tracking-tight">Tu Marca Aquí</span>
                         </div>
                         <div className="flex items-center gap-4">
                             {!isStarter && <span className="text-xs text-white/40 hidden sm:block">Asesor Certificado</span>}
@@ -154,13 +154,13 @@ export default function DemoLandingExample({
                                 <h1 className="text-3xl md:text-4xl font-heading font-black tracking-tight leading-tight mb-4">
                                     Residencia Premium
                                     <br />
-                                    <span className="text-white/40">Colinas de San Jer├│nimo</span>
+                                    <span className="text-white/40">Colinas de San Jerónimo</span>
                                 </h1>
                                 <p className={`text-lg font-heading font-bold ${accentText} mb-6`}>$8,500,000 MXN</p>
                                 <p className="text-sm text-white/40 leading-relaxed mb-8 max-w-md">
                                     {isStarter
-                                        ? "Hermosa residencia de 320m┬▓ con acabados de lujo."
-                                        : "Hermosa residencia de 320m┬▓ en una de las zonas m├ís exclusivas. Acabados de lujo, jard├¡n privado y vista panor├ímica a la monta├▒a."
+                                        ? "Hermosa residencia de 320m² con acabados de lujo."
+                                        : "Hermosa residencia de 320m² en una de las zonas más exclusivas. Acabados de lujo, jardín privado y vista panorámica a la montaña."
                                     }
                                 </p>
                             </Wrapper>
@@ -168,9 +168,9 @@ export default function DemoLandingExample({
                             {/* Stats */}
                             <div className="grid grid-cols-4 gap-3 mb-8">
                                 {[
-                                    { icon: BedDouble, value: "4", label: "Rec├ímaras" },
-                                    { icon: Bath, value: "3.5", label: "Ba├▒os" },
-                                    { icon: Ruler, value: "320", label: "m┬▓" },
+                                    { icon: BedDouble, value: "4", label: "Recámaras" },
+                                    { icon: Bath, value: "3.5", label: "Baños" },
+                                    { icon: Ruler, value: "320", label: "m²" },
                                     { icon: Camera, value: "24", label: "Fotos" },
                                 ].map((stat, i) => (
                                     <Wrapper key={i} {...delayAnim(0.2 + i * 0.1)}
@@ -199,7 +199,7 @@ export default function DemoLandingExample({
                             </div>
                         </div>
 
-                        {/* Image grid ΓÇö interactive for Pro/Team, static for Starter */}
+                        {/* Image grid — interactive for Pro/Team, static for Starter */}
                         <div className="hidden lg:block">
                             {f.gallery === "static" ? (
                                 /* Starter: single static image */
@@ -256,13 +256,13 @@ export default function DemoLandingExample({
                 </div>
             </div>
 
-            {/* ΓöÇΓöÇ Antes vs Despu├⌐s (Pro/Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* —— Antes vs Después (Pro/Team only) —————————— */}
             {(isPro || isTeam) && (
                 <div className="max-w-6xl mx-auto px-6 py-20 border-t border-white/5">
                     <div className="text-center mb-12">
-                        <h2 className="text-2xl font-heading font-black mb-4">Difer├⌐nciate de la competencia</h2>
+                        <h2 className="text-2xl font-heading font-black mb-4">Diferénciate de la competencia</h2>
                         <p className="text-sm text-white/40 max-w-lg mx-auto">
-                            Transformamos un anuncio gen├⌐rico en una experiencia premium que genera confianza.
+                            Transformamos un anuncio genérico en una experiencia premium que genera confianza.
                         </p>
                     </div>
 
@@ -297,12 +297,12 @@ export default function DemoLandingExample({
                             </div>
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div className="bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl">
-                                    <p className="text-[10px] font-bold text-white/60">Γ¥î Dise├▒o gen├⌐rico y poco profesional</p>
+                                    <p className="text-[10px] font-bold text-white/60">❌ Diseño genérico y poco profesional</p>
                                 </div>
                             </div>
                         </motion.div>
 
-                        {/* Despu├⌐s: Landing Pro */}
+                        {/* Después: Landing Pro */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             whileInView={{ opacity: 1, x: 0 }}
@@ -310,7 +310,7 @@ export default function DemoLandingExample({
                             className={`${isTeam ? "border-cima-gold/40 shadow-[0_0_30px_rgba(200,169,110,0.1)]" : "border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.1)]"} bg-white/[0.03] border-2 rounded-2xl p-6 relative overflow-hidden`}
                         >
                             <div className={`${isTeam ? "bg-cima-gold text-black" : "bg-blue-500 text-white"} absolute top-4 right-4 text-[8px] font-black px-2 py-1 rounded uppercase tracking-wider`}>
-                                Despu├⌐s: Cima Pro
+                                Después: Cima Pro
                             </div>
                             <div className="space-y-4">
                                 <div className="aspect-video rounded-lg overflow-hidden border border-white/10 shadow-lg">
@@ -340,21 +340,21 @@ export default function DemoLandingExample({
                                 </div>
                             </div>
                             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center pb-4">
-                                <p className="text-[10px] font-bold text-white">Γ£à Atrae leads de alto valor</p>
+                                <p className="text-[10px] font-bold text-white">✅ Atrae leads de alto valor</p>
                             </div>
                         </motion.div>
                     </div>
                 </div>
             )}
 
-            {/* ΓöÇΓöÇ Social Proof (Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* —— Social Proof (Team only) —————————————————— */}
             {f.socialProof && (
                 <div className="max-w-6xl mx-auto px-6 py-12 border-t border-white/5">
                     <div className="flex items-center justify-center gap-8 mb-8">
                         {[
                             { value: "98%", label: "Clientes satisfechos" },
                             { value: "+250", label: "Propiedades vendidas" },
-                            { value: "< 30 d├¡as", label: "Tiempo promedio" },
+                            { value: "< 30 días", label: "Tiempo promedio" },
                         ].map((stat, i) => (
                             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 + i * 0.1 }}
                                 className="text-center">
@@ -366,19 +366,19 @@ export default function DemoLandingExample({
                     {/* Testimonial */}
                     <div className="max-w-lg mx-auto bg-cima-gold/[0.03] border border-cima-gold/10 rounded-2xl p-6 text-center">
                         <MessageSquare className="h-5 w-5 text-cima-gold/30 mx-auto mb-3" />
-                        <p className="text-sm text-white/60 italic mb-3">&quot;Vendieron nuestra casa en 21 d├¡as. El portal del propietario nos mantuvo informados en todo momento.&quot;</p>
-                        <p className="text-xs font-bold text-white">Familia Trevi├▒o</p>
+                        <p className="text-sm text-white/60 italic mb-3">&quot;Vendieron nuestra casa en 21 días. El portal del propietario nos mantuvo informados en todo momento.&quot;</p>
+                        <p className="text-xs font-bold text-white">Familia Treviño</p>
                         <p className="text-[8px] text-white/30">Residencia Carretera Nacional</p>
                     </div>
                 </div>
             )}
 
-            {/* ΓöÇΓöÇ Features / Trust ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* —— Features / Trust ————————————————————————— */}
             <div className="max-w-6xl mx-auto px-6 py-16">
                 <div className={`grid grid-cols-1 ${isStarter ? "md:grid-cols-2" : "md:grid-cols-3"} gap-4 mb-16`}>
                     {[
-                        { icon: Shield, title: "Garant├¡a de 30 d├¡as", desc: "Si no vendemos tu propiedad, te devolvemos tu inversi├│n" },
-                        { icon: Camera, title: "Fotograf├¡a profesional", desc: "Sesi├│n HDR completa + video tour + drone a├⌐reo" },
+                        { icon: Shield, title: "Garantía de 30 días", desc: "Si no vendemos tu propiedad, te devolvemos tu inversión" },
+                        { icon: Camera, title: "Fotografía profesional", desc: "Sesión HDR completa + video tour + drone aéreo" },
                         ...(!isStarter ? [{ icon: Star, title: "Portal del propietario", desc: "Sigue el progreso de tu venta en tiempo real, 24/7" }] : []),
                     ].map((feature, i) => (
                         <Wrapper key={i} {...delayAnim(0.5 + i * 0.1)}
@@ -393,14 +393,14 @@ export default function DemoLandingExample({
                     ))}
                 </div>
 
-                {/* ΓöÇΓöÇ ROI Section (Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+                {/* —— ROI Section (Team only) —————————————————— */}
                 {f.roiCalculator && (
                     <div className="mb-16">
                         <div className="text-center mb-10">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cima-gold/10 border border-cima-gold/20 text-[8px] font-bold text-cima-gold uppercase tracking-widest mb-3">
                                 <TrendingUp className="h-3 w-3" /> Calculadora de Impacto
                             </span>
-                            <h2 className="text-xl font-heading font-bold">Tu inversi├│n se paga sola</h2>
+                            <h2 className="text-xl font-heading font-bold">Tu inversión se paga sola</h2>
                         </div>
 
                         <div className="max-w-xl mx-auto mb-10 bg-white/[0.02] border border-white/10 rounded-2xl p-6">
@@ -425,16 +425,16 @@ export default function DemoLandingExample({
                                 </div>
                                 <div className="bg-white/[0.03] border border-white/5 rounded-lg p-3">
                                     <p className="text-[7px] text-white/30 uppercase font-black mb-1">Ahorro en Tiempo</p>
-                                    <p className="text-lg font-heading font-bold text-cima-gold">-60 d├¡as</p>
+                                    <p className="text-lg font-heading font-bold text-cima-gold">-60 días</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
                             {[
-                                { icon: Zap, label: "Venta tradicional", value: "90+ d├¡as", sublabel: "Sin estrategia digital", color: "text-white/40" },
-                                { icon: TrendingUp, label: "Con Cima Pro", value: "< 30 d├¡as", sublabel: "Marketing Predictivo", color: "text-cima-gold" },
-                                { icon: Award, label: "Inversi├│n Neta", value: "Nivel Pro", sublabel: "Retorno 10x garantizado", color: "text-green-400" },
+                                { icon: Zap, label: "Venta tradicional", value: "90+ días", sublabel: "Sin estrategia digital", color: "text-white/40" },
+                                { icon: TrendingUp, label: "Con Cima Pro", value: "< 30 días", sublabel: "Marketing Predictivo", color: "text-cima-gold" },
+                                { icon: Award, label: "Inversión Neta", value: "Nivel Pro", sublabel: "Retorno 10x garantizado", color: "text-green-400" },
                             ].map((item, i) => (
                                 <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 + i * 0.1 }}
                                     className="bg-cima-gold/[0.03] border border-cima-gold/10 rounded-xl p-4 text-center">
@@ -451,8 +451,8 @@ export default function DemoLandingExample({
                 {/* Lead capture form */}
                 <div className="max-w-md mx-auto">
                     <div className={`${isTeam ? "bg-cima-gold/[0.02] border-cima-gold/10" : "bg-white/[0.03] border-white/10"} border rounded-2xl p-8`}>
-                        <h2 className="text-lg font-heading font-bold text-center mb-2">┬┐Te interesa esta propiedad?</h2>
-                        <p className="text-xs text-white/40 text-center mb-6">D├⌐janos tus datos y te contactamos en menos de 1 hora</p>
+                        <h2 className="text-lg font-heading font-bold text-center mb-2">¿Te interesa esta propiedad?</h2>
+                        <p className="text-xs text-white/40 text-center mb-6">Déjanos tus datos y te contactamos en menos de 1 hora</p>
 
                         <div className="space-y-3">
                             <input type="text" placeholder="Tu nombre"
@@ -487,16 +487,16 @@ export default function DemoLandingExample({
                 </div>
             </div>
 
-            {/* ΓöÇΓöÇ Footer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* —— Footer ———————————————————————————————————— */}
             <div className="h-40 bg-black border-t border-white/5 flex flex-col items-center justify-center gap-2">
-                <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">Cima Propiedades ┬╖ {new Date().getFullYear()}</p>
+                <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">Cima Propiedades · {new Date().getFullYear()}</p>
                 <div className="h-1 w-20 bg-cima-gold/20 rounded-full" />
             </div>
 
             {/* Chat Widget */}
             <ChatWidget onSendMessage={onSendMessage} messages={messages || []} />
 
-            {/* ΓöÇΓöÇ Social Proof (Pro/Team only) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+            {/* —— Social Proof (Pro/Team only) —————————————— */}
             {!isStarter && <SocialProofToast tier={plan.tier} />}
         </div>
     );
@@ -519,7 +519,7 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
 
     const handleSend = () => {
         if (!inputValue.trim() || !onSendMessage) return;
-        onSendMessage("Interesado (T├║)", inputValue);
+        onSendMessage("Interesado (Tú)", inputValue);
         setInputValue("");
     };
 
@@ -543,7 +543,7 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
                                     <p className="text-[10px] font-black text-black uppercase tracking-tighter">Asistente Cima AI</p>
                                     <div className="flex items-center gap-1">
                                         <div className="h-1.5 w-1.5 rounded-full bg-black/60 animate-pulse" />
-                                        <span className="text-[7px] text-black/60 font-bold uppercase">En l├¡nea ahora</span>
+                                        <span className="text-[7px] text-black/60 font-bold uppercase">En línea ahora</span>
                                     </div>
                                 </div>
                             </div>
@@ -564,16 +564,16 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
                             {messages.map((msg, i) => (
                                 <motion.div
                                     key={msg.id || i}
-                                    initial={{ opacity: 0, x: msg.from.includes("T├║") ? 10 : -10 }}
+                                    initial={{ opacity: 0, x: msg.from.includes("Tú") ? 10 : -10 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className={`flex ${msg.from.includes("T├║") ? "justify-end" : "justify-start"}`}
+                                    className={`flex ${msg.from.includes("Tú") ? "justify-end" : "justify-start"}`}
                                 >
-                                    <div className={`max-w-[85%] p-3 rounded-2xl text-[10px] ${msg.from.includes("T├║")
+                                    <div className={`max-w-[85%] p-3 rounded-2xl text-[10px] ${msg.from.includes("Tú")
                                         ? "bg-cima-gold text-black font-medium rounded-tr-none shadow-lg shadow-cima-gold/10"
                                         : "bg-white/5 text-white/80 border border-white/10 rounded-tl-none"
                                         }`}>
                                         <p className="leading-relaxed">{msg.message}</p>
-                                        <span className={`text-[7px] mt-1 block opacity-40 ${msg.from.includes("T├║") ? "text-right" : ""}`}>{msg.time}</span>
+                                        <span className={`text-[7px] mt-1 block opacity-40 ${msg.from.includes("Tú") ? "text-right" : ""}`}>{msg.time}</span>
                                     </div>
                                 </motion.div>
                             ))}

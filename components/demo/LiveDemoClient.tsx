@@ -32,35 +32,35 @@ export interface LiveMessage {
 }
 
 const INITIAL_LEADS: LiveLead[] = [
-    { id: "1", name: "Ana Mart├¡nez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
-    { id: "2", name: "Carlos L├│pez", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
-    { id: "3", name: "Mar├¡a Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10", score: 92, isAiQualified: true },
-    { id: "4", name: "Roberto Trevi├▒o", phone: "81 4444 9876", source: "Referido", sourceIcon: UsersIcon, status: "visita_agendada", date: "Ayer", property: "Pent. Santa Mar├¡a", color: "text-amber-400 bg-amber-500/10", score: 78 },
-    { id: "5", name: "Sof├¡a Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 d├¡as", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10", score: 95, isAiQualified: true },
-    { id: "6", name: "Familia Rodr├¡guez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10", score: 64 },
+    { id: "1", name: "Ana Martínez", phone: "81 2345 6789", source: "Instagram", sourceIcon: Instagram, status: "nuevo", date: "Hace 12 min", property: "Residencia Las Misiones", color: "text-pink-400 bg-pink-500/10", score: 98, isAiQualified: true },
+    { id: "2", name: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10", score: 85 },
+    { id: "3", name: "María Garza", phone: "81 5555 1234", source: "Landing", sourceIcon: Globe, status: "calificado", date: "Hace 3 horas", property: "Residencia Contry Sol", color: "text-emerald-400 bg-emerald-500/10", score: 92, isAiQualified: true },
+    { id: "4", name: "Roberto Treviño", phone: "81 4444 9876", source: "Referido", sourceIcon: UsersIcon, status: "visita_agendada", date: "Ayer", property: "Pent. Santa María", color: "text-amber-400 bg-amber-500/10", score: 78 },
+    { id: "5", name: "Sofía Villarreal", phone: "81 3333 5678", source: "Instagram", sourceIcon: Instagram, status: "en_negociacion", date: "Hace 2 días", property: "Casa Valle Poniente", color: "text-pink-400 bg-pink-500/10", score: 95, isAiQualified: true },
+    { id: "6", name: "Familia Rodríguez", phone: "81 2222 3456", source: "Marketplace", sourceIcon: Facebook, status: "nuevo", date: "Hace 5 min", property: "Residencia Las Misiones", color: "text-blue-400 bg-blue-500/10", score: 64 },
     { id: "7", name: "Ing. Pedro Salazar", phone: "81 1111 7890", source: "Landing", sourceIcon: Globe, status: "contactado", date: "Hace 4 horas", property: "Depto. Torre LOVFT", color: "text-emerald-400 bg-emerald-500/10", score: 88 },
 ];
 
 const INITIAL_MESSAGES: LiveMessage[] = [
-    { id: "1", from: "Familia Rodr├¡guez", message: "Hola, ┬┐podemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
-    { id: "2", from: "Ing. Roberto M.", message: "Ya firm├⌐ el contrato, ┬┐cu├índo hacemos las fotos?", time: "Hace 20 min", unread: true },
-    { id: "3", from: "Dra. Sof├¡a L.", message: "┬┐Hubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
-    { id: "4", from: "Carlos L├│pez", message: "Me interesa mucho, ┬┐pueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
-    { id: "5", from: "Sr. Hern├índez", message: "Gracias por las fotos, se ven incre├¡bles ≡ƒæÅ", time: "Ayer", unread: false },
+    { id: "1", from: "Familia Rodríguez", message: "Hola, ¿podemos reagendar la visita para las 12?", time: "Hace 5 min", unread: true },
+    { id: "2", from: "Ing. Roberto M.", message: "Ya firmé el contrato, ¿cuándo hacemos las fotos?", time: "Hace 20 min", unread: true },
+    { id: "3", from: "Dra. Sofía L.", message: "¿Hubo alguna oferta nueva por la casa?", time: "Hace 1 hora", unread: true },
+    { id: "4", from: "Carlos López", message: "Me interesa mucho, ¿pueden bajar un poco el precio?", time: "Hace 3 horas", unread: false },
+    { id: "5", from: "Sr. Hernández", message: "Gracias por las fotos, se ven increíbles 🙌", time: "Ayer", unread: false },
 ];
 
 const NARRATIVE: Record<View, { title: string; desc: string }> = {
     landing: {
-        title: "Captaci├│n Autom├ítica",
-        desc: "Cada propiedad tiene su propia Landing Page de alto impacto dise├▒ada para convertir visitantes en leads cualificados."
+        title: "Captación Automática",
+        desc: "Cada propiedad tiene su propia Landing Page de alto impacto diseñada para convertir visitantes en leads cualificados."
     },
     admin: {
         title: "Control Total de Operaciones",
-        desc: "El centro neur├ílgico del asesor. Aqu├¡ se gestiona el pipeline de ventas, los anal├¡ticos y la comunicaci├│n con el cliente."
+        desc: "El centro neurálgico del asesor. Aquí se gestiona el pipeline de ventas, los analíticos y la comunicación con el cliente."
     },
     portal: {
         title: "Transparencia que Enamora",
-        desc: "El Portal del Due├▒o reduce el estr├⌐s del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
+        desc: "El Portal del Dueño reduce el estrés del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
     }
 };
 
@@ -150,7 +150,7 @@ function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: stri
                     </div>
                 </div>
                 <h3 className="text-lg font-heading font-black text-gray-900 mb-2">{title || "Mobile Mirroring"}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed opacity-80">{desc || "Escanea este c├│digo para ver c├│mo se adapta la experiencia a un dispositivo m├│vil en tiempo real."}</p>
+                <p className="text-xs text-gray-500 leading-relaxed opacity-80">{desc || "Escanea este código para ver cómo se adapta la experiencia a un dispositivo móvil en tiempo real."}</p>
 
                 <button
                     onClick={onClose}
@@ -164,7 +164,7 @@ function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: stri
     );
 }
 
-/* ΓòÉΓòÉΓòÉ MAIN COMPONENT ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+/* === MAIN COMPONENT ========================================================================================= */
 export default function LiveDemoClient() {
     const [view, setView] = useState<View>("admin");
     const [tier, setTier] = useState<PlanTier>("premium");

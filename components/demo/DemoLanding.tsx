@@ -38,7 +38,7 @@ function ROICalculator() {
                         <Calculator className="h-3.5 w-3.5 text-cima-gold" />
                         <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-cima-gold">calculadora de impacto</span>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-heading font-bold mb-3">┬┐Cu├ínto ahorras con nosotros?</h2>
+                    <h2 className="text-2xl md:text-3xl font-heading font-bold mb-3">¿Cuánto ahorras con nosotros?</h2>
                     <p className="text-sm text-white/40">Ajusta el valor de tu propiedad y ve el impacto financiero</p>
                 </motion.div>
 
@@ -85,13 +85,13 @@ function ROICalculator() {
                         <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4 text-center col-span-2 md:col-span-1">
                             <Zap className="h-4 w-4 text-cima-gold mx-auto mb-2" />
                             <p className="text-2xl font-heading font-bold text-cima-gold">${commission.toFixed(1)}M</p>
-                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Comisi├│n 6%</p>
+                            <p className="text-[7px] text-white/30 uppercase font-bold tracking-wider">Comisión 6%</p>
                         </div>
                     </div>
 
                     <div className="mt-6 p-3 bg-green-500/5 border border-green-500/10 rounded-xl text-center">
                         <p className="text-[10px] text-green-400 font-bold">
-                            ≡ƒÆí Tu inversi├│n se recupera en ahorro de mantenimiento y tiempo de mercado
+                            💡 Tu inversión se recupera en ahorro de mantenimiento y tiempo de mercado
                         </p>
                     </div>
                 </motion.div>
@@ -104,9 +104,9 @@ function ROICalculator() {
 function OnboardingSection() {
     const steps = [
         { icon: MessageCircle, label: "Agendar Cita", desc: "Nos contactas por WhatsApp o formulario", time: "5 min" },
-        { icon: Camera, label: "Sesi├│n Fotogr├ífica", desc: "Fotos profesionales y tour virtual", time: "D├¡a 1" },
-        { icon: Rocket, label: "Publicaci├│n", desc: "Landing propia + portales + redes sociales", time: "D├¡a 2" },
-        { icon: BarChart3, label: "Seguimiento", desc: "Dashboard y portal del propietario activo", time: "D├¡a 3" },
+        { icon: Camera, label: "Sesión Fotográfica", desc: "Fotos profesionales y tour virtual", time: "Día 1" },
+        { icon: Rocket, label: "Publicación", desc: "Landing propia + portales + redes sociales", time: "Día 2" },
+        { icon: BarChart3, label: "Seguimiento", desc: "Dashboard y portal del propietario activo", time: "Día 3" },
     ];
 
     return (
@@ -118,8 +118,8 @@ function OnboardingSection() {
                     viewport={{ once: true }}
                     className="text-center mb-12"
                 >
-                    <h2 className="text-2xl md:text-3xl font-heading font-bold mb-3">┬┐C├│mo empezamos?</h2>
-                    <p className="text-sm text-white/40">En 3 d├¡as tu propiedad est├í en el mercado con tecnolog├¡a premium</p>
+                    <h2 className="text-2xl md:text-3xl font-heading font-bold mb-3">¿Cómo empezamos?</h2>
+                    <p className="text-sm text-white/40">En 3 días tu propiedad está en el mercado con tecnología premium</p>
                 </motion.div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -178,7 +178,7 @@ export default function DemoLanding({ plan }: DemoLandingProps) {
                             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cima-gold/10 border border-cima-gold/20 mb-8"
                         >
                             <Sparkles className="h-4 w-4 text-cima-gold" />
-                            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-cima-gold">Garant├¡a de 30 d├¡as</span>
+                            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-cima-gold">Garantía de 30 días</span>
                         </motion.div>
                     ) : (
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8">
@@ -196,7 +196,7 @@ export default function DemoLanding({ plan }: DemoLandingProps) {
                             className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tight mb-8 leading-[1]"
                         >
                             <span className="block">Vendemos tu casa</span>
-                            <span className="block text-cima-gold">en menos de 30 d├¡as.</span>
+                            <span className="block text-cima-gold">en menos de 30 días.</span>
                             <span className="block text-white/40">Garantizado.</span>
                         </motion.h1>
                     ) : (

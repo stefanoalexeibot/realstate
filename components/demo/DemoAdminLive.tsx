@@ -17,7 +17,7 @@ import NextImage from "next/image";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import { type LiveLead, type LiveMessage } from "./LiveDemoClient";
 
-/* ΓöÇΓöÇΓöÇ Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* --- Types ------------------------------------------------------------------------------------------------------ */
 type SidebarTab = "propiedades" | "leads" | "visitas" | "analiticos" | "mensajes" | "ia_studio" | "documentos" | "contratos";
 
 interface DemoAdminLiveProps {
@@ -32,20 +32,20 @@ interface DemoAdminLiveProps {
     onAddMessage: (from: string, text: string, isAi?: boolean) => void;
 }
 
-/* ΓöÇΓöÇΓöÇ Mock Data ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* --- Mock Data ------------------------------------------------------------------------------------------------- */
 const PROPERTIES = [
-    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. Garc├¡a", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
-    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa Mar├¡a" },
-    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sof├¡a L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
-    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hern├índez", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de An├íhuac 305, Valle Poniente" },
-    { name: "Pent. Santa Mar├¡a", price: "$15.8M", status: "Exclusiva", owner: "Lic. P├⌐rez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa Mar├¡a" },
-    { name: "Casa Cumbres Elite", price: "$5.5M", status: "Venta", owner: "Arq. Mendoza", img: "/recamara-despues.png", hits: 67, trend: [15, 22, 18, 28, 35, 32, 40], beds: 3, baths: 2.5, m2: 210, address: "Cumbres Elite 7┬░ Sector, Priv. ├ümbar" },
-    { name: "Depto. V├¡a Cordillera", price: "$3.8M", status: "Venta", owner: "Sra. Lozano", img: "/cocina-despues.png", hits: 45, trend: [8, 12, 15, 11, 20, 18, 25], beds: 2, baths: 1, m2: 85, address: "V├¡a Cordillera 200, Col. Residencial" },
-    { name: "Residencia Carretera Nal.", price: "$18.5M", status: "Exclusiva", owner: "Fam. Trevi├▒o", img: "/estancia-despues.png", hits: 178, trend: [40, 55, 48, 65, 72, 68, 85], beds: 5, baths: 4.5, m2: 480, address: "Carr. Nacional Km 268, La Estanzuela" },
-    { name: "Townhouse San Pedro", price: "$7.2M", status: "Venta", owner: "Lic. Cavazos", img: "/recamara-despues.png", hits: 92, trend: [25, 30, 28, 38, 45, 42, 55], beds: 3, baths: 3, m2: 175, address: "San Pedro Garza Garc├¡a, Zona Valle" },
-    { name: "Loft Barrio Antiguo", price: "$2.9M", status: "Venta", owner: "Dis. Ram├¡rez", img: "/cocina-despues.png", hits: 110, trend: [35, 42, 38, 50, 58, 55, 70], beds: 1, baths: 1, m2: 65, address: "Barrio Antiguo, Calle Morelos 412" },
-    { name: "Casa Bosques del Valle", price: "$9.7M", status: "Venta", owner: "Dr. Gonz├ílez", img: "/estancia-despues.png", hits: 73, trend: [18, 25, 22, 30, 38, 35, 42], beds: 4, baths: 3, m2: 290, address: "Bosques del Valle, Priv. Roble" },
-    { name: "Pent. Distrito Tec", price: "$6.8M", status: "Exclusiva", owner: "Ing. Salinas", img: "/recamara-despues.png", hits: 156, trend: [42, 50, 45, 62, 70, 65, 82], beds: 2, baths: 2, m2: 130, address: "Blvd. D├¡az Ordaz, Torre Altus, P.H." },
+    { name: "Residencia Las Misiones", price: "$12.4M", status: "Venta", owner: "Fam. García", img: "/cocina-despues.png", hits: 142, trend: [30, 45, 38, 52, 60, 55, 72], beds: 4, baths: 3.5, m2: 320, address: "Av. Las Misiones 482, Col. Las Misiones" },
+    { name: "Depto. Torre LOVFT", price: "$4.2M", status: "Exclusiva", owner: "Ing. Roberto M.", img: "/estancia-despues.png", hits: 89, trend: [20, 25, 35, 30, 40, 38, 45], beds: 2, baths: 2, m2: 110, address: "Torre LOVFT, Piso 12, Santa María" },
+    { name: "Residencia Contry Sol", price: "$8.9M", status: "Venta", owner: "Dra. Sofía L.", img: "/recamara-despues.png", hits: 56, trend: [10, 15, 20, 25, 22, 30, 28], beds: 3, baths: 2.5, m2: 240, address: "Contry Sol 1024, Col. Contry" },
+    { name: "Casa Valle Poniente", price: "$6.1M", status: "Venta", owner: "Sr. Hernández", img: "/cocina-despues.png", hits: 34, trend: [5, 8, 12, 10, 15, 18, 20], beds: 3, baths: 2, m2: 180, address: "Valle de Anáhuac 305, Valle Poniente" },
+    { name: "Pent. Santa María", price: "$15.8M", status: "Exclusiva", owner: "Lic. Pérez", img: "/estancia-despues.png", hits: 201, trend: [50, 60, 55, 70, 80, 75, 90], beds: 3, baths: 3, m2: 195, address: "Penthouse, Torre Lux, Santa María" },
+    { name: "Casa Cumbres Elite", price: "$5.5M", status: "Venta", owner: "Arq. Mendoza", img: "/recamara-despues.png", hits: 67, trend: [15, 22, 18, 28, 35, 32, 40], beds: 3, baths: 2.5, m2: 210, address: "Cumbres Elite 7° Sector, Priv. Ámbar" },
+    { name: "Depto. Vía Cordillera", price: "$3.8M", status: "Venta", owner: "Sra. Lozano", img: "/cocina-despues.png", hits: 45, trend: [8, 12, 15, 11, 20, 18, 25], beds: 2, baths: 1, m2: 85, address: "Vía Cordillera 200, Col. Residencial" },
+    { name: "Residencia Carretera Nal.", price: "$18.5M", status: "Exclusiva", owner: "Fam. Treviño", img: "/estancia-despues.png", hits: 178, trend: [40, 55, 48, 65, 72, 68, 85], beds: 5, baths: 4.5, m2: 480, address: "Carr. Nacional Km 268, La Estanzuela" },
+    { name: "Townhouse San Pedro", price: "$7.2M", status: "Venta", owner: "Lic. Cavazos", img: "/recamara-despues.png", hits: 92, trend: [25, 30, 28, 38, 45, 42, 55], beds: 3, baths: 3, m2: 175, address: "San Pedro Garza García, Zona Valle" },
+    { name: "Loft Barrio Antiguo", price: "$2.9M", status: "Venta", owner: "Dis. Ramírez", img: "/cocina-despues.png", hits: 110, trend: [35, 42, 38, 50, 58, 55, 70], beds: 1, baths: 1, m2: 65, address: "Barrio Antiguo, Calle Morelos 412" },
+    { name: "Casa Bosques del Valle", price: "$9.7M", status: "Venta", owner: "Dr. González", img: "/estancia-despues.png", hits: 73, trend: [18, 25, 22, 30, 38, 35, 42], beds: 4, baths: 3, m2: 290, address: "Bosques del Valle, Priv. Roble" },
+    { name: "Pent. Distrito Tec", price: "$6.8M", status: "Exclusiva", owner: "Ing. Salinas", img: "/recamara-despues.png", hits: 156, trend: [42, 50, 45, 62, 70, 65, 82], beds: 2, baths: 2, m2: 130, address: "Blvd. Díaz Ordaz, Torre Altus, P.H." },
     { name: "Residencia Chipinque", price: "$22.0M", status: "Exclusiva", owner: "Fam. Garza", img: "/cocina-despues.png", hits: 225, trend: [55, 65, 60, 78, 88, 82, 95], beds: 5, baths: 5, m2: 550, address: "Paseo de Chipinque 100, San Pedro" },
 ];
 
@@ -53,25 +53,25 @@ const PROPERTIES = [
 // const LEADS = [...]
 
 const VISITS = [
-    { prospect: "Familia Rodr├¡guez", property: "Residencia Las Misiones", date: "Hoy", time: "11:00 AM", status: "confirmada", sentiment: "positive" },
+    { prospect: "Familia Rodríguez", property: "Residencia Las Misiones", date: "Hoy", time: "11:00 AM", status: "confirmada", sentiment: "positive" },
     { prospect: "Ing. Luis Garza", property: "Depto. Torre LOVFT", date: "Hoy", time: "4:30 PM", status: "pendiente", sentiment: null },
-    { prospect: "Sra. Ana Trevi├▒o", property: "Residencia Las Misiones", date: "Ma├▒ana", time: "10:00 AM", status: "confirmada", sentiment: null },
-    { prospect: "Carlos L├│pez", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10" },
-    { prospect: "Mar├¡a Elena Ramos", property: "Residencia Contry Sol", date: "28 Feb", time: "11:30 AM", status: "realizada", sentiment: "positive" },
-    { prospect: "Roberto Trevi├▒o", property: "Pent. Santa Mar├¡a", date: "27 Feb", time: "5:00 PM", status: "realizada", sentiment: "neutral" },
-    { prospect: "Lic. P├⌐rez (familiar)", property: "Casa Valle Poniente", date: "26 Feb", time: "3:00 PM", status: "cancelada", sentiment: null },
+    { prospect: "Sra. Ana Treviño", property: "Residencia Las Misiones", date: "Mañana", time: "10:00 AM", status: "confirmada", sentiment: null },
+    { prospect: "Carlos López", phone: "81 9876 5432", source: "Marketplace", sourceIcon: Facebook, status: "contactado", date: "Hace 1 hora", property: "Depto. Torre LOVFT", color: "text-blue-400 bg-blue-500/10" },
+    { prospect: "María Elena Ramos", property: "Residencia Contry Sol", date: "28 Feb", time: "11:30 AM", status: "realizada", sentiment: "positive" },
+    { prospect: "Roberto Treviño", property: "Pent. Santa María", date: "27 Feb", time: "5:00 PM", status: "realizada", sentiment: "neutral" },
+    { prospect: "Lic. Pérez (familiar)", property: "Casa Valle Poniente", date: "26 Feb", time: "3:00 PM", status: "cancelada", sentiment: null },
 ];
 
 // (Moved to shared state in LiveDemoClient)
 // const MESSAGES = [...]
 
 const NOTIFICATIONS = [
-    { icon: Zap, text: "Nuevo lead desde Instagram", sub: "Ana Mart├¡nez ΓÇö Residencia Las Misiones", color: "text-pink-400 bg-pink-500/20" },
-    { icon: Calendar, text: "Visita agendada para ma├▒ana", sub: "Sra. Trevi├▒o ΓÇö 10:00 AM", color: "text-blue-400 bg-blue-500/20" },
-    { icon: MessageSquare, text: "Nuevo mensaje", sub: "Familia Rodr├¡guez quiere reagendar", color: "text-purple-400 bg-purple-500/20" },
-    { icon: Target, text: "Oferta recibida", sub: "$11.8M ΓÇö Residencia Las Misiones", color: "text-green-400 bg-green-500/20" },
-    { icon: Eye, text: "Tu propiedad tiene 50 vistas hoy", sub: "Pent. Santa Mar├¡a ΓÇö r├⌐cord semanal", color: "text-amber-400 bg-amber-500/20" },
-    { icon: Phone, text: "Lead por WhatsApp", sub: "Familia Rodr├¡guez ΓÇö Mar del Plata 123", color: "text-green-400 bg-green-500/20" },
+    { icon: Zap, text: "Nuevo lead desde Instagram", sub: "Ana Martínez — Residencia Las Misiones", color: "text-pink-400 bg-pink-500/20" },
+    { icon: Calendar, text: "Visita agendada para mañana", sub: "Sra. Treviño — 10:00 AM", color: "text-blue-400 bg-blue-500/20" },
+    { icon: MessageSquare, text: "Nuevo mensaje", sub: "Familia Rodríguez quiere reagendar", color: "text-purple-400 bg-purple-500/20" },
+    { icon: Target, text: "Oferta recibida", sub: "$11.8M — Residencia Las Misiones", color: "text-green-400 bg-green-500/20" },
+    { icon: Eye, text: "Tu propiedad tiene 50 vistas hoy", sub: "Pent. Santa María — récord semanal", color: "text-amber-400 bg-amber-500/20" },
+    { icon: Phone, text: "Lead por WhatsApp", sub: "Familia Rodríguez — Mar del Plata 123", color: "text-green-400 bg-green-500/20" },
 ];
 
 const STATUS_MAP: Record<string, { label: string; class: string }> = {
@@ -79,10 +79,10 @@ const STATUS_MAP: Record<string, { label: string; class: string }> = {
     contactado: { label: "Contactado", class: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
     calificado: { label: "Calificado", class: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
     visita_agendada: { label: "Visita", class: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-    en_negociacion: { label: "Negociaci├│n", class: "bg-cima-gold/20 text-cima-gold border-cima-gold/30" },
+    en_negociacion: { label: "Negociación", class: "bg-cima-gold/20 text-cima-gold border-cima-gold/30" },
 };
 
-/* ΓöÇΓöÇΓöÇ Mini Sparkline ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* --- Mini Sparkline ------------------------------------------------------------------------------------------ */
 function MiniChart({ data, color = "#C8A96E", height = 32 }: { data: number[]; color?: string; height?: number }) {
     const max = Math.max(...data);
     const min = Math.min(...data);
@@ -227,7 +227,7 @@ function BarChart({ data, labels }: { data: number[]; labels: string[] }) {
     );
 }
 
-/* ΓòÉΓòÉΓòÉ MAIN COMPONENT ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+/* === MAIN COMPONENT ========================================================================================= */
 export default function DemoAdminLive({
     plan,
     leads,
@@ -242,6 +242,7 @@ export default function DemoAdminLive({
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
     const [isMobilePreview, setIsMobilePreview] = useState(false);
+    const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
     // Reset to propiedades if current tab becomes unavailable
     // OR if externalTab changes (Auto Demo)
@@ -271,7 +272,7 @@ export default function DemoAdminLive({
         { id: "propiedades", icon: Layout, label: "Propiedades", locked: false },
         { id: "leads", icon: Users, label: "Leads", badge: "7", locked: false },
         { id: "visitas", icon: Target, label: "Visitas", badge: "2", locked: !f.visits },
-        { id: "analiticos", icon: TrendingUp, label: "Anal├¡ticos", locked: !f.analytics },
+        { id: "analiticos", icon: TrendingUp, label: "Analíticos", locked: !f.analytics },
         { id: "mensajes", icon: MessageSquare, label: "Mensajes", badge: messages.filter(m => m.unread).length > 0 ? messages.filter(m => m.unread).length.toString() : undefined, locked: !f.messages },
         { id: "ia_studio", icon: Wand2, label: "IA Studio", locked: plan.tier === "basico" },
         { id: "documentos", icon: ShieldCheck, label: "Documentos", locked: plan.tier === "basico" },
@@ -283,19 +284,19 @@ export default function DemoAdminLive({
             { label: "Vistas Totales", value: "148", change: "+5%", icon: Eye, data: [20, 35, 25, 40, 30, 45, 50] },
             { label: "Leads Activos", value: "3", change: "+1", icon: Users, data: [1, 0, 1, 2, 1, 2, 3] },
             { label: "Visitas Mes", value: "2", change: "+1", icon: Target, data: [0, 1, 0, 1, 1, 1, 2] },
-            { label: "Conversi├│n", value: "0.8%", change: "+0.2%", icon: TrendingUp, data: [0.4, 0.5, 0.6, 0.5, 0.7, 0.7, 0.8] },
+            { label: "Conversión", value: "0.8%", change: "+0.2%", icon: TrendingUp, data: [0.4, 0.5, 0.6, 0.5, 0.7, 0.7, 0.8] },
         ],
         profesional: [
             { label: "Vistas Totales", value: "589", change: "+8%", icon: Eye, data: [100, 120, 110, 150, 140, 170, 190] },
             { label: "Leads Activos", value: "12", change: "+3", icon: Users, data: [4, 6, 5, 8, 7, 10, 12] },
             { label: "Visitas Mes", value: "8", change: "+2", icon: Target, data: [2, 3, 3, 5, 4, 6, 8] },
-            { label: "Conversi├│n", value: "2.1%", change: "+0.5%", icon: TrendingUp, data: [1.2, 1.4, 1.6, 1.5, 1.8, 1.9, 2.1] },
+            { label: "Conversión", value: "2.1%", change: "+0.5%", icon: TrendingUp, data: [1.2, 1.4, 1.6, 1.5, 1.8, 1.9, 2.1] },
         ],
         premium: [
             { label: "Vistas Totales", value: "1247", change: "+12%", icon: Eye, data: [180, 220, 195, 310, 280, 350, 420] },
             { label: "Leads Activos", value: "23", change: "+5", icon: Users, data: [8, 10, 12, 15, 14, 18, 23] },
             { label: "Visitas Mes", value: "18", change: "+3", icon: Target, data: [5, 7, 6, 9, 11, 14, 18] },
-            { label: "Conversi├│n", value: "4.2%", change: "+0.8%", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
+            { label: "Conversión", value: "4.2%", change: "+0.8%", icon: TrendingUp, data: [2.1, 2.5, 3.0, 2.8, 3.4, 3.8, 4.2] },
         ]
     };
 
@@ -414,22 +415,22 @@ export default function DemoAdminLive({
                             {/* Header */}
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                                 <div>
-                                    <h1 className={`font-serif font-black tracking-tight mb-1 transition-all ${isMobilePreview ? "text-lg" : "text-2xl"}`}>
+                                    <h1 className={`font-heading font-black tracking-tight mb-1 transition-all ${isMobilePreview ? "text-lg" : "text-2xl"}`}>
                                         {activeTab === "propiedades" && "Mis Propiedades"}
                                         {activeTab === "leads" && "Leads Recientes"}
                                         {activeTab === "visitas" && "Agenda de Visitas"}
-                                        {activeTab === "analiticos" && "Anal├¡ticos"}
+                                        {activeTab === "analiticos" && "Analíticos"}
                                         {activeTab === "mensajes" && "Mensajes"}
                                         {activeTab === "ia_studio" && "IA Studio"}
                                         {activeTab === "documentos" && "Documentos"}
                                         {activeTab === "contratos" && "Contratos"}
                                     </h1>
                                     <p className="text-xs text-white/40">
-                                        {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> ┬╖ L├¡mite: {maxProps}</span>}</>}
+                                        {activeTab === "propiedades" && <>Gestionando <span className="text-white font-bold">{visibleProps.length} activos</span>{maxProps < PROPERTIES.length && <span className="text-white/20"> · Límite: {maxProps}</span>}</>}
                                         {activeTab === "leads" && <>Tienes <span className="text-white font-bold">7 leads</span> esta semana</>}
-                                        {activeTab === "visitas" && <>Pr├│ximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
-                                        {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">├║ltimos 30 d├¡as</span></>}
-                                        {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> ┬╖ {messages.length} conversaciones</>}
+                                        {activeTab === "visitas" && <>Próximas <span className="text-white font-bold">4 visitas</span> esta semana</>}
+                                        {activeTab === "analiticos" && <>Rendimiento de los <span className="text-white font-bold">últimos 30 días</span></>}
+                                        {activeTab === "mensajes" && <><span className="text-white font-bold">{messages.filter(m => m.unread).length} sin leer</span> · {messages.length} conversaciones</>}
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -443,12 +444,21 @@ export default function DemoAdminLive({
                                     <button
                                         onClick={() => setIsMobilePreview(!isMobilePreview)}
                                         className={`p-2.5 border rounded-xl transition-all flex items-center gap-2 group ${isMobilePreview ? "bg-cima-gold border-cima-gold text-black shadow-lg shadow-cima-gold/20" : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"}`}
-                                        title={isMobilePreview ? "Volver a Escritorio" : "Ver en M├│vil"}
+                                        title={isMobilePreview ? "Volver a Escritorio" : "Ver en Móvil"}
                                     >
                                         {isMobilePreview ? <Monitor className="h-3.5 w-3.5" /> : <Smartphone className="h-3.5 w-3.5" />}
                                         <span className="text-[8px] font-black uppercase tracking-widest hidden md:inline">
-                                            {isMobilePreview ? "Escritorio" : "M├│vil"}
+                                            {isMobilePreview ? "Escritorio" : "Móvil"}
                                         </span>
+                                    </button>
+
+                                    {/* Checkout / Close Sale Button */}
+                                    <button
+                                        onClick={() => setShowCheckoutModal(true)}
+                                        className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0"
+                                    >
+                                        <Briefcase className="h-3.5 w-3.5" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest hidden md:inline">Cerrar Venta</span>
                                     </button>
 
                                     <button className="flex items-center gap-2 bg-cima-gold text-black px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shrink-0">
@@ -473,10 +483,10 @@ export default function DemoAdminLive({
                                         </div>
                                         <div className="flex items-end justify-between gap-2">
                                             <div>
-                                                <div className={`font-serif font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
+                                                <div className={`font-heading font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
                                                     <Counter
                                                         value={stat.value}
-                                                        suffix={stat.label === "Conversi├│n" ? "%" : ""}
+                                                        suffix={stat.label === "Conversión" ? "%" : ""}
                                                     />
                                                 </div>
                                                 <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">{stat.label}</p>
@@ -538,11 +548,203 @@ export default function DemoAdminLive({
                 setActiveTab("leads");
                 if (onNavigateToLeads) onNavigateToLeads();
             }} />
+
+            <CheckoutModal
+                isOpen={showCheckoutModal}
+                onClose={() => setShowCheckoutModal(false)}
+            />
         </div>
     );
 }
 
-/* ΓòÉΓòÉΓòÉ VIEWS ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+function CheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const [step, setStep] = useState<"select" | "details" | "success">("select");
+    const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+    const [commission, setCommission] = useState("5");
+    const [finalPrice, setFinalPrice] = useState("");
+
+    const handleReset = () => {
+        setStep("select");
+        setSelectedLeads([]);
+        setCommission("5");
+        setFinalPrice("");
+    };
+
+    const handleClose = () => {
+        handleReset();
+        onClose();
+    };
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={handleClose}
+                        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                    />
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="relative w-full max-w-lg bg-[#0A0A0B] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+                    >
+                        {/* Header */}
+                        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-xl bg-cima-gold flex items-center justify-center text-black shadow-lg shadow-cima-gold/20">
+                                    <Briefcase className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-white uppercase tracking-tight">Cerrar Venta</h3>
+                                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Finalizar proceso comercial</p>
+                                </div>
+                            </div>
+                            <button onClick={handleClose} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+                                <X className="h-5 w-5 text-white/40" />
+                            </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6">
+                            {step === "select" && (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <p className="text-[10px] font-black text-cima-gold uppercase tracking-widest">1. Seleccionar Lead Comprador</p>
+                                        <span className="text-[8px] text-white/20 font-mono">7 leads disponibles</span>
+                                    </div>
+                                    <div className="grid gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                        {["Carlos López", "Ana Martínez", "Roberto García", "Elena Ramos", "Miguel Sánchez", "Sofía Luna", "Héctor Díaz"].map((lead) => (
+                                            <button
+                                                key={lead}
+                                                onClick={() => setSelectedLeads([lead])}
+                                                className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${selectedLeads.includes(lead)
+                                                    ? "bg-cima-gold/10 border-cima-gold text-cima-gold"
+                                                    : "bg-white/5 border-white/5 text-white/60 hover:border-white/20"
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-[10px] font-black ${selectedLeads.includes(lead) ? "bg-cima-gold text-black" : "bg-white/10 text-white/40"}`}>
+                                                        {lead.charAt(0)}
+                                                    </div>
+                                                    <span className="text-xs font-bold">{lead}</span>
+                                                </div>
+                                                {selectedLeads.includes(lead) && <CheckCircle2 className="h-4 w-4" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        disabled={selectedLeads.length === 0}
+                                        onClick={() => setStep("details")}
+                                        className="w-full mt-4 py-4 bg-cima-gold text-black rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-lg disabled:opacity-50"
+                                    >
+                                        Siguiente Paso
+                                    </button>
+                                </div>
+                            )}
+
+                            {step === "details" && (
+                                <div className="space-y-6">
+                                    <p className="text-[10px] font-black text-cima-gold uppercase tracking-widest">2. Detalles Económicos</p>
+                                    <div className="grid gap-4">
+                                        <div>
+                                            <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Precio de Venta Final</label>
+                                            <div className="relative">
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold">$</span>
+                                                <input
+                                                    type="text"
+                                                    placeholder="12,400,000"
+                                                    value={finalPrice}
+                                                    onChange={(e) => setFinalPrice(e.target.value)}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-8 pr-4 text-white outline-none focus:border-cima-gold/40 transition-all font-mono"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Comisión %</label>
+                                                <select
+                                                    value={commission}
+                                                    onChange={(e) => setCommission(e.target.value)}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white outline-none focus:border-cima-gold/40 transition-all appearance-none"
+                                                >
+                                                    <option value="3">3%</option>
+                                                    <option value="4">4%</option>
+                                                    <option value="5">5%</option>
+                                                    <option value="6">6%</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest block mb-2">Total Comisión</label>
+                                                <div className="w-full bg-cima-gold/5 border border-cima-gold/20 rounded-2xl py-4 px-4 text-cima-gold font-mono font-bold">
+                                                    $620,000
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => setStep("select")}
+                                            className="flex-1 py-4 bg-white/5 border border-white/10 text-white/60 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all"
+                                        >
+                                            Atrás
+                                        </button>
+                                        <button
+                                            onClick={() => setStep("success")}
+                                            className="flex-[2] py-4 bg-cima-gold text-black rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
+                                        >
+                                            Confirmar Cierre
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {step === "success" && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="text-center py-10 space-y-6"
+                                >
+                                    <div className="relative inline-block">
+                                        <div className="h-24 w-24 rounded-full bg-cima-gold flex items-center justify-center text-black mx-auto relative z-10">
+                                            <CheckCircle2 className="h-12 w-12" />
+                                        </div>
+                                        <motion.div
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1.5, opacity: 0 }}
+                                            transition={{ repeat: Infinity, duration: 1.5 }}
+                                            className="absolute inset-0 bg-cima-gold rounded-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">¡Venta Cerrada!</h4>
+                                        <p className="text-sm text-white/60">Felicidades, la propiedad ha sido marcada como vendida y los analíticos se han actualizado.</p>
+                                    </div>
+                                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 inline-block w-full">
+                                        <p className="text-[10px] text-white/20 uppercase font-black tracking-widest mb-1">Impacto en Analíticos</p>
+                                        <p className="text-cima-gold font-bold">+ $620,000 en comisiones proyectadas</p>
+                                    </div>
+                                    <button
+                                        onClick={handleClose}
+                                        className="w-full py-4 bg-white text-black rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-cima-gold transition-all"
+                                    >
+                                        Volver al Panel
+                                    </button>
+                                </motion.div>
+                            )}
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
+    );
+}
+
+/* === VIEWS ==================================================================================================== */
 
 /* ΓöÇΓöÇ Diffusion Button (for PropertiesView) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: string }) {
@@ -559,7 +761,7 @@ function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: s
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            alert(`Propiedad "${propertyName}" difundida con ├⌐xito!`);
+            alert(`Propiedad "${propertyName}" difundida con éxito!`);
         }, 1500);
     };
 
@@ -911,7 +1113,7 @@ function PropertyDetailPanel({ property, onBack, isTeam, plan }: { property: (ty
     );
 }
 
-/* ΓöÇΓöÇ Leads View ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* --- Checkout Modal -------------------------------------------------------------------------------------------- */
 function LeadsView({ leads, newLeadId, onUpdateStatus, tier }: {
     leads: LiveLead[];
     newLeadId?: string;
