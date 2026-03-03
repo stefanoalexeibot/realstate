@@ -568,7 +568,7 @@ export default function LiveDemoClient() {
                         </div>
 
                         {/* Context bar + ROI widget */}
-                        <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between">
+                        <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between relative">
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
                                 <span className="text-[8px] font-bold text-cima-gold">{plan.name}</span>
@@ -577,18 +577,22 @@ export default function LiveDemoClient() {
                                 <span className="text-[7px] text-white/15">&middot;</span>
                                 <span className="text-[7px] text-white/20">{plan.deliveryDays}d entrega</span>
                             </div>
-                            {/* ROI Widget */}
-                            <div className="hidden sm:flex items-center gap-2">
-                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20">
+
+                            {/* ROI Widget - Centered */}
+                            <div className="absolute left-1/2 -translate-x-1/2 hidden sm:flex items-center gap-2">
+                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/20 shadow-lg shadow-green-500/5">
                                     <TrendingUp className="h-3 w-3 text-green-400" />
-                                    <span className="text-[8px] font-black text-green-400">
-                                        ROI: {ROI_DATA[tier].potentialRevenue}
+                                    <span className="text-[8px] font-black text-green-400 uppercase tracking-wider">
+                                        ROI Estimado: {ROI_DATA[tier].potentialRevenue}
                                     </span>
-                                    <span className="text-[7px] text-green-400/50">
-                                        ({ROI_DATA[tier].leadsPerMonth} leads)
+                                    <span className="text-[7px] text-green-400/50 font-bold">
+                                        ({ROI_DATA[tier].leadsPerMonth} leads/mes)
                                     </span>
                                 </div>
                             </div>
+
+                            {/* Right side empty space for balance or other future tools */}
+                            <div className="w-[100px] hidden sm:block" />
                         </div>
 
                         {/* Narrative Caption */}
