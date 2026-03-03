@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign, Flame, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck, BellOff } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
@@ -263,7 +263,6 @@ export default function LiveDemoClient() {
     const [autoDemo, setAutoDemo] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
     const [showComparison, setShowComparison] = useState(false);
-    const [leadPulse, setLeadPulse] = useState(false);
     const autoDemoRef = useRef<NodeJS.Timeout | null>(null);
     const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
@@ -618,16 +617,16 @@ export default function LiveDemoClient() {
                 )}
             </AnimatePresence>
 
-            {/* Focus Toggle (Always visible but subtle) */}
+            {/* No Molestar Toggle */}
             <button
                 onClick={() => setFocusMode(!focusMode)}
                 className={`fixed top-20 right-6 z-[101] p-3 rounded-2xl border transition-all ${focusMode
                     ? "bg-cima-gold text-black border-cima-gold shadow-2xl scale-110"
                     : "bg-black/40 backdrop-blur-md border-white/5 text-white/20 hover:text-white hover:border-white/20"
                     }`}
-                title={focusMode ? "Salir de Modo Enfoque" : "Modo Enfoque (Ocultar UI)"}
+                title={focusMode ? "Desactivar No Molestar" : "Activar No Molestar (Ocultar UI)"}
             >
-                {focusMode ? <Eye className="h-4 w-4" /> : <Eye className="h-4 w-4 opacity-50" />}
+                {focusMode ? <BellOff className="h-4 w-4" /> : <BellOff className="h-4 w-4 opacity-50" />}
             </button>
             {/* ΓöÇΓöÇ Content Area ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             <AnimatePresence mode="wait">
