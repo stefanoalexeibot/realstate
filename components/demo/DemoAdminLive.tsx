@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { createPortal } from "react-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 // Vercel Redeploy Trigger: Phase 5 - Digital Vault
@@ -598,18 +597,16 @@ export default function DemoAdminLive({
                 onClose={() => setShowCheckoutModal(false)}
             />
 
-            <AnimatePresence>
-                {showNewPropWizard && (
-                    <NewPropertyWizard
-                        onClose={() => setShowNewPropWizard(false)}
-                        onPublish={(newProp) => {
-                            setLiveProperties(prev => [newProp, ...prev]);
-                            setNewPropHighlight(0);
-                            setTimeout(() => setNewPropHighlight(null), 4000);
-                        }}
-                    />
-                )}
-            </AnimatePresence>
+            {showNewPropWizard && (
+                <NewPropertyWizard
+                    onClose={() => setShowNewPropWizard(false)}
+                    onPublish={(newProp) => {
+                        setLiveProperties(prev => [newProp, ...prev]);
+                        setNewPropHighlight(0);
+                        setTimeout(() => setNewPropHighlight(null), 4000);
+                    }}
+                />
+            )}
         </div>
     );
 }
@@ -668,23 +665,13 @@ function NewPropertyWizard({ onClose, onPublish }: { onClose: () => void; onPubl
     );
 
     const randomPhoto = PROP_PHOTOS[Math.floor(Math.random() * PROP_PHOTOS.length)];
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
-    if (!mounted) return null;
 
-    return createPortal(
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[500] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4"
+    return (
+        <div
+            className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4"
             onClick={onClose}
         >
-            <motion.div
-                initial={{ scale: 0.92, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.92, opacity: 0, y: 20 }}
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            <div
                 className="bg-[#0F0F10] border border-white/10 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -883,9 +870,8 @@ function NewPropertyWizard({ onClose, onPublish }: { onClose: () => void; onPubl
                         </button>
                     </div>
                 )}
-            </motion.div>
-        </motion.div>,
-        document.body
+            </div>
+        </div>
     );
 }
 
