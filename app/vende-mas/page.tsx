@@ -45,7 +45,7 @@ function LiveActivityFeed() {
         { name: "Mónica G.", loc: "Veracruz", action: "descargó reporte de ROI anual", time: "hace 2 horas" },
         { name: "Ricardo E.", loc: "Chihuahua", action: "activó feedback automático IA", time: "hace 2 horas" },
         { name: "Lorena J.", loc: "Villahermosa", action: "mostró portal a un propietario", time: "hace 3 horas" },
-        { name: "Samuel V.", loc: "Cuernavaca", action: "certificó su cuenta como Agente Cima", time: "hace 3 horas" },
+        { name: "Samuel V.", loc: "Cuernavaca", action: "certificó su cuenta como Agente Aurum", time: "hace 3 horas" },
         { name: "Isabel N.", loc: "Pachuca", action: "compartió propiedad en Facebook", time: "hace 3 horas" },
         { name: "Hugo P.", loc: "Ensenada", action: "cerró renta de local comercial", time: "hace 4 horas" },
         { name: "Beatriz M.", loc: "Xalapa", action: "actualizó precio por feedback IA", time: "hace 4 horas" },
@@ -113,7 +113,7 @@ function PortalPreviewSystem() {
                                     <div className="h-3 w-3 rounded-full bg-cima-gold flex items-center justify-center">
                                         <Check className="h-1.5 w-1.5 text-black" />
                                     </div>
-                                    <span className="text-[6px] font-bold text-white/60 uppercase tracking-widest">Agente Verificado Cima</span>
+                                    <span className="text-[6px] font-bold text-white/60 uppercase tracking-widest">Agente Verificado Aurum</span>
                                 </div>
                             </div>
                             <div className="flex flex-col items-end gap-1">
@@ -349,7 +349,7 @@ function PortalPreviewSystem() {
                                                 <Cpu className="h-4 w-4 text-cima-gold" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-[7px] font-black uppercase text-white leading-none">Cima</span>
+                                                <span className="text-[7px] font-black uppercase text-white leading-none">Aurum</span>
                                                 <span className="text-[5px] font-mono text-cima-gold tracking-widest leading-none uppercase">Portal</span>
                                             </div>
                                         </div>
@@ -626,7 +626,7 @@ function EliteComparison() {
                     </ul>
                 </div>
 
-                {/* Cima Side */}
+                {/* Aurum Side */}
                 <div className="bg-cima-gold/5 border-2 border-cima-gold/30 rounded-[30px] md:rounded-[50px] p-8 md:p-16 relative overflow-hidden group shadow-[0_40px_100px_-20px_rgba(200,169,110,0.15)]">
                     <div className="absolute -top-24 -right-24 w-64 h-64 bg-cima-gold/20 blur-[100px] rounded-full" />
                     <div className="absolute top-6 right-8 bg-cima-gold text-black text-[9px] font-black uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg shadow-cima-gold/20">
@@ -638,7 +638,7 @@ function EliteComparison() {
                             <Zap className="h-6 w-6 text-black" />
                         </div>
                         <div>
-                            <h4 className="text-2xl md:text-3xl font-heading font-black text-white">Cima Master</h4>
+                            <h4 className="text-2xl md:text-3xl font-heading font-black text-white">Aurum Master</h4>
                             <p className="text-cima-gold font-mono text-[10px] uppercase tracking-widest">Template Pro</p>
                         </div>
                     </div>
@@ -939,7 +939,7 @@ function InteractiveDemoEmbed() {
                     {/* Real high-quality mockup image */}
                     <img
                         src="/mockups/admin-mockup.png"
-                        alt="Cima Agent Command Center"
+                        alt="Aurum Agent Command Center"
                         className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 group-hover:scale-[1.02]"
                     />
 
@@ -1723,7 +1723,7 @@ export default function VendeMasPage() {
                         </div>
                     </div>
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-10 border-t border-white/5">
-                        <p className="text-[9px] font-mono text-white/20 uppercase tracking-widest text-center sm:text-left">© {new Date().getFullYear()} Cima Tech Ecosystem. All rights reserved.</p>
+                        <p className="text-[9px] font-mono text-white/20 uppercase tracking-widest text-center sm:text-left">© {new Date().getFullYear()} Aurum Tech Ecosystem. All rights reserved.</p>
                         <div className="flex items-center gap-4 opacity-40">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                             <span className="text-[9px] font-mono uppercase tracking-widest">System Online</span>

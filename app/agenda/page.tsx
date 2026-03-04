@@ -1303,7 +1303,7 @@ export default function AgendaPage() {
                             <Building2 className="h-3.5 w-3.5 md:h-4 md:w-4 text-cima-gold" />
                         </div>
                         <span className="font-heading font-bold tracking-tight text-white/90 text-sm md:text-base">
-                            Cima <span className="text-cima-gold italic font-medium ml-0.5 hidden sm:inline">Pro</span>
+                            Aurum
                         </span>
                     </div>
                     <div className="flex items-center gap-3 md:gap-4">
@@ -1850,7 +1850,7 @@ export default function AgendaPage() {
                             <Building2 className="h-3.5 w-3.5 text-cima-gold" />
                         </div>
                         <span className="font-heading font-bold tracking-tight text-white/90 text-sm">
-                            Cima <span className="text-cima-gold italic font-medium">Pro</span>
+                            Aurum
                         </span>
                     </div>
                     <p className="text-[10px] text-white/20 font-mono uppercase tracking-widest text-center">
