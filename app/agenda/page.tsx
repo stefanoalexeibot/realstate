@@ -226,6 +226,7 @@ function RoiCalculator() {
 // ─── Portal Preview ────────────────────────────────────────────────────────
 function PortalPreview() {
     const [tab, setTab] = useState(0);
+    const [paused, setPaused] = useState(false);
     const tabs = [
         { label: "Portal Dueño", icon: Users },
         { label: "Feedback IA", icon: BarChart3 },
@@ -233,8 +234,15 @@ function PortalPreview() {
         { label: "Pipeline", icon: TrendingUp },
     ];
 
+    // Auto-cycle tabs every 4 seconds unless user clicked one
+    useEffect(() => {
+        if (paused) return;
+        const t = setInterval(() => setTab(prev => (prev + 1) % tabs.length), 4000);
+        return () => clearInterval(t);
+    }, [paused, tabs.length]);
+
     return (
-        <div className="bg-white/[0.02] border border-white/10 rounded-[20px] md:rounded-[32px] overflow-hidden shadow-2xl">
+        <div className="bg-white/[0.02] border border-white/10 rounded-[20px] md:rounded-[32px] overflow-hidden shadow-2xl shadow-cima-gold/5 ring-1 ring-cima-gold/10">
             {/* Top bar — fake browser chrome */}
             <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/[0.01]">
                 <div className="flex gap-1.5">
@@ -254,11 +262,21 @@ function PortalPreview() {
                 {tabs.map((t, i) => (
                     <button
                         key={i}
-                        onClick={() => setTab(i)}
-                        className={`flex items-center gap-2 px-4 md:px-6 py-3.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${tab === i ? "text-cima-gold border-b-2 border-cima-gold bg-cima-gold/5" : "text-white/25 hover:text-white/50"}`}
+                        onClick={() => { setTab(i); setPaused(true); }}
+                        className={`relative flex items-center gap-2 px-4 md:px-6 py-3.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${tab === i ? "text-cima-gold border-b-2 border-cima-gold bg-cima-gold/5" : "text-white/25 hover:text-white/50"}`}
                     >
                         <t.icon className="h-3 w-3" />
                         {t.label}
+                        {/* Auto-progress bar on active tab */}
+                        {tab === i && !paused && (
+                            <motion.span
+                                key={i}
+                                initial={{ scaleX: 0 }}
+                                animate={{ scaleX: 1 }}
+                                transition={{ duration: 4, ease: "linear" }}
+                                className="absolute bottom-0 left-0 right-0 h-[2px] bg-cima-gold/40 origin-left"
+                            />
+                        )}
                     </button>
                 ))}
             </div>
@@ -1206,24 +1224,37 @@ export default function AgendaPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                         <FadeIn direction="right">
                             <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Lo que ven tus clientes</span>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-black mb-6 md:mb-8 tracking-tight">
-                                La herramienta que gana exclusivas
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-black mb-4 md:mb-6 tracking-tight">
+                                La herramienta que cierra exclusivas <span className="text-cima-gold">antes de la primera visita</span>
                             </h2>
-                            <p className="text-white/60 text-sm md:text-lg mb-8 md:mb-10 leading-relaxed">
-                                No solo tienes una plataforma bonita. Tu propietario entra a su portal personalizado y ve todo lo que estás haciendo. La confianza se construye sola.
+                            <p className="text-white/60 text-sm md:text-lg mb-6 md:mb-8 leading-relaxed">
+                                En la primera presentación abres el portal en tu celular y se lo muestras al propietario. En ese momento ya ganaste la exclusiva — antes de salir de la reunión.
                             </p>
-                            <ul className="space-y-4 md:space-y-6 mb-10">
+
+                            {/* Mini stat */}
+                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-cima-gold/5 border border-cima-gold/15 mb-8">
+                                <div className="h-10 w-10 rounded-xl bg-cima-gold/15 flex items-center justify-center shrink-0">
+                                    <TrendingUp className="h-5 w-5 text-cima-gold" />
+                                </div>
+                                <div>
+                                    <p className="text-cima-gold font-mono text-xl font-black">73%</p>
+                                    <p className="text-white/50 text-xs leading-tight">de propietarios elige al asesor que muestra seguimiento digital en la primera reunión</p>
+                                </div>
+                            </div>
+
+                            <ul className="space-y-4 md:space-y-5 mb-10">
                                 {[
-                                    { t: "Dashboard en tiempo real", d: "Visitas, feedback, leads — todo visible sin que llamen.", icon: BarChart3 },
-                                    { t: "Expediente digital", d: "Contratos, fotos, documentos. Sin caos de PDFs.", icon: FileText },
-                                    { t: "Un clic = portal activo", d: "Captás exclusiva → activás portal → propietario encantado.", icon: Key },
+                                    { t: "Portal en vivo desde el día 1", d: "Tu propietario entra con su link privado y ve visitas, leads y avances en tiempo real.", icon: Users },
+                                    { t: "Feedback con sentimiento IA", d: "Cada visita genera un reporte. Datos reales para defender o ajustar el precio.", icon: BarChart3 },
+                                    { t: "Ficha PDF lista en 12 segundos", d: "Con tu nombre, tu logo y la propiedad formateada. Sin Word, sin Canva, sin esperar.", icon: FileText },
+                                    { t: "Pipeline de exclusivas en un panel", d: "Captando / En visitas / En cierre. Tu negocio completo visible desde el celular.", icon: Target },
                                 ].map((item, i) => (
                                     <li key={i} className="flex gap-4 group items-start">
-                                        <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center group-hover:bg-cima-gold/20 transition-all shrink-0 mt-0.5">
-                                            <item.icon className="h-4 w-4 md:h-5 md:w-5 text-cima-gold" />
+                                        <div className="h-8 w-8 md:h-9 md:w-9 rounded-lg md:rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center group-hover:bg-cima-gold/20 transition-all shrink-0 mt-0.5">
+                                            <item.icon className="h-3.5 w-3.5 md:h-4 md:w-4 text-cima-gold" />
                                         </div>
                                         <div className="flex-1">
-                                            <p className="font-bold text-white text-[11px] md:text-sm">{item.t}</p>
+                                            <p className="font-bold text-white text-xs md:text-sm">{item.t}</p>
                                             <p className="text-white/40 text-[10px] md:text-xs mt-0.5 leading-relaxed">{item.d}</p>
                                         </div>
                                     </li>
@@ -1236,8 +1267,30 @@ export default function AgendaPage() {
                                 Ver la Demo en Vivo <Rocket className="h-4 w-4" />
                             </button>
                         </FadeIn>
+
                         <FadeIn direction="left" className="w-full">
-                            <PortalPreview />
+                            {/* Floating notification */}
+                            <div className="relative">
+                                <motion.div
+                                    animate={{ y: [0, -6, 0] }}
+                                    transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+                                    className="absolute -top-4 -right-2 z-20 flex items-center gap-2 bg-[#0F1116]/90 backdrop-blur-md border border-green-500/30 rounded-full px-3 py-1.5 shadow-lg shadow-green-500/10"
+                                >
+                                    <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+                                    <span className="text-[9px] font-bold text-green-400 uppercase tracking-widest whitespace-nowrap">Portal activo · En vivo</span>
+                                </motion.div>
+
+                                {/* Gold glow behind card */}
+                                <div className="absolute -inset-2 bg-cima-gold/5 blur-2xl rounded-[40px] pointer-events-none" />
+
+                                <PortalPreview />
+
+                                {/* Bottom badge */}
+                                <div className="flex items-center justify-center gap-2 mt-4">
+                                    <Globe className="h-3 w-3 text-white/20" />
+                                    <span className="text-[9px] text-white/20 font-mono">Vista real de la plataforma · Sin ediciones</span>
+                                </div>
+                            </div>
                         </FadeIn>
                     </div>
                 </div>
