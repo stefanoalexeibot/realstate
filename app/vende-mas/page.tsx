@@ -1289,11 +1289,8 @@ export default function VendeMasPage() {
             {/* Navbar Minimalista */}
             <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 backdrop-blur-xl bg-black/20">
                 <div className="mx-auto max-w-7xl h-16 px-4 md:px-6 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center shrink-0">
-                            <Cpu className="h-3.5 w-3.5 md:h-4 md:w-4 text-cima-gold" />
-                        </div>
-                        <span className="font-heading font-bold tracking-tight text-white/90 text-sm md:text-base whitespace-nowrap">Master Template <span className="text-cima-gold italic font-medium ml-1 hidden sm:inline">Pro</span></span>
+                    <div className="flex items-center">
+                        <img src="/aurum-logo.png" alt="Aurum" className="h-10 md:h-12 w-auto shrink-0" />
                     </div>
                     <div className="flex items-center gap-3 md:gap-4">
                         <span className="hidden lg:flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase">

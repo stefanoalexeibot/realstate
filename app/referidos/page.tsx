@@ -291,11 +291,8 @@ export default function ReferidosPage() {
             {/* NAV */}
             <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 backdrop-blur-xl bg-black/20">
                 <div className="mx-auto max-w-7xl h-16 px-4 md:px-6 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-lg bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center">
-                            <Building2 className="h-3.5 w-3.5 text-cima-gold" />
-                        </div>
-                        <span className="font-heading font-bold tracking-tight text-white/90 text-sm">Aurum</span>
+                    <div className="flex items-center">
+                        <img src="/aurum-logo.png" alt="Aurum" className="h-10 w-auto shrink-0" />
                     </div>
                     <button
                         onClick={scrollToForm}
