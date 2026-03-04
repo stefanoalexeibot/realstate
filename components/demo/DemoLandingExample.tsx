@@ -65,14 +65,18 @@ export default function DemoLandingExample({
     plan,
     onLeadCapture,
     onSendMessage,
-    messages
+    messages,
+    customization,
 }: {
     plan: PlanConfig;
     onLeadCapture?: (data: any) => void;
     onSendMessage?: (from: string, text: string, isAi?: boolean) => void;
     messages?: LiveMessage[];
+    customization?: { clientName: string; propertyName: string; propertyPrice: string };
 }) {
     const f = plan.features.landing;
+    const propName = customization?.propertyName || "Residencia Premium";
+    const propPrice = customization?.propertyPrice || "8,500,000";
     const isTeam = plan.tier === "premium";
     const isPro = plan.tier === "profesional";
     const isStarter = plan.tier === "basico";
@@ -166,7 +170,7 @@ export default function DemoLandingExample({
                                 </span>
 
                                 <h1 className="text-4xl md:text-5xl font-heading font-black tracking-tight leading-none mb-2">
-                                    Residencia Premium
+                                    {propName}
                                 </h1>
                                 <p className="text-xl md:text-2xl font-heading text-white/35 mb-3 font-medium">
                                     Colinas de San Jerónimo
@@ -180,7 +184,7 @@ export default function DemoLandingExample({
 
                                 {/* Big Price */}
                                 <div className="mb-7">
-                                    <span className={`text-4xl font-heading font-black ${accentText}`}>$8,500,000</span>
+                                    <span className={`text-4xl font-heading font-black ${accentText}`}>${propPrice}</span>
                                     <span className="text-base text-white/35 font-medium ml-2">MXN</span>
                                 </div>
                             </Wrapper>

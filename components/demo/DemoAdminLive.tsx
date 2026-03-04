@@ -246,6 +246,19 @@ export default function DemoAdminLive({
     const [isMobilePreview, setIsMobilePreview] = useState(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
+    // Live leads counter
+    const [liveLeadBonus, setLiveLeadBonus] = useState(0);
+    const [flashLead, setFlashLead] = useState(false);
+
+    useEffect(() => {
+        const id = setInterval(() => {
+            setLiveLeadBonus(b => b + 1);
+            setFlashLead(true);
+            setTimeout(() => setFlashLead(false), 2000);
+        }, 30000);
+        return () => clearInterval(id);
+    }, []);
+
     // Reset to propiedades if current tab becomes unavailable
     // OR if externalTab changes (Auto Demo)
     React.useEffect(() => {
@@ -473,32 +486,49 @@ export default function DemoAdminLive({
 
                             {/* Analytics Row --- always visible */}
                             <div className={`grid transition-all duration-500 ${isMobilePreview ? "grid-cols-1 gap-2" : "grid-cols-2 md:grid-cols-4 gap-3"} mb-8`} key={plan.tier}>
-                                {STATS.map((stat, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className={`bg-white/[0.03] border border-white/5 rounded-2xl hover:border-cima-gold/20 hover:bg-white/[0.05] transition-all shadow-2xl shadow-black/40 ${isMobilePreview ? "p-3" : "p-4"}`}
-                                    >
-                                        <div className="flex items-center justify-between mb-3">
-                                            <stat.icon className="h-3.5 w-3.5 text-cima-gold/40" />
-                                            <span className="text-[8px] font-bold text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded-full">{stat.change}</span>
-                                        </div>
-                                        <div className="flex items-end justify-between gap-2">
-                                            <div>
-                                                <div className={`font-heading font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
-                                                    <Counter
-                                                        value={stat.value}
-                                                        suffix={stat.label === "Conversi-n" ? "%" : ""}
-                                                    />
+                                {STATS.map((stat, i) => {
+                                    const isLeads = stat.label === "Leads Activos";
+                                    const displayValue = isLeads && liveLeadBonus > 0
+                                        ? String(parseInt(stat.value) + liveLeadBonus)
+                                        : stat.value;
+                                    return (
+                                        <motion.div
+                                            key={i}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.1 }}
+                                            className={`border rounded-2xl hover:border-cima-gold/20 transition-all shadow-2xl shadow-black/40 ${isMobilePreview ? "p-3" : "p-4"} ${isLeads && flashLead
+                                                ? "bg-green-500/5 border-green-500/40 ring-2 ring-green-500/20"
+                                                : "bg-white/[0.03] border-white/5 hover:bg-white/[0.05]"
+                                                }`}
+                                        >
+                                            <div className="flex items-center justify-between mb-3">
+                                                <stat.icon className="h-3.5 w-3.5 text-cima-gold/40" />
+                                                <div className="flex items-center gap-1">
+                                                    {isLeads && liveLeadBonus > 0 && (
+                                                        <span className="flex items-center gap-0.5 text-[7px] font-black text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded-full">
+                                                            <span className="h-1 w-1 rounded-full bg-green-400 animate-pulse inline-block" />
+                                                            +{liveLeadBonus} en vivo
+                                                        </span>
+                                                    )}
+                                                    <span className="text-[8px] font-bold text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded-full">{stat.change}</span>
                                                 </div>
-                                                <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">{stat.label}</p>
                                             </div>
-                                            {!isMobilePreview && <MiniChart data={stat.data} />}
-                                        </div>
-                                    </motion.div>
-                                ))}
+                                            <div className="flex items-end justify-between gap-2">
+                                                <div>
+                                                    <div className={`font-heading font-black text-white ${isMobilePreview ? "text-base" : "text-xl"}`}>
+                                                        <Counter
+                                                            value={displayValue}
+                                                            suffix={stat.label === "Conversi-n" ? "%" : ""}
+                                                        />
+                                                    </div>
+                                                    <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">{stat.label}</p>
+                                                </div>
+                                                {!isMobilePreview && <MiniChart data={stat.data} />}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
 
                             {/* ------ Tab Content ------------------------------------------------------------------------ */}

@@ -2,12 +2,18 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck, BellOff, Building2 } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, ChevronLeft, Monitor, Maximize2, Eye, DollarSign, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck, BellOff, Building2, SlidersHorizontal } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
 import DemoPropertyPage from "@/components/demo/DemoPropertyPage";
 import { DEMO_PLANS, type PlanTier } from "@/lib/config/demo-plans";
+
+export interface DemoCustomization {
+    clientName: string;
+    propertyName: string;
+    propertyPrice: string;
+}
 
 export interface LiveLead {
     id: string;
@@ -256,6 +262,98 @@ function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: stri
     );
 }
 
+/* ── Script Overlay ── */
+interface AutoStep {
+    view: string;
+    tab?: string;
+    duration: number;
+    label: string;
+    script: { title: string; points: string[] };
+}
+
+function ScriptOverlay({ step, stepIndex, totalSteps, isPaused, onPrev, onNext, onStop, onTogglePause }: {
+    step: AutoStep;
+    stepIndex: number;
+    totalSteps: number;
+    isPaused: boolean;
+    onPrev: () => void;
+    onNext: () => void;
+    onStop: () => void;
+    onTogglePause: () => void;
+}) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] w-full max-w-xl px-4 pointer-events-auto"
+        >
+            <div className="bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl shadow-black/60">
+                {/* Header row */}
+                <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <button
+                            onClick={onPrev}
+                            disabled={stepIndex === 0}
+                            className="p-1 rounded-lg hover:bg-white/10 transition-all disabled:opacity-20 shrink-0"
+                        >
+                            <ChevronLeft className="h-3.5 w-3.5 text-white/50" />
+                        </button>
+                        <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider shrink-0">
+                            Paso {stepIndex + 1} de {totalSteps}
+                        </span>
+                        <span className="text-[8px] text-white/15 shrink-0">·</span>
+                        <span className="text-[10px] font-black text-cima-gold truncate">{step.script.title}</span>
+                    </div>
+                    <button onClick={onStop} className="p-1 rounded-lg hover:bg-white/10 transition-all shrink-0 ml-2">
+                        <X className="h-3.5 w-3.5 text-white/30" />
+                    </button>
+                </div>
+
+                {/* Points */}
+                <div className="space-y-1.5 mb-4 pl-1">
+                    {step.script.points.map((point, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                            <div className="h-1 w-1 rounded-full bg-cima-gold/50 mt-1.5 shrink-0" />
+                            <p className="text-[10px] text-white/65 leading-snug">{point}</p>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Footer row */}
+                <div className="flex items-center justify-between">
+                    <div className="flex gap-1">
+                        {Array.from({ length: totalSteps }).map((_, i) => (
+                            <div
+                                key={i}
+                                className={`h-1 rounded-full transition-all duration-300 ${i === stepIndex ? "w-5 bg-cima-gold" : "w-1.5 bg-white/15"}`}
+                            />
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={onTogglePause}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[8px] font-bold text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                        >
+                            {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
+                            {isPaused ? "Reanudar" : "Pausar"}
+                        </button>
+                        <button
+                            onClick={onNext}
+                            disabled={stepIndex === totalSteps - 1}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold/10 border border-cima-gold/20 rounded-lg text-[8px] font-bold text-cima-gold hover:bg-cima-gold/20 transition-all disabled:opacity-30"
+                        >
+                            Siguiente
+                            <ChevronRight className="h-3 w-3" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
 /* === MAIN COMPONENT ========================================================================================= */
 export default function LiveDemoClient() {
     const [view, setView] = useState<View>("admin");
@@ -266,12 +364,19 @@ export default function LiveDemoClient() {
     const [agentName, setAgentName] = useState("");
     const [editingName, setEditingName] = useState(false);
     const [autoDemo, setAutoDemo] = useState(false);
+    const [autoDemoPaused, setAutoDemoPaused] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
     const [showComparison, setShowComparison] = useState(false);
     const autoDemoRef = useRef<NodeJS.Timeout | null>(null);
     const [autoDemoStep, setAutoDemoStep] = useState(0);
     const plan = DEMO_PLANS[tier];
     const nameInputRef = useRef<HTMLInputElement>(null);
+
+    // Customization state
+    const [customization, setCustomization] = useState<DemoCustomization>({ clientName: "", propertyName: "", propertyPrice: "" });
+    const [showCustomize, setShowCustomize] = useState(false);
+    const [customizeDraft, setCustomizeDraft] = useState<DemoCustomization>({ clientName: "", propertyName: "", propertyPrice: "" });
+    const hasCustomization = !!(customization.clientName || customization.propertyName || customization.propertyPrice);
 
     // Shared State
     const [leads, setLeads] = useState<LiveLead[]>(INITIAL_LEADS);
@@ -340,27 +445,98 @@ export default function LiveDemoClient() {
 
     const TIER_ORDER: PlanTier[] = ["basico", "profesional", "premium"];
 
-    const AUTO_STEPS: { view: View; tab?: any; duration: number; label: string }[] = [
-        { view: "landing", duration: 5000, label: "Landing" },
-        { view: "admin", tab: "propiedades", duration: 5000, label: "Propiedades" },
-        { view: "admin", tab: "leads", duration: 4000, label: "Leads" },
-        { view: "admin", tab: "analiticos", duration: 4000, label: "Analíticos" },
-        { view: "portal", duration: 5000, label: "Portal" },
+    const AUTO_STEPS: { view: View; tab?: any; duration: number; label: string; script: { title: string; points: string[] } }[] = [
+        {
+            view: "landing", duration: 8000, label: "Landing",
+            script: {
+                title: "Landing Page de Alto Impacto",
+                points: [
+                    "Primera impresión del comprador — diseñada para convertir",
+                    "URL exclusiva por propiedad, ideal para campañas en redes",
+                    "Formulario conectado directo al panel — 0 fricción",
+                ]
+            }
+        },
+        {
+            view: "admin", tab: "propiedades", duration: 6000, label: "Propiedades",
+            script: {
+                title: "Gestión de Propiedades",
+                points: [
+                    "Todas tus propiedades en un solo lugar",
+                    "Fotos, precio y estatus en tiempo real",
+                    "Edita y publica en segundos",
+                ]
+            }
+        },
+        {
+            view: "admin", tab: "leads", duration: 6000, label: "Leads",
+            script: {
+                title: "Pipeline de Leads",
+                points: [
+                    "Leads calificados por IA automáticamente",
+                    "Score de intención de compra en cada lead",
+                    "Seguimiento en un click",
+                ]
+            }
+        },
+        {
+            view: "admin", tab: "analiticos", duration: 5000, label: "Analíticos",
+            script: {
+                title: "Analíticos en Tiempo Real",
+                points: [
+                    "Vistas, leads y conversión en un dashboard",
+                    "Datos que fundamentan tu estrategia de precio",
+                    "Comparativa vs el mercado",
+                ]
+            }
+        },
+        {
+            view: "portal", duration: 6000, label: "Portal",
+            script: {
+                title: "Portal del Propietario",
+                points: [
+                    "Tu cliente ve el progreso 24/7 sin llamarte",
+                    "Reduce fricción y genera confianza",
+                    "Evidencia fotográfica de cada acción",
+                ]
+            }
+        },
+        {
+            view: "propiedad", duration: 6000, label: "Propiedad",
+            script: {
+                title: "Página de Propiedad Premium",
+                points: [
+                    "Así ve el comprador la propiedad en el portal",
+                    "Galería, specs y contacto en una sola URL",
+                    "SEO optimizado para Google",
+                ]
+            }
+        },
     ];
 
     const startAutoDemo = useCallback(() => {
         setAutoDemo(true);
+        setAutoDemoPaused(false);
         setAutoDemoStep(0);
         setView(AUTO_STEPS[0].view);
     }, []);
 
     const stopAutoDemo = useCallback(() => {
         setAutoDemo(false);
+        setAutoDemoPaused(false);
         if (autoDemoRef.current) clearTimeout(autoDemoRef.current);
     }, []);
 
+    const goToStep = useCallback((newStep: number) => {
+        if (autoDemoRef.current) clearTimeout(autoDemoRef.current);
+        setAutoDemoPaused(true);
+        const clamped = Math.max(0, Math.min(AUTO_STEPS.length - 1, newStep));
+        setAutoDemoStep(clamped);
+        setView(AUTO_STEPS[clamped].view);
+    }, []);
+
     useEffect(() => {
-        if (!autoDemo) return;
+        if (!autoDemo || autoDemoPaused) return;
         const step = AUTO_STEPS[autoDemoStep];
         if (!step) { setAutoDemo(false); return; }
         setView(step.view);
@@ -372,7 +548,18 @@ export default function LiveDemoClient() {
             }
         }, step.duration);
         return () => { if (autoDemoRef.current) clearTimeout(autoDemoRef.current); };
-    }, [autoDemo, autoDemoStep]);
+    }, [autoDemo, autoDemoPaused, autoDemoStep]);
+
+    // Keyboard navigation for ScriptOverlay
+    useEffect(() => {
+        if (!autoDemo) return;
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === "ArrowRight") { e.preventDefault(); goToStep(autoDemoStep + 1); }
+            if (e.key === "ArrowLeft") { e.preventDefault(); goToStep(autoDemoStep - 1); }
+        };
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [autoDemo, autoDemoStep, goToStep]);
 
     function switchTier(newTier: PlanTier) {
         const oldIdx = TIER_ORDER.indexOf(tier);
@@ -490,6 +677,77 @@ export default function LiveDemoClient() {
                                     <span className={`text-[7px] font-mono ${tier === t.id ? "text-black/60" : "text-white/20"}`}>{t.price}</span>
                                 </button>
                             ))}
+                        </div>
+
+                        {/* Customize button + dropdown */}
+                        <div className="relative hidden lg:block">
+                            <button
+                                onClick={() => {
+                                    setCustomizeDraft(customization);
+                                    setShowCustomize(v => !v);
+                                }}
+                                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all ${hasCustomization
+                                    ? "bg-cima-gold/10 border-cima-gold/40 text-cima-gold"
+                                    : "bg-white/5 border-white/10 text-white/40 hover:text-white hover:bg-white/10"
+                                    }`}
+                                title="Personalizar demo"
+                            >
+                                <SlidersHorizontal className="h-3 w-3" />
+                                {hasCustomization ? "Personalizado" : "Personalizar"}
+                            </button>
+                            <AnimatePresence>
+                                {showCustomize && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                                        transition={{ duration: 0.15 }}
+                                        className="absolute right-0 top-full mt-2 w-72 bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl z-[110]"
+                                    >
+                                        <p className="text-[9px] font-black text-cima-gold uppercase tracking-widest mb-3">Personalizar Demo</p>
+                                        <div className="space-y-2.5 mb-4">
+                                            {[
+                                                { key: "clientName" as const, label: "Nombre del Prospecto", placeholder: "Ej: Familia García" },
+                                                { key: "propertyName" as const, label: "Nombre de la Propiedad", placeholder: "Ej: Residencia Chipinque" },
+                                                { key: "propertyPrice" as const, label: "Precio (solo número)", placeholder: "Ej: 12,500,000" },
+                                            ].map(({ key, label, placeholder }) => (
+                                                <div key={key}>
+                                                    <label className="text-[8px] font-bold text-white/30 uppercase tracking-widest block mb-1">{label}</label>
+                                                    <input
+                                                        value={customizeDraft[key]}
+                                                        onChange={e => setCustomizeDraft(d => ({ ...d, [key]: e.target.value }))}
+                                                        placeholder={placeholder}
+                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white placeholder:text-white/20 outline-none focus:border-cima-gold/40 transition-all"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    setCustomization(customizeDraft);
+                                                    setShowCustomize(false);
+                                                    setUpgradeFlash(true);
+                                                    setTimeout(() => setUpgradeFlash(false), 600);
+                                                }}
+                                                className="flex-1 bg-cima-gold text-black py-2 rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all"
+                                            >
+                                                Aplicar
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setCustomization({ clientName: "", propertyName: "", propertyPrice: "" });
+                                                    setCustomizeDraft({ clientName: "", propertyName: "", propertyPrice: "" });
+                                                    setShowCustomize(false);
+                                                }}
+                                                className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-[9px] font-bold text-white/40 hover:text-white transition-all"
+                                            >
+                                                Limpiar
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         <button
@@ -622,19 +880,21 @@ export default function LiveDemoClient() {
                             notificationsMuted={focusMode}
                         />
                     )}
-                    {view === "portal" && <DemoPortal plan={plan} />}
+                    {view === "portal" && <DemoPortal plan={plan} customization={customization} />}
                     {view === "landing" && (
                         <DemoLandingExample
                             plan={plan}
                             onLeadCapture={handleAddLead}
                             onSendMessage={handleAddMessage}
                             messages={messages}
+                            customization={customization}
                         />
                     )}
                     {view === "propiedad" && (
                         <DemoPropertyPage
                             plan={plan}
                             onSendMessage={handleAddMessage}
+                            customization={customization}
                         />
                     )}
                 </motion.div>
@@ -681,6 +941,21 @@ export default function LiveDemoClient() {
 
             <AnimatePresence>
                 {showComparison && <ComparisonModal onClose={() => setShowComparison(false)} />}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {autoDemo && AUTO_STEPS[autoDemoStep] && (
+                    <ScriptOverlay
+                        step={AUTO_STEPS[autoDemoStep]}
+                        stepIndex={autoDemoStep}
+                        totalSteps={AUTO_STEPS.length}
+                        isPaused={autoDemoPaused}
+                        onPrev={() => goToStep(autoDemoStep - 1)}
+                        onNext={() => goToStep(autoDemoStep + 1)}
+                        onStop={stopAutoDemo}
+                        onTogglePause={() => setAutoDemoPaused(p => !p)}
+                    />
+                )}
             </AnimatePresence>
         </div>
     );

@@ -220,13 +220,17 @@ function ShareModal({ onClose }: { onClose: () => void }) {
 export default function DemoPropertyPage({
     plan,
     onSendMessage,
+    customization,
 }: {
     plan: PlanConfig;
     onSendMessage?: (from: string, text: string, isAi?: boolean) => void;
+    customization?: { clientName: string; propertyName: string; propertyPrice: string };
 }) {
     const isTeam = plan.tier === "premium";
     const isPro = plan.tier === "profesional";
     const isStarter = plan.tier === "basico";
+    const propName = customization?.propertyName || "Residencia Premium";
+    const propPrice = customization?.propertyPrice || "8,500,000";
 
     // Accent tokens
     const accentBg = isTeam ? "bg-cima-gold" : isPro ? "bg-indigo-500" : "bg-white";
@@ -316,7 +320,7 @@ export default function DemoPropertyPage({
                 <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
                     <div className="max-w-6xl mx-auto">
                         <h1 className="text-3xl md:text-5xl font-heading font-black tracking-tight leading-none text-white mb-2">
-                            Residencia Premium
+                            {propName}
                         </h1>
                         <div className="flex items-center gap-2 text-white/50 mb-4">
                             <MapPin className="h-4 w-4" />
@@ -324,7 +328,7 @@ export default function DemoPropertyPage({
                         </div>
                         {/* Info bar */}
                         <div className="flex flex-wrap items-center gap-3 md:gap-6">
-                            <span className={`text-3xl font-heading font-black ${accentText}`}>$8,500,000 <span className="text-base text-white/40 font-medium">MXN</span></span>
+                            <span className={`text-3xl font-heading font-black ${accentText}`}>${propPrice} <span className="text-base text-white/40 font-medium">MXN</span></span>
                             <div className="h-5 w-px bg-white/15 hidden sm:block" />
                             {[
                                 { icon: BedDouble, value: "4 recámaras" },
@@ -633,7 +637,7 @@ export default function DemoPropertyPage({
                                         <span className="text-[8px] font-black text-cima-gold uppercase tracking-widest">Certificado Cima Pro</span>
                                     </div>
                                 )}
-                                <p className={`text-2xl font-heading font-black ${accentText} mb-1`}>$8,500,000</p>
+                                <p className={`text-2xl font-heading font-black ${accentText} mb-1`}>${propPrice}</p>
                                 <p className="text-xs text-white/30 mb-5">MXN · Precio de venta</p>
 
                                 {/* Agent card */}
@@ -708,7 +712,7 @@ export default function DemoPropertyPage({
                     <div className="max-w-lg mx-auto flex gap-3 pointer-events-auto">
                         <button className={`flex-1 flex items-center justify-center gap-2 ${accentBg} ${accentCtaBg} py-4 rounded-xl text-xs font-black uppercase tracking-wider hover:brightness-110 transition-all shadow-2xl active:scale-[0.98]`}>
                             <Calendar className="h-4 w-4" />
-                            Agenda tu Visita — $8,500,000
+                            Agenda tu Visita — ${propPrice}
                         </button>
                         <button className="flex items-center gap-2 bg-green-500/10 border border-green-500/25 text-green-400 px-5 py-4 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-green-500/20 transition-all shadow-lg">
                             <MessageCircle className="h-4 w-4" />

@@ -10,15 +10,18 @@ import {
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
 import UpgradeBanner from "./UpgradeBanner";
+import type { DemoCustomization } from "./LiveDemoClient";
 
 interface DemoPortalProps {
     plan: PlanConfig;
+    customization?: DemoCustomization;
 }
 
 type TabId = "dashboard" | "feedback" | "documents" | "evidence";
 
-export default function DemoPortal({ plan }: DemoPortalProps) {
+export default function DemoPortal({ plan, customization }: DemoPortalProps) {
     const f = plan.features.portal;
+    const propertyLabel = customization?.propertyName || "Residencial Las Misiones";
     const [activeTab, setActiveTab] = useState<TabId>("dashboard");
 
     const tabs: { id: TabId; label: string; icon: React.ElementType; available: boolean; requiredTier?: "profesional" | "premium" }[] = [
@@ -39,7 +42,7 @@ export default function DemoPortal({ plan }: DemoPortalProps) {
                         </div>
                         <div>
                             <h1 className="text-lg font-heading font-black tracking-tight">Portal del Propietario</h1>
-                            <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">Residencial Las Misiones • {plan.name}</p>
+                            <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest">{propertyLabel} • {plan.name}</p>
                         </div>
                     </div>
                 </div>
