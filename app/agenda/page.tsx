@@ -8,9 +8,10 @@ import {
     ShieldAlert, CheckCircle2, X, Clock, Bell,
     Globe, Heart, ChevronDown, Check,
     MinusCircle, Rocket, MousePointer2, Key, Gem,
-    FileText, Building2, DollarSign
+    FileText, Building2, DollarSign, Star, PhoneCall,
+    CalendarCheck, Monitor
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { MotionDiv } from "@/components/landing/motion-wrapper";
 import TiltCard from "@/components/landing/tilt-card";
 import FadeIn from "@/components/landing/fade-in";
@@ -120,25 +121,57 @@ function CountdownTimer() {
     );
 }
 
+// ─── CountUp hook ──────────────────────────────────────────────────────────
+function useCountUp(target: number, duration = 1.8, inView = false) {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        if (!inView) return;
+        let start = 0;
+        const step = target / (duration * 60);
+        const timer = setInterval(() => {
+            start += step;
+            if (start >= target) { setCount(target); clearInterval(timer); }
+            else setCount(Math.floor(start));
+        }, 1000 / 60);
+        return () => clearInterval(timer);
+    }, [inView, target, duration]);
+    return count;
+}
+
 // ─── Success Metrics ───────────────────────────────────────────────────────
+function MetricCard({ label, num, suffix, prefix, icon: Icon, delay }: {
+    label: string; num: number; suffix?: string; prefix?: string;
+    icon: React.ElementType; delay: number;
+}) {
+    const ref = React.useRef(null);
+    const inView = useInView(ref, { once: true, margin: "-60px" });
+    const count = useCountUp(num, 1.6, inView);
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay, duration: 0.5 }}
+            className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-center group hover:border-cima-gold/30 transition-all"
+        >
+            <div className="h-10 w-10 rounded-full bg-cima-gold/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Icon className="h-5 w-5 text-cima-gold" />
+            </div>
+            <p className="text-2xl font-black text-white mb-1 tabular-nums">
+                {prefix}{count}{suffix}
+            </p>
+            <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">{label}</p>
+        </motion.div>
+    );
+}
+
 function SuccessMetrics() {
-    const metrics = [
-        { label: "Asesores Activos", value: "+40", icon: Users },
-        { label: "Entrega Garantizada", value: "7 días", icon: Clock },
-        { label: "ROI Promedio", value: "12×", icon: TrendingUp },
-        { label: "Satisfacción", value: "99%", icon: Heart },
-    ];
     return (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {metrics.map((m, i) => (
-                <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-center group hover:border-cima-gold/30 transition-all">
-                    <div className="h-10 w-10 rounded-full bg-cima-gold/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <m.icon className="h-5 w-5 text-cima-gold" />
-                    </div>
-                    <p className="text-2xl font-black text-white mb-1">{m.value}</p>
-                    <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">{m.label}</p>
-                </div>
-            ))}
+            <MetricCard label="Asesores Activos"     num={40}  prefix="+" suffix=""      icon={Users}      delay={0} />
+            <MetricCard label="Entrega Garantizada"  num={7}   prefix=""  suffix=" días" icon={Clock}      delay={0.1} />
+            <MetricCard label="ROI Promedio"         num={12}  prefix=""  suffix="×"     icon={TrendingUp} delay={0.2} />
+            <MetricCard label="Satisfacción"         num={99}  prefix=""  suffix="%"     icon={Heart}      delay={0.3} />
         </div>
     );
 }
@@ -791,25 +824,56 @@ function BookingForm() {
             </div>
 
             {[
-                { id: "email", label: "Correo electrónico", type: "email", placeholder: "tu@correo.com", required: true },
-                { id: "agencia", label: "Agencia o zona donde trabajas", type: "text", placeholder: "Ej. San Pedro, independiente, ERA...", required: false },
+                { id: "email", label: "Correo electrónico (opcional)", type: "email", placeholder: "tu@correo.com", required: false },
+                { id: "agencia", label: "Agencia o zona (opcional)", type: "text", placeholder: "Ej. San Pedro, independiente, ERA...", required: false },
             ].map(f => (
                 <div key={f.id}>
-                    <label className="block text-[9px] font-bold uppercase tracking-widest text-white/40 mb-2">{f.label}</label>
+                    <label className="block text-[9px] font-bold uppercase tracking-widest text-white/30 mb-2">{f.label}</label>
                     <input
                         type={f.type}
                         placeholder={f.placeholder}
                         required={f.required}
                         value={form[f.id as keyof typeof form]}
                         onChange={e => setForm(prev => ({ ...prev, [f.id]: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:border-cima-gold/40 focus:bg-white/[0.07] transition-all outline-none"
+                        className="w-full bg-white/[0.03] border border-white/[0.07] rounded-xl px-4 py-3 text-sm text-white placeholder-white/15 focus:border-cima-gold/30 focus:bg-white/[0.05] transition-all outline-none"
                     />
                 </div>
             ))}
 
+            {/* "¿Qué pasa después?" mini-steps */}
+            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-2.5">
+                <p className="text-[8px] font-black text-white/20 uppercase tracking-[0.25em] mb-3">¿Qué pasa después?</p>
+                {[
+                    { icon: PhoneCall,    text: "Te llamamos en menos de 2 horas" },
+                    { icon: CalendarCheck, text: "Agendamos tu demo de 15 minutos" },
+                    { icon: Monitor,      text: "Ves la plataforma con tus propiedades" },
+                ].map((s, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                        <div className="h-6 w-6 rounded-full bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center shrink-0">
+                            <s.icon className="h-3 w-3 text-cima-gold" />
+                        </div>
+                        <p className="text-[11px] text-white/50">{s.text}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Social proof */}
+            <div className="flex items-center gap-3">
+                <div className="flex -space-x-1.5">
+                    {["CR", "LM", "DV"].map((init, i) => (
+                        <div key={i} className="h-6 w-6 rounded-full bg-gradient-to-br from-cima-gold/30 to-cima-gold/10 border border-cima-gold/30 flex items-center justify-center text-[6px] font-black text-cima-gold">
+                            {init}
+                        </div>
+                    ))}
+                </div>
+                <span className="text-[11px] text-white/25 font-mono">
+                    <span className="text-cima-gold font-bold">7</span> asesores agendaron esta semana
+                </span>
+            </div>
+
             <button
                 type="submit"
-                className="w-full py-5 bg-cima-gold text-black rounded-2xl font-heading font-black text-xs uppercase tracking-widest text-center shadow-[0_20px_40px_-15px_rgba(200,169,110,0.4)] hover:scale-[1.02] hover:bg-white transition-all flex items-center justify-center gap-3 group/btn mt-2"
+                className="w-full py-5 bg-cima-gold text-black rounded-2xl font-heading font-black text-xs uppercase tracking-widest text-center shadow-[0_20px_40px_-15px_rgba(200,169,110,0.4)] hover:scale-[1.02] hover:bg-white transition-all flex items-center justify-center gap-3 group/btn"
             >
                 Agendar mi Demo Gratis
                 <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -1079,6 +1143,15 @@ export default function AgendaPage() {
                                 <span className="relative z-10 text-xs md:text-sm uppercase tracking-widest">Quiero mi Demo Gratis →</span>
                             </button>
                             <a
+                                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero agendar mi demo de Cima Pro para asesores en Monterrey 🏠")}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full sm:w-auto px-8 py-4 md:px-10 md:py-5 bg-[#25D366]/10 border border-[#25D366]/40 text-[#25D366] font-heading font-bold rounded-xl md:rounded-2xl hover:bg-[#25D366]/20 transition-all text-[10px] md:text-sm uppercase tracking-widest flex items-center justify-center gap-3"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                                WhatsApp
+                            </a>
+                            <a
                                 href="#roi"
                                 className="w-full sm:w-auto px-8 py-4 md:px-10 md:py-5 bg-white/5 border border-white/10 font-heading font-bold rounded-xl md:rounded-2xl hover:bg-white/10 transition-all text-[10px] md:text-sm uppercase tracking-widest"
                             >
@@ -1096,6 +1169,7 @@ export default function AgendaPage() {
 
             {/* ─── SUCCESS METRICS ─── */}
             <section className="py-12 md:py-16 px-4 md:px-6 bg-black relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
                 <div className="mx-auto max-w-6xl">
                     <SuccessMetrics />
                 </div>
@@ -1197,6 +1271,50 @@ export default function AgendaPage() {
                             </FadeIn>
                         ))}
                     </div>
+                </div>
+            </section>
+
+            {/* ─── ADMIN MOCKUP ─── */}
+            <section className="py-16 md:py-24 px-4 md:px-6 relative overflow-hidden bg-[#050507]">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
+                <div className="mx-auto max-w-6xl">
+                    <FadeIn>
+                        <div className="text-center mb-12 md:mb-16">
+                            <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Vista real de la plataforma</span>
+                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-bold mb-4 tracking-tight">
+                                Tu negocio completo en un solo panel
+                            </h2>
+                            <p className="text-white/40 text-sm md:text-base max-w-2xl mx-auto">
+                                Exclusivas activas, leads, comisiones y actividad de propietarios — todo desde tu pantalla.
+                            </p>
+                        </div>
+                    </FadeIn>
+                    <FadeIn delay={0.2}>
+                        <div className="relative rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)]">
+                            {/* Browser chrome */}
+                            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-[#0A0A0B]">
+                                <div className="flex gap-1.5">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
+                                    <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
+                                    <div className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
+                                </div>
+                                <div className="flex-1 mx-3 h-5 bg-white/5 border border-white/5 rounded-md flex items-center px-2 gap-1.5">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-cima-gold/40" />
+                                    <span className="text-[8px] text-white/20 font-mono">cimapro.mx/admin/dashboard</span>
+                                </div>
+                                <span className="text-[7px] text-green-400/60 font-mono uppercase tracking-widest hidden sm:flex items-center gap-1">
+                                    <span className="h-1 w-1 rounded-full bg-green-400 animate-pulse inline-block" /> En vivo
+                                </span>
+                            </div>
+                            <img
+                                src="/mockups/admin-mockup.png"
+                                alt="Dashboard de administración Cima Pro — vista real"
+                                className="w-full block"
+                            />
+                            {/* Gradient fade bottom */}
+                            <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#050507] to-transparent pointer-events-none" />
+                        </div>
+                    </FadeIn>
                 </div>
             </section>
 
@@ -1305,6 +1423,7 @@ export default function AgendaPage() {
 
             {/* ─── TESTIMONIALS ─── */}
             <section className="py-16 md:py-24 px-4 md:px-6 relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent" />
                 <div className="mx-auto max-w-6xl">
                     <div className="text-center mb-12 md:mb-16">
                         <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Resultados reales</span>
@@ -1321,6 +1440,11 @@ export default function AgendaPage() {
                             <FadeIn key={i} delay={i * 0.1}>
                                 <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 md:p-8 relative overflow-hidden group hover:border-cima-gold/20 transition-all h-full">
                                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cima-gold/30 to-transparent" />
+                                    <div className="flex items-center gap-0.5 mb-3">
+                                        {[...Array(5)].map((_, si) => (
+                                            <Star key={si} className="h-3.5 w-3.5 text-cima-gold" fill="currentColor" />
+                                        ))}
+                                    </div>
                                     <div className="text-4xl text-white/10 font-serif leading-none mb-3">"</div>
                                     <p className="text-sm text-white/70 leading-relaxed mb-6 italic">{t.quote}</p>
                                     <div className="inline-flex items-center gap-2 bg-green-500/5 border border-green-500/15 rounded-full px-3 py-1.5 mb-6">
@@ -1344,7 +1468,8 @@ export default function AgendaPage() {
             </section>
 
             {/* ─── HOW IT WORKS ─── */}
-            <section className="py-16 md:py-24 px-4 md:px-6 bg-[#070708]">
+            <section className="py-16 md:py-24 px-4 md:px-6 bg-[#070708] relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
                 <div className="mx-auto max-w-6xl">
                     <div className="text-center mb-12 md:mb-20">
                         <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 tracking-tight">De Cero a Pro en 7 Días</h2>
@@ -1406,6 +1531,7 @@ export default function AgendaPage() {
 
             {/* ─── FORM SECTION ─── */}
             <section id="form-section" className="py-16 md:py-24 px-4 md:px-6 relative bg-[#070708]">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent" />
                 <div className="mx-auto max-w-6xl">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
                         {/* Left: urgency + trust */}
