@@ -15,6 +15,10 @@ import { MotionDiv } from "@/components/landing/motion-wrapper";
 import TiltCard from "@/components/landing/tilt-card";
 import FadeIn from "@/components/landing/fade-in";
 
+// ─── Config ────────────────────────────────────────────────────────────────
+// TODO: Reemplaza con tu número de WhatsApp real (formato: 52 + 10 dígitos)
+const WA_NUMBER = "528112345678";
+
 // ─── Live Activity Feed ────────────────────────────────────────────────────
 function LiveActivityFeed() {
     const activities = [
@@ -361,6 +365,107 @@ function EliteFaq() {
     );
 }
 
+// ─── Comparison Section ────────────────────────────────────────────────────
+function ComparisonSection() {
+    return (
+        <div className="space-y-12 md:space-y-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                {/* Traditional */}
+                <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden group grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+                    <div className="absolute top-4 right-4 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest py-1 px-3 rounded-full border border-red-500/20">
+                        Lo que usas hoy
+                    </div>
+                    <h4 className="text-xl md:text-2xl font-heading font-bold mb-6 text-white/60">Software Tradicional</h4>
+                    <div className="grid grid-cols-2 gap-3 mb-8">
+                        {["EasyBroker", "Wasi", "Wiggot", "NOCNOK"].map(name => (
+                            <div key={name} className="flex items-center justify-center p-5 bg-white/5 border border-white/10 rounded-xl relative overflow-hidden">
+                                <span className="text-xs font-bold text-white/40">{name}</span>
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div className="h-[1px] w-[80%] bg-red-500/40 rotate-[-10deg]" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <ul className="space-y-3">
+                        {[
+                            "Sitios genéricos, sin tu marca",
+                            "Sin portal para el propietario",
+                            "Reportes estáticos en PDF",
+                            "El asesor se ve como todos los demás",
+                        ].map(text => (
+                            <li key={text} className="flex items-center gap-3 text-xs text-white/30">
+                                <MinusCircle className="h-4 w-4 text-red-500/30 shrink-0" />
+                                {text}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Cima Pro */}
+                <div className="bg-cima-gold/5 border-2 border-cima-gold/30 rounded-[30px] md:rounded-[50px] p-8 md:p-16 relative overflow-hidden shadow-[0_40px_100px_-20px_rgba(200,169,110,0.15)]">
+                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-cima-gold/20 blur-[100px] rounded-full" />
+                    <div className="absolute top-6 right-8 bg-cima-gold text-black text-[9px] font-black uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg shadow-cima-gold/20">
+                        El Nuevo Estándar
+                    </div>
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="h-12 w-12 rounded-2xl bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/30">
+                            <Zap className="h-6 w-6 text-black" />
+                        </div>
+                        <div>
+                            <h4 className="text-2xl md:text-3xl font-heading font-black text-white">Cima Pro</h4>
+                            <p className="text-cima-gold font-mono text-[10px] uppercase tracking-widest">Plataforma Personal</p>
+                        </div>
+                    </div>
+                    <ul className="space-y-5 mb-10">
+                        {[
+                            { t: "Impacto Visual de Élite", d: "Diseño que justifica tu comisión de inmediato." },
+                            { t: "Portal Propietario Nativo", d: "Transparencia que elimina la ansiedad del dueño." },
+                            { t: "Ficha PDF en 12 segundos", d: "Sin Word, sin Canva, sin perder tiempo." },
+                            { t: "Dashboard de Leads y Pipeline", d: "Nunca más pierdas un prospecto en un chat." },
+                        ].map((item, i) => (
+                            <motion.li
+                                key={i}
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                className="flex gap-4"
+                            >
+                                <div className="h-6 w-6 rounded-full bg-cima-gold/20 border border-cima-gold/30 flex items-center justify-center shrink-0">
+                                    <Check className="h-3 w-3 text-cima-gold" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold text-white">{item.t}</p>
+                                    <p className="text-[11px] text-white/50">{item.d}</p>
+                                </div>
+                            </motion.li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            {/* Micro comparison table */}
+            <div className="rounded-[32px] border border-white/5 overflow-hidden bg-white/[0.01]">
+                <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
+                    {[
+                        { l: "Despliegue", t: "3 Meses", c: "7 Días" },
+                        { l: "Estética", t: "Genérica", c: "Ultra-Lujo" },
+                        { l: "Portal Dueño", t: "No incluye", c: "Nativo" },
+                        { l: "Soporte", t: "Tickets", c: "Personal VIP" },
+                    ].map((item, i) => (
+                        <div key={i} className="p-6 md:p-8 text-center space-y-2">
+                            <p className="text-[9px] uppercase font-bold text-white/20 tracking-[0.2em]">{item.l}</p>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[10px] text-white/20 line-through italic">{item.t}</span>
+                                <span className="text-sm md:text-base font-black text-cima-gold italic">{item.c}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 // ─── Features data ─────────────────────────────────────────────────────────
 const FEATURES = [
     { icon: Layout, title: "Portal Propietario 24/7", desc: "Tu cliente ve visitas, feedback y avances en tiempo real. Elimina el '¿cómo va mi casa?' para siempre." },
@@ -377,6 +482,8 @@ function BookingForm() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitted(true);
+        const msg = `Hola, me interesa la demo gratuita de Cima Pro 🏠\n\n*Nombre:* ${form.nombre}\n*Teléfono:* ${form.telefono}\n*Email:* ${form.email}\n*Agencia/Zona:* ${form.agencia || "Independiente"}\n\n¿Cuándo podemos agendar?`;
+        window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     };
 
     if (submitted) {
@@ -460,6 +567,22 @@ function BookingForm() {
                 <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
             </button>
 
+            {/* WhatsApp alternative */}
+            <div className="relative flex items-center gap-3 py-1">
+                <div className="flex-1 h-px bg-white/5" />
+                <span className="text-[9px] text-white/20 uppercase tracking-widest font-bold">o si prefieres</span>
+                <div className="flex-1 h-px bg-white/5" />
+            </div>
+            <a
+                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero información sobre la demo de Cima Pro para asesores inmobiliarios 🏠")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] rounded-2xl font-heading font-black text-xs uppercase tracking-widest text-center hover:bg-[#25D366]/20 transition-all flex items-center justify-center gap-3"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                Escribir por WhatsApp
+            </a>
+
             <div className="flex items-center justify-center gap-6 pt-1">
                 {["Sin compromiso", "15 minutos", "Respuesta en 2h"].map(t => (
                     <span key={t} className="flex items-center gap-1.5 text-[9px] font-bold text-white/20 uppercase tracking-wide">
@@ -471,18 +594,127 @@ function BookingForm() {
     );
 }
 
+// ─── Exit Intent Modal ─────────────────────────────────────────────────────
+function ExitIntentModal({ onClose, onCTA }: { onClose: () => void; onCTA: () => void }) {
+    return (
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+                style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }}
+                onClick={onClose}
+            >
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                    transition={{ type: "spring", damping: 20 }}
+                    onClick={e => e.stopPropagation()}
+                    className="bg-[#0F1116] border border-cima-gold/30 rounded-[32px] p-8 md:p-12 max-w-md w-full relative overflow-hidden shadow-[0_40px_100px_-20px_rgba(200,169,110,0.2)]"
+                >
+                    <div className="absolute -top-16 -right-16 w-48 h-48 bg-cima-gold/15 blur-[80px] rounded-full pointer-events-none" />
+                    <button
+                        onClick={onClose}
+                        className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all"
+                    >
+                        <X className="h-3.5 w-3.5 text-white/50" />
+                    </button>
+
+                    <div className="relative z-10">
+                        <div className="text-3xl mb-4">⚡</div>
+                        <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.3em] mb-3 block">
+                            Espera un momento
+                        </span>
+                        <h3 className="text-2xl md:text-3xl font-heading font-black text-white mb-3 leading-tight">
+                            ¿Ya sabías que el 90% de tus competidores no tiene esto?
+                        </h3>
+                        <p className="text-white/50 text-sm leading-relaxed mb-8">
+                            Una demo de 15 minutos puede cambiar cómo presentas exclusivas esta semana. Sin costo, sin compromisos.
+                        </p>
+                        <button
+                            onClick={() => { onClose(); onCTA(); }}
+                            className="w-full py-4 bg-cima-gold text-black rounded-2xl font-heading font-black text-xs uppercase tracking-widest hover:bg-white transition-all flex items-center justify-center gap-3 mb-3 shadow-[0_15px_30px_-10px_rgba(200,169,110,0.4)]"
+                        >
+                            Ver la Demo Gratis <ArrowRight className="h-4 w-4" />
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className="w-full text-center text-[10px] text-white/20 hover:text-white/40 transition-colors py-2"
+                        >
+                            No, prefiero seguir perdiendo exclusivas
+                        </button>
+                    </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
+    );
+}
+
 // ─── PAGE ──────────────────────────────────────────────────────────────────
 export default function AgendaPage() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [showExitIntent, setShowExitIntent] = useState(false);
+    const exitShown = React.useRef(false);
 
     const scrollToForm = () => {
         document.getElementById("form-section")?.scrollIntoView({ behavior: "smooth" });
     };
 
+    // Exit intent: desktop = mouse leaves top, mobile = 45s timer
+    useEffect(() => {
+        const handleMouseLeave = (e: MouseEvent) => {
+            if (e.clientY <= 0 && !exitShown.current) {
+                exitShown.current = true;
+                setShowExitIntent(true);
+            }
+        };
+        document.addEventListener("mouseleave", handleMouseLeave);
+
+        const mobileTimer = setTimeout(() => {
+            if (!exitShown.current && window.innerWidth < 768) {
+                exitShown.current = true;
+                setShowExitIntent(true);
+            }
+        }, 45000);
+
+        return () => {
+            document.removeEventListener("mouseleave", handleMouseLeave);
+            clearTimeout(mobileTimer);
+        };
+    }, []);
+
     return (
+        <>
+        {showExitIntent && (
+            <ExitIntentModal
+                onClose={() => setShowExitIntent(false)}
+                onCTA={() => { setShowExitIntent(false); scrollToForm(); }}
+            />
+        )}
+
+        {/* Sticky mobile CTA */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden p-3 bg-[#0A0A0B]/95 backdrop-blur-xl border-t border-white/10 flex gap-2">
+            <button
+                onClick={scrollToForm}
+                className="flex-1 py-3.5 bg-cima-gold text-black rounded-xl font-heading font-black text-[11px] uppercase tracking-widest hover:bg-white transition-all flex items-center justify-center gap-2"
+            >
+                Agenda Demo Gratis <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+            <a
+                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero info sobre Cima Pro 🏠")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-12 w-12 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 flex items-center justify-center shrink-0"
+            >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            </a>
+        </div>
+
         <div
             onMouseMove={e => setMousePos({ x: e.clientX, y: e.clientY })}
-            className="min-h-screen bg-[#0A0A0B] text-white selection:bg-cima-gold/30 scroll-smooth relative overflow-x-hidden"
+            className="min-h-screen bg-[#0A0A0B] text-white selection:bg-cima-gold/30 scroll-smooth relative overflow-x-hidden pb-20 md:pb-0"
         >
             {/* Searchlight */}
             <div
@@ -717,6 +949,24 @@ export default function AgendaPage() {
                             </FadeIn>
                         ))}
                     </div>
+                </div>
+            </section>
+
+            {/* ─── COMPARISON ─── */}
+            <section className="py-16 md:py-24 px-4 md:px-6 relative">
+                <div className="mx-auto max-w-6xl">
+                    <div className="text-center mb-16 md:mb-24">
+                        <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Análisis de Mercado</span>
+                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-heading font-black mb-6 tracking-tight">
+                            El Nuevo Estándar vs{" "}
+                            <br className="hidden md:block" />
+                            <span className="text-white/20">Lo Tradicional</span>
+                        </h2>
+                        <p className="text-white/40 text-sm md:text-lg max-w-2xl mx-auto">
+                            No es solo otro software. Es una categoría diferente de tecnología inmobiliaria.
+                        </p>
+                    </div>
+                    <ComparisonSection />
                 </div>
             </section>
 
@@ -968,5 +1218,6 @@ export default function AgendaPage() {
                 </div>
             </footer>
         </div>
+        </>
     );
 }
