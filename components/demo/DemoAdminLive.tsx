@@ -761,6 +761,37 @@ function NewPropertyWizard({ onClose, onPublish }: { onClose: () => void; onPubl
                                     <textarea value={descripcion} onChange={e => setDescripcion(e.target.value)} rows={3}
                                         className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none resize-none" />
                                 </div>
+
+                                {/* Fotos */}
+                                <div className="space-y-2">
+                                    <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Fotos de la Propiedad</label>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {/* Mock uploaded photos */}
+                                        {["/cocina-despues.png", "/estancia-despues.png"].map((src, i) => (
+                                            <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 group">
+                                                <img src={src} alt="" className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                                                <button className="absolute top-1 right-1 h-5 w-5 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <X className="h-2.5 w-2.5 text-white" />
+                                                </button>
+                                                {i === 0 && (
+                                                    <div className="absolute bottom-1 left-1 bg-cima-gold text-black text-[6px] font-black uppercase px-1.5 py-0.5 rounded-md">Principal</div>
+                                                )}
+                                            </div>
+                                        ))}
+                                        {/* Upload button */}
+                                        <button className="aspect-square rounded-xl border-2 border-dashed border-white/15 flex flex-col items-center justify-center gap-1.5 hover:border-cima-gold/50 hover:bg-cima-gold/[0.04] transition-all group">
+                                            <Upload className="h-5 w-5 text-white/20 group-hover:text-cima-gold transition-colors" />
+                                            <span className="text-[7px] font-bold text-white/20 group-hover:text-cima-gold/70 uppercase tracking-wider">Agregar</span>
+                                        </button>
+                                        {/* Empty slots */}
+                                        {[0, 0, 0].map((_, i) => (
+                                            <button key={i} className="aspect-square rounded-xl border border-dashed border-white/8 flex items-center justify-center hover:border-white/20 transition-all">
+                                                <ImageIcon className="h-4 w-4 text-white/10" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <p className="text-[7px] text-white/20 font-medium">Arrastra o haz click para subir · JPG, PNG, HEIC · Máx. 20MB c/u</p>
+                                </div>
                             </motion.div>
                         )}
 
