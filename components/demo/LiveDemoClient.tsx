@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck, BellOff } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, Monitor, Maximize2, Eye, DollarSign, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck, BellOff, Building2 } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
+import DemoPropertyPage from "@/components/demo/DemoPropertyPage";
 import { DEMO_PLANS, type PlanTier } from "@/lib/config/demo-plans";
 
 export interface LiveLead {
@@ -61,10 +62,14 @@ const NARRATIVE: Record<View, { title: string; desc: string }> = {
     portal: {
         title: "Transparencia que Enamora",
         desc: "El Portal del Dueño reduce el estrés del cliente y las llamadas de seguimiento, mostrando el progreso real 24/7."
+    },
+    propiedad: {
+        title: "Tu Propiedad, Publicada con Lujo",
+        desc: "Así ve el comprador tu propiedad: una página premium que genera confianza, destaca ante la competencia y acelera el cierre."
     }
 };
 
-type View = "admin" | "portal" | "landing";
+type View = "admin" | "portal" | "landing" | "propiedad";
 
 const ROI_DATA: Record<PlanTier, { avgComission: string; leadsPerMonth: string; potentialRevenue: string }> = {
     basico: { avgComission: "$150K", leadsPerMonth: "5-10", potentialRevenue: "$150K/mes" },
@@ -153,7 +158,7 @@ function ComparisonModal({ onClose }: { onClose: () => void }) {
     );
 }
 
-/* ΓöÇΓöÇΓöÇ Presentation Timer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ── Presentation Timer ── */
 function PresentationTimer() {
     const [seconds, setSeconds] = useState(0);
     const [running, setRunning] = useState(false);
@@ -208,7 +213,7 @@ function PresentationTimer() {
     );
 }
 
-/* ΓöÇΓöÇΓöÇ QR Code (SVG pattern) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* ── QR Code Overlay ── */
 function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: string; desc?: string }) {
     return (
         <motion.div
@@ -292,7 +297,7 @@ export default function LiveDemoClient() {
             date: "Justo ahora",
             property: "Residencia Las Misiones",
             color: source.color,
-            score: Math.floor(75 + Math.random() * 24), // Random high score for new leads
+            score: Math.floor(75 + Math.random() * 24),
             isAiQualified: Math.random() > 0.3,
             ...newLeadData
         };
@@ -300,7 +305,6 @@ export default function LiveDemoClient() {
         setLeads(prev => [lead, ...prev]);
         setLastLeadId(id);
 
-        // Automaticaly clear last lead ID after some time
         setTimeout(() => setLastLeadId(""), 5000);
     }, []);
 
@@ -319,13 +323,12 @@ export default function LiveDemoClient() {
         };
         setMessages(prev => [newMessage, ...prev]);
 
-        // Simulated AI Response if it was a user message
         if (!isAi) {
             setTimeout(() => {
                 const aiResponse: LiveMessage = {
                     id: Math.random().toString(36).substr(2, 9),
                     from: "Cima AI Assistant",
-                    message: `¡Hola ${from}! Gracias por tu interés. Un asesor se pondrá en contacto contigo pronto. ¿Te gustaría agendar una visita guiada?`,
+                    message: `¡Hola ${from}! Gracias por tu interés. Un asesor se pondrá en contacto contigo pronto.`,
                     time: "Justo ahora",
                     unread: true,
                     isAi: true
@@ -337,7 +340,6 @@ export default function LiveDemoClient() {
 
     const TIER_ORDER: PlanTier[] = ["basico", "profesional", "premium"];
 
-    // Auto-demo sequence
     const AUTO_STEPS: { view: View; tab?: any; duration: number; label: string }[] = [
         { view: "landing", duration: 5000, label: "Landing" },
         { view: "admin", tab: "propiedades", duration: 5000, label: "Propiedades" },
@@ -400,15 +402,8 @@ export default function LiveDemoClient() {
         if (editingName && nameInputRef.current) nameInputRef.current.focus();
     }, [editingName]);
 
-    const VIEW_LABELS: Record<View, string> = {
-        admin: "Esto es lo que VE EL ASESOR — gestión de propiedades, leads, visitas y analíticos",
-        portal: "Esto es lo que VE EL PROPIETARIO — transparencia total sobre el progreso de venta",
-        landing: "Esta es la LANDING PAGE para cada propiedad — captura de leads automática",
-    };
-
     return (
-        <div className={`min-h-screen bg-black text-white selection:bg-cima-gold selection:text-black font-sans ${focusMode ? "pb-0" : "pb-20"}`}>
-            {/* Upgrade flash overlay */}
+        <div className="min-h-screen bg-black text-white selection:bg-cima-gold selection:text-black font-sans pb-20">
             <AnimatePresence>
                 {upgradeFlash && (
                     <motion.div
@@ -421,165 +416,145 @@ export default function LiveDemoClient() {
                 )}
             </AnimatePresence>
 
-            {/* ΓöÇΓöÇ Top Bar / Controls ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
-            <AnimatePresence>
-                {!focusMode && (
-                    <motion.div
-                        initial={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -50 }}
-                        className="sticky top-0 z-[100] bg-black/80 backdrop-blur-xl border-b border-white/5"
-                    >
-                        <div className="max-w-[1600px] mx-auto px-4 h-16 flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-4">
-                                <div className="h-7 w-7 rounded-lg bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/20">
-                                    <Monitor className="h-3.5 w-3.5 text-black" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-wider text-white">Demo en Vivo</span>
-                                    {editingName ? (
-                                        <input
-                                            ref={nameInputRef}
-                                            value={agentName}
-                                            onChange={(e) => setAgentName(e.target.value)}
-                                            onBlur={() => setEditingName(false)}
-                                            onKeyDown={(e) => e.key === "Enter" && setEditingName(false)}
-                                            placeholder="Nombre del asesor"
-                                            className="text-[8px] font-mono text-cima-gold uppercase tracking-widest bg-transparent border-b border-cima-gold/30 outline-none w-32 pb-0.5"
-                                        />
-                                    ) : (
-                                        <button
-                                            onClick={() => setEditingName(true)}
-                                            className="flex items-center gap-1 text-[8px] font-mono text-cima-gold uppercase tracking-widest hover:text-white transition-all text-left"
-                                        >
-                                            {agentName || "Plataforma Inmobiliaria"}
-                                            <Pencil className="h-2 w-2 opacity-30" />
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* 3-way Toggle */}
-                            <div className="flex items-center gap-0.5 bg-white/[0.05] p-1 rounded-xl border border-white/10">
-                                {([
-                                    { id: "landing" as View, icon: Globe, label: "Landing", mobileLabel: "Landing" },
-                                    { id: "admin" as View, icon: Layout, label: "Panel del Asesor", mobileLabel: "Asesor" },
-                                    { id: "portal" as View, icon: Home, label: "Portal Propietario", mobileLabel: "Portal" },
-                                ]).map((tab, i) => (
-                                    <React.Fragment key={tab.id}>
-                                        {i > 0 && <ChevronRight className="h-3 w-3 text-white/10 mx-0.5 hidden sm:block" />}
-                                        <button
-                                            onClick={() => setView(tab.id)}
-                                            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-[8px] sm:text-[9px] font-bold uppercase tracking-wider transition-all ${view === tab.id
-                                                ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
-                                                : "text-white/40 hover:text-white/60 hover:bg-white/5"
-                                                }`}
-                                        >
-                                            <tab.icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                                            <span className="hidden sm:inline">{tab.label}</span>
-                                            <span className="sm:hidden">{tab.mobileLabel}</span>
-                                        </button>
-                                    </React.Fragment>
-                                ))}
-                            </div>
-
-                            {/* Actions */}
-                            <div className="flex items-center gap-2">
-                                {/* Plan Selector */}
-                                {/* Plan Selector with prices */}
-                                <div className="hidden md:flex items-center gap-0.5 bg-white/[0.03] p-0.5 rounded-lg border border-white/10">
-                                    {([
-                                        { id: "basico" as PlanTier, label: "Starter", price: DEMO_PLANS.basico.price },
-                                        { id: "profesional" as PlanTier, label: "Pro", price: DEMO_PLANS.profesional.price },
-                                        { id: "premium" as PlanTier, label: "Team", price: DEMO_PLANS.premium.price },
-                                    ]).map((t) => (
-                                        <button
-                                            key={t.id}
-                                            onClick={() => switchTier(t.id)}
-                                            className={`px-2.5 py-1.5 rounded-md text-[8px] font-bold uppercase tracking-wider transition-all flex items-center gap-1 ${tier === t.id
-                                                ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
-                                                : "text-white/30 hover:text-white/50 hover:bg-white/5"
-                                                }`}
-                                        >
-                                            <span>{t.label}</span>
-                                            <span className={`text-[7px] font-mono ${tier === t.id ? "text-black/60" : "text-white/20"}`}>{t.price}</span>
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {/* Comparison button */}
+            {/* ── Top Bar / Controls ──────────────────────── */}
+            <div className="sticky top-0 z-[100] bg-black/80 backdrop-blur-xl border-b border-white/5">
+                <div className="max-w-[1600px] mx-auto px-4 h-16 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="h-7 w-7 rounded-lg bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/20">
+                            <Monitor className="h-3.5 w-3.5 text-black" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-white">Demo en Vivo</span>
+                            {editingName ? (
+                                <input
+                                    ref={nameInputRef}
+                                    value={agentName}
+                                    onChange={(e) => setAgentName(e.target.value)}
+                                    onBlur={() => setEditingName(false)}
+                                    onKeyDown={(e) => e.key === "Enter" && setEditingName(false)}
+                                    placeholder="Nombre del asesor"
+                                    className="text-[8px] font-mono text-cima-gold uppercase tracking-widest bg-transparent border-b border-cima-gold/30 outline-none w-32 pb-0.5"
+                                />
+                            ) : (
                                 <button
-                                    onClick={() => setShowComparison(true)}
-                                    className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[8px] font-bold uppercase tracking-wider text-white/40 hover:text-white hover:bg-white/10 transition-all"
-                                    title="Ver comparativa"
+                                    onClick={() => setEditingName(true)}
+                                    className="flex items-center gap-1 text-[8px] font-mono text-cima-gold uppercase tracking-widest hover:text-white transition-all text-left"
                                 >
-                                    <Shield className="h-3 w-3" />
-                                    VS
+                                    {agentName || "Plataforma Inmobiliaria"}
+                                    <Pencil className="h-2 w-2 opacity-30" />
                                 </button>
+                            )}
+                        </div>
+                    </div>
 
-                                {/* ¡Lo Quiero! CTA */}
-                                <a
-                                    href="https://propiedades-mty.vercel.app/checkout/onboarding"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cima-gold to-amber-500 text-black rounded-xl text-[9px] font-black uppercase tracking-wider hover:from-white hover:to-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cima-gold/30 animate-pulse"
-                                    title="Cerrar venta"
-                                    style={{ animationDuration: '3s' }}
-                                >
-                                    <DollarSign className="h-3.5 w-3.5" />
-                                    ¡Lo Quiero!
-                                </a>
-
-                                {/* Timer */}
-                                <div className="hidden xl:flex">
-                                    <PresentationTimer />
-                                </div>
-
-                                {/* QR */}
+                    <div className="flex items-center gap-0.5 bg-white/[0.05] p-1 rounded-xl border border-white/10">
+                        {([
+                            { id: "landing" as View, icon: Globe, label: "Landing", mobileLabel: "Landing" },
+                            { id: "admin" as View, icon: Layout, label: "Panel del Asesor", mobileLabel: "Asesor" },
+                            { id: "portal" as View, icon: Home, label: "Portal Propietario", mobileLabel: "Portal" },
+                            { id: "propiedad" as View, icon: Building2, label: "Página de Propiedad", mobileLabel: "Propiedad" },
+                        ]).map((tab, i) => (
+                            <React.Fragment key={tab.id}>
+                                {i > 0 && <ChevronRight className="h-3 w-3 text-white/10 mx-0.5 hidden sm:block" />}
                                 <button
-                                    onClick={() => setShowQR(true)}
-                                    className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all"
-                                    title="Mostrar QR"
-                                >
-                                    <QrCode className="h-3.5 w-3.5 text-white/40" />
-                                </button>
-
-                                {/* Auto Demo */}
-                                <button
-                                    onClick={autoDemo ? stopAutoDemo : startAutoDemo}
-                                    className={`hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all ${autoDemo
-                                        ? "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20"
-                                        : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"
+                                    onClick={() => setView(tab.id)}
+                                    className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-[8px] sm:text-[9px] font-bold uppercase tracking-wider transition-all ${view === tab.id
+                                        ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
+                                        : "text-white/40 hover:text-white/60 hover:bg-white/5"
                                         }`}
-                                    title={autoDemo ? "Detener Auto Demo" : "Iniciar Auto Demo"}
                                 >
-                                    {autoDemo ? <StopCircle className="h-3 w-3" /> : <PlayCircle className="h-3 w-3" />}
-                                    {autoDemo ? `Auto` : "Auto Demo"}
+                                    <tab.icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                    <span className="hidden sm:inline">{tab.label}</span>
+                                    <span className="sm:hidden">{tab.mobileLabel}</span>
                                 </button>
+                            </React.Fragment>
+                        ))}
+                    </div>
 
-                                {/* Fullscreen */}
+                    <div className="flex items-center gap-2">
+                        <div className="hidden md:flex items-center gap-0.5 bg-white/[0.03] p-0.5 rounded-lg border border-white/10">
+                            {([
+                                { id: "basico" as PlanTier, label: "Starter", price: DEMO_PLANS.basico.price },
+                                { id: "profesional" as PlanTier, label: "Pro", price: DEMO_PLANS.profesional.price },
+                                { id: "premium" as PlanTier, label: "Team", price: DEMO_PLANS.premium.price },
+                            ]).map((t) => (
                                 <button
-                                    onClick={toggleFullscreen}
-                                    className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all"
-                                    title="Pantalla completa"
-                                >
-                                    <Maximize2 className="h-3.5 w-3.5 text-white/40" />
-                                </button>
-
-                                {/* No Molestar */}
-                                <button
-                                    onClick={() => setFocusMode(!focusMode)}
-                                    className={`p-2 rounded-lg border transition-all ${focusMode
-                                        ? "bg-cima-gold border-cima-gold text-black shadow-lg"
-                                        : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
+                                    key={t.id}
+                                    onClick={() => switchTier(t.id)}
+                                    className={`px-2.5 py-1.5 rounded-md text-[8px] font-bold uppercase tracking-wider transition-all flex items-center gap-1 ${tier === t.id
+                                        ? "bg-cima-gold text-black shadow-lg shadow-cima-gold/20"
+                                        : "text-white/30 hover:text-white/50 hover:bg-white/5"
                                         }`}
-                                    title={focusMode ? "Desactivar No Molestar" : "Activar No Molestar (Ocultar UI)"}
                                 >
-                                    <BellOff className="h-3.5 w-3.5" />
+                                    <span>{t.label}</span>
+                                    <span className={`text-[7px] font-mono ${tier === t.id ? "text-black/60" : "text-white/20"}`}>{t.price}</span>
                                 </button>
-                            </div>
+                            ))}
                         </div>
 
-                        {/* Context bar + ROI widget */}
+                        <button
+                            onClick={() => setShowComparison(true)}
+                            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[8px] font-bold uppercase tracking-wider text-white/40 hover:text-white hover:bg-white/10 transition-all"
+                            title="Ver comparativa"
+                        >
+                            <Shield className="h-3 w-3" />
+                            VS
+                        </button>
+
+                        <a
+                            href="https://propiedades-mty.vercel.app/checkout/onboarding"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cima-gold to-amber-500 text-black rounded-xl text-[9px] font-black uppercase tracking-wider hover:from-white hover:to-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cima-gold/30 animate-pulse"
+                            title="Cerrar venta"
+                        >
+                            <DollarSign className="h-3.5 w-3.5" />
+                            ¡Lo Quiero!
+                        </a>
+
+                        <div className="hidden xl:flex">
+                            <PresentationTimer />
+                        </div>
+
+                        <button
+                            onClick={() => setShowQR(true)}
+                            className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all"
+                        >
+                            <QrCode className="h-3.5 w-3.5 text-white/40" />
+                        </button>
+
+                        <button
+                            onClick={autoDemo ? stopAutoDemo : startAutoDemo}
+                            className={`hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all ${autoDemo
+                                ? "bg-red-500/10 border-red-500/20 text-red-400"
+                                : "bg-white/5 border-white/10 text-white/40"
+                                }`}
+                        >
+                            {autoDemo ? <StopCircle className="h-3 w-3" /> : <PlayCircle className="h-3 w-3" />}
+                            {autoDemo ? `Auto` : "Auto Demo"}
+                        </button>
+
+                        <button
+                            onClick={toggleFullscreen}
+                            className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all"
+                        >
+                            <Maximize2 className="h-3.5 w-3.5 text-white/40" />
+                        </button>
+
+                        <button
+                            onClick={() => setFocusMode(!focusMode)}
+                            className={`p-2 rounded-lg border transition-all ${focusMode
+                                ? "bg-cima-gold border-cima-gold text-black shadow-lg"
+                                : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
+                                }`}
+                            title={focusMode ? "Desactivar No Molestar" : "Activar No Molestar (Silenciar Notificaciones)"}
+                        >
+                            <BellOff className="h-3.5 w-3.5" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Context bar + ROI widget */}
                 <div className="border-t border-white/5 px-4 py-1.5 flex items-center justify-between relative">
                     <div className="flex items-center gap-1.5">
                         <span className="text-[7px] text-white/20 uppercase font-bold tracking-widest">Paquete:</span>
@@ -603,11 +578,9 @@ export default function LiveDemoClient() {
                         </div>
                     </div>
 
-                    {/* Right side empty space for balance or other future tools */}
                     <div className="w-[100px] hidden sm:block" />
                 </div>
 
-                {/* Narrative Caption */}
                 <div className="bg-cima-gold/5 border-b border-cima-gold/10 px-4 py-2 relative overflow-hidden">
                     <motion.div
                         key={view}
@@ -622,133 +595,93 @@ export default function LiveDemoClient() {
                             {NARRATIVE[view].desc}
                         </span>
                     </motion.div>
-                    <motion.div
-                        initial={{ left: "-10%" }}
-                        animate={{ left: "110%" }}
-                        transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                        className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent skew-x-12"
-                    />
-                </div>
-            </motion.div>
-                )}
-        </AnimatePresence>
-
-            {/* Exit No Molestar floating button (only when UI is hidden) */ }
-    <AnimatePresence>
-        {focusMode && (
-            <motion.button
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                onClick={() => setFocusMode(false)}
-                className="fixed top-6 right-6 z-[101] p-4 bg-cima-gold text-black rounded-2xl shadow-2xl shadow-cima-gold/30 hover:scale-110 active:scale-95 transition-all flex items-center gap-2"
-                title="Desactivar Modo No Molestar"
-            >
-                <BellOff className="h-4 w-4" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Salir de No Molestar</span>
-            </motion.button>
-        )}
-    </AnimatePresence>
-    {/* ΓöÇΓöÇ Content Area ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */ }
-    <AnimatePresence mode="wait">
-        <motion.div
-            key={view}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-        >
-            {view === "admin" && (
-                <DemoAdminLive
-                    plan={plan}
-                    agentName={agentName}
-                    onNavigateToLeads={handleNavigateToLeads}
-                    externalTab={AUTO_STEPS[autoDemoStep]?.tab}
-                    leads={leads}
-                    onUpdateLeadStatus={handleUpdateLeadStatus}
-                    newLeadId={lastLeadId}
-                    messages={messages}
-                    onAddMessage={handleAddMessage}
-                />
-            )}
-            {view === "portal" && <DemoPortal plan={plan} />}
-            {view === "landing" && (
-                <DemoLandingExample
-                    plan={plan}
-                    onLeadCapture={handleAddLead}
-                    onSendMessage={handleAddMessage}
-                    messages={messages}
-                />
-            )}
-        </motion.div>
-    </AnimatePresence>
-
-    {/* Bottom CTA bar */ }
-    {
-        view !== "landing" && !focusMode && (
-            <div className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-black via-black/90 to-transparent pt-8 pb-4 px-4 pointer-events-none">
-                <div className="max-w-lg mx-auto flex items-center gap-3 pointer-events-auto">
-                    <a
-                        href="https://propiedades-mty.vercel.app/checkout/onboarding"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
-                    >
-                        <DollarSign className="h-4 w-4" />
-                        ¡Lo Quiero! &middot; {plan.name}
-                    </a>
-                    <button
-                        onClick={() => setShowQR(true)}
-                        className="flex items-center gap-2 border border-white/10 bg-white/5 text-white/60 px-5 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-white/10 hover:text-white transition-all"
-                    >
-                        <QrCode className="h-3.5 w-3.5" />
-                        QR
-                    </button>
                 </div>
             </div>
-        )
-    }
 
-    {/* ΓöÇΓöÇ QR Overlay ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */ }
-    <AnimatePresence>
-        {showQR && (
-            <QROverlay
-                onClose={() => setShowQR(false)}
-                title={view === "landing" ? "Vista Móvil del Comprador" : view === "admin" ? "Notificaciones en tu Móvil" : "Portal para el Dueño (Móvil)"}
-                desc={view === "landing"
-                    ? "Escanea con tu celular para ver cómo interactúa un comprador real con esta propiedad."
-                    : view === "admin"
-                        ? "Manten el control de tus propiedades y recibe alertas de nuevos leads estés donde estés."
-                        : "Tu cliente podríá seguir el progreso de su venta cómodamente desde su smartphone."
-                }
-            />
-        )}
-    </AnimatePresence>
-
-    {/* Comparison Modal */ }
-    <AnimatePresence>
-        {showComparison && <ComparisonModal onClose={() => setShowComparison(false)} />}
-    </AnimatePresence>
-
-    {/* Upgrade glow flash */ }
-    <AnimatePresence>
-        {upgradeFlash && (
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.6 }}
-                className="fixed inset-0 z-[60] pointer-events-none"
-            >
+            {/* ── Content Area ──────────────────────────── */}
+            <AnimatePresence mode="wait">
                 <motion.div
-                    initial={{ top: "0%" }}
-                    animate={{ top: "100%" }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cima-gold to-transparent shadow-[0_0_30px_10px_rgba(200,169,110,0.4)]"
-                />
-            </motion.div>
-        )}
-    </AnimatePresence>
-        </div >
+                    key={view}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full"
+                >
+                    {view === "admin" && (
+                        <DemoAdminLive
+                            plan={plan}
+                            agentName={agentName}
+                            onNavigateToLeads={handleNavigateToLeads}
+                            externalTab={AUTO_STEPS[autoDemoStep]?.tab}
+                            leads={leads}
+                            onUpdateLeadStatus={handleUpdateLeadStatus}
+                            newLeadId={lastLeadId}
+                            messages={messages}
+                            onAddMessage={handleAddMessage}
+                            notificationsMuted={focusMode}
+                        />
+                    )}
+                    {view === "portal" && <DemoPortal plan={plan} />}
+                    {view === "landing" && (
+                        <DemoLandingExample
+                            plan={plan}
+                            onLeadCapture={handleAddLead}
+                            onSendMessage={handleAddMessage}
+                            messages={messages}
+                        />
+                    )}
+                    {view === "propiedad" && (
+                        <DemoPropertyPage
+                            plan={plan}
+                            onSendMessage={handleAddMessage}
+                        />
+                    )}
+                </motion.div>
+            </AnimatePresence>
+
+            {/* Bottom CTA bar */}
+            {view !== "landing" && view !== "propiedad" && (
+                <div className="fixed bottom-0 inset-x-0 z-50 bg-gradient-to-t from-black via-black/90 to-transparent pt-8 pb-4 px-4 pointer-events-none">
+                    <div className="max-w-[1600px] mx-auto px-4 w-full flex items-center justify-center gap-3 pointer-events-auto">
+                        <div className="max-w-lg w-full flex gap-3">
+                            <a
+                                href="https://propiedades-mty.vercel.app/checkout/onboarding"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 flex items-center justify-center gap-2 bg-cima-gold text-black px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg"
+                            >
+                                <DollarSign className="h-4 w-4" />
+                                ¡Lo Quiero! &middot; {plan.name}
+                            </a>
+                            <button
+                                onClick={() => setShowQR(true)}
+                                className="flex items-center gap-2 border border-white/10 bg-white/5 text-white/60 px-5 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider"
+                            >
+                                <QrCode className="h-3.5 w-3.5" />
+                                QR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <AnimatePresence>
+                {showQR && (
+                    <QROverlay
+                        onClose={() => setShowQR(false)}
+                        title={view === "landing" ? "Vista Móvil del Comprador" : view === "admin" ? "Notificaciones en tu Móvil" : "Portal para el Dueño (Móvil)"}
+                        desc={view === "landing"
+                            ? "Escanea con tu celular para ver cómo interactúa un comprador real."
+                            : "Usa tu móvil para recibir alertas y gestionar tus propiedades."
+                        }
+                    />
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {showComparison && <ComparisonModal onClose={() => setShowComparison(false)} />}
+            </AnimatePresence>
+        </div>
     );
 }
