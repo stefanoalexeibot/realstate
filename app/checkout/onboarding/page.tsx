@@ -140,7 +140,7 @@ function ShareModal({ data, plan, sessions, anticipo, invoiceNum, today, onClose
 
     const summaryText = `
 ╔══════════════════════════════╗
-   CIMA PRO — RESUMEN DE PROYECTO
+   AURUM — RESUMEN DE PROYECTO
 ╚══════════════════════════════╝
 
 📋 Folio: ${invoiceNum} · ${today}
@@ -170,7 +170,7 @@ ${sessions.map(s => `• ${s.title}
 🎯 Meta del cliente:
 ${data.growthGoal || "—"}
 
-¡Gracias por confiar en Cima Pro! 🚀
+¡Gracias por confiar en Aurum! 🚀
     `.trim();
 
     const copyText = async () => {
@@ -185,7 +185,7 @@ ${data.growthGoal || "—"}
     };
 
     const sendEmail = () => {
-        const subject = `Resumen de Proyecto Cima Pro — ${invoiceNum}`;
+        const subject = `Resumen de Proyecto Aurum — ${invoiceNum}`;
         const url = `mailto:${data.clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(summaryText)}`;
         window.open(url, "_blank");
     };
@@ -559,7 +559,7 @@ export default function OnboardingPortal() {
                                 <div className="space-y-4">
                                     <h2 className="text-4xl md:text-6xl font-heading font-black tracking-tight">¡BIENVENIDO<br /><span className="text-cima-gold">AL CLUB!</span></h2>
                                     <p className="text-white/50 text-base max-w-md mx-auto">
-                                        {data.clientName ? `${data.clientName}, tu` : "Tu"} proyecto con <strong className="text-white">Cima Pro {currentPlan.name}</strong> está en marcha.
+                                        {data.clientName ? `${data.clientName}, tu` : "Tu"} proyecto con <strong className="text-white">Aurum {currentPlan.name}</strong> está en marcha.
                                     </p>
                                 </div>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -704,7 +704,7 @@ export default function OnboardingPortal() {
                                 </div>
 
                                 <p className="text-[6px] text-gray-400 text-center uppercase tracking-widest leading-relaxed">
-                                    Al procesar el pago, confirmas la reserva de tu zona exclusiva y aceptas los términos de servicio de Cima Pro.
+                                    Al procesar el pago, confirmas la reserva de tu zona exclusiva y aceptas los términos de servicio de Aurum.
                                 </p>
                             </div>
                         </motion.div>
@@ -726,7 +726,7 @@ export default function OnboardingPortal() {
                             <span className="text-[9px] font-mono font-bold text-white/40 uppercase tracking-widest">Encriptación SSL 256-bit</span>
                         </div>
                     </div>
-                    <span className="text-[9px] font-bold text-white/15 uppercase tracking-[0.2em]">Cima Pro v3.1 · © 2025</span>
+                    <span className="text-[9px] font-bold text-white/15 uppercase tracking-[0.2em]">Aurum v3.1 · © 2025</span>
                 </div>
             </div>
         </div>

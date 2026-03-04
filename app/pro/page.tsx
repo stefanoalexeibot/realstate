@@ -168,7 +168,7 @@ const FAQS = [
     },
     {
         q: "¿Por qué no contratar un desarrollador independiente más barato?",
-        a: "Un freelancer puede construir partes del sistema, pero no el ecosistema. Necesitarías contratar por separado: diseñador UX, desarrollador backend, experto en CRM, especialista en IA y alguien que los integre. El proceso toma meses, los errores de integración son costosos, y cuando algo falla, nadie es responsable. Con Cima Pro tienes un solo equipo, un solo contrato y un solo punto de responsabilidad."
+        a: "Un freelancer puede construir partes del sistema, pero no el ecosistema. Necesitarías contratar por separado: diseñador UX, desarrollador backend, experto en CRM, especialista en IA y alguien que los integre. El proceso toma meses, los errores de integración son costosos, y cuando algo falla, nadie es responsable. Con Aurum tienes un solo equipo, un solo contrato y un solo punto de responsabilidad."
     },
     {
         q: "¿En cuánto tiempo comienza a generar resultados?",
@@ -496,7 +496,7 @@ export default function CimaProPage() {
                     <FadeIn>
                         <div className="text-center mb-14">
                             <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-4 block">Análisis de Valor</span>
-                            <h2 className="font-heading font-black text-4xl sm:text-5xl text-cima-text tracking-tight">Cima Pro vs. La Alternativa Tradicional</h2>
+                            <h2 className="font-heading font-black text-4xl sm:text-5xl text-cima-text tracking-tight">Aurum vs. La Alternativa Tradicional</h2>
                             <p className="text-cima-text-dim mt-4 text-base max-w-xl mx-auto">Lo que muchos intentan armar por su cuenta termina costando el doble y tardando 3 veces más.</p>
                         </div>
 
@@ -511,7 +511,7 @@ export default function CimaProPage() {
                                         <span className="text-[9px] text-cima-text-dim/50">(freelancers + CRM + diseñador)</span>
                                     </div>
                                     <div className="p-5 text-center bg-cima-gold/5">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-cima-gold block">Cima Pro</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-cima-gold block">Aurum</span>
                                         <span className="text-[9px] text-cima-gold/50">Ecosistema Unificado</span>
                                     </div>
                                 </div>
@@ -551,7 +551,7 @@ export default function CimaProPage() {
                                 </div>
                                 <div className="text-center">
                                     <p className="text-cima-text font-black text-xl mb-1">Ver Análisis de Valor</p>
-                                    <p className="text-cima-text-dim text-xs">Comparativa Cima Pro vs Tradicional</p>
+                                    <p className="text-cima-text-dim text-xs">Comparativa Aurum vs Tradicional</p>
                                 </div>
                                 <div className="flex items-center gap-2 text-cima-gold text-[10px] font-black uppercase tracking-widest mt-2">
                                     Abrir Comparativa <ArrowRight className="h-3 w-3" />
@@ -584,7 +584,7 @@ export default function CimaProPage() {
 
                                     <div className="p-8 border-b border-cima-border flex flex-col items-center">
                                         <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-2 block text-center">Análisis de Valor</span>
-                                        <h3 className="font-heading font-black text-2xl text-cima-text text-center">Cima Pro vs Tradicional</h3>
+                                        <h3 className="font-heading font-black text-2xl text-cima-text text-center">Aurum vs Tradicional</h3>
                                     </div>
 
                                     <div className="flex-1 overflow-auto p-4 sm:p-8">
@@ -592,7 +592,7 @@ export default function CimaProPage() {
                                             <div className="grid grid-cols-3 bg-white/5 font-black text-[10px] uppercase tracking-widest">
                                                 <div className="p-4 border-r border-cima-border">Punto</div>
                                                 <div className="p-4 border-r border-cima-border text-center text-red-300">Tradicional</div>
-                                                <div className="p-4 text-center text-cima-gold">Cima Pro</div>
+                                                <div className="p-4 text-center text-cima-gold">Aurum</div>
                                             </div>
                                             {[
                                                 { item: "Costo total", trad: "$60k–$150k+", cima: "$45k–$120k", cimaGood: true },
@@ -612,7 +612,7 @@ export default function CimaProPage() {
                                         </div>
                                         <div className="mt-8 p-6 rounded-2xl bg-cima-gold text-cima-bg text-center">
                                             <p className="font-black text-sm uppercase tracking-widest mb-1 italic">Veredicto Final</p>
-                                            <p className="text-xs font-bold font-heading">Cima Pro ofrece un ROI de +350% vs soluciones tradicionales en el primer año.</p>
+                                            <p className="text-xs font-bold font-heading">Aurum ofrece un ROI de +350% vs soluciones tradicionales en el primer año.</p>
                                         </div>
                                     </div>
                                 </motion.div>
