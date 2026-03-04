@@ -593,6 +593,265 @@ function PortalPreview() {
     );
 }
 
+// ─── Admin Dashboard Preview ──────────────────────────────────────────────
+function AdminDashboardPreview() {
+    const [tab, setTab] = useState(0);
+    const [paused, setPaused] = useState(false);
+    const tabs = [
+        { label: "Dashboard", icon: BarChart3 },
+        { label: "Exclusivas", icon: Building2 },
+        { label: "Leads",      icon: Users },
+        { label: "Comisiones", icon: DollarSign },
+    ];
+
+    useEffect(() => {
+        if (paused) return;
+        const t = setInterval(() => setTab(prev => (prev + 1) % tabs.length), 4500);
+        return () => clearInterval(t);
+    }, [paused, tabs.length]);
+
+    return (
+        <div className="bg-white/[0.02] border border-white/10 rounded-[20px] md:rounded-[32px] overflow-hidden shadow-2xl shadow-cima-gold/5 ring-1 ring-cima-gold/10">
+            {/* Browser chrome */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/[0.01]">
+                <div className="flex gap-1.5">
+                    <div className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
+                </div>
+                <div className="flex-1 mx-3 h-5 bg-white/5 border border-white/5 rounded-md flex items-center px-2 gap-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-cima-gold/40" />
+                    <span className="text-[8px] text-white/20 font-mono">cimapro.mx/admin/dashboard</span>
+                </div>
+                <span className="text-[7px] text-green-400/60 font-mono uppercase tracking-widest hidden sm:flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse inline-block" />En vivo
+                </span>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar">
+                {tabs.map((t, i) => (
+                    <button
+                        key={i}
+                        onClick={() => { setTab(i); setPaused(true); }}
+                        className={`relative flex items-center gap-2 px-4 md:px-6 py-3.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${tab === i ? "text-cima-gold border-b-2 border-cima-gold bg-cima-gold/5" : "text-white/25 hover:text-white/50"}`}
+                    >
+                        <t.icon className="h-3 w-3" />
+                        {t.label}
+                        {tab === i && !paused && (
+                            <motion.span
+                                key={i}
+                                initial={{ scaleX: 0 }}
+                                animate={{ scaleX: 1 }}
+                                transition={{ duration: 4.5, ease: "linear" }}
+                                className="absolute bottom-0 left-0 right-0 h-[2px] bg-cima-gold/40 origin-left"
+                            />
+                        )}
+                    </button>
+                ))}
+            </div>
+
+            {/* Content */}
+            <div className="p-5 md:p-7 min-h-[360px]">
+                <AnimatePresence mode="wait">
+
+                    {/* ── TAB 0: Dashboard ── */}
+                    {tab === 0 && (
+                        <motion.div key="dash" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
+                            <div className="grid grid-cols-4 gap-2">
+                                {[
+                                    { l: "Exclusivas", v: "7",     sub: "activas",    color: "text-cima-gold",  bg: "bg-cima-gold/5  border-cima-gold/10" },
+                                    { l: "Leads",      v: "14",    sub: "esta semana", color: "text-blue-400",   bg: "bg-blue-500/5   border-blue-500/10" },
+                                    { l: "Comisión",   v: "$280K", sub: "proyectada",  color: "text-green-400",  bg: "bg-green-500/5  border-green-500/10" },
+                                    { l: "Portales",   v: "7",     sub: "activos",     color: "text-purple-400", bg: "bg-purple-500/5 border-purple-500/10" },
+                                ].map((m, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.07 }}
+                                        className={`${m.bg} border rounded-xl p-2.5 text-center`}
+                                    >
+                                        <p className="text-[6px] text-white/30 uppercase font-bold mb-1">{m.l}</p>
+                                        <p className={`text-base font-black ${m.color}`}>{m.v}</p>
+                                        <p className="text-[6px] text-white/20 font-mono">{m.sub}</p>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                {/* Activity feed */}
+                                <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3 space-y-2">
+                                    <p className="text-[7px] font-black text-white/30 uppercase tracking-widest mb-2">Actividad reciente</p>
+                                    {[
+                                        { dot: "bg-green-400",  text: "Lead nuevo · Valle",         time: "3 min" },
+                                        { dot: "bg-cima-gold",  text: "Ficha PDF generada",          time: "12 min" },
+                                        { dot: "bg-blue-400",   text: "Visita registrada · Cumbres", time: "1h" },
+                                        { dot: "bg-purple-400", text: "Propietario revisó portal",   time: "2h" },
+                                    ].map((a, i) => (
+                                        <div key={i} className="flex items-center gap-2">
+                                            <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${a.dot}`} />
+                                            <p className="text-[8px] text-white/50 flex-1 truncate">{a.text}</p>
+                                            <span className="text-[7px] text-white/20 font-mono shrink-0">{a.time}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Bar chart */}
+                                <div className="bg-white/[0.02] border border-white/5 rounded-xl p-3">
+                                    <p className="text-[7px] font-black text-white/30 uppercase tracking-widest mb-2">Exclusivas · 6 meses</p>
+                                    <div className="flex items-end gap-1.5 h-16">
+                                        {[3, 5, 4, 7, 6, 8].map((h, i) => (
+                                            <motion.div
+                                                key={i}
+                                                initial={{ scaleY: 0 }}
+                                                animate={{ scaleY: 1 }}
+                                                transition={{ delay: i * 0.08, duration: 0.5, ease: "easeOut" }}
+                                                style={{ originY: 1, height: `${(h / 8) * 100}%` }}
+                                                className="flex-1 rounded-t bg-cima-gold/30 hover:bg-cima-gold/60 transition-colors"
+                                            />
+                                        ))}
+                                    </div>
+                                    <div className="flex justify-between mt-1">
+                                        {["A", "S", "O", "N", "D", "E"].map(m => (
+                                            <span key={m} className="text-[6px] text-white/15 font-mono flex-1 text-center">{m}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-[9px] text-white/20 text-center font-mono pt-1">Todo tu negocio en una sola pantalla — actualizado al instante.</p>
+                        </motion.div>
+                    )}
+
+                    {/* ── TAB 1: Exclusivas ── */}
+                    {tab === 1 && (
+                        <motion.div key="excl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-2">
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em]">Mis Exclusivas Activas</p>
+                                <div className="flex items-center gap-1 bg-cima-gold/10 border border-cima-gold/20 rounded-full px-2 py-0.5">
+                                    <TrendingUp className="h-2.5 w-2.5 text-cima-gold" />
+                                    <span className="text-[7px] font-bold text-cima-gold">$32.4M portafolio</span>
+                                </div>
+                            </div>
+                            {[
+                                { name: "Casa Valle del Campestre", price: "$4.2M", stage: "En Visitas", leads: 4, days: "28d", stageColor: "text-cima-gold bg-cima-gold/10 border-cima-gold/20" },
+                                { name: "PH Contry Club",           price: "$8.7M", stage: "En Cierre",  leads: 2, days: "45d", stageColor: "text-green-400 bg-green-500/10 border-green-500/20" },
+                                { name: "Casa Cumbres Platinum",    price: "$3.8M", stage: "Captando",   leads: 0, days: "2d",  stageColor: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
+                                { name: "Depto Mitras Centro",      price: "$1.9M", stage: "En Visitas", leads: 6, days: "14d", stageColor: "text-cima-gold bg-cima-gold/10 border-cima-gold/20" },
+                                { name: "Casa San Agustín",         price: "$6.0M", stage: "En Cierre",  leads: 1, days: "62d", stageColor: "text-green-400 bg-green-500/10 border-green-500/20" },
+                            ].map((prop, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.06 }}
+                                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-cima-gold/20 transition-all"
+                                >
+                                    <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center shrink-0">
+                                        <Building2 className="h-3.5 w-3.5 text-white/30" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[9px] font-bold text-white truncate">{prop.name}</p>
+                                        <p className="text-[8px] text-cima-gold font-black">{prop.price}</p>
+                                    </div>
+                                    <div className="text-right shrink-0 space-y-0.5">
+                                        <span className={`inline-block text-[7px] font-bold px-1.5 py-0.5 rounded-full border ${prop.stageColor}`}>{prop.stage}</span>
+                                        <p className="text-[6px] text-white/25 font-mono">{prop.leads} leads · {prop.days}</p>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+
+                    {/* ── TAB 2: Leads ── */}
+                    {tab === 2 && (
+                        <motion.div key="leads" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-2.5">
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em]">Bandeja de Leads</p>
+                                <div className="flex items-center gap-1 bg-blue-500/10 border border-blue-500/20 rounded-full px-2 py-0.5">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+                                    <span className="text-[7px] font-bold text-blue-400">14 leads activos</span>
+                                </div>
+                            </div>
+                            {[
+                                { name: "Juan M.",    prop: "Casa Valle",   score: 92, time: "3 min", hot: true,  source: "Portal" },
+                                { name: "Sofía G.",   prop: "PH Contry",    score: 78, time: "1h",   hot: false, source: "WhatsApp" },
+                                { name: "Roberto L.", prop: "Depto Mitras", score: 65, time: "3h",   hot: false, source: "Portal" },
+                                { name: "Ana P.",     prop: "Casa Cumbres", score: 45, time: "1d",   hot: false, source: "Web" },
+                            ].map((lead, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.07 }}
+                                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${lead.hot ? "bg-cima-gold/5 border-cima-gold/20" : "bg-white/[0.02] border-white/5"}`}
+                                >
+                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-[8px] font-black shrink-0 ${lead.hot ? "bg-cima-gold text-black" : "bg-white/10 text-white/50"}`}>
+                                        {lead.name.split(" ").map((n: string) => n[0]).join("")}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-1.5 mb-0.5">
+                                            <p className="text-[9px] font-bold text-white">{lead.name}</p>
+                                            {lead.hot && <span className="text-[6px] bg-cima-gold text-black font-black px-1 py-0.5 rounded uppercase tracking-wide">Hot</span>}
+                                        </div>
+                                        <p className="text-[7px] text-white/40 truncate">{lead.prop} · {lead.source}</p>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                        <p className={`text-[10px] font-black ${lead.score >= 80 ? "text-green-400" : lead.score >= 60 ? "text-cima-gold" : "text-white/30"}`}>{lead.score}<span className="text-[6px] opacity-50">/100</span></p>
+                                        <p className="text-[6px] text-white/25 font-mono">{lead.time}</p>
+                                    </div>
+                                </motion.div>
+                            ))}
+                            <p className="text-[9px] text-white/20 text-center font-mono">Score automático por IA — actúa primero en los leads más calientes.</p>
+                        </motion.div>
+                    )}
+
+                    {/* ── TAB 3: Comisiones ── */}
+                    {tab === 3 && (
+                        <motion.div key="comis" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em]">Mis Comisiones 2025</p>
+                                <span className="text-[7px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 rounded-full px-2 py-0.5">+38% vs 2024</span>
+                            </div>
+                            <div className="bg-cima-gold/5 border border-cima-gold/15 rounded-2xl p-4 text-center">
+                                <p className="text-[8px] uppercase font-bold text-cima-gold/60 tracking-widest mb-1">Comisión proyectada anual</p>
+                                <p className="text-3xl font-heading font-black text-white">$1,440,000</p>
+                                <p className="text-[8px] text-white/30 font-mono mt-0.5">basado en tu pipeline actual</p>
+                            </div>
+                            <div className="space-y-2">
+                                <p className="text-[7px] font-bold text-white/30 uppercase tracking-widest">Desglose mensual</p>
+                                {[
+                                    { month: "Noviembre", amount: "$240,000", cierres: 2, status: "cobrada" },
+                                    { month: "Diciembre", amount: "$180,000", cierres: 1, status: "cobrada" },
+                                    { month: "Enero",     amount: "$280,000", cierres: 2, status: "en proceso" },
+                                ].map((row, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, x: 10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.08 }}
+                                        className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5"
+                                    >
+                                        <div>
+                                            <p className="text-[9px] font-bold text-white">{row.month}</p>
+                                            <p className="text-[7px] text-white/30">{row.cierres} cierre{row.cierres > 1 ? "s" : ""}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-black text-cima-gold">{row.amount}</p>
+                                            <span className={`text-[6px] font-bold px-1.5 py-0.5 rounded-full ${row.status === "cobrada" ? "text-green-400 bg-green-500/10" : "text-yellow-400 bg-yellow-500/10"}`}>{row.status}</span>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+}
+
 // ─── FAQ ──────────────────────────────────────────────────────────────────
 function EliteFaq() {
     const faqs = [
@@ -1290,30 +1549,7 @@ export default function AgendaPage() {
                         </div>
                     </FadeIn>
                     <FadeIn delay={0.2}>
-                        <div className="relative rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)]">
-                            {/* Browser chrome */}
-                            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-[#0A0A0B]">
-                                <div className="flex gap-1.5">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
-                                    <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
-                                    <div className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
-                                </div>
-                                <div className="flex-1 mx-3 h-5 bg-white/5 border border-white/5 rounded-md flex items-center px-2 gap-1.5">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-cima-gold/40" />
-                                    <span className="text-[8px] text-white/20 font-mono">cimapro.mx/admin/dashboard</span>
-                                </div>
-                                <span className="text-[7px] text-green-400/60 font-mono uppercase tracking-widest hidden sm:flex items-center gap-1">
-                                    <span className="h-1 w-1 rounded-full bg-green-400 animate-pulse inline-block" /> En vivo
-                                </span>
-                            </div>
-                            <img
-                                src="/mockups/admin-mockup.png"
-                                alt="Dashboard de administración Cima Pro — vista real"
-                                className="w-full block"
-                            />
-                            {/* Gradient fade bottom */}
-                            <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#050507] to-transparent pointer-events-none" />
-                        </div>
+                        <AdminDashboardPreview />
                     </FadeIn>
                 </div>
             </section>
