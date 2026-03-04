@@ -1018,11 +1018,18 @@ const FEATURES = [
 function BookingForm() {
     const [form, setForm] = useState({ nombre: "", telefono: "", email: "", agencia: "" });
     const [submitted, setSubmitted] = useState(false);
+    const [referredBy, setReferredBy] = useState("");
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get("ref");
+        if (ref) setReferredBy(ref);
+    }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitted(true);
-        const msg = `Hola, me interesa la demo gratuita de Aurum 🏠\n\n*Nombre:* ${form.nombre}\n*Teléfono:* ${form.telefono}\n*Email:* ${form.email}\n*Agencia/Zona:* ${form.agencia || "Independiente"}\n\n¿Cuándo podemos agendar?`;
+        const msg = `Hola, me interesa la demo gratuita de Aurum 🏠\n\n*Nombre:* ${form.nombre}\n*Teléfono:* ${form.telefono}\n*Email:* ${form.email}\n*Agencia/Zona:* ${form.agencia || "Independiente"}${referredBy ? `\n*Referido por:* ${referredBy}` : ""}\n\n¿Cuándo podemos agendar?`;
         window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     };
 
