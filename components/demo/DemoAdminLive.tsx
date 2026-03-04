@@ -30,6 +30,7 @@ interface DemoAdminLiveProps {
     externalTab?: SidebarTab;
     messages: LiveMessage[];
     onAddMessage: (from: string, text: string, isAi?: boolean) => void;
+    notificationsMuted?: boolean;
 }
 
 /* --- Mock Data ------------------------------------------------------------------------------------------------- */
@@ -237,7 +238,8 @@ export default function DemoAdminLive({
     onNavigateToLeads,
     externalTab,
     messages,
-    onAddMessage
+    onAddMessage,
+    notificationsMuted
 }: DemoAdminLiveProps) {
     const f = plan.features.admin;
     const [activeTab, setActiveTab] = useState<SidebarTab>("propiedades");
@@ -546,10 +548,12 @@ export default function DemoAdminLive({
                 </div>
             </div>
 
-            <RotatingToast onClick={() => {
-                setActiveTab("leads");
-                if (onNavigateToLeads) onNavigateToLeads();
-            }} />
+            {!notificationsMuted && (
+                <RotatingToast onClick={() => {
+                    setActiveTab("leads");
+                    if (onNavigateToLeads) onNavigateToLeads();
+                }} />
+            )}
 
             <CheckoutModal
                 isOpen={showCheckoutModal}
