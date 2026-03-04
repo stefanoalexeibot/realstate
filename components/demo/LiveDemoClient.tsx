@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, ChevronLeft, Monitor, Maximize2, Eye, DollarSign, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck, BellOff, Building2, SlidersHorizontal } from "lucide-react";
+import { Instagram, Facebook, Globe, Users as UsersIcon, Timer, QrCode, Play, Pause, RotateCcw, Pencil, PlayCircle, StopCircle, Layout, Home, ChevronRight, ChevronLeft, Monitor, Maximize2, Eye, DollarSign, Zap, X, ArrowRight, TrendingUp, Shield, CheckCircle2, Smartphone, FileSpreadsheet, PhoneCall, Image as ImageIcon, BarChart3, UserCheck, BellOff, Building2, SlidersHorizontal, UserPlus } from "lucide-react";
 import DemoAdminLive from "@/components/demo/DemoAdminLive";
 import DemoPortal from "@/components/demo/DemoPortal";
 import DemoLandingExample from "@/components/demo/DemoLandingExample";
@@ -354,6 +354,200 @@ function ScriptOverlay({ step, stepIndex, totalSteps, isPaused, onPrev, onNext, 
     );
 }
 
+interface FiredLeadInfo {
+    name: string;
+    source: string;
+    sourceColor: string;
+    score: number;
+    property: string;
+}
+
+/* --- FiredLeadToast ---------------------------------------- */
+function FiredLeadToast({ lead, onDismiss }: { lead: FiredLeadInfo; onDismiss: () => void }) {
+    const [phase, setPhase] = useState<"incoming" | "qualified">("incoming");
+
+    useEffect(() => {
+        const t1 = setTimeout(() => setPhase("qualified"), 1500);
+        const t2 = setTimeout(() => onDismiss(), 5000);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, [onDismiss]);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            className="fixed top-20 right-4 z-[150] w-72"
+        >
+            <div className="bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
+                <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                        {phase === "incoming" ? (
+                            <div className="h-8 w-8 rounded-lg bg-cima-gold/20 flex items-center justify-center">
+                                <Zap className="h-4 w-4 text-cima-gold animate-pulse" />
+                            </div>
+                        ) : (
+                            <div className="h-8 w-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                                <CheckCircle2 className="h-4 w-4 text-green-400" />
+                            </div>
+                        )}
+                        <div>
+                            <p className="text-[10px] font-black text-white">{lead.name}</p>
+                            <p className={`text-[9px] font-bold ${phase === "incoming" ? "text-cima-gold" : "text-green-400"}`}>
+                                {phase === "incoming" ? "Calificando con IA..." : "¡Lead Calificado!"}
+                            </p>
+                        </div>
+                    </div>
+                    <button onClick={onDismiss} className="p-1 hover:bg-white/10 rounded-lg transition-all">
+                        <X className="h-3 w-3 text-white/30" />
+                    </button>
+                </div>
+                {phase === "incoming" ? (
+                    <div className="mt-2">
+                        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                            <motion.div
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 1.5, ease: "linear" }}
+                                className="h-full bg-cima-gold rounded-full"
+                            />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="mt-2 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full ${lead.sourceColor}`}>{lead.source}</span>
+                            <span className="text-[9px] text-white/50 truncate max-w-[100px]">{lead.property}</span>
+                        </div>
+                        <div className="flex items-center gap-1 bg-green-500/10 border border-green-500/20 rounded-lg px-2 py-0.5">
+                            <span className="text-[8px] font-black text-green-400">Score {lead.score}</span>
+                        </div>
+                    </div>
+                )}
+                {phase === "qualified" && (
+                    <p className="mt-2 text-[8px] text-white/30 font-bold">Aparece en tu panel → Leads</p>
+                )}
+            </div>
+        </motion.div>
+    );
+}
+
+/* --- ROICalculatorModal ---------------------------------------- */
+function ROICalculatorModal({ onClose }: { onClose: () => void }) {
+    const [propCount, setPropCount] = useState(3);
+    const [commission, setCommission] = useState("300,000");
+
+    const commissionNum = parseInt(commission.replace(/,/g, "")) || 0;
+    const leadsPerMonth = propCount * 8;
+    const closingsPerMonth = Math.max(1, Math.round(propCount * 0.4));
+    const monthlyRevenue = closingsPerMonth * commissionNum;
+    const yearlyRevenue = monthlyRevenue * 12;
+    const recoveryClosings = commissionNum > 0 ? Math.ceil(49900 / commissionNum) : 1;
+
+    const handleCommissionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value.replace(/,/g, "");
+        if (raw === "" || /^\d+$/.test(raw)) {
+            const num = parseInt(raw) || 0;
+            setCommission(num > 0 ? num.toLocaleString() : "");
+        }
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[99] bg-black/90 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={onClose}
+        >
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="bg-[#111] rounded-3xl p-8 max-w-lg w-full border border-white/10 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 className="text-lg font-black text-white uppercase tracking-tight">Calculadora ROI</h3>
+                        <p className="text-[10px] text-white/40 mt-0.5">¿Cuánto puedes ganar con Cima?</p>
+                    </div>
+                    <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/10 transition-all">
+                        <X className="h-5 w-5 text-white/40" />
+                    </button>
+                </div>
+
+                <div className="space-y-5 mb-6">
+                    <div>
+                        <label className="text-[9px] font-bold text-white/40 uppercase tracking-widest block mb-2">Propiedades activas</label>
+                        <div className="flex gap-2">
+                            {([1, 3, 5, 10] as const).map((n) => (
+                                <button
+                                    key={n}
+                                    onClick={() => setPropCount(n)}
+                                    className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase border transition-all ${propCount === n
+                                        ? "bg-cima-gold text-black border-cima-gold"
+                                        : "bg-white/5 border-white/10 text-white/40 hover:text-white hover:bg-white/10"
+                                    }`}
+                                >
+                                    {n === 10 ? "10+" : n}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        <label className="text-[9px] font-bold text-white/40 uppercase tracking-widest block mb-2">Comisión promedio por venta ($)</label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[11px] text-white/30 font-bold">$</span>
+                            <input
+                                value={commission}
+                                onChange={handleCommissionChange}
+                                placeholder="300,000"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-8 py-3 text-[13px] font-bold text-white placeholder:text-white/20 outline-none focus:border-cima-gold/40 transition-all"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 mb-5">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest mb-1">Leads / mes</p>
+                            <p className="text-2xl font-black text-white">{leadsPerMonth}</p>
+                        </div>
+                        <div>
+                            <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest mb-1">Potencial / mes</p>
+                            <p className="text-2xl font-black text-white">${monthlyRevenue.toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div className="border-t border-white/5 pt-4">
+                        <p className="text-[8px] font-bold text-white/30 uppercase tracking-widest mb-1">Potencial anual</p>
+                        <p className="text-3xl font-black text-green-400">${yearlyRevenue.toLocaleString()}</p>
+                    </div>
+                </div>
+
+                <div className="bg-cima-gold/5 border border-cima-gold/20 rounded-2xl p-4 mb-5">
+                    <p className="text-[10px] text-cima-gold font-bold leading-relaxed">
+                        Recuperas la inversión en tu{" "}
+                        {recoveryClosings === 1 ? "primera venta" : `primer ${recoveryClosings} cierres`}
+                        {" "}— <span className="font-black">$49,900 pago único.</span>
+                    </p>
+                </div>
+
+                <a
+                    href="https://propiedades-mty.vercel.app/checkout/onboarding"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 bg-cima-gold text-black py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-cima-gold/20 active:scale-95"
+                >
+                    <DollarSign className="h-4 w-4" />
+                    Comenzar con Cima Pro
+                </a>
+            </motion.div>
+        </motion.div>
+    );
+}
+
 /* === MAIN COMPONENT ========================================================================================= */
 export default function LiveDemoClient() {
     const [view, setView] = useState<View>("admin");
@@ -377,6 +571,12 @@ export default function LiveDemoClient() {
     const [showCustomize, setShowCustomize] = useState(false);
     const [customizeDraft, setCustomizeDraft] = useState<DemoCustomization>({ clientName: "", propertyName: "", propertyPrice: "" });
     const hasCustomization = !!(customization.clientName || customization.propertyName || customization.propertyPrice);
+
+    // Fire Lead + ROI states
+    const [showROICalc, setShowROICalc] = useState(false);
+    const [firedLead, setFiredLead] = useState<FiredLeadInfo | null>(null);
+    const [isFiring, setIsFiring] = useState(false);
+    const [pendingAdminTab, setPendingAdminTab] = useState<string | undefined>(undefined);
 
     // Shared State
     const [leads, setLeads] = useState<LiveLead[]>(INITIAL_LEADS);
@@ -442,6 +642,36 @@ export default function LiveDemoClient() {
             }, 2000);
         }
     }, []);
+
+    const fireDemoLead = useCallback(() => {
+        const LEAD_POOL: FiredLeadInfo[] = [
+            { name: "Familia Hernández", source: "Instagram", sourceColor: "text-pink-400 bg-pink-500/10", score: 92, property: "Residencia Las Misiones" },
+            { name: "Ing. Diego Morales", source: "Landing", sourceColor: "text-emerald-400 bg-emerald-500/10", score: 89, property: "Torre LOVFT Depto 12B" },
+            { name: "Arq. Valeria Santos", source: "Marketplace", sourceColor: "text-blue-400 bg-blue-500/10", score: 94, property: "Residencia Chipinque" },
+            { name: "Dr. Ramón Gutiérrez", source: "Instagram", sourceColor: "text-pink-400 bg-pink-500/10", score: 96, property: "Casa Valle Poniente" },
+            { name: "Lic. Patricia Reyes", source: "Landing", sourceColor: "text-emerald-400 bg-emerald-500/10", score: 88, property: "Pent. Santa María" },
+            { name: "Familia Castillo", source: "Referido", sourceColor: "text-amber-400 bg-amber-500/10", score: 91, property: "Residencia Contry Sol" },
+        ];
+        const sourceIconMap: Record<string, any> = {
+            Instagram, Landing: Globe, Marketplace: Facebook, Referido: UsersIcon,
+        };
+        const pool = LEAD_POOL[Math.floor(Math.random() * LEAD_POOL.length)];
+        handleAddLead({
+            name: pool.name,
+            source: pool.source,
+            sourceIcon: sourceIconMap[pool.source] || Globe,
+            color: pool.sourceColor,
+            score: pool.score,
+            property: pool.property,
+            isAiQualified: true,
+        });
+        setFiredLead(pool);
+        setView("admin");
+        setPendingAdminTab("leads");
+        setTimeout(() => setPendingAdminTab(undefined), 500);
+        setIsFiring(true);
+        setTimeout(() => setIsFiring(false), 1200);
+    }, [handleAddLead]);
 
     const TIER_ORDER: PlanTier[] = ["basico", "profesional", "premium"];
 
@@ -759,6 +989,15 @@ export default function LiveDemoClient() {
                             VS
                         </button>
 
+                        <button
+                            onClick={() => setShowROICalc(true)}
+                            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[8px] font-bold uppercase tracking-wider text-white/40 hover:text-green-400 hover:border-green-500/20 hover:bg-green-500/5 transition-all"
+                            title="Calculadora ROI"
+                        >
+                            <BarChart3 className="h-3 w-3" />
+                            ROI
+                        </button>
+
                         <a
                             href="https://propiedades-mty.vercel.app/checkout/onboarding"
                             target="_blank"
@@ -790,6 +1029,19 @@ export default function LiveDemoClient() {
                         >
                             {autoDemo ? <StopCircle className="h-3 w-3" /> : <PlayCircle className="h-3 w-3" />}
                             {autoDemo ? `Auto` : "Auto Demo"}
+                        </button>
+
+                        <button
+                            onClick={fireDemoLead}
+                            disabled={isFiring}
+                            className={`hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[8px] font-bold uppercase tracking-wider transition-all ${isFiring
+                                ? "bg-cima-gold/20 border-cima-gold/40 text-cima-gold scale-95"
+                                : "bg-white/5 border-white/10 text-white/40 hover:bg-green-500/10 hover:border-green-500/20 hover:text-green-400"
+                                }`}
+                            title="Simular lead entrante"
+                        >
+                            <UserPlus className={`h-3 w-3 ${isFiring ? "animate-bounce" : ""}`} />
+                            {isFiring ? "¡Entrando!" : "Disparar Lead"}
                         </button>
 
                         <button
@@ -871,7 +1123,7 @@ export default function LiveDemoClient() {
                             plan={plan}
                             agentName={agentName}
                             onNavigateToLeads={handleNavigateToLeads}
-                            externalTab={AUTO_STEPS[autoDemoStep]?.tab}
+                            externalTab={pendingAdminTab || AUTO_STEPS[autoDemoStep]?.tab}
                             leads={leads}
                             onUpdateLeadStatus={handleUpdateLeadStatus}
                             newLeadId={lastLeadId}
@@ -956,6 +1208,14 @@ export default function LiveDemoClient() {
                         onTogglePause={() => setAutoDemoPaused(p => !p)}
                     />
                 )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {showROICalc && <ROICalculatorModal onClose={() => setShowROICalc(false)} />}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {firedLead && <FiredLeadToast lead={firedLead} onDismiss={() => setFiredLead(null)} />}
             </AnimatePresence>
         </div>
     );
