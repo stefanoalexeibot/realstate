@@ -25,11 +25,11 @@ function LiveActivityFeed() {
     const activities = [
         { name: "Carlos R.", loc: "San Pedro", action: "agendó su demo gratuita", time: "hace 3 min" },
         { name: "Laura M.", loc: "Monterrey", action: "activó su portal de propietario", time: "hace 8 min" },
-        { name: "Diego V.", loc: "Cumbres", action: "cerró exclusiva de $8.5M con Cima", time: "hace 15 min" },
+        { name: "Diego V.", loc: "Cumbres", action: "cerró exclusiva de $8.5M con Aurum", time: "hace 15 min" },
         { name: "Ana P.", loc: "Valle", action: "captó mansión en San Agustín", time: "hace 20 min" },
         { name: "Marco S.", loc: "Garza García", action: "generó ficha técnica PDF en 12 seg", time: "hace 28 min" },
         { name: "Elena V.", loc: "Contry", action: "recibió 4 leads desde su portal", time: "hace 35 min" },
-        { name: "Roberto G.", loc: "Santa Catarina", action: "firmó contrato de exclusiva vía Cima", time: "hace 40 min" },
+        { name: "Roberto G.", loc: "Santa Catarina", action: "firmó contrato de exclusiva vía Aurum", time: "hace 40 min" },
         { name: "Sofía L.", loc: "Mitras", action: "mostró portal a propietario en presentación", time: "hace 50 min" },
         { name: "Javier M.", loc: "Loma Larga", action: "actualizó 3 exclusivas desde el celular", time: "hace 1 hora" },
         { name: "Carla B.", loc: "Monterrey Centro", action: "activó QR inteligente para open house", time: "hace 1 hora" },
@@ -195,7 +195,7 @@ function RoiCalculator() {
                         Tu plataforma se paga con <span className="text-cima-gold">un solo cierre.</span>
                     </h3>
                     <p className="text-white/50 mb-8 text-xs md:text-sm leading-relaxed">
-                        Ajusta el valor de tus propiedades y cuántas cierras al año. Ve cuántas veces recuperas tu inversión en Cima Pro.
+                        Ajusta el valor de tus propiedades y cuántas cierras al año. Ve cuántas veces recuperas tu inversión en Aurum.
                     </p>
                     <div className="space-y-6 md:space-y-8">
                         <div>
@@ -285,7 +285,7 @@ function PortalPreview() {
                 </div>
                 <div className="flex-1 mx-3 h-5 bg-white/5 border border-white/5 rounded-md flex items-center px-2 gap-1.5">
                     <div className="h-1.5 w-1.5 rounded-full bg-cima-gold/40" />
-                    <span className="text-[8px] text-white/20 font-mono">cimapro.mx/portal/pedro-garza</span>
+                    <span className="text-[8px] text-white/20 font-mono">aurum.mx/portal/pedro-garza</span>
                 </div>
                 <span className="text-[7px] text-white/20 font-mono uppercase tracking-widest hidden sm:block">● En vivo</span>
             </div>
@@ -325,13 +325,13 @@ function PortalPreview() {
                             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4">
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
-                                        <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em] mb-1">Mi Portal · Cima Pro</p>
+                                        <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em] mb-1">Mi Portal · Aurum</p>
                                         <h5 className="text-sm font-black text-white">Hola, Pedro 👋</h5>
                                         <div className="flex items-center gap-1 mt-1">
                                             <div className="h-3 w-3 rounded-full bg-cima-gold flex items-center justify-center">
                                                 <Check className="h-1.5 w-1.5 text-black" />
                                             </div>
-                                            <span className="text-[7px] font-bold text-white/40 uppercase tracking-widest">Asesor verificado Cima</span>
+                                            <span className="text-[7px] font-bold text-white/40 uppercase tracking-widest">Asesor verificado Aurum</span>
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -471,9 +471,9 @@ function PortalPreview() {
                                         <div className="h-4 w-4 rounded bg-cima-gold/20 flex items-center justify-center">
                                             <span className="text-[6px] font-black text-cima-gold">C</span>
                                         </div>
-                                        <span className="text-[8px] font-black text-white/60 uppercase tracking-widest">Cima Pro · Tu Marca</span>
+                                        <span className="text-[8px] font-black text-white/60 uppercase tracking-widest">Aurum · Tu Marca</span>
                                     </div>
-                                    <span className="text-[7px] text-white/20 font-mono">cimapro.mx</span>
+                                    <span className="text-[7px] text-white/20 font-mono">aurum.mx</span>
                                 </div>
                                 {/* PDF body */}
                                 <div className="p-4">
@@ -621,7 +621,7 @@ function AdminDashboardPreview() {
                 </div>
                 <div className="flex-1 mx-3 h-5 bg-white/5 border border-white/5 rounded-md flex items-center px-2 gap-1.5">
                     <div className="h-1.5 w-1.5 rounded-full bg-cima-gold/40" />
-                    <span className="text-[8px] text-white/20 font-mono">cimapro.mx/admin/dashboard</span>
+                    <span className="text-[8px] text-white/20 font-mono">aurum.mx/admin/dashboard</span>
                 </div>
                 <span className="text-[7px] text-green-400/60 font-mono uppercase tracking-widest hidden sm:flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse inline-block" />En vivo
@@ -858,7 +858,7 @@ function EliteFaq() {
         { q: "¿Necesito saber de tecnología?", a: "Para nada. La plataforma es Zero Code. Nosotros configuramos todo desde el primer día. Tú solo la usas desde tu celular o computadora, como si fuera una app cualquiera." },
         { q: "¿En cuánto tiempo veo resultados?", a: "La mayoría de asesores nota diferencia en su primera presentación con propietario. La plataforma está lista y operativa en 7 días. No es exageración." },
         { q: "¿Cuánto cuesta?", a: "Tenemos planes desde $14,900 MXN (único pago). La mayoría de asesores recupera la inversión completa con una sola exclusiva adicional. En la demo te mostramos el plan ideal para tu volumen." },
-        { q: "¿Qué pasa si ya tengo un CRM?", a: "Cima Pro puede funcionar de forma independiente o conectarse a tus flujos actuales. No tienes que abandonar nada que ya funcione." },
+        { q: "¿Qué pasa si ya tengo un CRM?", a: "Aurum puede funcionar de forma independiente o conectarse a tus flujos actuales. No tienes que abandonar nada que ya funcione." },
         { q: "¿Y si no me convence la demo?", a: "Sin compromiso. Es una llamada de 15 minutos. Si no ves el valor, no hay presión. Si contratas y en 30 días no estás satisfecho, te devolvemos tu dinero." },
     ];
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -941,7 +941,7 @@ function ComparisonSection() {
                     </ul>
                 </div>
 
-                {/* Cima Pro */}
+                {/* Aurum */}
                 <div className="bg-cima-gold/5 border-2 border-cima-gold/30 rounded-[30px] md:rounded-[50px] p-8 md:p-16 relative overflow-hidden shadow-[0_40px_100px_-20px_rgba(200,169,110,0.15)]">
                     <div className="absolute -top-24 -right-24 w-64 h-64 bg-cima-gold/20 blur-[100px] rounded-full" />
                     <div className="absolute top-6 right-8 bg-cima-gold text-black text-[9px] font-black uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg shadow-cima-gold/20">
@@ -952,7 +952,7 @@ function ComparisonSection() {
                             <Zap className="h-6 w-6 text-black" />
                         </div>
                         <div>
-                            <h4 className="text-2xl md:text-3xl font-heading font-black text-white">Cima Pro</h4>
+                            <h4 className="text-2xl md:text-3xl font-heading font-black text-white">Aurum</h4>
                             <p className="text-cima-gold font-mono text-[10px] uppercase tracking-widest">Plataforma Personal</p>
                         </div>
                     </div>
@@ -1022,7 +1022,7 @@ function BookingForm() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitted(true);
-        const msg = `Hola, me interesa la demo gratuita de Cima Pro 🏠\n\n*Nombre:* ${form.nombre}\n*Teléfono:* ${form.telefono}\n*Email:* ${form.email}\n*Agencia/Zona:* ${form.agencia || "Independiente"}\n\n¿Cuándo podemos agendar?`;
+        const msg = `Hola, me interesa la demo gratuita de Aurum 🏠\n\n*Nombre:* ${form.nombre}\n*Teléfono:* ${form.telefono}\n*Email:* ${form.email}\n*Agencia/Zona:* ${form.agencia || "Independiente"}\n\n¿Cuándo podemos agendar?`;
         window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     };
 
@@ -1145,7 +1145,7 @@ function BookingForm() {
                 <div className="flex-1 h-px bg-white/5" />
             </div>
             <a
-                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero información sobre la demo de Cima Pro para asesores inmobiliarios 🏠")}`}
+                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero información sobre la demo de Aurum para asesores inmobiliarios 🏠")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-4 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] rounded-2xl font-heading font-black text-xs uppercase tracking-widest text-center hover:bg-[#25D366]/20 transition-all flex items-center justify-center gap-3"
@@ -1274,7 +1274,7 @@ export default function AgendaPage() {
                 Agenda Demo Gratis <ArrowRight className="h-3.5 w-3.5" />
             </button>
             <a
-                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero info sobre Cima Pro 🏠")}`}
+                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero info sobre Aurum 🏠")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-12 w-12 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 flex items-center justify-center shrink-0"
@@ -1347,7 +1347,7 @@ export default function AgendaPage() {
 
                     <FadeIn delay={0.2}>
                         <p className="text-sm md:text-lg lg:text-xl text-white/60 max-w-3xl mx-auto mb-10 md:mb-12 leading-relaxed">
-                            Cima Pro convierte tu gestión en la plataforma más sofisticada de Monterrey.{" "}
+                            Aurum convierte tu gestión en la plataforma más sofisticada de Monterrey.{" "}
                             <span className="text-white font-medium">En 7 días. Sin código. Sin complicaciones.</span>
                         </p>
                     </FadeIn>
@@ -1402,7 +1402,7 @@ export default function AgendaPage() {
                                 <span className="relative z-10 text-xs md:text-sm uppercase tracking-widest">Quiero mi Demo Gratis →</span>
                             </button>
                             <a
-                                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero agendar mi demo de Cima Pro para asesores en Monterrey 🏠")}`}
+                                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Hola, quiero agendar mi demo de Aurum para asesores en Monterrey 🏠")}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full sm:w-auto px-8 py-4 md:px-10 md:py-5 bg-[#25D366]/10 border border-[#25D366]/40 text-[#25D366] font-heading font-bold rounded-xl md:rounded-2xl hover:bg-[#25D366]/20 transition-all text-[10px] md:text-sm uppercase tracking-widest flex items-center justify-center gap-3"
@@ -1854,7 +1854,7 @@ export default function AgendaPage() {
                         </span>
                     </div>
                     <p className="text-[10px] text-white/20 font-mono uppercase tracking-widest text-center">
-                        © 2025 Cima Pro · Monterrey, NL · Todos los derechos reservados
+                        © 2025 Aurum · Monterrey, NL · Todos los derechos reservados
                     </p>
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5">
                         <ShieldCheck className="h-3.5 w-3.5 text-cima-gold" />

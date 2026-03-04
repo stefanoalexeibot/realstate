@@ -1508,7 +1508,7 @@ export default function VendeMasPage() {
                 <div className="mx-auto max-w-6xl">
                     <div className="text-center mb-16 md:mb-20">
                         <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-bold mb-4">Ecosistema Propietario-Asesor</h2>
-                        <p className="text-white/40 text-sm md:text-base max-w-2xl mx-auto">Toda la potencia de Cima Pro, empaquetada para tu crecimiento personal.</p>
+                        <p className="text-white/40 text-sm md:text-base max-w-2xl mx-auto">Toda la potencia de Aurum, empaquetada para tu crecimiento personal.</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -1698,7 +1698,7 @@ export default function VendeMasPage() {
                         href="/pro"
                         className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 md:gap-4 text-cima-gold font-black text-[10px] md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] hover:gap-6 transition-all bg-cima-gold/5 border border-cima-gold/20 px-8 py-4 md:px-10 md:py-5 rounded-xl md:rounded-2xl shadow-2xl"
                     >
-                        Explorar Cima Pro <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 shrink-0" />
+                        Explorar Aurum <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 shrink-0" />
                     </Link>
                 </div>
             </section >
