@@ -223,98 +223,319 @@ function RoiCalculator() {
     );
 }
 
-// ─── Portal Preview (simplified tab) ──────────────────────────────────────
+// ─── Portal Preview ────────────────────────────────────────────────────────
 function PortalPreview() {
     const [tab, setTab] = useState(0);
     const tabs = [
-        { label: "Portal Propietario", icon: Users },
-        { label: "Seguimiento", icon: BarChart3 },
-        { label: "Fichas PDF", icon: FileText },
+        { label: "Portal Dueño", icon: Users },
+        { label: "Feedback IA", icon: BarChart3 },
+        { label: "Ficha PDF", icon: FileText },
+        { label: "Pipeline", icon: TrendingUp },
     ];
+
     return (
-        <div className="bg-white/[0.02] border border-white/10 rounded-[20px] md:rounded-[32px] overflow-hidden">
+        <div className="bg-white/[0.02] border border-white/10 rounded-[20px] md:rounded-[32px] overflow-hidden shadow-2xl">
+            {/* Top bar — fake browser chrome */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/[0.01]">
+                <div className="flex gap-1.5">
+                    <div className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
+                </div>
+                <div className="flex-1 mx-3 h-5 bg-white/5 border border-white/5 rounded-md flex items-center px-2 gap-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-cima-gold/40" />
+                    <span className="text-[8px] text-white/20 font-mono">cimapro.mx/portal/pedro-garza</span>
+                </div>
+                <span className="text-[7px] text-white/20 font-mono uppercase tracking-widest hidden sm:block">● En vivo</span>
+            </div>
+
             {/* Tabs */}
             <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar">
                 {tabs.map((t, i) => (
                     <button
                         key={i}
                         onClick={() => setTab(i)}
-                        className={`flex items-center gap-2 px-5 md:px-8 py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${tab === i ? "text-cima-gold border-b-2 border-cima-gold bg-cima-gold/5" : "text-white/30 hover:text-white/60"}`}
+                        className={`flex items-center gap-2 px-4 md:px-6 py-3.5 text-[9px] md:text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${tab === i ? "text-cima-gold border-b-2 border-cima-gold bg-cima-gold/5" : "text-white/25 hover:text-white/50"}`}
                     >
-                        <t.icon className="h-3.5 w-3.5" />
+                        <t.icon className="h-3 w-3" />
                         {t.label}
                     </button>
                 ))}
             </div>
+
             {/* Content */}
-            <div className="p-6 md:p-10 min-h-[280px]">
+            <div className="p-5 md:p-7 min-h-[340px]">
                 <AnimatePresence mode="wait">
+
+                    {/* ── TAB 0: Portal Propietario ── */}
                     {tab === 0 && (
-                        <motion.div key="0" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
-                            <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5">
+                        <motion.div key="portal" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
+                            {/* Header */}
+                            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4">
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
-                                        <p className="text-[8px] font-black text-cima-gold uppercase tracking-widest mb-1">Mi Portal</p>
-                                        <h5 className="text-sm font-bold text-white">Hola, PEDRO</h5>
-                                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 font-bold uppercase mt-1 inline-block">● Exclusiva Activa</span>
+                                        <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em] mb-1">Mi Portal · Cima Pro</p>
+                                        <h5 className="text-sm font-black text-white">Hola, Pedro 👋</h5>
+                                        <div className="flex items-center gap-1 mt-1">
+                                            <div className="h-3 w-3 rounded-full bg-cima-gold flex items-center justify-center">
+                                                <Check className="h-1.5 w-1.5 text-black" />
+                                            </div>
+                                            <span className="text-[7px] font-bold text-white/40 uppercase tracking-widest">Asesor verificado Cima</span>
+                                        </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-[8px] text-white/30 uppercase font-bold">Precio</p>
-                                        <p className="text-base font-black text-white">$4.2M</p>
+                                        <span className="text-[8px] px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 font-bold uppercase">● Activa</span>
+                                        <p className="text-[7px] text-white/30 uppercase mt-1.5 font-bold">Semana 4 / 8</p>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-3 gap-2 mb-4">
-                                    {[{ l: "Visitas", v: "14" }, { l: "Leads", v: "3" }, { l: "Semana", v: "3/8" }].map((s, i) => (
-                                        <div key={i} className="bg-white/5 border border-white/5 rounded-lg p-2 text-center">
-                                            <p className="text-[7px] text-white/30 uppercase font-bold mb-0.5">{s.l}</p>
-                                            <p className="text-xs font-black text-white">{s.v}</p>
+
+                                {/* Stats grid */}
+                                <div className="grid grid-cols-4 gap-2 mb-4">
+                                    {[
+                                        { l: "Precio", v: "$4.2M" },
+                                        { l: "Visitas", v: "17" },
+                                        { l: "Leads", v: "4" },
+                                        { l: "m²", v: "220" },
+                                    ].map((s, i) => (
+                                        <div key={i} className="bg-white/5 border border-white/5 rounded-xl p-2 text-center">
+                                            <p className="text-[6px] text-white/30 uppercase font-bold mb-0.5">{s.l}</p>
+                                            <p className="text-[10px] font-black text-white">{s.v}</p>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex items-center justify-between p-2 rounded-lg bg-cima-gold/5 border border-cima-gold/10">
-                                    <span className="text-[9px] font-bold text-white/60 uppercase">Plan de marketing activo</span>
-                                    <ArrowRight className="h-3 w-3 text-cima-gold animate-pulse" />
+
+                                {/* Progress timeline */}
+                                <div className="pt-3 border-t border-white/5">
+                                    <p className="text-[7px] font-bold text-white/30 uppercase mb-3 tracking-widest">Etapa de tu venta</p>
+                                    <div className="relative flex justify-between">
+                                        <div className="absolute top-[9px] left-0 right-0 h-[1px] bg-white/10" />
+                                        {[
+                                            { s: "Captación", done: true },
+                                            { s: "Publicación", done: true },
+                                            { s: "Visitas", active: true },
+                                            { s: "Cierre", done: false },
+                                        ].map((step, i) => (
+                                            <div key={i} className="relative z-10 flex flex-col items-center gap-1">
+                                                <div className={`h-[18px] w-[18px] rounded-full border-2 flex items-center justify-center transition-all ${step.active ? "bg-cima-gold border-cima-gold shadow-lg shadow-cima-gold/30" : step.done ? "bg-white/20 border-white/30" : "bg-black border-white/10"}`}>
+                                                    {step.done && <Check className="h-2 w-2 text-white" />}
+                                                    {step.active && <div className="h-1.5 w-1.5 rounded-full bg-black" />}
+                                                </div>
+                                                <p className={`text-[6px] font-bold uppercase truncate max-w-[40px] text-center ${step.active ? "text-cima-gold" : step.done ? "text-white/40" : "text-white/15"}`}>{step.s}</p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                            <p className="text-xs text-white/30 text-center font-mono">Tu propietario ve esto en tiempo real — sin llamarte.</p>
-                        </motion.div>
-                    )}
-                    {tab === 1 && (
-                        <motion.div key="1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
-                            <p className="text-[10px] font-black text-cima-gold uppercase tracking-widest mb-4">Sentimiento de visitas — Semana 3</p>
-                            {[{ l: "Precio alto", v: 3, c: "bg-red-500" }, { l: "Les encantó", v: 1, c: "bg-green-500" }, { l: "Lo pensarán", v: 2, c: "bg-cima-gold" }].map((item, i) => (
-                                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
-                                    <span className="text-xs font-bold text-white/70">{item.l}</span>
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-1.5 rounded-full bg-white/10" style={{ width: 60 }}>
-                                            <div className={`h-full rounded-full ${item.c}`} style={{ width: `${(item.v / 3) * 100}%` }} />
+
+                            {/* Recent activity */}
+                            <div className="space-y-2">
+                                <p className="text-[7px] font-bold text-white/30 uppercase tracking-widest px-1">Actividad reciente</p>
+                                {[
+                                    { icon: "👁", text: "Visita registrada — Juan M.", time: "Hoy 11:30", color: "text-blue-400" },
+                                    { icon: "💬", text: "Feedback recibido: 'precio alto'", time: "Ayer", color: "text-yellow-400" },
+                                    { icon: "📸", text: "3 fotos nuevas subidas", time: "Hace 2 días", color: "text-cima-gold" },
+                                ].map((a, i) => (
+                                    <div key={i} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+                                        <span className="text-sm">{a.icon}</span>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[9px] text-white/70 font-medium truncate">{a.text}</p>
                                         </div>
-                                        <span className="text-xs font-black text-white">{item.v}</span>
+                                        <span className={`text-[7px] font-bold ${a.color} shrink-0`}>{a.time}</span>
                                     </div>
-                                </div>
-                            ))}
-                            <p className="text-xs text-white/30 text-center font-mono mt-2">Usas datos reales para defender o ajustar el precio.</p>
+                                ))}
+                            </div>
+                            <p className="text-[9px] text-white/20 text-center font-mono pt-1">Tu propietario ve esto en tiempo real — sin llamarte.</p>
                         </motion.div>
                     )}
-                    {tab === 2 && (
-                        <motion.div key="2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
-                            <p className="text-[10px] font-black text-cima-gold uppercase tracking-widest mb-4">Ficha Técnica · Generada en 12 seg</p>
-                            <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 flex gap-4">
-                                <div className="w-16 h-20 rounded-lg bg-gradient-to-b from-cima-gold/20 to-cima-gold/5 border border-cima-gold/20 shrink-0 flex items-center justify-center">
-                                    <FileText className="h-6 w-6 text-cima-gold/50" />
+
+                    {/* ── TAB 1: Feedback IA ── */}
+                    {tab === 1 && (
+                        <motion.div key="feedback" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
+                            <div className="flex items-center justify-between mb-1">
+                                <div>
+                                    <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em]">Análisis de Sentimiento · IA</p>
+                                    <p className="text-xs font-black text-white mt-0.5">Semana 4 — 17 visitas</p>
                                 </div>
-                                <div className="flex-1">
-                                    <p className="text-xs font-black text-white mb-1">Casa Valle del Campestre</p>
-                                    <p className="text-[9px] text-white/40 mb-3">220 m² · 3 rec · $4.2M MXN</p>
-                                    <div className="flex gap-2">
-                                        <span className="text-[8px] px-2 py-0.5 rounded-full bg-cima-gold/10 border border-cima-gold/20 text-cima-gold font-bold">PDF A4</span>
-                                        <span className="text-[8px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/40 font-bold">Con tu marca</span>
+                                <div className="text-right">
+                                    <p className="text-[7px] text-white/30 uppercase font-bold">Score general</p>
+                                    <p className="text-lg font-black text-cima-gold">6.4<span className="text-[9px] text-white/30">/10</span></p>
+                                </div>
+                            </div>
+
+                            {/* Sentiment bars */}
+                            <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-4 space-y-3">
+                                {[
+                                    { l: "Precio alto", v: 8, pct: 47, c: "bg-red-500", dot: "bg-red-500" },
+                                    { l: "Muy interesado", v: 4, pct: 24, c: "bg-green-500", dot: "bg-green-500" },
+                                    { l: "Lo pensará", v: 3, pct: 18, c: "bg-cima-gold", dot: "bg-cima-gold" },
+                                    { l: "No le convino", v: 2, pct: 11, c: "bg-white/30", dot: "bg-white/20" },
+                                ].map((item, i) => (
+                                    <div key={i} className="space-y-1">
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`h-1.5 w-1.5 rounded-full ${item.dot}`} />
+                                                <span className="text-[9px] font-bold text-white/70">{item.l}</span>
+                                            </div>
+                                            <span className="text-[9px] font-black text-white">{item.v} <span className="text-white/30 font-normal">({item.pct}%)</span></span>
+                                        </div>
+                                        <div className="h-1.5 rounded-full bg-white/5">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${item.pct}%` }}
+                                                transition={{ delay: i * 0.1, duration: 0.6, ease: "easeOut" }}
+                                                className={`h-full rounded-full ${item.c}`}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* IA recommendation */}
+                            <div className="bg-cima-gold/5 border border-cima-gold/20 rounded-2xl p-3 flex gap-3">
+                                <div className="h-7 w-7 rounded-lg bg-cima-gold/10 flex items-center justify-center shrink-0">
+                                    <Zap className="h-3.5 w-3.5 text-cima-gold" />
+                                </div>
+                                <div>
+                                    <p className="text-[8px] font-black text-cima-gold uppercase tracking-widest mb-0.5">Recomendación IA</p>
+                                    <p className="text-[9px] text-white/60 leading-relaxed">El 47% señala precio alto. Considerar ajuste de <span className="text-white font-bold">$200K–$300K</span> o agregar incentivos para cerrar en semana 5.</p>
+                                </div>
+                            </div>
+                            <p className="text-[9px] text-white/20 text-center font-mono">Datos reales para defender o ajustar el precio con el dueño.</p>
+                        </motion.div>
+                    )}
+
+                    {/* ── TAB 2: Ficha PDF ── */}
+                    {tab === 2 && (
+                        <motion.div key="ficha" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em]">Ficha Técnica PDF · Ultra-lujo</p>
+                                <span className="text-[7px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 rounded-full px-2 py-0.5">Generada en 12 seg</span>
+                            </div>
+
+                            {/* A4 paper mockup */}
+                            <div className="bg-[#1a1a1f] border border-white/10 rounded-xl overflow-hidden">
+                                {/* PDF header */}
+                                <div className="bg-gradient-to-r from-[#0F0F12] to-[#1a1a1f] px-4 py-3 flex items-center justify-between border-b border-white/5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-4 w-4 rounded bg-cima-gold/20 flex items-center justify-center">
+                                            <span className="text-[6px] font-black text-cima-gold">C</span>
+                                        </div>
+                                        <span className="text-[8px] font-black text-white/60 uppercase tracking-widest">Cima Pro · Tu Marca</span>
+                                    </div>
+                                    <span className="text-[7px] text-white/20 font-mono">cimapro.mx</span>
+                                </div>
+                                {/* PDF body */}
+                                <div className="p-4">
+                                    {/* Property image placeholder */}
+                                    <div className="w-full h-20 rounded-lg bg-gradient-to-br from-cima-gold/10 via-white/5 to-transparent border border-white/5 mb-3 flex items-center justify-center relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,rgba(200,169,110,0.03)_8px,rgba(200,169,110,0.03)_9px)]" />
+                                        <div className="text-center">
+                                            <p className="text-[8px] text-white/30 font-mono">Foto principal de la propiedad</p>
+                                        </div>
+                                        {/* Watermark */}
+                                        <span className="absolute bottom-1.5 right-2 text-[6px] text-cima-gold/30 font-black uppercase tracking-widest">EXCLUSIVA · CIMA PRO</span>
+                                    </div>
+                                    {/* Property details */}
+                                    <div className="mb-3">
+                                        <p className="text-[10px] font-black text-white">Casa Valle del Campestre</p>
+                                        <p className="text-[8px] text-white/40">Col. Valle del Campestre · San Pedro G.G., NL</p>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-1.5 mb-3">
+                                        {[
+                                            { l: "Precio", v: "$4,200,000" },
+                                            { l: "Superficie", v: "220 m²" },
+                                            { l: "Recámaras", v: "3" },
+                                            { l: "Baños", v: "2.5" },
+                                            { l: "Autos", v: "2" },
+                                            { l: "Antigüedad", v: "5 años" },
+                                        ].map((d, i) => (
+                                            <div key={i} className="bg-white/5 rounded-lg p-1.5 text-center">
+                                                <p className="text-[5px] text-white/30 uppercase font-bold mb-0.5">{d.l}</p>
+                                                <p className="text-[8px] font-black text-white">{d.v}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {/* CTA row */}
+                                    <div className="flex items-center justify-between border-t border-white/5 pt-2">
+                                        <span className="text-[7px] text-cima-gold/60 font-mono">Lic. Roberto García · +52 81 XXXX XXXX</span>
+                                        <div className="flex items-center gap-1 bg-cima-gold/10 border border-cima-gold/20 rounded px-2 py-0.5">
+                                            <ArrowRight className="h-2 w-2 text-cima-gold" />
+                                            <span className="text-[6px] font-bold text-cima-gold uppercase">Descargar</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-xs text-white/30 text-center font-mono">Sin Word. Sin Canva. Sin perder 2 horas.</p>
+                            <p className="text-[9px] text-white/20 text-center font-mono">Sin Word. Sin Canva. Lista para WhatsApp en segundos.</p>
                         </motion.div>
                     )}
+
+                    {/* ── TAB 3: Pipeline ── */}
+                    {tab === 3 && (
+                        <motion.div key="pipeline" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="text-[7px] font-black text-cima-gold uppercase tracking-[0.2em]">Pipeline de Exclusivas</p>
+                                <div className="flex items-center gap-1 bg-cima-gold/10 border border-cima-gold/20 rounded-full px-2 py-0.5">
+                                    <TrendingUp className="h-2.5 w-2.5 text-cima-gold" />
+                                    <span className="text-[7px] font-bold text-cima-gold">$24.6M activo</span>
+                                </div>
+                            </div>
+
+                            {/* Kanban columns */}
+                            <div className="grid grid-cols-3 gap-2">
+                                {[
+                                    {
+                                        stage: "Captando", color: "border-blue-500/30 bg-blue-500/5", dot: "bg-blue-400",
+                                        props: [
+                                            { name: "Casa Cumbres", price: "$3.8M", days: "Día 2" },
+                                            { name: "Depto Mitras", price: "$1.9M", days: "Día 1" },
+                                        ]
+                                    },
+                                    {
+                                        stage: "En Visitas", color: "border-cima-gold/30 bg-cima-gold/5", dot: "bg-cima-gold",
+                                        props: [
+                                            { name: "Casa Valle", price: "$4.2M", days: "Semana 4" },
+                                            { name: "PH Contry", price: "$8.7M", days: "Semana 2" },
+                                        ]
+                                    },
+                                    {
+                                        stage: "En Cierre", color: "border-green-500/30 bg-green-500/5", dot: "bg-green-400",
+                                        props: [
+                                            { name: "Casa San Agustín", price: "$6.0M", days: "Oferta" },
+                                        ]
+                                    },
+                                ].map((col, ci) => (
+                                    <div key={ci} className={`border rounded-xl p-2.5 ${col.color}`}>
+                                        <div className="flex items-center gap-1.5 mb-2">
+                                            <div className={`h-1.5 w-1.5 rounded-full ${col.dot}`} />
+                                            <p className="text-[7px] font-black text-white/50 uppercase tracking-wide">{col.stage}</p>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            {col.props.map((p, pi) => (
+                                                <div key={pi} className="bg-white/[0.04] border border-white/5 rounded-lg p-2">
+                                                    <p className="text-[8px] font-bold text-white leading-tight">{p.name}</p>
+                                                    <p className="text-[7px] text-cima-gold font-black">{p.price}</p>
+                                                    <p className="text-[6px] text-white/25 font-mono">{p.days}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Commission tracker */}
+                            <div className="bg-white/[0.02] border border-white/10 rounded-xl p-3 flex items-center justify-between">
+                                <div>
+                                    <p className="text-[7px] font-bold text-white/30 uppercase tracking-widest mb-0.5">Comisión proyectada (5%)</p>
+                                    <p className="text-base font-black text-white">$<span className="text-cima-gold">300,000</span> <span className="text-white/30 text-xs font-normal">este mes</span></p>
+                                </div>
+                                <div className="h-10 w-10 rounded-xl bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
+                                    <DollarSign className="h-5 w-5 text-cima-gold" />
+                                </div>
+                            </div>
+                            <p className="text-[9px] text-white/20 text-center font-mono">Todo tu inventario en un solo panel — desde el celular.</p>
+                        </motion.div>
+                    )}
+
                 </AnimatePresence>
             </div>
         </div>
