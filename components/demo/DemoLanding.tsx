@@ -315,7 +315,7 @@ export default function DemoLanding({ plan }: DemoLandingProps) {
 
             {/* Footer */}
             <footer className="px-6 py-12 border-t border-white/5 text-center">
-                <p className="text-xs text-white/20">┬⌐ 2025 Demo ΓÇö Powered by Cima Propiedades</p>
+                <p className="text-xs text-white/20">┬⌐ 2025 Demo ΓÇö Powered by Aurum</p>
             </footer>
         </div>
     );

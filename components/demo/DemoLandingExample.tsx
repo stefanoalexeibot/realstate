@@ -512,7 +512,7 @@ export default function DemoLandingExample({
                             className={`${isTeam ? "border-cima-gold/40 shadow-[0_0_30px_rgba(200,169,110,0.1)]" : "border-indigo-500/40 shadow-[0_0_30px_rgba(99,102,241,0.1)]"} bg-white/[0.03] border-2 rounded-2xl p-6 relative overflow-hidden`}
                         >
                             <div className={`${isTeam ? "bg-cima-gold text-black" : "bg-indigo-500 text-white"} absolute top-4 right-4 text-[8px] font-black px-2 py-1 rounded uppercase tracking-wider`}>
-                                Después: Cima Pro
+                                Después: Aurum
                             </div>
                             <div className="space-y-4">
                                 <div className="aspect-video rounded-lg overflow-hidden border border-white/10 shadow-lg">
@@ -695,7 +695,7 @@ export default function DemoLandingExample({
                     <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
                         {[
                             { icon: Zap, label: "Venta tradicional", value: "90+ días", sublabel: "Sin estrategia digital", color: "text-white/40" },
-                            { icon: TrendingUp, label: "Con Cima Pro", value: "< 30 días", sublabel: "Marketing Predictivo", color: "text-cima-gold" },
+                            { icon: TrendingUp, label: "Con Aurum", value: "< 30 días", sublabel: "Marketing Predictivo", color: "text-cima-gold" },
                             { icon: Award, label: "Retorno Neto", value: "10x", sublabel: "ROI garantizado", color: "text-green-400" },
                         ].map((item, i) => (
                             <motion.div key={i}
@@ -726,7 +726,7 @@ export default function DemoLandingExample({
                                 <Building2 className="h-10 w-10 text-cima-gold/50" />
                             </div>
                             <div className="flex-1 text-center md:text-left">
-                                <h3 className="text-xl font-heading font-black text-white mb-1">Cima Propiedades</h3>
+                                <h3 className="text-xl font-heading font-black text-white mb-1">Aurumpiedades</h3>
                                 <p className="text-xs text-white/40 mb-5">La agencia inmobiliaria líder en Monterrey con más de 10 años de experiencia</p>
                                 <div className="flex flex-wrap justify-center md:justify-start gap-6">
                                     {[
@@ -807,13 +807,13 @@ export default function DemoLandingExample({
                         <Home className={`h-3 w-3 ${accentText}`} />
                     </div>
                     <p className="text-[10px] text-white/30 font-bold uppercase tracking-[0.2em]">
-                        Cima Propiedades · {new Date().getFullYear()}
+                        Aurumpiedades · {new Date().getFullYear()}
                     </p>
                 </div>
                 <div className={`h-0.5 w-16 ${accentBg} opacity-20 rounded-full`} />
                 {isTeam && (
                     <p className="text-[7px] text-white/15 font-bold uppercase tracking-widest">
-                        Powered by Cima Pro Technology
+                        Powered by Aurum Technology
                     </p>
                 )}
             </div>
@@ -863,7 +863,7 @@ function ChatWidget({ onSendMessage, messages }: { onSendMessage?: (f: string, t
                                     <Sparkles className="h-4 w-4 text-black" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-black uppercase tracking-tighter">Asistente Cima AI</p>
+                                    <p className="text-[10px] font-black text-black uppercase tracking-tighter">Asistente Aurum AI</p>
                                     <div className="flex items-center gap-1">
                                         <div className="h-1.5 w-1.5 rounded-full bg-black/60 animate-pulse" />
                                         <span className="text-[7px] text-black/60 font-bold uppercase">En línea ahora</span>

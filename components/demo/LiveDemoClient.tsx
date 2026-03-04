@@ -101,13 +101,13 @@ function ComparisonModal({ onClose }: { onClose: () => void }) {
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-lg font-black text-white uppercase tracking-tight">¿Por qué Cima?</h3>
+                    <h3 className="text-lg font-black text-white uppercase tracking-tight">¿Por qué Aurum?</h3>
                     <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/10 transition-all">
                         <X className="h-5 w-5 text-white/40" />
                     </button>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
-                    {/* Sin Cima */}
+                    {/* Sin Aurum */}
                     <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 space-y-4">
                         <div className="flex items-center gap-2 mb-4">
                             <div className="h-8 w-8 rounded-lg bg-red-500/20 flex items-center justify-center">
@@ -128,13 +128,13 @@ function ComparisonModal({ onClose }: { onClose: () => void }) {
                             </div>
                         ))}
                     </div>
-                    {/* Con Cima */}
+                    {/* Con Aurum */}
                     <div className="bg-cima-gold/5 border border-cima-gold/20 rounded-2xl p-6 space-y-4">
                         <div className="flex items-center gap-2 mb-4">
                             <div className="h-8 w-8 rounded-lg bg-cima-gold/20 flex items-center justify-center">
                                 <CheckCircle2 className="h-4 w-4 text-cima-gold" />
                             </div>
-                            <span className="text-sm font-black text-cima-gold uppercase">Con Cima Pro</span>
+                            <span className="text-sm font-black text-cima-gold uppercase">Con Aurum</span>
                         </div>
                         {[
                             { icon: Globe, text: "Landing profesional por propiedad" },
@@ -256,7 +256,7 @@ function QROverlay({ onClose, title, desc }: { onClose: () => void; title?: stri
                 >
                     Entiendo, cerrar
                 </button>
-                <p className="mt-4 text-[8px] text-gray-400 font-bold uppercase tracking-widest">Powered by Cima Pro Technology</p>
+                <p className="mt-4 text-[8px] text-gray-400 font-bold uppercase tracking-widest">Powered by Aurum Technology</p>
             </motion.div>
         </motion.div>
     );
@@ -470,7 +470,7 @@ function ROICalculatorModal({ onClose }: { onClose: () => void }) {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h3 className="text-lg font-black text-white uppercase tracking-tight">Calculadora ROI</h3>
-                        <p className="text-[10px] text-white/40 mt-0.5">¿Cuánto puedes ganar con Cima?</p>
+                        <p className="text-[10px] text-white/40 mt-0.5">¿Cuánto puedes ganar con Aurum?</p>
                     </div>
                     <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/10 transition-all">
                         <X className="h-5 w-5 text-white/40" />
@@ -541,7 +541,7 @@ function ROICalculatorModal({ onClose }: { onClose: () => void }) {
                     className="w-full flex items-center justify-center gap-2 bg-cima-gold text-black py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-cima-gold/20 active:scale-95"
                 >
                     <DollarSign className="h-4 w-4" />
-                    Comenzar con Cima Pro
+                    Comenzar con Aurum
                 </a>
             </motion.div>
         </motion.div>
@@ -632,7 +632,7 @@ export default function LiveDemoClient() {
             setTimeout(() => {
                 const aiResponse: LiveMessage = {
                     id: Math.random().toString(36).substr(2, 9),
-                    from: "Cima AI Assistant",
+                    from: "Aurum AI",
                     message: `¡Hola ${from}! Gracias por tu interés. Un asesor se pondrá en contacto contigo pronto.`,
                     time: "Justo ahora",
                     unread: true,

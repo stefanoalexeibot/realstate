@@ -128,7 +128,7 @@ export default function DemoPublicPage() {
                     <div className="h-7 w-7 rounded-lg bg-cima-gold flex items-center justify-center shadow-lg shadow-cima-gold/20">
                         <Building2 className="h-3.5 w-3.5 text-black" />
                     </div>
-                    <span className="text-xs font-black uppercase tracking-widest text-white">Cima Pro</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-white">Aurum</span>
                 </div>
                 <div className="flex items-center gap-3">
                     <a
@@ -377,7 +377,7 @@ export default function DemoPublicPage() {
             {/* Footer */}
             <footer className="border-t border-white/5 px-4 py-8 text-center">
                 <p className="text-[10px] text-white/20 uppercase tracking-widest font-bold">
-                    © 2025 Cima Pro · Plataforma Inmobiliaria · Monterrey, NL
+                    © 2025 Aurum · Plataforma Inmobiliaria · Monterrey, NL
                 </p>
             </footer>
         </div>

@@ -163,7 +163,7 @@ function VideoTourModal({ onClose }: { onClose: () => void }) {
 ────────────────────────────────────────────────────── */
 function ShareModal({ onClose }: { onClose: () => void }) {
     const [copied, setCopied] = useState(false);
-    const url = "https://cimapropiedades.mx/prop/residencia-colinas-12345";
+    const url = "https://aurum.mx/prop/residencia-colinas-12345";
 
     const handleCopy = () => {
         setCopied(true);
@@ -651,7 +651,7 @@ export default function DemoPropertyPage({
                                         <div className="h-6 w-6 rounded-lg bg-cima-gold/10 border border-cima-gold/20 flex items-center justify-center">
                                             <Shield className="h-3 w-3 text-cima-gold" />
                                         </div>
-                                        <span className="text-[8px] font-black text-cima-gold uppercase tracking-widest">Certificado Cima Pro</span>
+                                        <span className="text-[8px] font-black text-cima-gold uppercase tracking-widest">Certificado Aurum</span>
                                     </div>
                                 )}
                                 <p className={`text-2xl font-heading font-black ${accentText} mb-1`}>${propPrice}</p>
@@ -757,11 +757,11 @@ export default function DemoPropertyPage({
                         <Home className={`h-3 w-3 ${accentText}`} />
                     </div>
                     <p className="text-[10px] text-white/25 font-bold uppercase tracking-[0.2em]">
-                        Cima Propiedades · {new Date().getFullYear()}
+                        Aurumpiedades · {new Date().getFullYear()}
                     </p>
                 </div>
                 <div className={`h-0.5 w-12 ${accentBg} opacity-20 rounded-full`} />
-                {isTeam && <p className="text-[7px] text-white/15 font-bold uppercase tracking-widest">Powered by Cima Pro Technology</p>}
+                {isTeam && <p className="text-[7px] text-white/15 font-bold uppercase tracking-widest">Powered by Aurum Technology</p>}
             </div>
 
             {/* ══════════════════════════════════════
@@ -774,7 +774,7 @@ export default function DemoPropertyPage({
                 {/* Header */}
                 <div style={{ background: "#0A0A0B", borderBottom: "2px solid #C8A96E", padding: "32px 40px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
-                        <div style={{ color: "#C8A96E", fontSize: "22px", fontWeight: 900, letterSpacing: "4px", textTransform: "uppercase" }}>CIMA PRO</div>
+                        <div style={{ color: "#C8A96E", fontSize: "22px", fontWeight: 900, letterSpacing: "4px", textTransform: "uppercase" }}>AURUM</div>
                         <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "10px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginTop: "4px" }}>Ficha Técnica de Propiedad</div>
                     </div>
                     <div style={{ textAlign: "right", color: "rgba(255,255,255,0.3)", fontSize: "10px" }}>
@@ -841,7 +841,7 @@ export default function DemoPropertyPage({
                     <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>
                         <span style={{ color: "#C8A96E", fontWeight: 700 }}>Lic. María Fernández</span> · Asesora Certificada AMPI
                     </div>
-                    <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.2)" }}>Generado por Cima Pro · propiedadesmty.com</div>
+                    <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.2)" }}>Generado por Aurum · propiedadesmty.com</div>
                 </div>
             </div>
 

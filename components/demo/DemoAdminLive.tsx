@@ -633,7 +633,7 @@ function NewPropertyWizard({ onClose, onPublish }: { onClose: () => void; onPubl
     const [publishStage, setPublishStage] = useState(0);
     const [published, setPublished] = useState(false);
 
-    const STAGES = ["Preparando datos...", "Generando landing page...", "Activando IA Cima...", "¡Publicado!"];
+    const STAGES = ["Preparando datos...", "Generando landing page...", "Activando IA Aurum...", "¡Publicado!"];
 
     const toggleAmenity = (a: string) => {
         setAmenities(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
@@ -1933,7 +1933,7 @@ function DocumentsView() {
         { id: 1, name: "Escritura_Residencia_Magnolia.pdf", type: "Escritura", date: "12/02/2026", status: "verificado", size: "4.2 MB" },
         { id: 2, name: "ID_Propietario_Vargas.jpg", type: "Identificación", date: "15/02/2026", status: "pendiente", size: "1.8 MB" },
         { id: 3, name: "Predial_2026_Pagado.pdf", type: "Impuestos", date: "18/02/2026", status: "advertencia", size: "0.9 MB" },
-        { id: 4, name: "Contrato_Exclusividad_Cima.doc", type: "Contrato", date: "20/02/2026", status: "verificando", size: "2.1 MB" },
+        { id: 4, name: "Contrato_Exclusividad_Aurum.doc", type: "Contrato", date: "20/02/2026", status: "verificando", size: "2.1 MB" },
     ]);
 
     const [verifyingId, setVerifyingId] = useState<number | null>(null);
@@ -2054,7 +2054,7 @@ function DocumentsView() {
                     <ShieldCheck className="h-4 w-4 text-black" />
                 </div>
                 <div>
-                    <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Cima Legal Compliance · ON</h4>
+                    <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Aurum Legal Compliance · ON</h4>
                     <p className="text-[9px] text-white/50 leading-relaxed font-medium">Todos los documentos son analizados mediante **Integridad Biométrica** y **OCR Inteligente** para garantizar transacciones de ultra-lujo sin riesgos legales.</p>
                 </div>
             </div>
@@ -2068,11 +2068,11 @@ const TEMPLATE_CONTENT: Record<string, { sections: { title: string; text: string
     exclusividad: {
         sections: [
             { title: "ANTECEDENTES", text: "Las partes se reconocen mutuamente la capacidad jurídica suficiente para celebrar el presente Contrato de Exclusividad Inmobiliaria y manifiestan su voluntad de quedar obligadas en los términos y condiciones que se establecen a continuación." },
-            { title: "PRIMERA — VIGENCIA", text: "El presente contrato tendrá una vigencia de NOVENTA (90) días naturales, contados a partir de la fecha de firma. Durante este período, el PROPIETARIO se compromete a no realizar gestiones de venta a través de terceros distintos a CIMA PRO." },
-            { title: "SEGUNDA — COMISIÓN", text: "En caso de concretarse la venta del inmueble, el PROPIETARIO se obliga a pagar a CIMA PRO una comisión equivalente al porcentaje pactado sobre el precio de cierre de la operación, más el Impuesto al Valor Agregado (IVA) correspondiente." },
-            { title: "TERCERA — OBLIGACIONES", text: "CIMA PRO se compromete a promover activamente el inmueble en sus plataformas digitales, redes sociales, portales inmobiliarios y base de datos de clientes calificados, generando un mínimo de 5 visitas calificadas durante la vigencia del contrato." },
-            { title: "CUARTA — EXCLUSIVIDAD", text: "Durante la vigencia del presente instrumento, el PROPIETARIO se obliga a canalizar a CIMA PRO cualquier prospecto interesado en la adquisición del inmueble, con el fin de que sea atendido bajo los lineamientos profesionales de la empresa." },
-            { title: "QUINTA — RESCISIÓN", text: "Cualquiera de las partes podrá dar por terminado el presente contrato mediante aviso por escrito con 15 días de anticipación. En caso de rescisión imputable al PROPIETARIO, deberá cubrir los gastos de promoción ya efectuados por CIMA PRO." },
+            { title: "PRIMERA — VIGENCIA", text: "El presente contrato tendrá una vigencia de NOVENTA (90) días naturales, contados a partir de la fecha de firma. Durante este período, el PROPIETARIO se compromete a no realizar gestiones de venta a través de terceros distintos a AURUM." },
+            { title: "SEGUNDA — COMISIÓN", text: "En caso de concretarse la venta del inmueble, el PROPIETARIO se obliga a pagar a AURUM una comisión equivalente al porcentaje pactado sobre el precio de cierre de la operación, más el Impuesto al Valor Agregado (IVA) correspondiente." },
+            { title: "TERCERA — OBLIGACIONES", text: "AURUM se compromete a promover activamente el inmueble en sus plataformas digitales, redes sociales, portales inmobiliarios y base de datos de clientes calificados, generando un mínimo de 5 visitas calificadas durante la vigencia del contrato." },
+            { title: "CUARTA — EXCLUSIVIDAD", text: "Durante la vigencia del presente instrumento, el PROPIETARIO se obliga a canalizar a AURUM cualquier prospecto interesado en la adquisición del inmueble, con el fin de que sea atendido bajo los lineamientos profesionales de la empresa." },
+            { title: "QUINTA — RESCISIÓN", text: "Cualquiera de las partes podrá dar por terminado el presente contrato mediante aviso por escrito con 15 días de anticipación. En caso de rescisión imputable al PROPIETARIO, deberá cubrir los gastos de promoción ya efectuados por AURUM." },
         ]
     },
     arrendamiento: {
@@ -2093,10 +2093,10 @@ const TEMPLATE_CONTENT: Record<string, { sections: { title: string; text: string
     },
     aviso: {
         sections: [
-            { title: "RESPONSABLE", text: "CIMA PRO S.A. DE C.V. es responsable del tratamiento de sus datos personales. Con domicilio en Av. Constitución 444, Col. Centro, Monterrey, N.L., C.P. 64000. Tel: (81) 8000-0000. Correo: privacidad@cimapro.mx" },
+            { title: "RESPONSABLE", text: "AURUM S.A. DE C.V. es responsable del tratamiento de sus datos personales. Con domicilio en Av. Constitución 444, Col. Centro, Monterrey, N.L., C.P. 64000. Tel: (81) 8000-0000. Correo: privacidad@aurum.mx" },
             { title: "FINALIDADES DEL TRATAMIENTO", text: "Sus datos personales serán utilizados para las siguientes finalidades primarias: (i) Prestación del servicio de intermediación inmobiliaria, (ii) Envío de información sobre propiedades de su interés, (iii) Elaboración de contratos y documentos legales." },
             { title: "TRANSFERENCIAS", text: "Sus datos podrán ser transferidos a: notarios públicos para la formalización de operaciones, instituciones financieras para tramitar créditos hipotecarios, autoridades competentes cuando sea requerido por ley. En todos los casos se garantiza la confidencialidad de su información." },
-            { title: "DERECHOS ARCO", text: "Usted tiene derecho de Acceso, Rectificación, Cancelación y Oposición (ARCO) respecto a sus datos personales. Para ejercer dichos derechos, envíe su solicitud por escrito al correo privacidad@cimapro.mx, adjuntando identificación oficial vigente." },
+            { title: "DERECHOS ARCO", text: "Usted tiene derecho de Acceso, Rectificación, Cancelación y Oposición (ARCO) respecto a sus datos personales. Para ejercer dichos derechos, envíe su solicitud por escrito al correo privacidad@aurum.mx, adjuntando identificación oficial vigente." },
         ]
     },
 };
@@ -2229,7 +2229,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                                             <span style={{ color: "black", fontSize: "10px", fontWeight: 900 }}>CP</span>
                                         </div>
                                         <div>
-                                            <div style={{ fontSize: "14px", fontWeight: 900, color: "#C8A96E", letterSpacing: "2px" }}>CIMA PRO</div>
+                                            <div style={{ fontSize: "14px", fontWeight: 900, color: "#C8A96E", letterSpacing: "2px" }}>AURUM</div>
                                             <div style={{ fontSize: "8px", color: "#888", letterSpacing: "1px", textTransform: "uppercase" }}>Plataforma Inmobiliaria Premium</div>
                                         </div>
                                     </div>
@@ -2250,7 +2250,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                             <p style={{ fontSize: "9px", color: "#444", lineHeight: "1.8", fontFamily: "serif", textAlign: "justify", marginBottom: "20px" }}>
                                 En la ciudad de Monterrey, Nuevo León, a {formData.fecha}, comparecen por una parte{" "}
                                 <strong style={{ color: "#1a1a1a", borderBottom: "1px solid #C8A96E" }}>{formData.cliente}</strong>, en su carácter de CLIENTE, y por la otra parte{" "}
-                                <strong style={{ color: "#1a1a1a", borderBottom: "1px solid #C8A96E" }}>CIMA PRO S.A. DE C.V.</strong>, representado por Asesor Certificado, a fin de celebrar el presente instrumento bajo los siguientes términos:
+                                <strong style={{ color: "#1a1a1a", borderBottom: "1px solid #C8A96E" }}>AURUM S.A. DE C.V.</strong>, representado por Asesor Certificado, a fin de celebrar el presente instrumento bajo los siguientes términos:
                             </p>
 
                             {/* Sections / Clauses */}
@@ -2280,7 +2280,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                             <div style={{ marginTop: "40px", paddingTop: "24px", borderTop: "1px solid #f0ebe0", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
                                 {[
                                     { label: "CLIENTE", name: formData.cliente },
-                                    { label: "ASESOR CIMA", name: "Asesor Certificado" },
+                                    { label: "ASESOR AURUM", name: "Asesor Certificado" },
                                     { label: "TESTIGO", name: "________________" },
                                 ].map((sig) => (
                                     <div key={sig.label} style={{ textAlign: "center" }}>
@@ -2293,7 +2293,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
 
                             {/* Footer */}
                             <div style={{ marginTop: "32px", paddingTop: "12px", borderTop: "1px solid #f5f5f5", textAlign: "center", fontSize: "7px", color: "#bbb" }}>
-                                Folio CS-2024-089 · Validado por Cima Sign Technology · Documento generado para demostración
+                                Folio CS-2024-089 · Validado por Aurum Sign Technology · Documento generado para demostración
                             </div>
                         </div>
                     </div>
@@ -2306,7 +2306,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
             <div className="flex items-center justify-between px-1">
                 <div>
                     <h3 className="text-[14px] font-black text-white uppercase tracking-tighter">Generador de Contratos</h3>
-                    <p className="text-[10px] text-white/40 font-medium">Crea documentos legales en segundos sin salir de Cima</p>
+                    <p className="text-[10px] text-white/40 font-medium">Crea documentos legales en segundos sin salir de Aurum</p>
                 </div>
                 {step === "result" && (
                     <button
@@ -2437,7 +2437,7 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                                 animate={{ width: `${progress}%` }}
                             />
                         </div>
-                        <p className="text-[9px] text-white/30 font-mono uppercase tracking-widest">Inyectando datos con arquitectura Cima-Sign...</p>
+                        <p className="text-[9px] text-white/30 font-mono uppercase tracking-widest">Inyectando datos con arquitectura Aurum Sign...</p>
                     </div>
                 </div>
             )}
@@ -2550,7 +2550,7 @@ function MessagesView({ messages }: { messages: LiveMessage[] }) {
                             </div>
                             <div className="flex-1 space-y-3">
                                 <div>
-                                    <h4 className="font-serif text-white font-bold text-sm">Cima AI Nurture en Proceso</h4>
+                                    <h4 className="font-serif text-white font-bold text-sm">Aurum AI Nurture en Proceso</h4>
                                     <p className="text-[10px] text-cima-gold/60 font-medium">Automatizando el cierre con Roberto G.</p>
                                 </div>
 
