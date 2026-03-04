@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 // Vercel Redeploy Trigger: Phase 5 - Digital Vault
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -273,9 +275,12 @@ export default function DemoAdminLive({
     }, [plan.tier, externalTab]);
 
     const maxProps = plan.maxProperties === -1 ? PROPERTIES.length : plan.maxProperties;
-    const visibleProps = PROPERTIES.slice(0, maxProps);
+    const [liveProperties, setLiveProperties] = useState(PROPERTIES);
+    const visibleProps = liveProperties.slice(0, maxProps);
     const canEdit = plan.tier === "profesional" || plan.tier === "premium";
     const [selectedProperty, setSelectedProperty] = useState<number | null>(null);
+    const [showNewPropWizard, setShowNewPropWizard] = useState(false);
+    const [newPropHighlight, setNewPropHighlight] = useState<number | null>(null);
 
     const PLAN_LABELS: Record<string, string> = {
         basico: "Starter",
@@ -554,6 +559,8 @@ export default function DemoAdminLive({
                                                 canEdit={canEdit}
                                                 onSelect={(i) => setSelectedProperty(i)}
                                                 plan={plan}
+                                                onNewProperty={() => setShowNewPropWizard(true)}
+                                                highlightId={newPropHighlight}
                                             />
                                         )
                                     )}
@@ -589,7 +596,291 @@ export default function DemoAdminLive({
                 isOpen={showCheckoutModal}
                 onClose={() => setShowCheckoutModal(false)}
             />
+
+            <AnimatePresence>
+                {showNewPropWizard && (
+                    <NewPropertyWizard
+                        onClose={() => setShowNewPropWizard(false)}
+                        onPublish={(newProp) => {
+                            setLiveProperties(prev => [newProp, ...prev]);
+                            setNewPropHighlight(0);
+                            setTimeout(() => setNewPropHighlight(null), 4000);
+                        }}
+                    />
+                )}
+            </AnimatePresence>
         </div>
+    );
+}
+
+/* ------ New Property Wizard --------------------------------------------------------------------------------------------- */
+const PROP_PHOTOS = ["/cocina-despues.png", "/estancia-despues.png", "/recamara-despues.png"];
+const AMENITY_LIST = ["Alberca", "Jardín", "Gimnasio", "Roof Garden", "Seguridad 24h", "Cuarto de Servicio", "Vista Panorámica", "Elevador", "Bodega", "Estudio", "Cocina Integral", "Smart Home"];
+const PROP_TYPES = [{ label: "Casa", icon: "🏠" }, { label: "Depto", icon: "🏢" }, { label: "Local", icon: "🏪" }, { label: "Terreno", icon: "🌿" }];
+const OP_TYPES = ["Venta", "Renta", "Exclusiva"];
+
+function NewPropertyWizard({ onClose, onPublish }: { onClose: () => void; onPublish: (prop: (typeof PROPERTIES)[0]) => void }) {
+    const [step, setStep] = useState(1);
+    const [propType, setPropType] = useState("Casa");
+    const [opType, setOpType] = useState("Venta");
+    const [precio, setPrecio] = useState("6,500,000");
+    const [nombre, setNombre] = useState("Residencia Valle Oriente");
+    const [direccion, setDireccion] = useState("Valle Oriente 120, San Pedro G.G.");
+    const [recamaras, setRecamaras] = useState(3);
+    const [banos, setBanos] = useState(2);
+    const [estacionamientos, setEstacionamientos] = useState(2);
+    const [m2, setM2] = useState("180");
+    const [descripcion, setDescripcion] = useState("Hermosa residencia con acabados de primera y vista panorámica. Ideal para familia en zona premium.");
+    const [amenities, setAmenities] = useState<string[]>(["Alberca", "Jardín", "Seguridad 24h"]);
+    const [publishStage, setPublishStage] = useState(0);
+    const [published, setPublished] = useState(false);
+
+    const STAGES = ["Preparando datos...", "Generando landing page...", "Activando IA Cima...", "¡Publicado!"];
+
+    const toggleAmenity = (a: string) => {
+        setAmenities(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
+    };
+
+    const startPublish = () => {
+        setStep(4);
+        setPublishStage(0);
+        let stage = 0;
+        const iv = setInterval(() => {
+            stage++;
+            setPublishStage(stage);
+            if (stage >= 3) {
+                clearInterval(iv);
+                setTimeout(() => setPublished(true), 400);
+            }
+        }, 500);
+    };
+
+    const Stepper = ({ label, value, onDec, onInc, min, max }: { label: string; value: number; onDec: () => void; onInc: () => void; min: number; max: number }) => (
+        <div className="space-y-1.5">
+            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">{label}</label>
+            <div className="flex items-center gap-2 bg-white/[0.05] border border-white/10 rounded-xl px-3 py-2">
+                <button onClick={onDec} disabled={value <= min} className="h-6 w-6 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 disabled:opacity-30 transition-all font-black text-sm">−</button>
+                <span className="flex-1 text-center text-xs font-black text-white">{value}</span>
+                <button onClick={onInc} disabled={value >= max} className="h-6 w-6 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 disabled:opacity-30 transition-all font-black text-sm">+</button>
+            </div>
+        </div>
+    );
+
+    const randomPhoto = PROP_PHOTOS[Math.floor(Math.random() * PROP_PHOTOS.length)];
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4"
+            onClick={onClose}
+        >
+            <motion.div
+                initial={{ scale: 0.92, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.92, opacity: 0, y: 20 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="bg-[#0F0F10] border border-white/10 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-white/5">
+                    <div>
+                        <h3 className="text-sm font-black text-white uppercase tracking-tighter">Nueva Propiedad</h3>
+                        {step < 4 && <p className="text-[9px] text-white/30 mt-0.5">Paso {step} de 3</p>}
+                    </div>
+                    <button onClick={onClose} className="h-8 w-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-all">
+                        <X className="h-4 w-4 text-white/40" />
+                    </button>
+                </div>
+
+                {/* Step indicator */}
+                {step < 4 && (
+                    <div className="flex gap-1 px-6 pt-4">
+                        {[1, 2, 3].map(s => (
+                            <div key={s} className={`h-1 flex-1 rounded-full transition-all ${s <= step ? "bg-cima-gold" : "bg-white/10"}`} />
+                        ))}
+                    </div>
+                )}
+
+                {/* Content */}
+                <div className="p-6 max-h-[60vh] overflow-y-auto">
+                    <AnimatePresence mode="wait">
+                        {step === 1 && (
+                            <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
+                                <div>
+                                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-3">Tipo de Propiedad</p>
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {PROP_TYPES.map(({ label, icon }) => (
+                                            <button key={label} onClick={() => setPropType(label)}
+                                                className={`py-3 rounded-xl border text-center transition-all ${propType === label ? "border-cima-gold bg-cima-gold/10 text-cima-gold" : "border-white/10 bg-white/[0.03] text-white/40 hover:border-white/20"}`}>
+                                                <div className="text-lg mb-1">{icon}</div>
+                                                <div className="text-[9px] font-black">{label}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-3">Operación</p>
+                                    <div className="flex gap-2">
+                                        {OP_TYPES.map(op => (
+                                            <button key={op} onClick={() => setOpType(op)}
+                                                className={`flex-1 py-2.5 rounded-xl border text-[10px] font-black transition-all ${opType === op ? "border-cima-gold bg-cima-gold text-black" : "border-white/10 text-white/40 hover:border-white/20"}`}>
+                                                {op}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-2">Precio (MXN)</p>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cima-gold font-black text-sm">$</span>
+                                        <input value={precio} onChange={e => setPrecio(e.target.value)}
+                                            className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 pl-7 text-sm font-black text-white focus:border-cima-gold/50 transition-all outline-none" />
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 2 && (
+                            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Nombre de la Propiedad</label>
+                                    <input value={nombre} onChange={e => setNombre(e.target.value)}
+                                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Dirección</label>
+                                    <input value={direccion} onChange={e => setDireccion(e.target.value)}
+                                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                                </div>
+                                <div className="grid grid-cols-3 gap-3">
+                                    <Stepper label="Recámaras" value={recamaras} min={1} max={6} onDec={() => setRecamaras(v => Math.max(1, v - 1))} onInc={() => setRecamaras(v => Math.min(6, v + 1))} />
+                                    <Stepper label="Baños" value={banos} min={1} max={5} onDec={() => setBanos(v => Math.max(1, v - 1))} onInc={() => setBanos(v => Math.min(5, v + 1))} />
+                                    <Stepper label="Estac." value={estacionamientos} min={0} max={4} onDec={() => setEstacionamientos(v => Math.max(0, v - 1))} onInc={() => setEstacionamientos(v => Math.min(4, v + 1))} />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">M² Construidos</label>
+                                    <input value={m2} onChange={e => setM2(e.target.value)}
+                                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Descripción</label>
+                                    <textarea value={descripcion} onChange={e => setDescripcion(e.target.value)} rows={3}
+                                        className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none resize-none" />
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 3 && (
+                            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
+                                <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Selecciona las amenidades</p>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {AMENITY_LIST.map(a => (
+                                        <button key={a} onClick={() => toggleAmenity(a)}
+                                            className={`py-2.5 px-2 rounded-xl border text-[9px] font-bold transition-all text-center ${amenities.includes(a) ? "border-cima-gold bg-cima-gold/10 text-cima-gold" : "border-white/10 text-white/30 hover:border-white/20"}`}>
+                                            {amenities.includes(a) && <span className="mr-1">✓</span>}{a}
+                                        </button>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 4 && (
+                            <motion.div key="step4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-4 space-y-6">
+                                {!published ? (
+                                    <div className="space-y-6 text-center">
+                                        <div className="relative mx-auto w-20 h-20">
+                                            <div className="absolute inset-0 rounded-full border-4 border-white/5 border-t-cima-gold animate-spin" />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <Sparkles className="h-8 w-8 text-cima-gold animate-pulse" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-black text-white uppercase tracking-tighter mb-1">{STAGES[Math.min(publishStage, 3)]}</p>
+                                            <div className="w-48 h-1.5 bg-white/5 rounded-full mx-auto overflow-hidden">
+                                                <motion.div className="h-full bg-cima-gold rounded-full" animate={{ width: `${(publishStage / 3) * 100}%` }} transition={{ duration: 0.4 }} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-5">
+                                        <div className="text-center">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/30 rounded-full mb-3">
+                                                <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                                                <span className="text-[9px] font-black text-green-400 uppercase tracking-wider">En Vivo</span>
+                                            </div>
+                                            <p className="text-sm font-black text-white">¡Propiedad publicada!</p>
+                                            <p className="text-[10px] text-white/30 mt-1">Ya está disponible en tu portal y marketplaces</p>
+                                        </div>
+                                        {/* Preview card */}
+                                        <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+                                            <img src={randomPhoto} alt={nombre} className="w-full h-28 object-cover" />
+                                            <div className="p-3">
+                                                <p className="text-xs font-black text-white">{nombre}</p>
+                                                <p className="text-[10px] text-cima-gold font-bold mt-0.5">${precio} MXN</p>
+                                                <div className="flex items-center gap-2 mt-1 text-[8px] text-white/30">
+                                                    <span>{recamaras} rec.</span>
+                                                    <span>·</span>
+                                                    <span>{banos} baños</span>
+                                                    <span>·</span>
+                                                    <span>{m2} m²</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={onClose} className="flex-1 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white/50 uppercase tracking-wider hover:bg-white/10 transition-all">
+                                                Cerrar
+                                            </button>
+                                            <button onClick={onClose} className="flex-1 py-3 bg-cima-gold text-black rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-white transition-all">
+                                                Ver Propiedad
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* Footer buttons */}
+                {step < 4 && (
+                    <div className="p-6 pt-0 flex gap-3">
+                        {step > 1 && (
+                            <button onClick={() => setStep(s => s - 1)} className="px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white/50 uppercase hover:bg-white/10 transition-all">
+                                Atrás
+                            </button>
+                        )}
+                        <button
+                            onClick={() => {
+                                if (step < 3) setStep(s => s + 1);
+                                else {
+                                    const newProp = {
+                                        name: nombre,
+                                        price: `$${precio}`,
+                                        status: opType,
+                                        owner: "Nuevo Propietario",
+                                        img: randomPhoto,
+                                        hits: 0,
+                                        trend: [0, 0, 0, 0, 0, 0, 1],
+                                        beds: recamaras,
+                                        baths: banos,
+                                        m2: parseInt(m2) || 180,
+                                        address: direccion,
+                                    };
+                                    startPublish();
+                                    onPublish(newProp);
+                                }
+                            }}
+                            className="flex-1 py-3 bg-cima-gold text-black rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-white transition-all shadow-lg shadow-cima-gold/20"
+                        >
+                            {step < 3 ? "Continuar" : "Publicar Propiedad"}
+                        </button>
+                    </div>
+                )}
+            </motion.div>
+        </motion.div>
     );
 }
 
@@ -828,9 +1119,20 @@ function DiffusionButton({ propertyName, tier }: { propertyName: string; tier: s
 }
 
 /* ------ Properties View --------------------------------------------------------------------------------------------------------------------------- */
-function PropertiesView({ properties, canEdit, onSelect, plan }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void; plan: PlanConfig }) {
+function PropertiesView({ properties, canEdit, onSelect, plan, onNewProperty, highlightId }: { properties: typeof PROPERTIES; canEdit: boolean; onSelect: (i: number) => void; plan: PlanConfig; onNewProperty?: () => void; highlightId?: number | null }) {
     return (
         <div className="space-y-3">
+            <div className="flex items-center justify-between mb-2">
+                <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">{properties.length} propiedades</p>
+                {onNewProperty && (
+                    <button
+                        onClick={onNewProperty}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-cima-gold text-black rounded-lg text-[9px] font-black uppercase hover:bg-white transition-all"
+                    >
+                        <Plus className="h-3.5 w-3.5" /> Nueva Propiedad
+                    </button>
+                )}
+            </div>
             {properties.map((prop, i) => (
                 <motion.div
                     key={i}
@@ -838,7 +1140,7 @@ function PropertiesView({ properties, canEdit, onSelect, plan }: { properties: t
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: Math.min(i * 0.05, 0.5) }}
                     onClick={() => canEdit && onSelect(i)}
-                    className={`bg-white/[0.03] border border-white/5 p-3 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group ${canEdit ? "cursor-pointer" : ""}`}
+                    className={`bg-white/[0.03] border p-3 rounded-xl hover:border-cima-gold/30 hover:bg-white/[0.05] transition-all group ${canEdit ? "cursor-pointer" : ""} ${highlightId === i ? "border-green-500/50 ring-2 ring-green-500/40 bg-green-500/[0.04]" : "border-white/5"}`}
                 >
                     <div className="flex items-center gap-3 mb-2">
                         <div className="h-10 w-14 bg-black border border-white/10 rounded-lg overflow-hidden shrink-0">
@@ -1739,18 +2041,61 @@ function DocumentsView() {
 }
 
 /* ------ Contract Generator View --------------------------------------------------------------------------------------------------- */
+
+const TEMPLATE_CONTENT: Record<string, { sections: { title: string; text: string }[] }> = {
+    exclusividad: {
+        sections: [
+            { title: "ANTECEDENTES", text: "Las partes se reconocen mutuamente la capacidad jurídica suficiente para celebrar el presente Contrato de Exclusividad Inmobiliaria y manifiestan su voluntad de quedar obligadas en los términos y condiciones que se establecen a continuación." },
+            { title: "PRIMERA — VIGENCIA", text: "El presente contrato tendrá una vigencia de NOVENTA (90) días naturales, contados a partir de la fecha de firma. Durante este período, el PROPIETARIO se compromete a no realizar gestiones de venta a través de terceros distintos a CIMA PRO." },
+            { title: "SEGUNDA — COMISIÓN", text: "En caso de concretarse la venta del inmueble, el PROPIETARIO se obliga a pagar a CIMA PRO una comisión equivalente al porcentaje pactado sobre el precio de cierre de la operación, más el Impuesto al Valor Agregado (IVA) correspondiente." },
+            { title: "TERCERA — OBLIGACIONES", text: "CIMA PRO se compromete a promover activamente el inmueble en sus plataformas digitales, redes sociales, portales inmobiliarios y base de datos de clientes calificados, generando un mínimo de 5 visitas calificadas durante la vigencia del contrato." },
+            { title: "CUARTA — EXCLUSIVIDAD", text: "Durante la vigencia del presente instrumento, el PROPIETARIO se obliga a canalizar a CIMA PRO cualquier prospecto interesado en la adquisición del inmueble, con el fin de que sea atendido bajo los lineamientos profesionales de la empresa." },
+            { title: "QUINTA — RESCISIÓN", text: "Cualquiera de las partes podrá dar por terminado el presente contrato mediante aviso por escrito con 15 días de anticipación. En caso de rescisión imputable al PROPIETARIO, deberá cubrir los gastos de promoción ya efectuados por CIMA PRO." },
+        ]
+    },
+    arrendamiento: {
+        sections: [
+            { title: "OBJETO DEL ARRENDAMIENTO", text: "El ARRENDADOR da en arrendamiento al ARRENDATARIO el inmueble descrito, para uso exclusivamente habitacional. El ARRENDATARIO se obliga a destinar el inmueble únicamente para dicho fin, sin poder subarrendarlo total o parcialmente sin autorización escrita del ARRENDADOR." },
+            { title: "RENTA MENSUAL", text: "El ARRENDATARIO se obliga a pagar al ARRENDADOR como renta mensual la cantidad convenida en el presente instrumento, misma que deberá ser cubierta los primeros cinco días de cada mes en la cuenta bancaria que el ARRENDADOR designe." },
+            { title: "DEPÓSITO DE GARANTÍA", text: "El ARRENDATARIO entrega en este acto la cantidad equivalente a dos meses de renta como depósito de garantía, el cual le será devuelto al término del contrato, previa verificación del estado del inmueble y siempre que no existan adeudos." },
+            { title: "OBLIGACIONES DEL ARRENDATARIO", text: "El ARRENDATARIO se obliga a conservar el inmueble en las mismas condiciones en que lo recibe, efectuando las reparaciones menores que se ocasionen por el uso normal del mismo. Las reparaciones mayores serán responsabilidad del ARRENDADOR." },
+        ]
+    },
+    intencion: {
+        sections: [
+            { title: "APARTADO", text: "El COMPRADOR entrega en este acto la cantidad convenida como apartado del inmueble, con el propósito de demostrar su seriedad e intención de adquirir el bien inmueble objeto de la presente carta, quedando el mismo reservado por el plazo pactado." },
+            { title: "CONDICIONES SUSPENSIVAS", text: "La formalización de la operación está sujeta a las siguientes condiciones: (i) obtención de financiamiento bancario por parte del COMPRADOR, (ii) aprobación del avalúo comercial del inmueble, y (iii) presentación de documentación completa por parte del VENDEDOR." },
+            { title: "PLAZO DE CIERRE FORMAL", text: "Las partes acuerdan que la firma del contrato definitivo de compraventa ante Fedatario Público deberá realizarse en un plazo no mayor a 45 días naturales contados a partir de la firma de la presente carta de intención." },
+            { title: "DEVOLUCIÓN DE APARTADO", text: "En caso de que el VENDEDOR decida no concretar la operación o no cumpla con las condiciones pactadas, deberá devolver al COMPRADOR el doble del apartado recibido. Si el COMPRADOR desiste sin causa justificada, perderá el apartado entregado." },
+        ]
+    },
+    aviso: {
+        sections: [
+            { title: "RESPONSABLE", text: "CIMA PRO S.A. DE C.V. es responsable del tratamiento de sus datos personales. Con domicilio en Av. Constitución 444, Col. Centro, Monterrey, N.L., C.P. 64000. Tel: (81) 8000-0000. Correo: privacidad@cimapro.mx" },
+            { title: "FINALIDADES DEL TRATAMIENTO", text: "Sus datos personales serán utilizados para las siguientes finalidades primarias: (i) Prestación del servicio de intermediación inmobiliaria, (ii) Envío de información sobre propiedades de su interés, (iii) Elaboración de contratos y documentos legales." },
+            { title: "TRANSFERENCIAS", text: "Sus datos podrán ser transferidos a: notarios públicos para la formalización de operaciones, instituciones financieras para tramitar créditos hipotecarios, autoridades competentes cuando sea requerido por ley. En todos los casos se garantiza la confidencialidad de su información." },
+            { title: "DERECHOS ARCO", text: "Usted tiene derecho de Acceso, Rectificación, Cancelación y Oposición (ARCO) respecto a sus datos personales. Para ejercer dichos derechos, envíe su solicitud por escrito al correo privacidad@cimapro.mx, adjuntando identificación oficial vigente." },
+        ]
+    },
+};
+
 function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }) {
     const [step, setStep] = useState<"select" | "data" | "generating" | "result">("select");
     const [template, setTemplate] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         propiedad: "Residencia Las Misiones",
         cliente: "Carlos Vargas",
+        propietario: "Fam. García Treviño",
+        telefono: "81 2345 6789",
         precio: "$12,500,000",
         comision: "5%",
-        fecha: new Date().toLocaleDateString()
+        vigencia: "90",
+        fecha: new Date().toLocaleDateString("es-MX"),
     });
     const [progress, setProgress] = useState(0);
     const [showPreview, setShowPreview] = useState(false);
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+    const previewRef = useRef<HTMLDivElement>(null);
 
     const TEMPLATES = [
         { id: "exclusividad", label: "Contrato de Exclusividad", icon: FileSignature, desc: "Para captación de propiedades Premium" },
@@ -1781,87 +2126,155 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
         setShowPreview(false);
     };
 
+    const handleDownloadPDF = async () => {
+        if (!previewRef.current) return;
+        setIsGeneratingPDF(true);
+        try {
+            const canvas = await html2canvas(previewRef.current, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+            const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+            const imgWidth = 210;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            pdf.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, imgWidth, imgHeight);
+            pdf.save(`contrato-${template}-demo.pdf`);
+        } finally {
+            setIsGeneratingPDF(false);
+        }
+    };
+
     if (showPreview) {
         const selectedT = TEMPLATES.find(t => t.id === template);
+        const content = TEMPLATE_CONTENT[template || "exclusividad"];
         return (
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[500px] border border-white/10"
+                className="rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-white/10"
+                style={{ maxHeight: "80vh" }}
             >
-                <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                {/* Toolbar */}
+                <div className="p-4 bg-slate-900 border-b border-white/10 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-lg bg-cima-gold flex items-center justify-center">
                             <FileText className="h-4 w-4 text-black" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-slate-900 uppercase tracking-tighter shrink-0">Vista Previa: {selectedT?.label}</p>
-                            <p className="text-[8px] text-slate-500 font-medium whitespace-nowrap">Documento generado por Cima Sign</p>
+                            <p className="text-[10px] font-black text-white uppercase tracking-tighter">{selectedT?.label}</p>
+                            <p className="text-[8px] text-white/30 font-medium">Folio CS-2024-089 · Borrador de demostración</p>
                         </div>
                     </div>
-                    <button
-                        onClick={() => setShowPreview(false)}
-                        className="h-8 w-8 rounded-full hover:bg-slate-200 flex items-center justify-center transition-all shrink-0"
-                    >
-                        <X className="h-4 w-4 text-slate-400" />
-                    </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-8 sm:p-12 bg-white space-y-8 select-none custom-scrollbar-light">
-                    <div className="flex justify-between items-start border-b-2 border-slate-50 pb-8">
-                        <div className="h-10 w-24 bg-cima-gold/10 rounded flex items-center justify-center border border-cima-gold/20">
-                            <span className="text-[9px] font-serif font-black text-cima-gold italic uppercase">Cima Pro</span>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-[9px] font-black uppercase text-slate-900">Folio: CS-2024-089</p>
-                            <p className="text-[8px] text-slate-400">Fecha: {new Date().toLocaleDateString()}</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <h2 className="text-center font-serif text-lg font-black text-slate-800 underline decoration-cima-gold/30 underline-offset-8 uppercase tracking-widest">{selectedT?.label}</h2>
-
-                        <div className="space-y-4 text-slate-700 leading-relaxed text-[10px] text-justify font-serif">
-                            <p>En la ciudad de Monterrey, Nuevo León, comparecen por una parte el <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.cliente || "[Nombre del Cliente]"}</span> y por la otra parte <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">CIMA PRO S.A. DE C.V.</span> representado por <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">Asesor Elite</span>.</p>
-
-                            <p>Las partes acuerdan establecer el precio de la operación en la cantidad de <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">${formData.precio || "0.00"} MXN</span>, bajo los términos de exclusividad profesional para la propiedad <span className="text-slate-900 font-bold border-b border-cima-gold/40 px-1">{formData.propiedad || "la ubicación indicada"}</span>.</p>
-
-                            <div className="p-4 bg-slate-50 border-l-4 border-cima-gold rounded-r-xl">
-                                <p className="text-[8px] font-black uppercase text-slate-500 mb-1 italic">Cláusula de Honorarios</p>
-                                <p className="font-bold text-slate-900">Se pacta una comisión del {formData.comision || "0"}% sobre el valor total de la transacción, pagadera al momento de la firma ante Fedatario Público.</p>
-                            </div>
-
-                            <p>Ambas partes manifiestan su conformidad y voluntad para la firma del presente instrumento digital, validado mediante la infraestructura tecnológica de Cima Sign...</p>
-                        </div>
-                    </div>
-
-                    <div className="pt-12 grid grid-cols-2 gap-8 border-t border-slate-50 mt-12">
-                        <div className="text-center space-y-2">
-                            <div className="h-12 w-full bg-slate-50 rounded-lg border border-dashed border-slate-200 flex items-center justify-center">
-                                <span className="text-[7px] text-slate-300 font-mono uppercase tracking-widest">Firma Cliente</span>
-                            </div>
-                            <p className="text-[8px] font-bold text-slate-900 uppercase truncate px-2">{formData.cliente || "EL CLIENTE"}</p>
-                        </div>
-                        <div className="text-center space-y-2">
-                            <div className="h-12 w-full bg-cima-gold/5 rounded-lg border border-cima-gold/20 flex items-center justify-center relative overflow-hidden">
-                                <Sparkles className="absolute -right-1 -bottom-1 h-8 w-8 text-cima-gold/10" />
-                                <span className="text-[7px] text-cima-gold font-mono font-black uppercase tracking-tighter">CIMA SIGN</span>
-                            </div>
-                            <p className="text-[8px] font-bold text-slate-900 uppercase">CIMA PRO ELITE</p>
-                        </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handleDownloadPDF}
+                            disabled={isGeneratingPDF}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-cima-gold text-black rounded-xl text-[9px] font-black uppercase tracking-wider hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cima-gold/20"
+                        >
+                            {isGeneratingPDF ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                            {isGeneratingPDF ? "Generando..." : "Descargar PDF"}
+                        </button>
+                        <button
+                            onClick={() => setShowPreview(false)}
+                            className="h-8 w-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-all"
+                        >
+                            <X className="h-4 w-4 text-white/40" />
+                        </button>
                     </div>
                 </div>
 
-                <div className="p-4 bg-slate-900 flex justify-end gap-3 shrink-0">
-                    <button
-                        onClick={() => setShowPreview(false)}
-                        className="px-6 py-2 rounded-xl text-[9px] font-black text-white hover:bg-white/10 transition-all uppercase"
+                {/* A4 Preview scroll */}
+                <div className="flex-1 overflow-y-auto bg-slate-200 p-6">
+                    {/* The div captured by html2canvas */}
+                    <div
+                        ref={previewRef}
+                        className="bg-white mx-auto shadow-2xl relative overflow-hidden"
+                        style={{ width: "595px", minHeight: "842px", padding: "40px" }}
                     >
-                        Cerrar
-                    </button>
-                    <button className="px-6 py-2 bg-cima-gold rounded-xl text-[9px] font-black text-black hover:bg-white transition-all uppercase shadow-lg shadow-cima-gold/20">
-                        Confirmar y Enviar
-                    </button>
+                        {/* Watermark */}
+                        <div style={{
+                            position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
+                            pointerEvents: "none", zIndex: 1, transform: "rotate(-45deg)", fontSize: "72px",
+                            fontWeight: 900, color: "#f1f1f1", opacity: 0.07, userSelect: "none", whiteSpace: "nowrap"
+                        }}>
+                            BORRADOR DE EJEMPLO
+                        </div>
+
+                        {/* Content above watermark */}
+                        <div style={{ position: "relative", zIndex: 2 }}>
+                            {/* Membrete */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "2px solid #f0ebe0", paddingBottom: "24px", marginBottom: "28px" }}>
+                                <div>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
+                                        <div style={{ width: "32px", height: "32px", background: "#C8A96E", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <span style={{ color: "black", fontSize: "10px", fontWeight: 900 }}>CP</span>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: "14px", fontWeight: 900, color: "#C8A96E", letterSpacing: "2px" }}>CIMA PRO</div>
+                                            <div style={{ fontSize: "8px", color: "#888", letterSpacing: "1px", textTransform: "uppercase" }}>Plataforma Inmobiliaria Premium</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: "9px", fontWeight: 900, color: "#333", textTransform: "uppercase", letterSpacing: "1px" }}>Folio: CS-2024-089</div>
+                                    <div style={{ fontSize: "8px", color: "#888", marginTop: "4px" }}>Fecha: {formData.fecha}</div>
+                                    <div style={{ fontSize: "8px", color: "#C8A96E", marginTop: "2px", fontWeight: 700 }}>Vigencia: {formData.vigencia} días</div>
+                                </div>
+                            </div>
+
+                            {/* Title */}
+                            <h2 style={{ textAlign: "center", fontFamily: "serif", fontSize: "16px", fontWeight: 900, color: "#1a1a1a", textTransform: "uppercase", letterSpacing: "3px", marginBottom: "24px", textDecoration: "underline", textDecorationColor: "#C8A96E", textUnderlineOffset: "6px" }}>
+                                {selectedT?.label}
+                            </h2>
+
+                            {/* Intro paragraph */}
+                            <p style={{ fontSize: "9px", color: "#444", lineHeight: "1.8", fontFamily: "serif", textAlign: "justify", marginBottom: "20px" }}>
+                                En la ciudad de Monterrey, Nuevo León, a {formData.fecha}, comparecen por una parte{" "}
+                                <strong style={{ color: "#1a1a1a", borderBottom: "1px solid #C8A96E" }}>{formData.cliente}</strong>, en su carácter de CLIENTE, y por la otra parte{" "}
+                                <strong style={{ color: "#1a1a1a", borderBottom: "1px solid #C8A96E" }}>CIMA PRO S.A. DE C.V.</strong>, representado por Asesor Certificado, a fin de celebrar el presente instrumento bajo los siguientes términos:
+                            </p>
+
+                            {/* Sections / Clauses */}
+                            {content.sections.map((section, i) => (
+                                <div key={i} style={{ marginBottom: "18px" }}>
+                                    <div style={{ fontSize: "8px", fontWeight: 900, color: "#C8A96E", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "6px" }}>
+                                        {section.title}
+                                    </div>
+                                    <p style={{ fontSize: "9px", color: "#444", lineHeight: "1.75", fontFamily: "serif", textAlign: "justify" }}>
+                                        {section.text}
+                                    </p>
+                                    {/* Data highlights */}
+                                    {i === 0 && (
+                                        <div style={{ marginTop: "10px", background: "#fdfaf5", border: "1px solid #f0ebe0", borderLeft: "4px solid #C8A96E", borderRadius: "0 8px 8px 0", padding: "10px 14px" }}>
+                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", fontSize: "8px" }}>
+                                                <div><span style={{ color: "#888", fontWeight: 700 }}>Propiedad: </span><span style={{ color: "#1a1a1a", fontWeight: 900 }}>{formData.propiedad}</span></div>
+                                                <div><span style={{ color: "#888", fontWeight: 700 }}>Propietario: </span><span style={{ color: "#1a1a1a", fontWeight: 900 }}>{formData.propietario}</span></div>
+                                                <div><span style={{ color: "#888", fontWeight: 700 }}>Precio: </span><span style={{ color: "#C8A96E", fontWeight: 900 }}>{formData.precio}</span></div>
+                                                <div><span style={{ color: "#888", fontWeight: 700 }}>Comisión: </span><span style={{ color: "#1a1a1a", fontWeight: 900 }}>{formData.comision}</span></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            {/* Signature block */}
+                            <div style={{ marginTop: "40px", paddingTop: "24px", borderTop: "1px solid #f0ebe0", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
+                                {[
+                                    { label: "CLIENTE", name: formData.cliente },
+                                    { label: "ASESOR CIMA", name: "Asesor Certificado" },
+                                    { label: "TESTIGO", name: "________________" },
+                                ].map((sig) => (
+                                    <div key={sig.label} style={{ textAlign: "center" }}>
+                                        <div style={{ height: "48px", borderBottom: "2px dashed #ddd", marginBottom: "8px" }} />
+                                        <div style={{ fontSize: "8px", fontWeight: 900, color: "#1a1a1a", textTransform: "uppercase" }}>{sig.name}</div>
+                                        <div style={{ fontSize: "7px", color: "#aaa", marginTop: "2px" }}>{sig.label}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Footer */}
+                            <div style={{ marginTop: "32px", paddingTop: "12px", borderTop: "1px solid #f5f5f5", textAlign: "center", fontSize: "7px", color: "#bbb" }}>
+                                Folio CS-2024-089 · Validado por Cima Sign Technology · Documento generado para demostración
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </motion.div>
         );
@@ -1909,63 +2322,76 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 space-y-6"
                 >
-                    <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-2">
                         <div className="h-8 w-8 rounded-lg bg-cima-gold/10 flex items-center justify-center text-cima-gold">
                             <FilePenLine className="h-4 w-4" />
                         </div>
                         <h4 className="text-[11px] font-black text-white uppercase tracking-widest">Datos del Documento</h4>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Propiedad</label>
-                            <input
-                                type="text"
-                                value={formData.propiedad}
-                                onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
-                            />
+                    {/* Section: Datos de la Propiedad */}
+                    <div>
+                        <p className="text-[8px] font-black text-white/20 uppercase tracking-[3px] mb-4 border-b border-white/5 pb-2">Datos de la Propiedad</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Propiedad</label>
+                                <input type="text" value={formData.propiedad} onChange={(e) => setFormData({ ...formData, propiedad: e.target.value })}
+                                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Precio de Cierre</label>
+                                <input type="text" value={formData.precio} onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
+                                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Cliente / Dueño</label>
-                            <input
-                                type="text"
-                                value={formData.cliente}
-                                onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
-                            />
+                    </div>
+
+                    {/* Section: Partes del Contrato */}
+                    <div>
+                        <p className="text-[8px] font-black text-white/20 uppercase tracking-[3px] mb-4 border-b border-white/5 pb-2">Partes del Contrato</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Nombre del Comprador / Cliente</label>
+                                <input type="text" value={formData.cliente} onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
+                                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Nombre del Vendedor / Dueño</label>
+                                <input type="text" value={formData.propietario} onChange={(e) => setFormData({ ...formData, propietario: e.target.value })}
+                                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                                <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Teléfono de Contacto</label>
+                                <input type="text" value={formData.telefono} onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Precio de Cierre</label>
-                            <input
-                                type="text"
-                                value={formData.precio}
-                                onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Comisión Pactada</label>
-                            <input
-                                type="text"
-                                value={formData.comision}
-                                onChange={(e) => setFormData({ ...formData, comision: e.target.value })}
-                                className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none"
-                            />
+                    </div>
+
+                    {/* Section: Condiciones Comerciales */}
+                    <div>
+                        <p className="text-[8px] font-black text-white/20 uppercase tracking-[3px] mb-4 border-b border-white/5 pb-2">Condiciones Comerciales</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Comisión Pactada</label>
+                                <input type="text" value={formData.comision} onChange={(e) => setFormData({ ...formData, comision: e.target.value })}
+                                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Vigencia (días)</label>
+                                <input type="text" value={formData.vigencia} onChange={(e) => setFormData({ ...formData, vigencia: e.target.value })}
+                                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-cima-gold/50 transition-all outline-none" />
+                            </div>
                         </div>
                     </div>
 
                     <div className="pt-4 flex gap-3">
-                        <button
-                            onClick={() => setStep("select")}
-                            className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl font-black text-xs text-white/40 uppercase tracking-widest hover:bg-white/10 transition-all"
-                        >
+                        <button onClick={() => setStep("select")}
+                            className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl font-black text-xs text-white/40 uppercase tracking-widest hover:bg-white/10 transition-all">
                             Cancelar
                         </button>
-                        <button
-                            onClick={handleGenerate}
-                            className="flex-[2] py-4 bg-cima-gold text-black rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] active:scale-95 transition-all"
-                        >
+                        <button onClick={handleGenerate}
+                            className="flex-[2] py-4 bg-cima-gold text-black rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] active:scale-95 transition-all">
                             Generar PDF Profesional
                         </button>
                     </div>
@@ -2024,7 +2450,10 @@ function ContractGeneratorView({ isMobilePreview }: { isMobilePreview: boolean }
                             >
                                 <Eye className="h-4 w-4" /> Previsualizar
                             </button>
-                            <button className="py-4 bg-cima-gold text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                            <button
+                                onClick={() => { setShowPreview(true); setTimeout(handleDownloadPDF, 300); }}
+                                className="py-4 bg-cima-gold text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-cima-gold/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                            >
                                 <Download className="h-4 w-4" /> Descargar PDF
                             </button>
                         </div>

@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Home, BedDouble, Bath, Ruler, Camera, Calendar, MapPin,
     ChevronLeft, ChevronRight, CheckCircle2, Phone, Shield, Star,
     Eye, X, Share2, MessageCircle, Lock, Car, TrendingUp,
     Building2, Copy, Play, Users as UsersIcon, ExternalLink,
-    ChevronRight as Breadcrumb, Wifi, Waves, Dumbbell, TreePine
+    ChevronRight as Breadcrumb, Wifi, Waves, Dumbbell, TreePine,
+    FileDown, Loader2
 } from "lucide-react";
 import type { PlanConfig } from "@/lib/config/demo-plans";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 /* ──────────────────────────────────────────────────────
    Lightbox Modal (Pro / Team only)
@@ -246,6 +249,20 @@ export default function DemoPropertyPage({
     const [showVirtualTour, setShowVirtualTour] = useState(false);
     const [showVideoTour, setShowVideoTour] = useState(false);
     const [showShare, setShowShare] = useState(false);
+    const [generatingFicha, setGeneratingFicha] = useState(false);
+    const fichaRef = useRef<HTMLDivElement>(null);
+
+    const generateFichaPDF = async () => {
+        setGeneratingFicha(true);
+        try {
+            const canvas = await html2canvas(fichaRef.current!, { scale: 2, useCORS: true, allowTaint: true });
+            const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+            pdf.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, 210, 297);
+            pdf.save(`ficha-tecnica-${propName.replace(/\s+/g, "-")}-demo.pdf`);
+        } finally {
+            setGeneratingFicha(false);
+        }
+    };
 
     const photos = [
         "/cocina-despues.png",
@@ -673,6 +690,16 @@ export default function DemoPropertyPage({
                                         <Phone className="h-3.5 w-3.5" />
                                         Llamar
                                     </button>
+                                    {(isPro || isTeam) && (
+                                        <button
+                                            onClick={generateFichaPDF}
+                                            disabled={generatingFicha}
+                                            className="w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white/50 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {generatingFicha ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                                            {generatingFicha ? "Generando..." : "Ficha Técnica PDF"}
+                                        </button>
+                                    )}
                                 </div>
 
                                 {/* Team: Share button */}
@@ -735,6 +762,87 @@ export default function DemoPropertyPage({
                 </div>
                 <div className={`h-0.5 w-12 ${accentBg} opacity-20 rounded-full`} />
                 {isTeam && <p className="text-[7px] text-white/15 font-bold uppercase tracking-widest">Powered by Cima Pro Technology</p>}
+            </div>
+
+            {/* ══════════════════════════════════════
+                FICHA TÉCNICA — Hidden PDF Template
+            ══════════════════════════════════════ */}
+            <div
+                ref={fichaRef}
+                style={{ position: "fixed", left: "-9999px", top: 0, width: "794px", background: "#0A0A0B", color: "white", fontFamily: "sans-serif" }}
+            >
+                {/* Header */}
+                <div style={{ background: "#0A0A0B", borderBottom: "2px solid #C8A96E", padding: "32px 40px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                        <div style={{ color: "#C8A96E", fontSize: "22px", fontWeight: 900, letterSpacing: "4px", textTransform: "uppercase" }}>CIMA PRO</div>
+                        <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "10px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginTop: "4px" }}>Ficha Técnica de Propiedad</div>
+                    </div>
+                    <div style={{ textAlign: "right", color: "rgba(255,255,255,0.3)", fontSize: "10px" }}>
+                        <div style={{ fontWeight: 700 }}>{new Date().toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" })}</div>
+                        <div style={{ color: "#C8A96E", marginTop: "4px", fontSize: "9px", letterSpacing: "1px" }}>propiedadesmty.com</div>
+                    </div>
+                </div>
+
+                {/* Name & Price */}
+                <div style={{ padding: "28px 40px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                    <div style={{ fontSize: "26px", fontWeight: 900, color: "white", marginBottom: "8px" }}>{propName}</div>
+                    <div style={{ fontSize: "28px", fontWeight: 900, color: "#C8A96E" }}>${propPrice} MXN</div>
+                    <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px", marginTop: "4px" }}>San Pedro Garza García · Nuevo León</div>
+                </div>
+
+                {/* Specs grid */}
+                <div style={{ padding: "20px 40px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "16px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                    {[
+                        { label: "Recámaras", value: "4" },
+                        { label: "Baños", value: "3.5" },
+                        { label: "Construcción", value: "320 m²" },
+                        { label: "Estacionamientos", value: "2" },
+                    ].map((spec) => (
+                        <div key={spec.label} style={{ background: "rgba(200,169,110,0.06)", border: "1px solid rgba(200,169,110,0.2)", borderRadius: "12px", padding: "16px", textAlign: "center" }}>
+                            <div style={{ fontSize: "22px", fontWeight: 900, color: "#C8A96E" }}>{spec.value}</div>
+                            <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", marginTop: "4px", textTransform: "uppercase", letterSpacing: "1px" }}>{spec.label}</div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Description */}
+                <div style={{ padding: "20px 40px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "10px" }}>Descripción</div>
+                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", lineHeight: "1.7" }}>
+                        Impresionante residencia en zona premium de Monterrey. Amplios espacios iluminados, acabados de lujo y diseño arquitectónico contemporáneo. Jardín privado, terraza panorámica y domótica integrada. La propiedad ideal para quienes buscan exclusividad y confort en una ubicación privilegiada.
+                    </p>
+                </div>
+
+                {/* Amenidades */}
+                <div style={{ padding: "20px 40px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "12px" }}>Amenidades</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
+                        {["Alberca", "Jardín privado", "Gimnasio", "Roof Garden", "Seguridad 24h", "Cuarto de servicio", "Vista panorámica", "Elevador", "Bodega", "Estudio", "Cocina integral", "Smart Home"].map((a) => (
+                            <div key={a} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", color: "rgba(255,255,255,0.6)" }}>
+                                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#C8A96E", flexShrink: 0, display: "inline-block" }} />
+                                {a}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Photo */}
+                <div style={{ padding: "20px 40px 16px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "12px" }}>Fotografía Principal</div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photos[0]} alt="Propiedad" crossOrigin="anonymous" style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: "12px" }} />
+                </div>
+
+                {/* Gold separator */}
+                <div style={{ height: "2px", background: "linear-gradient(90deg, #C8A96E, transparent)", margin: "0 40px 16px" }} />
+
+                {/* Footer */}
+                <div style={{ padding: "12px 40px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>
+                        <span style={{ color: "#C8A96E", fontWeight: 700 }}>Lic. María Fernández</span> · Asesora Certificada AMPI
+                    </div>
+                    <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.2)" }}>Generado por Cima Pro · propiedadesmty.com</div>
+                </div>
             </div>
 
             {/* ══════════════════════════════════════
