@@ -17,7 +17,7 @@ import FadeIn from "@/components/landing/fade-in";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 // TODO: Reemplaza con tu número de WhatsApp real (formato: 52 + 10 dígitos)
-const WA_NUMBER = "528112345678";
+const WA_NUMBER = "528121980008";
 
 // ─── Live Activity Feed ────────────────────────────────────────────────────
 function LiveActivityFeed() {
@@ -377,11 +377,20 @@ function ComparisonSection() {
                     </div>
                     <h4 className="text-xl md:text-2xl font-heading font-bold mb-6 text-white/60">Software Tradicional</h4>
                     <div className="grid grid-cols-2 gap-3 mb-8">
-                        {["EasyBroker", "Wasi", "Wiggot", "NOCNOK"].map(name => (
-                            <div key={name} className="flex items-center justify-center p-5 bg-white/5 border border-white/10 rounded-xl relative overflow-hidden">
-                                <span className="text-xs font-bold text-white/40">{name}</span>
+                        {[
+                            { name: "EasyBroker", img: "/competitors/easybroker.png", scale: "scale-[1.56]" },
+                            { name: "NOCNOK",     img: "/competitors/NOCNOK.png" },
+                            { name: "Wiggot",     img: "/competitors/wiggot.png" },
+                            { name: "Wasi",       img: "/competitors/wasi.png" },
+                        ].map(comp => (
+                            <div key={comp.name} className="flex items-center justify-center p-6 bg-white/5 border border-white/10 rounded-xl relative overflow-hidden group/comp">
+                                <img
+                                    src={comp.img}
+                                    alt={comp.name}
+                                    className={`h-8 md:h-10 w-auto object-contain brightness-0 invert opacity-40 group-hover/comp:opacity-70 transition-opacity ${comp.scale ?? ""}`}
+                                />
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div className="h-[1px] w-[80%] bg-red-500/40 rotate-[-10deg]" />
+                                    <div className="h-[1px] w-[80%] bg-red-500/50 rotate-[-10deg]" />
                                 </div>
                             </div>
                         ))}
