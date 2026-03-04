@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 // Vercel Redeploy Trigger: Phase 5 - Digital Vault
@@ -667,13 +668,16 @@ function NewPropertyWizard({ onClose, onPublish }: { onClose: () => void; onPubl
     );
 
     const randomPhoto = PROP_PHOTOS[Math.floor(Math.random() * PROP_PHOTOS.length)];
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+    if (!mounted) return null;
 
-    return (
+    return createPortal(
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4"
+            className="fixed inset-0 z-[500] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4"
             onClick={onClose}
         >
             <motion.div
@@ -880,7 +884,8 @@ function NewPropertyWizard({ onClose, onPublish }: { onClose: () => void; onPubl
                     </div>
                 )}
             </motion.div>
-        </motion.div>
+        </motion.div>,
+        document.body
     );
 }
 
