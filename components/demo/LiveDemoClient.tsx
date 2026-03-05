@@ -836,9 +836,9 @@ export default function LiveDemoClient() {
             {/* ── Top Bar / Controls ──────────────────────── */}
             <div className="sticky top-0 z-[100] bg-black/80 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-[1600px] mx-auto px-4 h-16 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                         <img src="/aurum-isotipo.png" alt="Aurum" className="h-7 w-auto shrink-0" />
-                        <div className="flex flex-col">
+                        <div className="hidden lg:flex flex-col">
                             <span className="text-[10px] font-black uppercase tracking-wider text-white">Demo en Vivo</span>
                             {editingName ? (
                                 <input
