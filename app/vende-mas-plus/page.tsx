@@ -23,6 +23,10 @@ import { Comparison } from './components/Comparison';
 import { DashboardPreviews } from './components/DashboardPreviews';
 import { RoiCalculator } from './components/RoiCalculator';
 import { Pricing } from './components/Pricing';
+import { PortalMarquee } from './components/PortalMarquee';
+import { HowItWorks } from './components/HowItWorks';
+import { Testimonials } from './components/Testimonials';
+import { Features } from './components/Features';
 
 /* ─── Live Activity Feed (Toast-style) ───────────────────────────── */
 function LiveActivityFeed() {
@@ -194,9 +198,13 @@ export default function VendeMasPlusPage() {
                     </div>
                 </div>
 
+                <PortalMarquee />
                 <Comparison />
+                <HowItWorks />
+                <Features />
                 <DashboardPreviews />
                 <RoiCalculator />
+                <Testimonials />
                 <Pricing />
 
                 {/* Final CTA Bridge */}
