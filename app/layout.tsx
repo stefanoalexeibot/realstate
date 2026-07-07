@@ -36,6 +36,9 @@ export const metadata: Metadata = {
   title: { default: "Cima Propiedades | Monterrey", template: "%s | Cima Propiedades" },
   description: "Encuentra casas, departamentos y terrenos en venta y renta en Monterrey, Nuevo León. Asesoría personalizada para comprar o vender tu propiedad.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://cimapropiedades.mx"),
+  icons: {
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>",
+  },
   openGraph: {
     type: "website",
     locale: "es_MX",
