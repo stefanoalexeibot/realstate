@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Users2, Plus, Loader2, Phone, Mail, Check, X, Edit2, Trash2 } from "lucide-react";
 
 type Agente = {
@@ -40,21 +39,25 @@ export default function AgentesPage() {
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    const supabase = createClient();
-    const { data: ag } = await supabase.from("re_agentes").select("*").order("name");
-    const { data: props } = await supabase.from("re_properties").select("agent_id, status");
-
-    const res = await fetch("/api/admin/people");
-    const json = await res.json();
-    setProfiles(json.authProfiles ?? []);
-
-    const agWithStats = (ag ?? []).map((a) => ({
-      ...a,
-      _props: props?.filter((p) => p.agent_id === a.id && p.status === "active").length ?? 0,
-      _closed: props?.filter((p) => p.agent_id === a.id && ["sold", "rented"].includes(p.status)).length ?? 0,
-    }));
-    setAgentes(agWithStats as Agente[]);
-    setLoading(false);
+    try {
+      const [agRes, peopleRes] = await Promise.all([
+        fetch("/api/admin/agentes"),
+        fetch("/api/admin/people"),
+      ]);
+      const { agentes: ag, properties: props } = await agRes.json();
+      const { authProfiles } = await peopleRes.json();
+      setProfiles(authProfiles ?? []);
+      const agWithStats = (ag ?? []).map((a: Agente) => ({
+        ...a,
+        _props: props?.filter((p: { agent_id: string; status: string }) => p.agent_id === a.id && p.status === "active").length ?? 0,
+        _closed: props?.filter((p: { agent_id: string; status: string }) => p.agent_id === a.id && ["sold", "rented"].includes(p.status)).length ?? 0,
+      }));
+      setAgentes(agWithStats as Agente[]);
+    } catch (err) {
+      console.error("Error loading agentes:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);

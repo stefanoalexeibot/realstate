@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import {
   BookOpen, ChevronDown, ChevronRight, MessageCircle, Phone, Check,
   AlertTriangle, TrendingUp, Users, Clock, Target,
@@ -195,16 +194,18 @@ export default function VentasPage() {
   const [copied, setCopied] = useState<number | null>(null);
 
   const loadPipeline = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("re_seller_leads")
-      .select("pipeline_stage");
-    if (!data) return;
-    const counts: Record<string, number> = {};
-    data.forEach((r) => {
-      counts[r.pipeline_stage] = (counts[r.pipeline_stage] ?? 0) + 1;
-    });
-    setPipeline(STAGES.map((s) => ({ stage: s.key, count: counts[s.key] ?? 0 })));
+    try {
+      const res = await fetch("/api/seller-leads/list");
+      if (!res.ok) return;
+      const { data } = await res.json();
+      const counts: Record<string, number> = {};
+      (data ?? []).forEach((r: { pipeline_stage: string }) => {
+        counts[r.pipeline_stage] = (counts[r.pipeline_stage] ?? 0) + 1;
+      });
+      setPipeline(STAGES.map((s) => ({ stage: s.key, count: counts[s.key] ?? 0 })));
+    } catch (err) {
+      console.error("Error loading pipeline:", err);
+    }
   }, []);
 
   useEffect(() => { loadPipeline(); }, [loadPipeline]);

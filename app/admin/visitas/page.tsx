@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
 import {
   Calendar, Phone, Loader2, MessageSquare, Check,
   Camera, ImagePlus, X, ZoomIn, Star, AlertCircle,
@@ -87,32 +86,11 @@ export default function VisitasAdmin() {
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const supabase = createClient();
-
-      const { data, error } = await supabase
-        .from("re_visits")
-        .select(`
-          id, name, phone, status, created_at, preferred_date, 
-          agent_notes, interest_level, feedback_tags, 
-          re_properties(id, title, neighborhood, slug, cover_photo)
-        `)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Visits fetch error:", error);
-        setVisits([]);
-      } else {
-        setVisits(data as unknown as VisitRow[]);
-      }
-
-      const { data: propsData } = await supabase
-        .from("re_properties")
-        .select("id, title, neighborhood")
-        .eq("status", "active")
-        .order("title");
-
-      setProperties((propsData ?? []) as any);
-
+      const res = await fetch("/api/admin/visitas");
+      if (!res.ok) throw new Error("Error al cargar visitas");
+      const json = await res.json();
+      setVisits(json.visits as VisitRow[]);
+      setProperties(json.properties ?? []);
     } catch (err) {
       console.error("Unexpected error in load():", err);
     } finally {

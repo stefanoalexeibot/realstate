@@ -427,7 +427,7 @@ export default function LeadsAdmin() {
                   </div>
                   <p className="text-xs text-cima-text-muted mb-2">Comparte estas credenciales con el propietario:</p>
                   <div className="rounded-lg bg-cima-bg border border-cima-border p-3 font-mono text-xs space-y-1">
-                    <p><span className="text-cima-text-dim">URL:</span> <span className="text-cima-text">propiedades-mty.vercel.app/portal</span></p>
+                    <p><span className="text-cima-text-dim">URL:</span> <span className="text-cima-text">{(process.env.NEXT_PUBLIC_APP_URL ?? "cimapropiedades.mx").replace("https://", "")}/portal</span></p>
                     <p><span className="text-cima-text-dim">Email:</span> <span className="text-cima-text">{invite.email}</span></p>
                     <p><span className="text-cima-text-dim">Clave:</span> <span className="text-cima-gold font-bold">{inviteSuccess.pass}</span></p>
                   </div>
