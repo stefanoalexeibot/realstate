@@ -236,7 +236,7 @@ export default function LeadsAdmin() {
       ) : (
         <div className="rounded-xl border border-cima-border bg-cima-card overflow-hidden">
           {/* Table Header - Desktop only */}
-          <div className="hidden sm:grid grid-cols-[1fr_1fr_110px_110px_140px_90px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
+          <div className="hidden sm:grid grid-cols-[1fr_1fr_110px_110px_140px_120px] gap-4 px-5 py-3 border-b border-cima-border bg-cima-bg">
             {["Nombre", "Contacto", "Operación", "Pipeline", "Fecha", ""].map((h) => (
               <p key={h} className="font-mono text-[10px] tracking-[0.15em] text-cima-text-dim uppercase">{h}</p>
             ))}
@@ -249,7 +249,7 @@ export default function LeadsAdmin() {
               return (
                 <div key={l.id} className="hover:bg-cima-surface/30 transition-colors">
                   {/* Desktop View */}
-                  <div className="hidden sm:grid grid-cols-[1fr_1fr_110px_110px_140px_90px] gap-4 px-5 py-4 items-center">
+                  <div className="hidden sm:grid grid-cols-[1fr_1fr_110px_110px_140px_120px] gap-4 px-5 py-4 items-center">
                     {/* Name */}
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cima-gold/10 border border-cima-gold/20">
@@ -310,6 +310,13 @@ export default function LeadsAdmin() {
                         className="p-2 rounded-lg bg-cima-gold/10 border border-cima-gold/20 text-cima-gold hover:bg-cima-gold/20 transition-colors"
                       >
                         <Key className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => deleteLead(l.id)}
+                        disabled={deleting === l.id}
+                        className="p-2 rounded-lg bg-cima-surface border border-cima-border text-red-400/50 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors disabled:opacity-50"
+                      >
+                        {deleting === l.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                       </button>
                     </div>
                   </div>

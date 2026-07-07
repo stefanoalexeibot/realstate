@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { verifyAdminStatus } from "@/lib/auth-utils";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
@@ -10,7 +10,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const { pipeline_stage } = await req.json();
-    const supabase = createServiceClient();
+    const supabase = createAdminClient();
     const { error } = await supabase
       .from("re_seller_leads")
       .update({ pipeline_stage })
