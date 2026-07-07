@@ -290,7 +290,7 @@ export default function PortalDashboardClient({ data }: { data: PortalDashboardD
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <a
-                                        href={`https://wa.me/?text=${encodeURIComponent(`¡Mira esta propiedad en Cima! 🏠 ${property.title} - ${formatPrice(property.price)}. Ver más en: https://propiedades-mty.vercel.app/propiedades/${property.slug}`)}`}
+                                        href={`https://wa.me/?text=${encodeURIComponent(`¡Mira esta propiedad en Cima! 🏠 ${property.title} - ${formatPrice(property.price)}. Ver más en: ${process.env.NEXT_PUBLIC_APP_URL ?? 'https://cimapropiedades.mx'}/propiedades/${property.slug}`)}`}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-[13px] font-semibold hover:bg-[#25D366]/20 transition-all active:scale-[0.98]"
@@ -299,7 +299,7 @@ export default function PortalDashboardClient({ data }: { data: PortalDashboardD
                                         WhatsApp
                                     </a>
                                     <a
-                                        href={`https://www.facebook.com/sharer/sharer.php?u=https://propiedades-mty.vercel.app/propiedades/${property.slug}`}
+                                        href={`https://www.facebook.com/sharer/sharer.php?u=${process.env.NEXT_PUBLIC_APP_URL ?? 'https://cimapropiedades.mx'}/propiedades/${property.slug}`}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-[#1877F2]/10 border border-[#1877F2]/20 text-[#1877F2] text-[13px] font-semibold hover:bg-[#1877F2]/20 transition-all active:scale-[0.98]"

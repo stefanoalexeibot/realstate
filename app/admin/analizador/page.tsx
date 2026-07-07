@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { BarChart2, Search, Loader2, MapPin, Building2, TrendingUp } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -53,60 +52,54 @@ export default function AnalizadorPage() {
     setLoading(true);
     setSearched(true);
 
-    const supabase = createClient();
-    let query = supabase
-      .from("re_properties")
-      .select("id, title, slug, price, area_m2, bedrooms, bathrooms, neighborhood, status, operation_type")
-      .eq("property_type", form.property_type)
-      .eq("operation_type", form.operation_type)
-      .in("status", ["active", "sold", "rented"]);
+    try {
+      const params = new URLSearchParams({
+        property_type: form.property_type,
+        operation_type: form.operation_type,
+        neighborhood: form.neighborhood,
+        ...(form.bedrooms ? { bedrooms: form.bedrooms } : {}),
+      });
+      const res = await fetch(`/api/admin/analizador?${params}`);
+      if (!res.ok) throw new Error("Error en la búsqueda");
+      const { data } = await res.json();
+      const raw = (data ?? []) as Comparable[];
 
-    if (form.neighborhood.trim()) {
-      query = query.ilike("neighborhood", `%${form.neighborhood.trim()}%`);
-    }
-    if (form.bedrooms) {
-      query = query.gte("bedrooms", Number(form.bedrooms) - 1).lte("bedrooms", Number(form.bedrooms) + 1);
-    }
+      if (raw.length === 0) {
+        setResults({ comparables: [], avgPrice: 0, avgPriceM2: null, minPrice: 0, maxPrice: 0, conservative: 0, market: 0, premium: 0 });
+        return;
+      }
 
-    const { data } = await query.order("price").limit(20);
-    const raw = (data ?? []) as Comparable[];
+      const withArea = raw.filter((p) => p.area_m2 && p.area_m2 > 0);
+      const mapped = raw.map((p) => ({ ...p, price_per_m2: p.area_m2 ? p.price / p.area_m2 : undefined }));
+      const prices = raw.map((p) => p.price);
+      const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
 
-    if (raw.length === 0) {
-      setResults({ comparables: [], avgPrice: 0, avgPriceM2: null, minPrice: 0, maxPrice: 0, conservative: 0, market: 0, premium: 0 });
+      let avgPriceM2: number | null = null;
+      if (withArea.length > 0) {
+        const priceM2s = withArea.map((p) => p.price / (p.area_m2 ?? 1));
+        avgPriceM2 = priceM2s.reduce((a, b) => a + b, 0) / priceM2s.length;
+      }
+
+      const targetArea = form.area_m2 ? Number(form.area_m2) : null;
+      const base = avgPriceM2 && targetArea ? avgPriceM2 * targetArea : avgPrice;
+
+      setResults({
+        comparables: mapped,
+        avgPrice,
+        avgPriceM2,
+        minPrice,
+        maxPrice,
+        conservative: base * 0.90,
+        market: base,
+        premium: base * 1.15,
+      });
+    } catch (err) {
+      console.error("Error in analizador search:", err);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Price per m²
-    const withArea = raw.filter((p) => p.area_m2 && p.area_m2 > 0);
-    const mapped = raw.map((p) => ({ ...p, price_per_m2: p.area_m2 ? p.price / p.area_m2 : undefined }));
-
-    const prices = raw.map((p) => p.price);
-    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-
-    let avgPriceM2: number | null = null;
-    if (withArea.length > 0) {
-      const priceM2s = withArea.map((p) => p.price / (p.area_m2 ?? 1));
-      avgPriceM2 = priceM2s.reduce((a, b) => a + b, 0) / priceM2s.length;
-    }
-
-    // Suggested ranges based on area_m2 input
-    const targetArea = form.area_m2 ? Number(form.area_m2) : null;
-    const base = avgPriceM2 && targetArea ? avgPriceM2 * targetArea : avgPrice;
-
-    setResults({
-      comparables: mapped,
-      avgPrice,
-      avgPriceM2,
-      minPrice,
-      maxPrice,
-      conservative: base * 0.90,
-      market: base,
-      premium: base * 1.15,
-    });
-    setLoading(false);
   }
 
   return (

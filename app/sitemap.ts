@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/server';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createAdminClient();
-  const baseUrl = 'https://propiedades-mty.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://cimapropiedades.mx';
 
   // Fetch all active, sold, and rented properties for the sitemap
   const { data: properties } = await supabase

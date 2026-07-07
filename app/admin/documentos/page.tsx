@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { FileText, Printer, ChevronDown, Save, Loader2, Check, User } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -322,27 +321,23 @@ export default function DocumentosPage() {
 
   useEffect(() => {
     async function loadPropietarios() {
-      const supabase = createClient();
-      const { data: props } = await supabase
-        .from("re_propietarios")
-        .select("id, name, email, phone")
-        .order("name");
-
-      const { data: properties } = await supabase
-        .from("re_properties")
-        .select("propietario_id, title, address, neighborhood, city, price, operation_type, bedrooms, bathrooms, area_m2, parking")
-        .order("created_at", { ascending: false });
-
-      const options: PropietarioOption[] = (props ?? []).map((p) => ({
-        id: p.id,
-        name: p.name,
-        email: p.email,
-        phone: p.phone,
-        property: (properties ?? []).find((pr) => pr.propietario_id === p.id) ?? null,
-      }));
-
-      setPropietarios(options);
-      setLoadingProps(false);
+      try {
+        const res = await fetch("/api/admin/propietarios/list");
+        if (!res.ok) throw new Error("Error cargando propietarios");
+        const { propietarios: props, properties } = await res.json();
+        const options: PropietarioOption[] = (props ?? []).map((p: { id: string; name: string; email: string | null; phone: string | null }) => ({
+          id: p.id,
+          name: p.name,
+          email: p.email,
+          phone: p.phone,
+          property: (properties ?? []).find((pr: { propietario_id: string }) => pr.propietario_id === p.id) ?? null,
+        }));
+        setPropietarios(options);
+      } catch (err) {
+        console.error("Error loading propietarios:", err);
+      } finally {
+        setLoadingProps(false);
+      }
     }
     loadPropietarios();
   }, []);

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, X, Loader2, Building2, ImagePlus, Trash2, Check, FileUp, FileText, Download } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -67,20 +66,17 @@ export default function EditarPropiedad() {
   useEffect(() => {
     async function loadProperty() {
       try {
-        const supabase = createClient();
-        const [{ data: prop, error: propError }, { data: photos, error: photosError }, peopleRes] = await Promise.all([
-          supabase.from("re_properties").select("*").eq("id", params.id).single(),
-          supabase.from("re_photos").select("*").eq("property_id", params.id).order("order"),
+        const [propRes, peopleRes] = await Promise.all([
+          fetch(`/api/admin/propiedades/${params.id}`),
           fetch("/api/admin/people").then((r) => r.json()),
         ]);
 
-        if (propError || !prop) {
-          console.error("Error loading property:", propError);
+        if (!propRes.ok) {
           router.push("/admin/propiedades");
           return;
         }
 
-        if (photosError) console.error("Error loading photos:", photosError);
+        const { property: prop, photos } = await propRes.json();
 
         setForm({
           title: prop.title ?? "",
