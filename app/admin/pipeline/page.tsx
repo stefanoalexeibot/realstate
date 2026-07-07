@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { KanbanSquare, Phone, Loader2 } from "lucide-react";
 import type { SellerLead, PipelineStage } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
@@ -35,13 +34,16 @@ export default function PipelinePage() {
   const [dragOverStage, setDragOverStage] = useState<PipelineStage | null>(null);
 
   const load = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("re_seller_leads")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setLeads((data ?? []) as SellerLead[]);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/seller-leads/list");
+      if (!res.ok) throw new Error("Error al cargar leads");
+      const json = await res.json();
+      setLeads((json.data ?? []) as SellerLead[]);
+    } catch (err) {
+      console.error("Error loading pipeline leads:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);

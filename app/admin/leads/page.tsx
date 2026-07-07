@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Users, Phone, Key, X, Loader2, Check, Download, UserPlus, Trash2 } from "lucide-react";
 import type { PipelineStage } from "@/lib/types";
 import CreateLeadModal from "@/components/admin/create-lead-modal";
@@ -71,13 +70,16 @@ export default function LeadsAdmin() {
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("re_seller_leads")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setLeads((data ?? []) as LeadRow[]);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/seller-leads/list");
+      if (!res.ok) throw new Error("Error al cargar leads");
+      const json = await res.json();
+      setLeads((json.data ?? []) as LeadRow[]);
+    } catch (err) {
+      console.error("Error loading leads:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);
