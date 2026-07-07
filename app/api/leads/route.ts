@@ -29,7 +29,7 @@ export async function POST(req: Request) {
             source: source || "landing-page",
             operation_type: operation_type || null,
             neighborhood: neighborhood || null,
-            pipeline_stage: "nuevo",
+            pipeline_stage: "prospecto",
         });
 
         if (error) {

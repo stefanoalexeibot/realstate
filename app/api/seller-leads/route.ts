@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { notifyNewLead } from "@/lib/notify";
 import { checkRateLimit, isHoneypotFilled } from "@/lib/rate-limit";
 
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Nombre y teléfono son requeridos" }, { status: 400 });
     }
 
-    const supabase = createServiceClient();
+    const supabase = createAdminClient();
     const { error } = await supabase.from("re_seller_leads").insert({
       name,
       phone,
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
       operation_type: operation_type || "venta",
       estimated_price: estimated_price || null,
       message: message || null,
+      pipeline_stage: "prospecto",
       utm_source: utm_source || null,
       utm_medium: utm_medium || null,
       utm_campaign: utm_campaign || null,
@@ -40,7 +41,10 @@ export async function POST(req: Request) {
       referrer: referrer || null,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error("Error inserting seller lead:", error);
+      throw error;
+    }
 
     // Non-blocking notification
     notifyNewLead({ name, phone, email, neighborhood, operation_type, estimated_price, message });
