@@ -99,3 +99,49 @@ input.np-slider::-moz-range-thumb {
     transition: none !important;
   }
 }
+
+/* ── Premium /gana page backgrounds ──────────────────────────────── */
+
+/* Dot-grid pattern overlay */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(200, 169, 110, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Subtle diagonal line pattern for sections */
+.line-pattern {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 40px,
+    rgba(200, 169, 110, 0.025) 40px,
+    rgba(200, 169, 110, 0.025) 41px
+  );
+}
+
+/* Floating orb pulse animation */
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-30px) scale(1.05); opacity: 1; }
+}
+@keyframes floatOrbReverse {
+  0%, 100% { transform: translateY(0px) scale(1.05); opacity: 0.5; }
+  50% { transform: translateY(25px) scale(1); opacity: 0.8; }
+}
+@keyframes floatOrbSlow {
+  0%, 100% { transform: translate(0px, 0px); opacity: 0.4; }
+  33% { transform: translate(20px, -15px); opacity: 0.7; }
+  66% { transform: translate(-15px, 10px); opacity: 0.5; }
+}
+
+.orb-float       { animation: floatOrb        8s ease-in-out infinite; }
+.orb-float-rev   { animation: floatOrbReverse  11s ease-in-out infinite; }
+.orb-float-slow  { animation: floatOrbSlow     15s ease-in-out infinite; }
+
+/* Hero mesh gradient */
+.hero-mesh {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 10% 50%, rgba(200,169,110,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 90% 50%, rgba(200,169,110,0.05) 0%, transparent 60%);
+}
