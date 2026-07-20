@@ -1022,7 +1022,7 @@ tbody tr:hover { background: var(--surface); }
 ════════════════════════════════════════════ */
 const SUPABASE_URL = "https://lcgmipyvjzdikieuachy.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjZ21pcHl2anpkaWtpZXVhY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzgwOTQsImV4cCI6MjA4Njg1NDA5NH0.sIYsyzlK7qCUnWxx4oDCalZGRTBpA_onoZbbQuBZwyQ";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function mapProspectFromDb(row) {
   return {
