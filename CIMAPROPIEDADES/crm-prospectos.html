@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ─── DESIGN TOKENS (CIMA PROPIEDADES) ─── */
 :root {
@@ -995,36 +996,83 @@ tbody tr:hover { background: var(--surface); }
         </div>
       </div>
       <div class="field"><label>Descripción / Notas</label><textarea id="c_descripcion" placeholder="Dirección, detalles importantes..."></textarea></div>
-      <div class="field"><label>Creado por</label>
-        <input type="text" id="c_autor" readonly style="opacity:0.6;cursor:default">
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-danger btn-sm" id="btnEliminarCita" style="display:none;margin-right:auto" onclick="eliminarCitaActual()">Eliminar cita</button>
-        <button type="button" class="btn" onclick="cerrarModalCita()">Cancelar</button>
-        <button type="submit" class="btn btn-primary">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
-          Guardar cita
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- ═══════════ DETALLE PROSPECTO ═══════════ -->
-<div class="overlay" id="overlayDetalle" onclick="if(event.target===this)cerrarDetalle()">
-  <div class="modal detail-modal" id="detalleContenido"></div>
-</div>
-
 <script>
+/* ════════════════════════════════════════════
+   SUPABASE CLIENT & MAPPERS
+════════════════════════════════════════════ */
+const SUPABASE_URL = "https://lcgmipyvjzdikieuachy.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjZ21pcHl2anpkaWtpZXVhY2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNzgwOTQsImV4cCI6MjA4Njg1NDA5NH0.sIYsyzlK7qCUnWxx4oDCalZGRTBpA_onoZbbQuBZwyQ";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function mapProspectFromDb(row) {
+  return {
+    id: row.id,
+    nombre: row.nombre,
+    telefono: row.telefono,
+    email: row.email,
+    zona: row.zona,
+    tipo: row.tipo,
+    valor: row.valor,
+    fuente: row.fuente,
+    proximoSeguimiento: row.proximo_seguimiento,
+    etapa: row.etapa,
+    notas: row.notas || [],
+    creadoEn: Number(row.creado_en)
+  };
+}
+
+function mapProspectToDb(p) {
+  return {
+    id: p.id,
+    nombre: p.nombre,
+    telefono: p.telefono,
+    email: p.email,
+    zona: p.zona,
+    tipo: p.tipo,
+    valor: p.valor ? Number(p.valor) : null,
+    fuente: p.fuente,
+    proximo_seguimiento: p.proximoSeguimiento,
+    etapa: p.etapa,
+    notas: p.notas || [],
+    creado_en: p.creadoEn
+  };
+}
+
+function mapCitaFromDb(row) {
+  return {
+    id: row.id,
+    titulo: row.titulo,
+    fecha: row.fecha,
+    hora: row.hora,
+    tipo: row.tipo,
+    descripcion: row.descripcion,
+    prospectoId: row.prospecto_id,
+    autor: row.autor,
+    creadoEn: Number(row.creado_en)
+  };
+}
+
+function mapCitaToDb(c) {
+  return {
+    id: c.id,
+    titulo: c.titulo,
+    fecha: c.fecha,
+    hora: c.hora,
+    tipo: c.tipo,
+    descripcion: c.descripcion,
+    prospecto_id: c.prospectoId || null,
+    autor: c.autor,
+    creado_en: c.creadoEn
+  };
+}
+
 /* ════════════════════════════════════════════
    USUARIOS / AUTH
 ════════════════════════════════════════════ */
-/* ─── AUTH: nombre + contraseña "cima" ─── */
 const PASS_EQUIPO   = "cima";
 const KEY_USUARIOS  = "crm_cima_usuarios";
 const SESSION_KEY   = "crm_session_cima";
 
-// Usuarios base (siempre disponibles aunque se borre localStorage)
 const USUARIOS_BASE = [
   { name:"Admin",   role:"Administrador" },
   { name:"Luis",    role:"Asesor" },
@@ -1037,7 +1085,6 @@ let currentUser = null;
 function getUsuarios(){
   const raw = localStorage.getItem(KEY_USUARIOS);
   if(raw){ try{ return JSON.parse(raw); }catch(e){} }
-  // Primera vez: guardar usuarios base
   localStorage.setItem(KEY_USUARIOS, JSON.stringify(USUARIOS_BASE));
   return USUARIOS_BASE;
 }
@@ -1077,7 +1124,6 @@ function handleLogin(e){
     document.getElementById("loginError").classList.add("show"); return;
   }
   document.getElementById("loginError").classList.remove("show");
-  // Buscar o crear usuario
   const lista = getUsuarios();
   let user = lista.find(u => u.name.toLowerCase() === nombre.toLowerCase());
   if(!user){
@@ -1141,36 +1187,55 @@ function showApp(){
 }
 
 /* ════════════════════════════════════════════
-   REAL-TIME (BroadcastChannel)
+   REAL-TIME (Supabase Postgres Changes)
 ════════════════════════════════════════════ */
-let bc = null;
-
 function initRealtime(){
-  if(!window.BroadcastChannel) return;
-  bc = new BroadcastChannel("crm_cima_realtime");
-  bc.onmessage = (e) => {
-    const msg = e.data;
-    if(msg.type === "prospectos_update"){
-      prospectos = msg.data;
+  supabase
+    .channel('public:crm_prospectos')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_prospectos' }, payload => {
+      const { eventType, new: newRow, old: oldRow } = payload;
+      if (eventType === 'INSERT') {
+        if (!prospectos.some(p => p.id === newRow.id)) {
+          prospectos.push(mapProspectFromDb(newRow));
+        }
+      } else if (eventType === 'UPDATE') {
+        const idx = prospectos.findIndex(p => p.id === newRow.id);
+        if (idx !== -1) {
+          prospectos[idx] = mapProspectFromDb(newRow);
+        } else {
+          prospectos.push(mapProspectFromDb(newRow));
+        }
+      } else if (eventType === 'DELETE') {
+        prospectos = prospectos.filter(p => p.id !== oldRow.id);
+      }
       render();
-      showToast("📊", "Actualización en vivo", `${msg.user} actualizó los prospectos`);
-    }
-    if(msg.type === "citas_update"){
-      citas = msg.data;
-      if(vistaActual === "calendario") renderCalendario();
-      showToast("📅", "Nueva cita recibida", `${msg.user} ${msg.action}`);
-    }
-  };
-}
+      showToast("📊", "Actualización en vivo", "Los prospectos se actualizaron");
+    })
+    .subscribe();
 
-function broadcastProspectos(){
-  if(!bc) return;
-  bc.postMessage({ type:"prospectos_update", data: prospectos, user: currentUser?.name });
-}
-
-function broadcastCitas(action){
-  if(!bc) return;
-  bc.postMessage({ type:"citas_update", data: citas, user: currentUser?.name, action });
+  supabase
+    .channel('public:crm_citas')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_citas' }, payload => {
+      const { eventType, new: newRow, old: oldRow } = payload;
+      if (eventType === 'INSERT') {
+        if (!citas.some(c => c.id === newRow.id)) {
+          citas.push(mapCitaFromDb(newRow));
+        }
+      } else if (eventType === 'UPDATE') {
+        const idx = citas.findIndex(c => c.id === newRow.id);
+        if (idx !== -1) {
+          citas[idx] = mapCitaFromDb(newRow);
+        } else {
+          citas.push(mapCitaFromDb(newRow));
+        }
+      } else if (eventType === 'DELETE') {
+        citas = citas.filter(c => c.id !== oldRow.id);
+      }
+      if (vistaActual === 'calendario') renderCalendario();
+      else renderDashboard();
+      showToast("📅", "Calendario actualizado", "Las citas en vivo cambiaron");
+    })
+    .subscribe();
 }
 
 /* ════════════════════════════════════════════
@@ -1186,8 +1251,6 @@ let citaEditId  = null;
 
 const ETAPAS   = ["Nuevo","Contactado","Visita agendada","Negociación","Cerrado","Perdido"];
 const ETAPA_KEY = e => e.replace(/[^a-zA-Z]/g,"");
-const KEY_P    = "crm_cima_v2";
-const KEY_C    = "crm_cima_citas_v1";
 
 const ETAPA_COLOR = {
   "Nuevo":"var(--text-muted)","Contactado":"var(--blue)","Visita agendada":"var(--amber)",
@@ -1213,39 +1276,26 @@ const WA_TEMPLATES = {
 };
 
 /* ════════════════════════════════════════════
-   PERSISTENCIA
+   PERSISTENCIA (Supabase Load)
 ════════════════════════════════════════════ */
 async function cargar(){
-  if(window.storage){
-    try{
-      const res = await window.storage.get("prospectos_v1", false);
-      if(res?.value){
-        const viejos = JSON.parse(res.value);
-        if(viejos.length > 0 && !localStorage.getItem(KEY_P)){
-          prospectos = viejos;
-          localStorage.setItem(KEY_P, JSON.stringify(prospectos));
-        }
-      }
-    }catch(e){}
+  try {
+    const { data: dbP, error: errP } = await supabase.from('crm_prospectos').select('*');
+    if (!errP && dbP) {
+      prospectos = dbP.map(mapProspectFromDb);
+    }
+    const { data: dbC, error: errC } = await supabase.from('crm_citas').select('*');
+    if (!errC && dbC) {
+      citas = dbC.map(mapCitaFromDb);
+    }
+  } catch (e) {
+    console.error("Error al cargar datos desde Supabase:", e);
   }
-  const rawP = localStorage.getItem(KEY_P);
-  if(rawP){ try{ prospectos = JSON.parse(rawP); }catch(e){ prospectos=[]; } }
-  const rawC = localStorage.getItem(KEY_C);
-  if(rawC){ try{ citas = JSON.parse(rawC); }catch(e){ citas=[]; } }
 
   const now = new Date();
   calYear  = now.getFullYear();
   calMonth = now.getMonth();
   render();
-}
-
-function guardar(){
-  localStorage.setItem(KEY_P, JSON.stringify(prospectos));
-  broadcastProspectos();
-}
-
-function guardarCitas(){
-  localStorage.setItem(KEY_C, JSON.stringify(citas));
 }
 
 /* ════════════════════════════════════════════
@@ -1548,16 +1598,13 @@ const DIAS  = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 
 function getEventosDelDia(isoDate){
   const eventos = [];
-  // Citas manuales
   citas.filter(c=>c.fecha===isoDate).forEach(c=>{
     const ti = CITA_TIPO_INFO[c.tipo]||CITA_TIPO_INFO.otro;
     eventos.push({ id:c.id, titulo:c.titulo, hora:c.hora||"", tipo:c.tipo, css:ti.css, color:ti.color, sub:c.autor||"", descripcion:c.descripcion||"", isCita:true, autor:c.autor });
   });
-  // Seguimientos de prospectos
   prospectos.filter(p=>p.proximoSeguimiento===isoDate).forEach(p=>{
     eventos.push({ id:p.id, titulo:p.nombre, hora:"", tipo:"seguimiento", css:"type-seguimiento", color:"var(--gold)", sub:`Seguimiento · ${p.etapa}`, descripcion:`${p.zona||""} · ${fmtDinero(p.valor)}`, isCita:false });
   });
-  // Sort by time
   eventos.sort((a,b)=>(a.hora||"99:99").localeCompare(b.hora||"99:99"));
   return eventos;
 }
@@ -1569,10 +1616,9 @@ function renderCalendario(){
 
   const firstDay = new Date(calYear, calMonth, 1);
   const lastDay  = new Date(calYear, calMonth+1, 0);
-  const startDow = firstDay.getDay(); // 0=Sun
+  const startDow = firstDay.getDay();
   const totalCells = Math.ceil((startDow + lastDay.getDate()) / 7) * 7;
 
-  // Build cells
   let cells = "";
   for(let i=0; i<totalCells; i++){
     const dayOffset = i - startDow;
@@ -1604,12 +1650,10 @@ function renderCalendario(){
 
   const dayHeaders = DIAS.map((d,i)=>`<div class="cal-day-name ${i===0||i===6?'weekend':''}">${d}</div>`).join("");
 
-  // Build legend
   const legend = Object.entries(CITA_TIPO_INFO).map(([k,v])=>
     `<div class="cal-legend-item"><div class="cal-legend-dot" style="background:${v.color}"></div>${v.label}</div>`
   ).join("");
 
-  // Build detail panel
   const detailHTML = buildDayDetail(selectedDay);
 
   wrap.innerHTML = `<div class="cal-container">
@@ -1737,7 +1781,7 @@ function cerrarModalCita(){
   document.getElementById("overlayCita").classList.remove("show");
 }
 
-function guardarCita(ev){
+async function guardarCita(ev){
   ev.preventDefault();
   const id=document.getElementById("c_id").value;
   const data={
@@ -1753,34 +1797,50 @@ function guardarCita(ev){
   };
   if(id){ const idx=citas.findIndex(c=>c.id===id); if(idx>-1) citas[idx]=data; else citas.push(data); }
   else { citas.push(data); }
-  guardarCitas();
-  broadcastCitas(id?"actualizó una cita":"creó una cita nueva");
+  
   cerrarModalCita();
   selectedDay = data.fecha;
   if(vistaActual==="calendario") renderCalendario();
   else { renderDashboard(); }
   showToast("📅","Cita guardada",`${data.titulo} · ${fmtFecha(data.fecha)}`);
+
+  try {
+    const { error } = await supabase.from('crm_citas').upsert(mapCitaToDb(data));
+    if (error) throw error;
+  } catch (e) {
+    console.error("Error al guardar cita:", e);
+  }
 }
 
-function eliminarCita(id){
+async function eliminarCita(id){
   if(!confirm("¿Eliminar esta cita?")) return;
   citas=citas.filter(c=>c.id!==id);
-  guardarCitas();
-  broadcastCitas("eliminó una cita");
   if(vistaActual==="calendario") renderCalendario();
   else renderDashboard();
+
+  try {
+    const { error } = await supabase.from('crm_citas').delete().eq('id', id);
+    if (error) throw error;
+  } catch (e) {
+    console.error("Error al eliminar cita:", e);
+  }
 }
 
-function eliminarCitaActual(){
+async function eliminarCitaActual(){
   const id=document.getElementById("c_id").value;
   if(!id) return;
   if(!confirm("¿Eliminar esta cita?")) return;
   citas=citas.filter(c=>c.id!==id);
-  guardarCitas();
-  broadcastCitas("eliminó una cita");
   cerrarModalCita();
   if(vistaActual==="calendario") renderCalendario();
   else renderDashboard();
+
+  try {
+    const { error } = await supabase.from('crm_citas').delete().eq('id', id);
+    if (error) throw error;
+  } catch (e) {
+    console.error("Error al eliminar cita:", e);
+  }
 }
 
 /* ════════════════════════════════════════════
@@ -1854,8 +1914,10 @@ async function guardarProspecto(ev){
   ev.preventDefault();
   const id=document.getElementById("p_id").value;
   const nota=document.getElementById("p_nota_inicial").value.trim();
+  let p = {};
   if(id){
-    const p=prospectos.find(x=>x.id===id);
+    p = prospectos.find(x=>x.id===id);
+    if (!p) return;
     p.nombre=document.getElementById("p_nombre").value.trim();
     p.telefono=document.getElementById("p_telefono").value.trim();
     p.email=document.getElementById("p_email").value.trim();
@@ -1867,7 +1929,7 @@ async function guardarProspecto(ev){
     p.etapa=document.getElementById("p_etapa").value;
     if(nota) p.notas.unshift({fecha:new Date().toISOString(),texto:nota});
   } else {
-    prospectos.push({
+    p = {
       id:uid(),
       nombre:document.getElementById("p_nombre").value.trim(),
       telefono:document.getElementById("p_telefono").value.trim(),
@@ -1880,17 +1942,33 @@ async function guardarProspecto(ev){
       etapa:document.getElementById("p_etapa").value,
       notas:nota?[{fecha:new Date().toISOString(),texto:nota}]:[],
       creadoEn:Date.now()
-    });
+    };
+    prospectos.push(p);
   }
-  guardar();
+  
   cerrarModalForm();
   render();
+  
+  try {
+    const { error } = await supabase.from('crm_prospectos').upsert(mapProspectToDb(p));
+    if (error) throw error;
+  } catch (e) {
+    console.error("Error al guardar prospecto:", e);
+    showToast("❌", "Error al guardar", "Revisa la conexión a internet");
+  }
 }
 
 async function eliminarProspecto(id){
   if(!confirm("¿Eliminar este prospecto? Esta acción no se puede deshacer.")) return;
   prospectos=prospectos.filter(p=>p.id!==id);
-  guardar(); render(); cerrarDetalle();
+  render(); cerrarDetalle();
+
+  try {
+    const { error } = await supabase.from('crm_prospectos').delete().eq('id', id);
+    if (error) throw error;
+  } catch (e) {
+    console.error("Error al eliminar prospecto:", e);
+  }
 }
 
 /* ════════════════════════════════════════════
@@ -1971,29 +2049,42 @@ function pintarDetalle(){
   `;
 }
 
+async function cambiarEtapa(etapa){
+  const p=prospectos.find(x=>x.id===idActual); if(!p) return;
+  p.etapa=etapa; 
+  pintarDetalle(); 
+  render();
+  try {
+    await supabase.from('crm_prospectos').upsert(mapProspectToDb(p));
+  } catch(e){}
+}
+
+async function cambiarSeguimiento(fecha){
+  const p=prospectos.find(x=>x.id===idActual); if(!p) return;
+  p.proximoSeguimiento=fecha; 
+  render();
+  try {
+    await supabase.from('crm_prospectos').upsert(mapProspectToDb(p));
+  } catch(e){}
+}
+
+async function agregarNota(){
+  const el=document.getElementById("nuevaNota");
+  const texto=el.value.trim(); if(!texto) return;
+  const p=prospectos.find(x=>x.id===idActual); if(!p) return;
+  p.notas.unshift({fecha:new Date().toISOString(),texto});
+  el.value=""; 
+  pintarDetalle();
+  try {
+    await supabase.from('crm_prospectos').upsert(mapProspectToDb(p));
+  } catch(e){}
+}
+
 function abrirWhatsappDetalle(id){
   const p=prospectos.find(x=>x.id===id); if(!p) return;
   const limpio=p.telefono.replace(/\D/g,"");
   const template=(WA_TEMPLATES[p.etapa]||WA_TEMPLATES["Nuevo"]).replace("{nombre}",p.nombre||"");
   window.open(`https://wa.me/52${limpio}?text=${encodeURIComponent(template)}`,"_blank");
-}
-
-function cambiarEtapa(etapa){
-  const p=prospectos.find(x=>x.id===idActual); if(!p) return;
-  p.etapa=etapa; guardar(); pintarDetalle(); render();
-}
-
-function cambiarSeguimiento(fecha){
-  const p=prospectos.find(x=>x.id===idActual); if(!p) return;
-  p.proximoSeguimiento=fecha; guardar(); render();
-}
-
-function agregarNota(){
-  const el=document.getElementById("nuevaNota");
-  const texto=el.value.trim(); if(!texto) return;
-  const p=prospectos.find(x=>x.id===idActual); if(!p) return;
-  p.notas.unshift({fecha:new Date().toISOString(),texto});
-  guardar(); el.value=""; pintarDetalle();
 }
 
 /* ════════════════════════════════════════════
