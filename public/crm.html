@@ -996,6 +996,26 @@ tbody tr:hover { background: var(--surface); }
         </div>
       </div>
       <div class="field"><label>Descripción / Notas</label><textarea id="c_descripcion" placeholder="Dirección, detalles importantes..."></textarea></div>
+      <div class="field"><label>Creado por</label>
+        <input type="text" id="c_autor" readonly style="opacity:0.6;cursor:default">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-danger btn-sm" id="btnEliminarCita" style="display:none;margin-right:auto" onclick="eliminarCitaActual()">Eliminar cita</button>
+        <button type="button" class="btn" onclick="cerrarModalCita()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+          Guardar cita
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════ DETALLE PROSPECTO ═══════════ -->
+<div class="overlay" id="overlayDetalle" onclick="if(event.target===this)cerrarDetalle()">
+  <div class="modal detail-modal" id="detalleContenido"></div>
+</div>
+
 <script>
 /* ════════════════════════════════════════════
    SUPABASE CLIENT & MAPPERS
