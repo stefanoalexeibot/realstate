@@ -27,6 +27,14 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/crm",
+        destination: "/crm.html",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
