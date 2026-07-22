@@ -21,7 +21,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const admins = [
     { name: 'Luis', email: 'luis@cimapropiedades.mx', id: '505b47be-c704-4ecb-a2be-458750dc4d0e' },
     { name: 'Yair', email: 'yair@cimapropiedades.mx', id: '99deb334-b743-4776-b940-2c3300954a4d' },
-    { name: 'Stefano', email: 'stefano@cimapropiedades.mx', id: '49d8af16-6bb6-4bcd-8d74-af0907c4bb62' }
+    { name: 'Stefano', email: 'stefano@cimapropiedades.mx', id: '49d8af16-6bb6-4bcd-8d74-af0907c4bb62' },
+    { name: 'Alejandro', email: 'alejandro@cimapropiedades.mx', id: '4c2fa689-c501-440b-b719-128dd9b717c6' }
 ]
 
 async function run() {
