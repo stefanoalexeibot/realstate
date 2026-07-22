@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Building2, Check, ArrowRight, DollarSign, Users,
     Copy, CheckCircle2, ChevronDown, Zap, Gift,
-    TrendingUp, Share2, MessageSquare, ShieldCheck, Clock, MapPin, Link as LinkIcon, Sparkles
+    TrendingUp, Share2, MessageSquare, ShieldCheck, Clock, MapPin, Link as LinkIcon, Sparkles, GraduationCap
 } from "lucide-react";
 import Link from "next/link";
 
@@ -583,12 +583,21 @@ function GanaPageContent() {
                             <span className="font-mono text-[9px] tracking-[0.2em] text-cima-text-muted uppercase">Propiedades</span>
                         </div>
                     </Link>
-                    <button
-                        onClick={scrollToForm}
-                        className="bg-cima-gold text-cima-bg px-5 py-2 rounded-full text-xs font-black uppercase tracking-tight hover:bg-cima-gold-light transition-all shadow-lg shadow-cima-gold/10"
-                    >
-                        Referir Ahora →
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/gana/curso"
+                            className="hidden sm:flex items-center gap-2 border border-cima-gold/30 bg-cima-gold/10 text-cima-gold px-4 py-2 rounded-full text-xs font-bold font-mono hover:bg-cima-gold hover:text-cima-bg transition-all"
+                        >
+                            <GraduationCap className="h-4 w-4" />
+                            <span>Mini Curso (6 min)</span>
+                        </Link>
+                        <button
+                            onClick={scrollToForm}
+                            className="bg-cima-gold text-cima-bg px-5 py-2 rounded-full text-xs font-black uppercase tracking-tight hover:bg-cima-gold-light transition-all shadow-lg shadow-cima-gold/10"
+                        >
+                            Referir Ahora →
+                        </button>
+                    </div>
                 </div>
             </nav>
 
@@ -628,17 +637,27 @@ function GanaPageContent() {
                         <span><strong>Nuestro valor agregado:</strong> ¡Garantizamos vender la propiedad en <strong>menos de 30 días</strong>!</span>
                     </div>
 
-                    <p className="text-sm md:text-lg text-cima-text-muted max-w-2xl mx-auto mb-12 leading-relaxed">
+                    <p className="text-sm md:text-lg text-cima-text-muted max-w-2xl mx-auto mb-10 leading-relaxed">
                         ¿Tienes conocidos, amigos o vecinos que quieran vender su propiedad en Monterrey rápido y al mejor precio? Pásanos su contacto o compártele tu enlace único. Si los ayudamos a vender con nuestro plan de 30 días, tú ganas una gran comisión.
                     </p>
 
-                    <button
-                        onClick={scrollToForm}
-                        className="inline-flex items-center gap-3 px-10 py-5 bg-cima-gold text-cima-bg font-heading font-black rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_-15px_rgba(200,169,110,0.4)] text-sm uppercase tracking-widest group"
-                    >
-                        Comenzar a Referir
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+                        <button
+                            onClick={scrollToForm}
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-cima-gold text-cima-bg font-heading font-black rounded-2xl hover:scale-105 transition-all shadow-[0_20px_40px_-15px_rgba(200,169,110,0.4)] text-xs uppercase tracking-widest group"
+                        >
+                            Comenzar a Referir
+                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                        
+                        <Link
+                            href="/gana/curso"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-cima-card border border-cima-gold/30 text-cima-gold font-heading font-bold rounded-2xl hover:bg-cima-gold/10 transition-all text-xs uppercase tracking-widest"
+                        >
+                            <GraduationCap className="h-4 w-4" />
+                            Ver Mini Curso Gratis
+                        </Link>
+                    </div>
                     <p className="text-[11px] text-cima-text-dim font-mono mt-4">Transparente · Seguro · Directo a tu cuenta bancaria</p>
                 </div>
             </section>
