@@ -7,7 +7,7 @@ import {
     Copy, CheckCircle2, ChevronDown, Zap, Gift,
     TrendingUp, Share2, MessageSquare, ShieldCheck, Clock,
     Sparkles, BookOpen, GraduationCap, ArrowLeft, Lightbulb,
-    HelpCircle, PhoneCall, FileText, Target, Play
+    HelpCircle, PhoneCall, FileText, Target, Play, Image, Download, Palette
 } from "lucide-react";
 import Link from "next/link";
 
@@ -128,7 +128,226 @@ function InteractiveScriptSimulator() {
     );
 }
 
-// ─── MODULE NAVIGATION & CONTENT ──────────────────────────────────────────
+// ─── CARD GENERATOR ──────────────────────────────────────────────────────────
+function CardGenerator() {
+    const [nombre, setNombre] = useState("");
+    const [colorScheme, setColorScheme] = useState<"gold" | "dark" | "luxury">("gold");
+    const [downloaded, setDownloaded] = useState(false);
+    const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+    const schemes = {
+        gold:    { bg: "#090A0D", accent: "#C8A96E", text: "#F0EDE8", sub: "#7A6A4F" },
+        dark:    { bg: "#0D0D0D", accent: "#FFFFFF", text: "#FFFFFF", sub: "#888888" },
+        luxury:  { bg: "#1A0A00", accent: "#E8B84B", text: "#FFF8E7", sub: "#A07A30" },
+    };
+
+    const drawCard = React.useCallback(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const W = 1080, H = 1920;
+        canvas.width = W;
+        canvas.height = H;
+        const s = schemes[colorScheme];
+
+        // Background
+        ctx.fillStyle = s.bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Subtle dot grid
+        ctx.fillStyle = s.accent + "18";
+        for (let x = 32; x < W; x += 64) {
+            for (let y = 32; y < H; y += 64) {
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Top gradient glow
+        const glow = ctx.createRadialGradient(W / 2, 0, 0, W / 2, 0, 900);
+        glow.addColorStop(0, s.accent + "22");
+        glow.addColorStop(1, "transparent");
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, W, H);
+
+        // Large decorative circle
+        ctx.beginPath();
+        ctx.arc(W / 2, H * 0.38, 320, 0, Math.PI * 2);
+        ctx.strokeStyle = s.accent + "30";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(W / 2, H * 0.38, 240, 0, Math.PI * 2);
+        ctx.strokeStyle = s.accent + "18";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // House emoji / icon as text
+        ctx.font = "200px serif";
+        ctx.textAlign = "center";
+        ctx.fillText("🏠", W / 2, H * 0.42);
+
+        // Divider line
+        ctx.strokeStyle = s.accent;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.15, H * 0.52);
+        ctx.lineTo(W * 0.85, H * 0.52);
+        ctx.stroke();
+
+        // Main headline
+        ctx.font = `bold 88px sans-serif`;
+        ctx.fillStyle = s.text;
+        ctx.textAlign = "center";
+        ctx.fillText("¿Quieres vender", W / 2, H * 0.58);
+        ctx.fillText("tu casa en Mty?", W / 2, H * 0.64);
+
+        // Gold accent line
+        ctx.font = `bold 72px sans-serif`;
+        ctx.fillStyle = s.accent;
+        ctx.fillText("< 30 DÍAS", W / 2, H * 0.71);
+
+        // Sub text
+        ctx.font = `48px sans-serif`;
+        ctx.fillStyle = s.sub;
+        ctx.fillText("Plan de marketing acelerado.", W / 2, H * 0.76);
+        ctx.fillText("Garantizado. Sin costo inicial.", W / 2, H * 0.80);
+
+        // Second divider
+        ctx.strokeStyle = s.accent + "60";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.25, H * 0.85);
+        ctx.lineTo(W * 0.75, H * 0.85);
+        ctx.stroke();
+
+        // Referrer name
+        if (nombre.trim()) {
+            ctx.font = `bold 56px sans-serif`;
+            ctx.fillStyle = s.accent;
+            ctx.textAlign = "center";
+            ctx.fillText(nombre.trim().toUpperCase(), W / 2, H * 0.90);
+            ctx.font = `40px sans-serif`;
+            ctx.fillStyle = s.sub;
+            ctx.fillText("Embajador Oficial CIMA Propiedades", W / 2, H * 0.94);
+        } else {
+            ctx.font = `bold 52px sans-serif`;
+            ctx.fillStyle = s.accent;
+            ctx.fillText("CIMA Propiedades", W / 2, H * 0.90);
+            ctx.font = `40px sans-serif`;
+            ctx.fillStyle = s.sub;
+            ctx.fillText("Monterrey · cimapropiedades.com", W / 2, H * 0.94);
+        }
+
+        // CTA box
+        ctx.fillStyle = s.accent + "20";
+        ctx.strokeStyle = s.accent;
+        ctx.lineWidth = 3;
+        const bx = W * 0.08, by = H * 0.955, bw = W * 0.84, bh = 80;
+        ctx.beginPath();
+        (ctx as CanvasRenderingContext2D & { roundRect?: Function }).roundRect
+            ? (ctx as CanvasRenderingContext2D & { roundRect: Function }).roundRect(bx, by, bw, bh, 24)
+            : ctx.rect(bx, by, bw, bh);
+        ctx.fill();
+        ctx.stroke();
+        ctx.font = `bold 42px sans-serif`;
+        ctx.fillStyle = s.text;
+        ctx.textAlign = "center";
+        ctx.fillText("Escríbeme un DM · La asesoría es GRATIS", W / 2, by + 52);
+    }, [nombre, colorScheme]);
+
+    // Redraw on changes
+    React.useEffect(() => { drawCard(); }, [drawCard]);
+
+    const handleDownload = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const link = document.createElement("a");
+        link.download = `cima-story-${nombre.trim().toLowerCase().replace(/\s+/, "-") || "embajador"}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        setDownloaded(true);
+        setTimeout(() => setDownloaded(false), 3000);
+    };
+
+    return (
+        <div className="space-y-6">
+            {/* Controls */}
+            <div className="bg-cima-card border border-cima-border rounded-3xl p-6 space-y-5">
+                <div className="flex items-center gap-3 mb-2">
+                    <div className="h-10 w-10 rounded-xl bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center">
+                        <Palette className="h-5 w-5 text-cima-gold" />
+                    </div>
+                    <div>
+                        <h3 className="text-base font-heading font-black text-cima-text">Personaliza tu Tarjeta</h3>
+                        <p className="text-xs text-cima-text-muted">La imagen se genera en 1080x1920px, lista para Stories e Instagram.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-[9px] font-bold uppercase tracking-widest text-cima-text-muted mb-2">Tu Nombre (aparecerá en la tarjeta)</label>
+                    <input
+                        type="text"
+                        value={nombre}
+                        onChange={e => setNombre(e.target.value)}
+                        placeholder="Ej. Juan Pérez"
+                        className="w-full bg-cima-surface border border-cima-border rounded-xl px-4 py-3 text-sm text-cima-text placeholder-cima-text-dim focus:border-cima-gold/40 outline-none transition-all"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-[9px] font-bold uppercase tracking-widest text-cima-text-muted mb-3">Esquema de Color</label>
+                    <div className="grid grid-cols-3 gap-3">
+                        {(["gold", "dark", "luxury"] as const).map(sc => (
+                            <button
+                                key={sc}
+                                onClick={() => setColorScheme(sc)}
+                                className={`py-3 rounded-xl border text-xs font-bold capitalize transition-all ${
+                                    colorScheme === sc
+                                        ? "bg-cima-gold text-cima-bg border-cima-gold"
+                                        : "bg-cima-surface border-cima-border text-cima-text-muted hover:border-cima-gold/30"
+                                }`}
+                            >
+                                {sc === "gold" ? "✨ Dorado" : sc === "dark" ? "⬛ Oscuro" : "👑 Luxury"}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <button
+                    onClick={handleDownload}
+                    className={`w-full py-4 rounded-2xl font-heading font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                        downloaded
+                            ? "bg-green-500/10 border border-green-500/30 text-green-400"
+                            : "bg-cima-gold text-cima-bg hover:scale-[1.02] shadow-lg shadow-cima-gold/20"
+                    }`}
+                >
+                    {downloaded ? <><CheckCircle2 className="h-4 w-4" /> ¡Descargada! Súbela a tus Stories</> : <><Download className="h-4 w-4" /> Descargar PNG para Stories (1080x1920)</>}
+                </button>
+
+                <p className="text-[10px] text-cima-text-dim font-mono text-center">
+                    El archivo PNG se guarda directo en tu dispositivo. Luego súbelo a tus Stories de Instagram o Estado de WhatsApp.
+                </p>
+            </div>
+
+            {/* Preview */}
+            <div className="bg-cima-card border border-cima-border rounded-3xl p-5">
+                <p className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-widest mb-3">Vista Previa (escala reducida)</p>
+                <div className="flex justify-center">
+                    <canvas
+                        ref={canvasRef}
+                        className="rounded-2xl border border-cima-border"
+                        style={{ width: "240px", height: "auto" }}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function MiniCursoPage() {
     const [activeTab, setActiveTab] = useState(1);
 
@@ -138,7 +357,8 @@ export default function MiniCursoPage() {
         { id: 3, name: "3. La Pregunta Mágica", icon: MessageSquare },
         { id: 4, name: "4. Calificación Rápida", icon: Target },
         { id: 5, name: "5. Scripts Copiar & Pegar", icon: Copy },
-        { id: 6, name: "6. Traspaso & Cobro", icon: CheckCircle2 }
+        { id: 6, name: "6. Traspaso & Cobro", icon: CheckCircle2 },
+        { id: 7, name: "7. Tarjeta para Stories", icon: Image }
     ];
 
     return (
@@ -526,6 +746,31 @@ export default function MiniCursoPage() {
                                             <ArrowRight className="h-4 w-4" />
                                         </Link>
                                     </div>
+                                </div>
+                            </motion.div>
+                        )}
+                        {activeTab === 7 && (
+                            <motion.div
+                                key={7}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className="space-y-8"
+                            >
+                                <div className="bg-cima-card border border-cima-border rounded-3xl p-6 md:p-10 space-y-6">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-12 w-12 rounded-2xl bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center">
+                                            <Image className="h-6 w-6 text-cima-gold" />
+                                        </div>
+                                        <div>
+                                            <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-widest">Módulo 7 · Bonus</span>
+                                            <h2 className="text-2xl font-heading font-black text-cima-text">Generador de Tarjeta Digital para Stories</h2>
+                                        </div>
+                                    </div>
+                                    <p className="text-sm text-cima-text-muted leading-relaxed">
+                                        Crea en segundos tu imagen personalizada para subir a tus <strong>Stories de Instagram</strong> o <strong>Estado de WhatsApp</strong>. Pon tu nombre y descarga el PNG listo para compartir.
+                                    </p>
+                                    <CardGenerator />
                                 </div>
                             </motion.div>
                         )}

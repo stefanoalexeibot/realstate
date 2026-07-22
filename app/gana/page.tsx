@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Building2, Check, ArrowRight, DollarSign, Users,
     Copy, CheckCircle2, ChevronDown, Zap, Gift,
-    TrendingUp, Share2, MessageSquare, ShieldCheck, Clock, MapPin, Link as LinkIcon, Sparkles, GraduationCap
+    TrendingUp, Share2, MessageSquare, ShieldCheck, Clock, MapPin, Link as LinkIcon, Sparkles, GraduationCap,
+    Trophy, Medal, Star, FileText
 } from "lucide-react";
 import Link from "next/link";
 
@@ -738,6 +739,135 @@ function GanaPageContent() {
                 </div>
             </section>
 
+            {/* QUICK ACCESS — Portal + Checklist */}
+            <section className="py-12 px-6 bg-cima-bg relative">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cima-gold/10 to-transparent" />
+                <div className="mx-auto max-w-4xl">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <Link
+                            href="/gana/mi-portal"
+                            className="group bg-cima-card border border-cima-border rounded-2xl p-6 flex items-center gap-4 hover:border-cima-gold/40 hover:-translate-y-0.5 transition-all"
+                        >
+                            <div className="h-12 w-12 rounded-xl bg-cima-gold/10 border border-cima-gold/25 flex items-center justify-center shrink-0 group-hover:bg-cima-gold/20 transition-all">
+                                <Trophy className="h-6 w-6 text-cima-gold" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-heading font-black text-cima-text">Mi Portal de Embajador</p>
+                                <p className="text-xs text-cima-text-muted leading-snug mt-0.5">Consulta el avance de tus referidos en tiempo real.</p>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-cima-gold opacity-0 group-hover:opacity-100 transition-all" />
+                        </Link>
+                        <Link
+                            href="/gana/checklist"
+                            className="group bg-cima-card border border-cima-border rounded-2xl p-6 flex items-center gap-4 hover:border-cima-gold/40 hover:-translate-y-0.5 transition-all"
+                        >
+                            <div className="h-12 w-12 rounded-xl bg-cima-gold/10 border border-cima-gold/25 flex items-center justify-center shrink-0 group-hover:bg-cima-gold/20 transition-all">
+                                <FileText className="h-6 w-6 text-cima-gold" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-heading font-black text-cima-text">Checklist: Vender en 30 Días</p>
+                                <p className="text-xs text-cima-text-muted leading-snug mt-0.5">Descarga el PDF y compártelo con tus conocidos.</p>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-cima-gold opacity-0 group-hover:opacity-100 transition-all" />
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* VIP GAMIFICATION — Club de Embajadores */}
+            <section className="py-16 md:py-20 px-6 bg-cima-card/40 relative line-pattern">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cima-gold/20 to-transparent" />
+                <div className="mx-auto max-w-5xl">
+                    <div className="text-center mb-12">
+                        <span className="text-[10px] font-mono font-bold text-cima-gold uppercase tracking-[0.4em] mb-3 block">Exclusivo</span>
+                        <h2 className="text-3xl md:text-5xl font-heading font-black text-cima-text mb-4">Club de Embajadores VIP</h2>
+                        <p className="text-sm text-cima-text-muted max-w-xl mx-auto">
+                            Mientras más casas refieras, mayor el nivel que alcanzas y mayores los beneficios que recibes.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        {[
+                            {
+                                tier: "🥉 Bronce",
+                                req: "1 propiedad cerrada",
+                                color: "border-amber-700/40 bg-amber-700/5",
+                                accent: "text-amber-500",
+                                perks: [
+                                    "Comisión estándar: $2,500 – $5,000 MXN",
+                                    "Atribución garantizada en CRM de CIMA",
+                                    "Acceso al portal de seguimiento en vivo",
+                                    "Kit digital de referidos personalizado",
+                                ],
+                                icon: Medal,
+                            },
+                            {
+                                tier: "🥈 Plata",
+                                req: "3 propiedades cerradas",
+                                color: "border-slate-400/40 bg-slate-400/5",
+                                accent: "text-slate-300",
+                                perks: [
+                                    "Todo lo de Bronce +",
+                                    "Bono adicional: $2,000 MXN por cierre",
+                                    "Prioridad en la asignación del asesor",
+                                    "Mención especial en la red de embajadores",
+                                ],
+                                icon: Star,
+                                featured: true,
+                            },
+                            {
+                                tier: "🥇 Oro / VIP",
+                                req: "5 o más propiedades cerradas",
+                                color: "border-cima-gold/40 bg-cima-gold/5",
+                                accent: "text-cima-gold",
+                                perks: [
+                                    "Todo lo de Plata +",
+                                    "Bono especial negociado caso por caso",
+                                    "Invitación a la Cena Anual de Embajadores CIMA",
+                                    "Acceso prioritario a propiedades off-market",
+                                ],
+                                icon: Trophy,
+                            },
+                        ].map((t, i) => {
+                            const Icon = t.icon;
+                            return (
+                                <div
+                                    key={i}
+                                    className={`rounded-[24px] border-2 p-7 relative ${t.color} ${
+                                        (t as {featured?: boolean}).featured ? "ring-2 ring-cima-gold/30 shadow-[0_20px_60px_-20px_rgba(200,169,110,0.2)]" : ""
+                                    }`}
+                                >
+                                    {(t as {featured?: boolean}).featured && (
+                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                                            <span className="bg-cima-gold text-cima-bg text-[9px] font-black font-mono uppercase tracking-widest px-3 py-1 rounded-full">
+                                                Más Popular
+                                            </span>
+                                        </div>
+                                    )}
+                                    <div className={`h-12 w-12 rounded-2xl border flex items-center justify-center mb-5 ${t.color}`}>
+                                        <Icon className={`h-6 w-6 ${t.accent}`} />
+                                    </div>
+                                    <p className={`text-xl font-heading font-black ${t.accent} mb-1`}>{t.tier}</p>
+                                    <p className="text-[11px] font-mono text-cima-text-muted mb-5">{t.req}</p>
+                                    <ul className="space-y-2.5">
+                                        {t.perks.map((perk, pi) => (
+                                            <li key={pi} className="flex items-start gap-2 text-xs text-cima-text-muted">
+                                                <CheckCircle2 className={`h-4 w-4 shrink-0 mt-0.5 ${t.accent}`} />
+                                                <span>{perk}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <p className="text-center text-xs text-cima-text-dim font-mono mt-8">
+                        Los niveles se calculan automáticamente en base a las propiedades vendidas y escrituradas. Consulta tu nivel en <Link href="/gana/mi-portal" className="text-cima-gold hover:underline">Mi Portal</Link>.
+                    </p>
+                </div>
+            </section>
+
             {/* FORM */}
             <section id="form-referidos" className="py-16 md:py-24 px-6 relative">
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cima-gold/15 to-transparent" />
@@ -774,12 +904,26 @@ function GanaPageContent() {
                     <p className="text-[10px] text-cima-text-dim font-mono uppercase tracking-widest text-center">
                         © {new Date().getFullYear()} CIMA Propiedades · Monterrey, NL · Programa de Embajadores
                     </p>
-                    <Link
-                        href="/"
-                        className="text-[10px] text-cima-gold/50 hover:text-cima-gold font-mono uppercase tracking-widest transition-colors"
-                    >
-                        Ver portal →
-                    </Link>
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/gana/mi-portal"
+                            className="text-[10px] text-cima-gold/50 hover:text-cima-gold font-mono uppercase tracking-widest transition-colors"
+                        >
+                            Mi Portal →
+                        </Link>
+                        <Link
+                            href="/gana/checklist"
+                            className="text-[10px] text-cima-gold/50 hover:text-cima-gold font-mono uppercase tracking-widest transition-colors"
+                        >
+                            Checklist PDF →
+                        </Link>
+                        <Link
+                            href="/"
+                            className="text-[10px] text-cima-gold/50 hover:text-cima-gold font-mono uppercase tracking-widest transition-colors"
+                        >
+                            Ver portal →
+                        </Link>
+                    </div>
                 </div>
             </footer>
             </div>{/* end z-10 wrapper */}
