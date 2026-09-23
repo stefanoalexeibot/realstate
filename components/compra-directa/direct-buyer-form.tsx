@@ -111,17 +111,6 @@ export default function DirectBuyerForm({
   const [serverError, setServerError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fallbackUrl = result?.waFallback;
-    if (!fallbackUrl) return;
-
-    const timeout = window.setTimeout(() => {
-      window.location.assign(fallbackUrl);
-    }, 800);
-
-    return () => window.clearTimeout(timeout);
-  }, [result?.waFallback]);
-
-  useEffect(() => {
     if (visitRequestIntent) {
       setData((prev) => ({ ...prev, visit_requested: true }));
     }
@@ -958,9 +947,6 @@ function Step3({
         Completar este formulario no garantiza una oferta ni aprobación. Cima
         revisará tu información y te contactará si la propiedad aplica.
       </p>
-      <p className="text-xs text-cima-text-dim leading-relaxed">
-        Intentaremos avisar a Cima automáticamente. Si no se confirma, se abrirá WhatsApp; tendrás que tocar Enviar para que recibamos tu solicitud.
-      </p>
     </div>
   );
 }
@@ -1007,24 +993,12 @@ function SuccessScreen({
           <AlertCircle className="h-7 w-7 text-blue-400" />
         </div>
         <h3 className="text-xl font-heading font-bold text-cima-text mb-2">
-          {result.waFallback
-            ? "Termina tu solicitud por WhatsApp"
-            : "Solicitud recibida — revisión manual"}
+          Solicitud recibida — revisión manual
         </h3>
         <p className="text-sm text-cima-text-muted max-w-sm mx-auto mb-4">
-          {result.waFallback ? (
-            <>
-              Tu caso requiere revisión manual. WhatsApp se abrirá con tus datos,
-              pero el mensaje aún no se ha enviado. Toca Enviar para que Cima lo
-              reciba y pueda revisarlo.
-            </>
-          ) : (
-            <>
-              Tu caso requiere que un asesor de Cima lo revise personalmente. Te
-              contactaremos en los próximos días hábiles al{" "}
-              <span className="text-cima-text font-medium">{phone}</span>.
-            </>
-          )}
+          Tu caso requiere que un asesor de Cima lo revise personalmente. Te
+          contactaremos en los próximos días hábiles al{" "}
+          <span className="text-cima-text font-medium">{phone}</span>.
         </p>
         {result.waFallback && (
           <FallbackBanner url={result.waFallback} />
@@ -1040,23 +1014,13 @@ function SuccessScreen({
         <CheckCircle2 className="h-7 w-7 text-cima-gold" />
       </div>
       <h3 className="text-xl font-heading font-bold text-cima-text mb-2">
-        {result.waFallback ? "Termina tu solicitud por WhatsApp" : "¡Solicitud enviada!"}
+        ¡Solicitud enviada!
       </h3>
       <p className="text-sm text-cima-text-muted max-w-sm mx-auto mb-4">
-        {result.waFallback ? (
-          <>
-            Hola {name.split(" ")[0]}, no se confirmó el aviso automático a Cima.
-            WhatsApp se abrirá con tus datos; toca Enviar para que recibamos tu
-            solicitud y podamos continuar.
-          </>
-        ) : (
-          <>
-            Hola {name.split(" ")[0]}, recibimos tu solicitud. Un asesor de Cima
-            revisará tu propiedad y te contactará al{" "}
-            <span className="text-cima-text font-medium">{phone}</span> para
-            continuar el proceso.
-          </>
-        )}
+        Hola {name.split(" ")[0]}, recibimos tu solicitud. Un asesor de Cima
+        revisará tu propiedad y te contactará al{" "}
+        <span className="text-cima-text font-medium">{phone}</span> para
+        continuar el proceso.
       </p>
       {visitRequested && (
         <p className="text-sm text-cima-gold max-w-sm mx-auto mb-4">
@@ -1078,10 +1042,10 @@ function FallbackBanner({ url }: { url: string }) {
   return (
     <div className="rounded-xl border border-cima-border bg-cima-surface/50 p-4 text-left mt-2">
       <p className="text-xs text-cima-text-muted mb-2 leading-relaxed">
-        <span className="text-yellow-400 font-medium">Importante:</span> Estamos
-        abriendo WhatsApp con el mensaje listo. Aún no se ha enviado: toca Enviar
-        dentro de WhatsApp para que Cima reciba tu solicitud. Si no se abre solo,
-        usa este botón.
+        <span className="text-yellow-400 font-medium">Nota:</span> No pudimos
+        confirmar el envío automático de tu solicitud a Cima en este momento.
+        Puedes escribirles directamente en WhatsApp con la información ya
+        precargada — solo presiona Enviar.
       </p>
       <a
         href={url}
