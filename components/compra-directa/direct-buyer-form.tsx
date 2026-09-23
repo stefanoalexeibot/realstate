@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Send, MessageCircle, MapPin } from "lucide-react";
+import { ChevronRight, ChevronLeft, Send, MapPin } from "lucide-react";
 import {
   PROPERTY_TYPES,
   PROPERTY_CONDITIONS,
@@ -15,6 +15,7 @@ import { COLONIAS_MTY } from "@/lib/colonias-mty";
 const MUNICIPALITIES = Array.from(
   new Set(COLONIAS_MTY.map((c) => c.municipality))
 ).sort((a, b) => a.localeCompare(b, "es"));
+const WHATSAPP_NUMBER = "528121980008";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
 interface FormData {
@@ -35,11 +36,6 @@ interface FormData {
   preferred_visit_date: string;
   preferred_visit_time: string;
   consent: boolean;
-}
-
-interface SubmitResult {
-  status: "qualified" | "manual_review" | "out_of_coverage";
-  waFallback?: string;
 }
 
 const STEPS = ["Contacto", "Propiedad", "Detalles", "Confirmación"];
@@ -76,6 +72,63 @@ function getLocalDateValue() {
   return `${value("year")}-${value("month")}-${value("day")}`;
 }
 
+function formatDateForMessage(value: string) {
+  const [year, month, day] = value.split("-");
+  return year && month && day ? `${day}/${month}/${year}` : value;
+}
+
+function buildWhatsAppUrl(
+  data: FormData,
+  attribution: { utmSource?: string | null; utmMedium?: string | null; utmCampaign?: string | null }
+) {
+  const propertyType =
+    PROPERTY_TYPES.find((option) => option.value === data.property_type)?.label ??
+    data.property_type;
+  const condition =
+    PROPERTY_CONDITIONS.find((option) => option.value === data.property_condition)?.label ??
+    data.property_condition;
+  const situations = data.property_situations
+    .map((value) => PROPERTY_SITUATIONS.find((option) => option.value === value)?.label ?? value)
+    .join(", ");
+  const timeline =
+    SALE_TIMELINES.find((option) => option.value === data.timeline)?.label ??
+    data.timeline;
+  const mapUrl =
+    data.property_latitude !== null && data.property_longitude !== null
+      ? `https://maps.google.com/?q=${data.property_latitude},${data.property_longitude}`
+      : "";
+
+  const message = [
+    "Hola Cima, quiero solicitar una oferta para mi propiedad.",
+    "",
+    "*Mis datos*",
+    `Nombre: ${data.name.trim()}`,
+    `Teléfono / WhatsApp: ${data.phone.trim()}`,
+    "",
+    "*Datos de la propiedad*",
+    `Municipio: ${data.municipality}`,
+    data.colonia ? `Colonia: ${data.colonia}` : null,
+    data.property_address.trim() ? `Dirección: ${data.property_address.trim()}` : null,
+    mapUrl ? `Ubicación en mapa: ${mapUrl}` : null,
+    `¿Es propietario?: ${data.is_owner ? "Sí" : "No"}`,
+    `Tipo de inmueble: ${propertyType}`,
+    data.bedrooms !== "" ? `Recámaras: ${data.bedrooms === "0" ? "Estudio" : data.bedrooms}` : null,
+    `Estado: ${condition}`,
+    `Situación: ${situations || "Sin especificar"}`,
+    `Plazo para vender: ${timeline}`,
+    data.visit_requested
+      ? `Visita solicitada: ${formatDateForMessage(data.preferred_visit_date)} a las ${data.preferred_visit_time} (horario sujeto a confirmación)`
+      : "Visita: No solicitada",
+    attribution.utmSource ? `Origen: ${attribution.utmSource}` : null,
+    attribution.utmMedium ? `Medio: ${attribution.utmMedium}` : null,
+    attribution.utmCampaign ? `Campaña: ${attribution.utmCampaign}` : null,
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
+
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 function fieldClass(error?: boolean) {
   return `w-full rounded-xl border px-4 py-3 bg-cima-surface text-cima-text text-sm placeholder:text-cima-text-dim focus:outline-none focus:ring-2 transition-all ${
@@ -106,9 +159,6 @@ export default function DirectBuyerForm({
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(INITIAL);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<SubmitResult | null>(null);
-  const [serverError, setServerError] = useState<string | null>(null);
 
   useEffect(() => {
     if (visitRequestIntent) {
@@ -199,58 +249,12 @@ export default function DirectBuyerForm({
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   // ── Submit ──────────────────────────────────────────────────────────────
-  const submit = async () => {
+  const submit = () => {
     if (!validate(3)) return;
-    setLoading(true);
-    setServerError(null);
-
-    try {
-      const res = await fetch("/api/direct-buyer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          utm_source: utmSource,
-          utm_medium: utmMedium,
-          utm_campaign: utmCampaign,
-          // Honeypot — siempre vacío en envíos legítimos
-          website: "",
-        }),
-      });
-
-      const json = await res.json();
-
-      if (!res.ok) {
-        setServerError(json.error ?? "Error al enviar. Intenta de nuevo.");
-        return;
-      }
-
-      setResult({
-        status: json.status,
-        waFallback: json.waFallback,
-      });
-    } catch {
-      setServerError(
-        "Sin conexión. Revisa tu internet e intenta de nuevo."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ── Success screen ───────────────────────────────────────────────────────
-  if (result) {
-    return (
-      <SuccessScreen
-        result={result}
-        name={data.name}
-        phone={data.phone}
-        visitRequested={data.visit_requested}
-        preferredVisitDate={data.preferred_visit_date}
-        preferredVisitTime={data.preferred_visit_time}
-      />
+    window.location.assign(
+      buildWhatsAppUrl(data, { utmSource, utmMedium, utmCampaign })
     );
-  }
+  };
 
   // ── Form ─────────────────────────────────────────────────────────────────
   return (
@@ -309,14 +313,6 @@ export default function DirectBuyerForm({
         </motion.div>
       </AnimatePresence>
 
-      {/* Server error */}
-      {serverError && (
-        <p className="mt-3 text-sm text-red-400 flex items-center gap-1.5">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          {serverError}
-        </p>
-      )}
-
       {/* Navigation */}
       <div className="mt-6 flex gap-3">
         {step > 0 && (
@@ -341,25 +337,15 @@ export default function DirectBuyerForm({
           <button
             type="button"
             onClick={submit}
-            disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-cima-gold text-cima-bg font-semibold text-sm py-3 px-6 hover:bg-cima-gold-light transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-cima-gold text-cima-bg font-semibold text-sm py-3 px-6 hover:bg-cima-gold-light transition-all active:scale-95"
           >
-            {loading ? (
-              <>
-                <span className="h-4 w-4 rounded-full border-2 border-cima-bg/40 border-t-cima-bg animate-spin" />
-                Enviando…
-              </>
-            ) : (
-              <>
-                <Send className="h-4 w-4" /> Solicitar revisión
-              </>
-            )}
+            <Send className="h-4 w-4" /> Enviar solicitud
           </button>
         )}
       </div>
 
       <p className="mt-4 text-center text-xs text-cima-text-dim">
-        Al enviar, aceptas que Cima Propiedades revise tu solicitud y te contacte.
+        Al tocar “Enviar solicitud”, se abrirá WhatsApp con tu mensaje y tus datos listos. Para enviarlo a Cima, confirma con el botón Enviar de WhatsApp.
       </p>
     </div>
   );
@@ -947,115 +933,6 @@ function Step3({
         Completar este formulario no garantiza una oferta ni aprobación. Cima
         revisará tu información y te contactará si la propiedad aplica.
       </p>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Success Screen
-// ─────────────────────────────────────────────────────────────────────────────
-function SuccessScreen({
-  result,
-  name,
-  phone,
-  visitRequested,
-  preferredVisitDate,
-  preferredVisitTime,
-}: {
-  result: SubmitResult;
-  name: string;
-  phone: string;
-  visitRequested: boolean;
-  preferredVisitDate: string;
-  preferredVisitTime: string;
-}) {
-  if (result.status === "out_of_coverage") {
-    return (
-      <div className="text-center py-8 px-4">
-        <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
-          <AlertCircle className="h-7 w-7 text-yellow-500" />
-        </div>
-        <h3 className="text-xl font-heading font-bold text-cima-text mb-2">
-          Por ahora fuera de cobertura
-        </h3>
-        <p className="text-sm text-cima-text-muted max-w-sm mx-auto">
-          Actualmente Cima no cubre esa zona o tipo de propiedad para compra
-          directa. Gracias por tu interés, {name.split(" ")[0]}.
-        </p>
-      </div>
-    );
-  }
-
-  if (result.status === "manual_review") {
-    return (
-      <div className="text-center py-8 px-4">
-        <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center">
-          <AlertCircle className="h-7 w-7 text-blue-400" />
-        </div>
-        <h3 className="text-xl font-heading font-bold text-cima-text mb-2">
-          Solicitud recibida — revisión manual
-        </h3>
-        <p className="text-sm text-cima-text-muted max-w-sm mx-auto mb-4">
-          Tu caso requiere que un asesor de Cima lo revise personalmente. Te
-          contactaremos en los próximos días hábiles al{" "}
-          <span className="text-cima-text font-medium">{phone}</span>.
-        </p>
-        {result.waFallback && (
-          <FallbackBanner url={result.waFallback} />
-        )}
-      </div>
-    );
-  }
-
-  // qualified
-  return (
-    <div className="text-center py-8 px-4">
-      <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center">
-        <CheckCircle2 className="h-7 w-7 text-cima-gold" />
-      </div>
-      <h3 className="text-xl font-heading font-bold text-cima-text mb-2">
-        ¡Solicitud enviada!
-      </h3>
-      <p className="text-sm text-cima-text-muted max-w-sm mx-auto mb-4">
-        Hola {name.split(" ")[0]}, recibimos tu solicitud. Un asesor de Cima
-        revisará tu propiedad y te contactará al{" "}
-        <span className="text-cima-text font-medium">{phone}</span> para
-        continuar el proceso.
-      </p>
-      {visitRequested && (
-        <p className="text-sm text-cima-gold max-w-sm mx-auto mb-4">
-          Anotamos tu preferencia de visita para el {preferredVisitDate} a las {preferredVisitTime}. Cima confirmará el horario por WhatsApp.
-        </p>
-      )}
-      <p className="text-xs text-cima-text-dim max-w-xs mx-auto mb-5">
-        Esto no es una oferta ni una aprobación. La oferta real depende de la
-        evaluación presencial de Cima.
-      </p>
-      {result.waFallback && (
-        <FallbackBanner url={result.waFallback} />
-      )}
-    </div>
-  );
-}
-
-function FallbackBanner({ url }: { url: string }) {
-  return (
-    <div className="rounded-xl border border-cima-border bg-cima-surface/50 p-4 text-left mt-2">
-      <p className="text-xs text-cima-text-muted mb-2 leading-relaxed">
-        <span className="text-yellow-400 font-medium">Nota:</span> No pudimos
-        confirmar el envío automático de tu solicitud a Cima en este momento.
-        Puedes escribirles directamente en WhatsApp con la información ya
-        precargada — solo presiona Enviar.
-      </p>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-2.5 text-sm text-[#25D366] font-semibold hover:bg-[#25D366]/20 transition-all"
-      >
-        <MessageCircle className="h-4 w-4" />
-        Abrir WhatsApp
-      </a>
     </div>
   );
 }

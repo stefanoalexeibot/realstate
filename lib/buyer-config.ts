@@ -128,14 +128,6 @@ export const QUALIFYING_TIMELINES: SaleTimeline[] = [
   "3_6_meses",
 ];
 
-// ── Notificación WhatsApp ──────────────────────────────────────────────────
-// Controla para qué estados se envía la notificación a Cima.
-// TODO: Cima debe confirmar si quiere recibir también los de "manual_review".
-export const NOTIFY_WA_ON_STATUSES: QualificationStatus[] = [
-  "qualified",
-  "manual_review",
-];
-
 // ── Lógica de calificación ─────────────────────────────────────────────────
 export interface LeadData {
   municipality: string;
