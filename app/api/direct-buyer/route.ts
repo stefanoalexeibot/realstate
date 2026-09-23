@@ -11,6 +11,17 @@ import {
 } from "@/lib/buyer-config";
 import { notifyDirectBuyerLead } from "@/lib/whatsapp";
 
+function todayInMonterrey() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Monterrey",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const value = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${value("year")}-${value("month")}-${value("day")}`;
+}
+
 export async function POST(req: Request) {
   try {
     // ── 1. Rate limiting ────────────────────────────────────────────────────
@@ -37,6 +48,10 @@ export async function POST(req: Request) {
       property_situations,
       is_owner,
       timeline,
+      bedrooms,
+      visit_requested,
+      preferred_visit_date,
+      preferred_visit_time,
       utm_source,
       utm_medium,
       utm_campaign,
@@ -55,6 +70,39 @@ export async function POST(req: Request) {
     const cleanPhone = String(phone).replace(/[^\d+\-() ]/g, "").slice(0, 20);
     const cleanMunicipality = String(municipality).slice(0, 80).trim();
     const cleanColonia = colonia ? String(colonia).slice(0, 80).trim() : null;
+    const cleanBedrooms = bedrooms === "" || bedrooms == null ? null : Number(bedrooms);
+    if (
+      cleanBedrooms !== null &&
+      (!Number.isInteger(cleanBedrooms) || cleanBedrooms < 0 || cleanBedrooms > 20)
+    ) {
+      return NextResponse.json(
+        { error: "El número de recámaras debe estar entre 0 y 20" },
+        { status: 400 }
+      );
+    }
+
+    const cleanVisitRequested = visit_requested === true;
+    const cleanVisitDate = cleanVisitRequested
+      ? String(preferred_visit_date ?? "").slice(0, 10)
+      : null;
+    const cleanVisitTime = cleanVisitRequested
+      ? String(preferred_visit_time ?? "").slice(0, 5)
+      : null;
+
+    if (
+      cleanVisitRequested &&
+      (!cleanVisitDate ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(cleanVisitDate) ||
+        cleanVisitDate < todayInMonterrey() ||
+        !cleanVisitTime ||
+        !/^([01]\d|2[0-3]):[0-5]\d$/.test(cleanVisitTime))
+    ) {
+      return NextResponse.json(
+        { error: "Revisa la fecha y hora preferidas para la visita" },
+        { status: 400 }
+      );
+    }
+
     const cleanSituations: PropertySituation[] = Array.isArray(property_situations)
       ? (property_situations as string[]).slice(0, 10).map((s) => String(s)) as PropertySituation[]
       : [];
@@ -83,6 +131,10 @@ export async function POST(req: Request) {
         property_situations: cleanSituations,
         is_owner: !!is_owner,
         timeline: timeline as SaleTimeline,
+        bedrooms: cleanBedrooms,
+        visit_requested: cleanVisitRequested,
+        preferred_visit_date: cleanVisitDate,
+        preferred_visit_time: cleanVisitTime,
         qualification_status,
         utm_source: utm_source ?? null,
         utm_medium: utm_medium ?? null,
@@ -111,6 +163,10 @@ export async function POST(req: Request) {
         property_condition: property_condition as string,
         property_situations: cleanSituations,
         timeline: timeline as string,
+        bedrooms: cleanBedrooms,
+        visit_requested: cleanVisitRequested,
+        preferred_visit_date: cleanVisitDate,
+        preferred_visit_time: cleanVisitTime,
         qualification_status,
         utm_source: utm_source ?? null,
         utm_medium: utm_medium ?? null,

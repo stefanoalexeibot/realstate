@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import DirectBuyerForm from "./direct-buyer-form";
-import NetEstimator from "./net-estimator";
 
 // ── Fade-up utility ────────────────────────────────────────────────────────
 function FadeUp({
@@ -50,9 +49,15 @@ export default function CompraDirectaLanding({
   utmCampaign,
 }: Props) {
   const formRef = useRef<HTMLDivElement>(null);
+  const [visitRequestIntent, setVisitRequestIntent] = useState(false);
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const requestVisitAndScroll = () => {
+    setVisitRequestIntent(true);
+    scrollToForm();
   };
 
   const waFallback = `https://wa.me/${process.env.NEXT_PUBLIC_CIMA_WA ?? "528121980008"}?text=${encodeURIComponent("Hola Cima, quiero saber si compran mi propiedad directamente.")}`;
@@ -63,7 +68,10 @@ export default function CompraDirectaLanding({
       <CompraNav scrollToForm={scrollToForm} waFallback={waFallback} />
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <HeroSection scrollToForm={scrollToForm} />
+      <HeroSection
+        scrollToForm={scrollToForm}
+        requestVisit={requestVisitAndScroll}
+      />
 
       {/* ── Trust bar ─────────────────────────────────────────────────────── */}
       <TrustBar />
@@ -74,8 +82,8 @@ export default function CompraDirectaLanding({
       {/* ── Qué revisamos ─────────────────────────────────────────────────── */}
       <WhatWeReviewSection scrollToForm={scrollToForm} />
 
-      {/* ── Estimador ─────────────────────────────────────────────────────── */}
-      <EstimatorSection />
+      {/* ── Cómo preparamos la oferta ─────────────────────────────────────── */}
+      <OfferBasisSection scrollToForm={scrollToForm} />
 
       {/* ── FAQ ──────────────────────────────────────────────────────────── */}
       <FaqSection />
@@ -89,7 +97,7 @@ export default function CompraDirectaLanding({
         <div className="mx-auto max-w-xl">
           <FadeUp className="text-center mb-10">
             <p className="text-xs font-mono text-cima-gold uppercase tracking-widest mb-2">
-              Paso 1 de 2
+              4 pasos breves
             </p>
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-cima-text mb-3">
               Revisa si tu propiedad aplica
@@ -104,6 +112,7 @@ export default function CompraDirectaLanding({
               utmSource={utmSource}
               utmMedium={utmMedium}
               utmCampaign={utmCampaign}
+              visitRequestIntent={visitRequestIntent}
             />
           </FadeUp>
         </div>
@@ -165,7 +174,13 @@ function CompraNav({
 // ─────────────────────────────────────────────────────────────────────────────
 // Hero
 // ─────────────────────────────────────────────────────────────────────────────
-function HeroSection({ scrollToForm }: { scrollToForm: () => void }) {
+function HeroSection({
+  scrollToForm,
+  requestVisit,
+}: {
+  scrollToForm: () => void;
+  requestVisit: () => void;
+}) {
   return (
     <section className="relative pt-28 pb-20 px-4 overflow-hidden">
       {/* Background mesh */}
@@ -186,15 +201,16 @@ function HeroSection({ scrollToForm }: { scrollToForm: () => void }) {
 
         <FadeUp delay={0.08}>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold text-cima-text leading-tight mb-5">
-            Cima te compra{" "}
-            <span className="text-cima-gold">tu casa directamente</span>
+            ¿Necesitas vender tu casa{" "}
+            <span className="text-cima-gold">aunque tenga adeudos o reparaciones?</span>
           </h1>
         </FadeUp>
 
         <FadeUp delay={0.15}>
           <p className="text-lg text-cima-text-muted max-w-xl mx-auto mb-8 leading-relaxed">
-            Sin intermediarios ni publicación. Revisamos tu propiedad y, si
-            aplica, te hacemos una oferta directa. Tú decides si la aceptas.
+            En Cima revisamos propiedades en Monterrey que necesitan arreglos o
+            tienen adeudos pendientes. Cuéntanos qué está pasando y, si aplica,
+            te presentamos una oferta de compra directa sin compromiso.
           </p>
         </FadeUp>
 
@@ -208,18 +224,18 @@ function HeroSection({ scrollToForm }: { scrollToForm: () => void }) {
               Revisar si mi propiedad aplica
             </button>
             <button
-              onClick={scrollToForm}
+              onClick={requestVisit}
               id="hero-cta-secondary"
               className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-cima-border px-7 py-3.5 text-sm text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text transition-all"
             >
-              Solicitar oferta directa
+              Solicitar visita presencial
             </button>
           </div>
         </FadeUp>
 
         <FadeUp delay={0.3}>
           <p className="mt-5 text-xs text-cima-text-dim">
-            Sin compromiso · Sin visitas sorpresa · Tu información es privada
+            Sin compromiso · Sin visitas sorpresa · Cima confirma la visita por WhatsApp
           </p>
         </FadeUp>
 
@@ -272,7 +288,7 @@ const STEPS_HOW = [
     num: "02",
     icon: ShieldCheck,
     title: "Cima revisa y prepara una oferta",
-    desc: "Nuestro equipo analiza la información, puede agendar una visita y, si la propiedad aplica, te presenta una oferta directa.",
+    desc: "Si lo prefieres, solicita una visita y propone día y hora. Cima confirma la disponibilidad por WhatsApp.",
   },
   {
     num: "03",
@@ -366,7 +382,7 @@ const REVIEW_ITEMS = [
   {
     icon: Clock,
     title: "Urgencia de venta",
-    desc: "Si necesitas vender pronto, la compra directa puede ser más predecible que el mercado abierto, aunque el tiempo depende de cada caso.",
+    desc: "Cuéntanos cuándo te gustaría vender y revisaremos si Cima puede avanzar dentro de ese plazo.",
     ok: true,
   },
 ];
@@ -380,12 +396,11 @@ function WhatWeReviewSection({ scrollToForm }: { scrollToForm: () => void }) {
             Casos que revisamos
           </p>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-cima-text mb-3">
-            Situaciones que Cima sí considera
+            Situaciones que podemos revisar
           </h2>
           <p className="text-cima-text-muted max-w-lg mx-auto">
-            No prometemos comprar cualquier propiedad ni resolver todas las
-            situaciones, pero sí evaluamos casos que otros compradores rechazan
-            de entrada.
+            Cada inmueble y situación se evalúa individualmente. Te diremos si
+            podemos avanzar después de revisar la información.
           </p>
         </FadeUp>
 
@@ -444,26 +459,63 @@ function WhatWeReviewSection({ scrollToForm }: { scrollToForm: () => void }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Estimador
+// Qué revisamos para preparar la oferta
 // ─────────────────────────────────────────────────────────────────────────────
-function EstimatorSection() {
+function OfferBasisSection({ scrollToForm }: { scrollToForm: () => void }) {
+  const factors = [
+    {
+      icon: Home,
+      title: "Valor en la zona",
+      description: "Comparamos la propiedad con inmuebles y operaciones similares.",
+    },
+    {
+      icon: Wrench,
+      title: "Estado actual",
+      description: "Consideramos las reparaciones que requiere, sin pedirte que las hagas antes.",
+    },
+    {
+      icon: FileCheck,
+      title: "Saldos y documentación",
+      description: "Revisamos los adeudos y los pasos necesarios para una posible compraventa.",
+    },
+  ];
+
   return (
-    <section id="estimador" className="py-20 px-4">
-      <div className="mx-auto max-w-2xl">
+    <section id="como-preparamos-la-oferta" className="py-20 px-4">
+      <div className="mx-auto max-w-5xl">
         <FadeUp className="text-center mb-10">
           <p className="text-xs font-mono text-cima-gold uppercase tracking-widest mb-2">
-            Herramienta educativa
+            Una oferta clara
           </p>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-cima-text mb-3">
-            Entiende tu posible neto
+            Qué revisamos antes de ofrecer
           </h2>
-          <p className="text-cima-text-muted max-w-lg mx-auto">
-            Antes de tomar una decisión, es útil entender los rangos típicos.
-            Esta calculadora es orientativa, no es una oferta de Cima.
+          <p className="text-cima-text-muted max-w-xl mx-auto">
+            No usamos una calculadora genérica para fijar el precio. Primero
+            revisamos estos puntos y después te explicamos la propuesta.
           </p>
         </FadeUp>
-        <FadeUp delay={0.1}>
-          <NetEstimator />
+        <div className="grid md:grid-cols-3 gap-4">
+          {factors.map(({ icon: Icon, title, description }, index) => (
+            <FadeUp key={title} delay={index * 0.08}>
+              <div className="h-full rounded-2xl border border-cima-border bg-cima-card p-5">
+                <Icon className="h-5 w-5 text-cima-gold mb-4" />
+                <h3 className="font-heading font-bold text-cima-text mb-2">{title}</h3>
+                <p className="text-sm text-cima-text-muted leading-relaxed">{description}</p>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+        <FadeUp delay={0.25} className="mt-8 text-center">
+          <p className="text-sm text-cima-text-dim mb-4">
+            Solicitar revisión no te obliga a aceptar una oferta.
+          </p>
+          <button
+            onClick={scrollToForm}
+            className="inline-flex items-center justify-center rounded-xl bg-cima-gold px-6 py-3 text-sm font-semibold text-cima-bg hover:bg-cima-gold-light transition-colors"
+          >
+            Revisar mi propiedad
+          </button>
         </FadeUp>
       </div>
     </section>
@@ -480,7 +532,7 @@ const FAQS = [
   },
   {
     q: "¿Cómo se determina el precio de la oferta?",
-    a: "La oferta considera el valor de mercado de la zona, el estado del inmueble y los costos de la operación. No ofrecemos precio de lista completo, pero sí un proceso transparente y sin sorpresas.",
+    a: "Consideramos el valor de propiedades similares, el estado del inmueble, los saldos pendientes y los costos de la operación. La propuesta puede diferir del precio de venta en mercado abierto; te explicamos los factores para que decidas con claridad.",
   },
   {
     q: "¿Estoy obligado a aceptar si solicito una revisión?",
@@ -588,5 +640,3 @@ function MobileStickyCta({ scrollToForm }: { scrollToForm: () => void }) {
     </div>
   );
 }
-
-

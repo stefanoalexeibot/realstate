@@ -21,6 +21,10 @@ CREATE TABLE IF NOT EXISTS re_direct_buyer_leads (
   property_situations  text[]        NOT NULL DEFAULT '{}',
   is_owner             boolean       NOT NULL DEFAULT true,
   timeline             text          NOT NULL,       -- urgente | 1_3_meses | 3_6_meses | mas_6_meses | explorando
+  bedrooms             smallint      CHECK (bedrooms IS NULL OR bedrooms BETWEEN 0 AND 20),
+  visit_requested      boolean       NOT NULL DEFAULT false,
+  preferred_visit_date date,
+  preferred_visit_time time,
 
   -- Calificación automática
   qualification_status text          NOT NULL,       -- qualified | manual_review | out_of_coverage
@@ -36,6 +40,14 @@ CREATE TABLE IF NOT EXISTS re_direct_buyer_leads (
   notes                text,
   assigned_to          text
 );
+
+-- Compatibilidad con instalaciones donde la tabla ya existía.
+ALTER TABLE re_direct_buyer_leads
+  ADD COLUMN IF NOT EXISTS bedrooms smallint
+    CHECK (bedrooms IS NULL OR bedrooms BETWEEN 0 AND 20),
+  ADD COLUMN IF NOT EXISTS visit_requested boolean NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS preferred_visit_date date,
+  ADD COLUMN IF NOT EXISTS preferred_visit_time time;
 
 -- Índices útiles para el equipo de Cima
 CREATE INDEX IF NOT EXISTS idx_direct_buyer_leads_status

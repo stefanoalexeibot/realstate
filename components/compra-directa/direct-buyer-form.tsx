@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Send, MessageCircle } from "lucide-react";
 import {
@@ -23,10 +23,14 @@ interface FormData {
   municipality: string;
   colonia: string;
   property_type: string;
+  bedrooms: string;
   is_owner: boolean | null;
   property_condition: string;
   property_situations: string[];
   timeline: string;
+  visit_requested: boolean;
+  preferred_visit_date: string;
+  preferred_visit_time: string;
   consent: boolean;
 }
 
@@ -44,12 +48,27 @@ const INITIAL: FormData = {
   municipality: "",
   colonia: "",
   property_type: "",
+  bedrooms: "",
   is_owner: null,
   property_condition: "",
   property_situations: [],
   timeline: "",
+  visit_requested: false,
+  preferred_visit_date: "",
+  preferred_visit_time: "",
   consent: false,
 };
+
+function getLocalDateValue() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Monterrey",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const value = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${value("year")}-${value("month")}-${value("day")}`;
+}
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 function fieldClass(error?: boolean) {
@@ -69,15 +88,27 @@ interface Props {
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
+  visitRequestIntent?: boolean;
 }
 
-export default function DirectBuyerForm({ utmSource, utmMedium, utmCampaign }: Props) {
+export default function DirectBuyerForm({
+  utmSource,
+  utmMedium,
+  utmCampaign,
+  visitRequestIntent = false,
+}: Props) {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(INITIAL);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (visitRequestIntent) {
+      setData((prev) => ({ ...prev, visit_requested: true }));
+    }
+  }, [visitRequestIntent]);
 
   // ── Colonias filtradas por municipio ────────────────────────────────────
   const colonias = data.municipality
@@ -122,6 +153,12 @@ export default function DirectBuyerForm({ utmSource, utmMedium, utmCampaign }: P
       if (s === 1) {
         if (!data.municipality) e.municipality = "Selecciona un municipio";
         if (!data.property_type) e.property_type = "Selecciona el tipo";
+        if (data.bedrooms !== "") {
+          const bedrooms = Number(data.bedrooms);
+          if (!Number.isInteger(bedrooms) || bedrooms < 0 || bedrooms > 20) {
+            e.bedrooms = "Indica un número entre 0 y 20, o deja el campo vacío";
+          }
+        }
       }
 
       if (s === 2) {
@@ -132,6 +169,10 @@ export default function DirectBuyerForm({ utmSource, utmMedium, utmCampaign }: P
         if (data.property_situations.length === 0)
           e.property_situations = "Selecciona al menos una opción";
         if (!data.timeline) e.timeline = "Selecciona un plazo";
+        if (data.visit_requested && !data.preferred_visit_date)
+          e.preferred_visit_date = "Elige una fecha preferida";
+        if (data.visit_requested && !data.preferred_visit_time)
+          e.preferred_visit_time = "Elige una hora preferida";
       }
 
       if (s === 3) {
@@ -198,6 +239,9 @@ export default function DirectBuyerForm({ utmSource, utmMedium, utmCampaign }: P
         result={result}
         name={data.name}
         phone={data.phone}
+        visitRequested={data.visit_requested}
+        preferredVisitDate={data.preferred_visit_date}
+        preferredVisitTime={data.preferred_visit_time}
       />
     );
   }
@@ -463,6 +507,27 @@ function Step1({
           <p className="mt-1 text-xs text-red-400">{errors.property_type}</p>
         )}
       </div>
+      <div>
+        <label htmlFor="db-bedrooms" className={labelClass()}>
+          Número de recámaras <span className="normal-case text-cima-text-dim">(opcional)</span>
+        </label>
+        <input
+          id="db-bedrooms"
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={20}
+          step={1}
+          placeholder="Ej. 3"
+          value={data.bedrooms}
+          onChange={(e) => setData((p) => ({ ...p, bedrooms: e.target.value }))}
+          className={fieldClass(!!errors.bedrooms)}
+        />
+        <p className="mt-1 text-xs text-cima-text-dim">Escribe 0 si es tipo estudio.</p>
+        {errors.bedrooms && (
+          <p className="mt-1 text-xs text-red-400">{errors.bedrooms}</p>
+        )}
+      </div>
     </div>
   );
 }
@@ -494,11 +559,11 @@ function Step2({
 
       {/* ¿Eres propietario? */}
       <div>
-        <label className={labelClass()}>¿Eres propietario o estás autorizado para vender?</label>
+        <label className={labelClass()}>¿Puedes autorizar la venta de la propiedad?</label>
         <div className="flex gap-3">
           {[
-            { val: true, label: "Sí, soy propietario" },
-            { val: false, label: "Estoy autorizado" },
+            { val: true, label: "Sí" },
+            { val: false, label: "No, necesito consultarlo" },
           ].map(({ val, label }) => (
             <button
               key={String(val)}
@@ -603,6 +668,86 @@ function Step2({
           <p className="mt-1 text-xs text-red-400">{errors.timeline}</p>
         )}
       </div>
+
+      <div className="rounded-2xl border border-cima-border bg-cima-surface/60 p-4 sm:p-5">
+        <div className="mb-3">
+          <h4 className="text-sm font-semibold text-cima-text">
+            ¿Quieres que vayamos a verla?
+          </h4>
+          <p className="mt-1 text-xs text-cima-text-muted">
+            Propón día y hora. Cima confirmará la disponibilidad por WhatsApp.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-2">
+          {[
+            { value: true, label: "Sí, solicitar una visita" },
+            { value: false, label: "Primero quiero hablar" },
+          ].map((option) => (
+            <button
+              key={String(option.value)}
+              type="button"
+              aria-pressed={data.visit_requested === option.value}
+              onClick={() =>
+                setData((prev) => ({
+                  ...prev,
+                  visit_requested: option.value,
+                  preferred_visit_date: option.value ? prev.preferred_visit_date : "",
+                  preferred_visit_time: option.value ? prev.preferred_visit_time : "",
+                }))
+              }
+              className={`rounded-xl border px-3 py-3 text-sm text-left transition-colors ${
+                data.visit_requested === option.value
+                  ? "border-cima-gold bg-cima-gold/10 text-cima-gold font-semibold"
+                  : "border-cima-border bg-cima-card text-cima-text-muted hover:border-cima-gold/30"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        {data.visit_requested && (
+          <div className="mt-4 grid sm:grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="db-visit-date" className={labelClass()}>
+                Fecha preferida
+              </label>
+              <input
+                id="db-visit-date"
+                type="date"
+                min={getLocalDateValue()}
+                value={data.preferred_visit_date}
+                onChange={(e) =>
+                  setData((prev) => ({ ...prev, preferred_visit_date: e.target.value }))
+                }
+                className={fieldClass(!!errors.preferred_visit_date)}
+              />
+              {errors.preferred_visit_date && (
+                <p className="mt-1 text-xs text-red-400">{errors.preferred_visit_date}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="db-visit-time" className={labelClass()}>
+                Hora preferida
+              </label>
+              <input
+                id="db-visit-time"
+                type="time"
+                value={data.preferred_visit_time}
+                onChange={(e) =>
+                  setData((prev) => ({ ...prev, preferred_visit_time: e.target.value }))
+                }
+                className={fieldClass(!!errors.preferred_visit_time)}
+              />
+              {errors.preferred_visit_time && (
+                <p className="mt-1 text-xs text-red-400">{errors.preferred_visit_time}</p>
+              )}
+            </div>
+            <p className="sm:col-span-2 text-xs text-cima-text-dim">
+              La visita queda solicitada, no confirmada, hasta que Cima te contacte.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -642,8 +787,10 @@ function Step3({
             ["Municipio", data.municipality],
             data.colonia ? ["Colonia", data.colonia] : null,
             ["Tipo", PROPERTY_TYPES.find((p) => p.value === data.property_type)?.label ?? data.property_type],
+            data.bedrooms !== "" ? ["Recámaras", data.bedrooms === "0" ? "Estudio" : data.bedrooms] : null,
             ["Estado inmueble", PROPERTY_CONDITIONS.find((c) => c.value === data.property_condition)?.label ?? data.property_condition],
             ["Plazo", SALE_TIMELINES.find((t) => t.value === data.timeline)?.label ?? data.timeline],
+            data.visit_requested ? ["Visita solicitada", `${data.preferred_visit_date} · ${data.preferred_visit_time}`] : null,
           ] as (string[] | null)[]
         )
           .filter((row): row is string[] => row !== null)
@@ -715,10 +862,16 @@ function SuccessScreen({
   result,
   name,
   phone,
+  visitRequested,
+  preferredVisitDate,
+  preferredVisitTime,
 }: {
   result: SubmitResult;
   name: string;
   phone: string;
+  visitRequested: boolean;
+  preferredVisitDate: string;
+  preferredVisitTime: string;
 }) {
   if (result.status === "out_of_coverage") {
     return (
@@ -773,6 +926,11 @@ function SuccessScreen({
         <span className="text-cima-text font-medium">{phone}</span> para
         continuar el proceso.
       </p>
+      {visitRequested && (
+        <p className="text-sm text-cima-gold max-w-sm mx-auto mb-4">
+          Anotamos tu preferencia de visita para el {preferredVisitDate} a las {preferredVisitTime}. Cima confirmará el horario por WhatsApp.
+        </p>
+      )}
       <p className="text-xs text-cima-text-dim max-w-xs mx-auto mb-5">
         Esto no es una oferta ni una aprobación. La oferta real depende de la
         evaluación presencial de Cima.

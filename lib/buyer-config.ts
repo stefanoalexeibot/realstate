@@ -146,8 +146,8 @@ export interface LeadData {
 }
 
 export function classifyLead(data: LeadData): QualificationStatus {
-  // 1. El lead debe ser propietario o estar autorizado para vender
-  if (!data.is_owner) return "out_of_coverage";
+  // 1. Confirmar autoridad requiere revisión, pero no descartar al contacto.
+  if (!data.is_owner) return "manual_review";
 
   // 2. Cobertura geográfica
   if (!COVERED_MUNICIPALITIES.includes(data.municipality)) {

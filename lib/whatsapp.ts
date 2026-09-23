@@ -29,6 +29,10 @@ export interface DirectBuyerNotification {
   property_condition: string;
   property_situations: string[];
   timeline: string;
+  bedrooms: number | null;
+  visit_requested: boolean;
+  preferred_visit_date?: string | null;
+  preferred_visit_time?: string | null;
   qualification_status: QualificationStatus;
   utm_source?: string | null;
   utm_medium?: string | null;
@@ -52,6 +56,14 @@ async function sendViaTemplate(
     data.property_situations.length > 0
       ? data.property_situations.join(", ")
       : "Ninguna";
+  const propertyDetails = [
+    data.bedrooms === null ? null : `${data.bedrooms} recámaras`,
+    data.visit_requested
+      ? `Visita solicitada: ${data.preferred_visit_date} ${data.preferred_visit_time} (por confirmar)`
+      : "Sin solicitud de visita",
+  ]
+    .filter(Boolean)
+    .join(" | ");
 
   const utmText = [
     data.utm_source && `fuente: ${data.utm_source}`,
@@ -77,9 +89,9 @@ async function sendViaTemplate(
             { type: "text", text: data.name },
             { type: "text", text: data.phone },
             { type: "text", text: `${data.municipality}${data.colonia ? ` — ${data.colonia}` : ""}` },
-            { type: "text", text: data.property_type },
+            { type: "text", text: `${data.property_type}${data.bedrooms === null ? "" : ` — ${data.bedrooms} recámaras`}` },
             { type: "text", text: data.property_condition },
-            { type: "text", text: situationsText },
+            { type: "text", text: `${situationsText} | ${propertyDetails}` },
             { type: "text", text: data.timeline },
             { type: "text", text: utmText || "Sin UTM" },
           ],
@@ -118,7 +130,10 @@ async function sendFreeText(
       ? data.property_situations.join(", ")
       : "Ninguna";
 
-  const text = `*Cima Compra Directa — Nuevo Lead*\n\n*Estado:* ${statusLabel}\n*Nombre:* ${data.name}\n*Teléfono:* ${data.phone}\n*Zona:* ${data.municipality}${data.colonia ? ` — ${data.colonia}` : ""}\n*Tipo:* ${data.property_type}\n*Estado inmueble:* ${data.property_condition}\n*Situaciones:* ${situationsText}\n*Plazo:* ${data.timeline}${data.utm_source ? `\n*UTM:* ${data.utm_source}` : ""}`;
+  const visitText = data.visit_requested
+    ? `${data.preferred_visit_date ?? "Sin fecha"} a las ${data.preferred_visit_time ?? "Sin hora"} (por confirmar)`
+    : "No solicitada";
+  const text = `*Cima Compra Directa — Nuevo Lead*\n\n*Estado:* ${statusLabel}\n*Nombre:* ${data.name}\n*Teléfono:* ${data.phone}\n*Zona:* ${data.municipality}${data.colonia ? ` — ${data.colonia}` : ""}\n*Tipo:* ${data.property_type}\n*Recámaras:* ${data.bedrooms === null ? "No indicadas" : data.bedrooms}\n*Estado inmueble:* ${data.property_condition}\n*Situaciones:* ${situationsText}\n*Plazo:* ${data.timeline}\n*Visita solicitada:* ${visitText}${data.utm_source ? `\n*UTM:* ${data.utm_source}` : ""}`;
 
   const body = {
     messaging_product: "whatsapp",
@@ -184,6 +199,10 @@ function buildFallbackUrl(data: DirectBuyerNotification): string {
       ? data.property_situations.join(", ")
       : "Ninguna";
 
-  const msg = `Hola Cima, soy ${data.name} y quiero saber si mi propiedad aplica para venta directa. Zona: ${data.municipality}. Tipo: ${data.property_type}. Situaciones: ${situationsText}. Plazo: ${data.timeline}. Mi teléfono: ${data.phone}`;
+  const visitText = data.visit_requested
+    ? ` Solicito visita para el ${data.preferred_visit_date} a las ${data.preferred_visit_time} (sujeta a confirmación).`
+    : "";
+  const bedroomsText = data.bedrooms === null ? "" : ` Recámaras: ${data.bedrooms}.`;
+  const msg = `Hola Cima, soy ${data.name} y quiero saber si mi propiedad aplica para venta directa. Zona: ${data.municipality}. Tipo: ${data.property_type}.${bedroomsText} Situaciones: ${situationsText}. Plazo: ${data.timeline}.${visitText} Mi teléfono: ${data.phone}`;
   return `https://wa.me/${cimaWa}?text=${encodeURIComponent(msg)}`;
 }
