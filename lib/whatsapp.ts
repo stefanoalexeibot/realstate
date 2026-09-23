@@ -25,6 +25,9 @@ export interface DirectBuyerNotification {
   phone: string;
   municipality: string;
   colonia?: string | null;
+  property_address?: string | null;
+  property_latitude?: number | null;
+  property_longitude?: number | null;
   property_type: string;
   property_condition: string;
   property_situations: string[];
@@ -37,6 +40,30 @@ export interface DirectBuyerNotification {
   utm_source?: string | null;
   utm_medium?: string | null;
   utm_campaign?: string | null;
+}
+
+function getMapUrl(data: DirectBuyerNotification) {
+  const latitude = data.property_latitude;
+  const longitude = data.property_longitude;
+  if (
+    typeof latitude !== "number" ||
+    !Number.isFinite(latitude) ||
+    typeof longitude !== "number" ||
+    !Number.isFinite(longitude)
+  ) {
+    return null;
+  }
+  return `https://maps.google.com/?q=${latitude},${longitude}`;
+}
+
+function getLocationDetails(data: DirectBuyerNotification) {
+  const details: string[] = [];
+  if (data.property_address?.trim()) {
+    details.push(`Dirección: ${data.property_address.trim()}`);
+  }
+  const mapUrl = getMapUrl(data);
+  if (mapUrl) details.push(`Mapa: ${mapUrl}`);
+  return details.join(" | ");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -61,6 +88,7 @@ async function sendViaTemplate(
     data.visit_requested
       ? `Visita solicitada: ${data.preferred_visit_date} ${data.preferred_visit_time} (por confirmar)`
       : "Sin solicitud de visita",
+    getLocationDetails(data) || null,
   ]
     .filter(Boolean)
     .join(" | ");
@@ -133,7 +161,8 @@ async function sendFreeText(
   const visitText = data.visit_requested
     ? `${data.preferred_visit_date ?? "Sin fecha"} a las ${data.preferred_visit_time ?? "Sin hora"} (por confirmar)`
     : "No solicitada";
-  const text = `*Cima Compra Directa — Nuevo Lead*\n\n*Estado:* ${statusLabel}\n*Nombre:* ${data.name}\n*Teléfono:* ${data.phone}\n*Zona:* ${data.municipality}${data.colonia ? ` — ${data.colonia}` : ""}\n*Tipo:* ${data.property_type}\n*Recámaras:* ${data.bedrooms === null ? "No indicadas" : data.bedrooms}\n*Estado inmueble:* ${data.property_condition}\n*Situaciones:* ${situationsText}\n*Plazo:* ${data.timeline}\n*Visita solicitada:* ${visitText}${data.utm_source ? `\n*UTM:* ${data.utm_source}` : ""}`;
+  const mapUrl = getMapUrl(data);
+  const text = `*Cima Compra Directa — Nuevo Lead*\n\n*Estado:* ${statusLabel}\n*Nombre:* ${data.name}\n*Teléfono:* ${data.phone}\n*Zona:* ${data.municipality}${data.colonia ? ` — ${data.colonia}` : ""}\n*Dirección:* ${data.property_address?.trim() || "No indicada"}\n*Ubicación exacta:* ${mapUrl ?? "No compartida"}\n*Tipo:* ${data.property_type}\n*Recámaras:* ${data.bedrooms === null ? "No indicadas" : data.bedrooms}\n*Estado inmueble:* ${data.property_condition}\n*Situaciones:* ${situationsText}\n*Plazo:* ${data.timeline}\n*Visita solicitada:* ${visitText}${data.utm_source ? `\n*UTM:* ${data.utm_source}` : ""}`;
 
   const body = {
     messaging_product: "whatsapp",
@@ -203,6 +232,10 @@ function buildFallbackUrl(data: DirectBuyerNotification): string {
     ? ` Solicito visita para el ${data.preferred_visit_date} a las ${data.preferred_visit_time} (sujeta a confirmación).`
     : "";
   const bedroomsText = data.bedrooms === null ? "" : ` Recámaras: ${data.bedrooms}.`;
-  const msg = `Hola Cima, soy ${data.name} y quiero saber si mi propiedad aplica para venta directa. Zona: ${data.municipality}. Tipo: ${data.property_type}.${bedroomsText} Situaciones: ${situationsText}. Plazo: ${data.timeline}.${visitText} Mi teléfono: ${data.phone}`;
+  const addressText = data.property_address?.trim()
+    ? ` Dirección: ${data.property_address.trim()}.`
+    : "";
+  const mapText = getMapUrl(data) ? ` Mapa: ${getMapUrl(data)}` : "";
+  const msg = `Hola Cima, soy ${data.name} y quiero saber si mi propiedad aplica para venta directa. Zona: ${data.municipality}${data.colonia ? `, ${data.colonia}` : ""}.${addressText}${mapText} Tipo: ${data.property_type}.${bedroomsText} Situaciones: ${situationsText}. Plazo: ${data.timeline}.${visitText} Mi teléfono: ${data.phone}`;
   return `https://wa.me/${cimaWa}?text=${encodeURIComponent(msg)}`;
 }

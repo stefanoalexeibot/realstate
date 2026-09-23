@@ -527,10 +527,6 @@ function OfferBasisSection({ scrollToForm }: { scrollToForm: () => void }) {
 // ─────────────────────────────────────────────────────────────────────────────
 const FAQS = [
   {
-    q: "¿Cima es comprador directo o es una agencia?",
-    a: "En esta modalidad, Cima actúa como comprador directo de tu propiedad. No publicamos tu casa ni buscamos compradores externos: somos nosotros quienes hacemos la oferta.",
-  },
-  {
     q: "¿Cómo se determina el precio de la oferta?",
     a: "Consideramos el valor de propiedades similares, el estado del inmueble, los saldos pendientes y los costos de la operación. La propuesta puede diferir del precio de venta en mercado abierto; te explicamos los factores para que decidas con claridad.",
   },
@@ -541,10 +537,6 @@ const FAQS = [
   {
     q: "¿Qué pasa si mi propiedad tiene hipoteca?",
     a: "Es un caso que revisamos. No garantizamos que todas las hipotecas se puedan resolver, pero sí analizamos cada situación individualmente.",
-  },
-  {
-    q: "¿Qué no hace Cima en esta modalidad?",
-    a: "No somos tu agente ni gestionamos la venta de tu propiedad a terceros. No publicamos en portales ni cobramos comisión. En esta página, Cima es el comprador directo.",
   },
 ];
 

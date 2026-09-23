@@ -43,6 +43,9 @@ export async function POST(req: Request) {
       phone,
       municipality,
       colonia,
+      property_address,
+      property_latitude,
+      property_longitude,
       property_type,
       property_condition,
       property_situations,
@@ -70,6 +73,30 @@ export async function POST(req: Request) {
     const cleanPhone = String(phone).replace(/[^\d+\-() ]/g, "").slice(0, 20);
     const cleanMunicipality = String(municipality).slice(0, 80).trim();
     const cleanColonia = colonia ? String(colonia).slice(0, 80).trim() : null;
+    const cleanPropertyAddress = property_address
+      ? String(property_address).trim().slice(0, 240) || null
+      : null;
+    const parseCoordinate = (value: unknown) =>
+      value == null || String(value).trim() === "" ? null : Number(value);
+    const cleanLatitude = parseCoordinate(property_latitude);
+    const cleanLongitude = parseCoordinate(property_longitude);
+    const hasAnyCoordinate = cleanLatitude !== null || cleanLongitude !== null;
+    if (
+      hasAnyCoordinate &&
+      (cleanLatitude === null ||
+        cleanLongitude === null ||
+        !Number.isFinite(cleanLatitude) ||
+        !Number.isFinite(cleanLongitude) ||
+        cleanLatitude < -90 ||
+        cleanLatitude > 90 ||
+        cleanLongitude < -180 ||
+        cleanLongitude > 180)
+    ) {
+      return NextResponse.json(
+        { error: "La ubicación compartida no es válida" },
+        { status: 400 }
+      );
+    }
     const cleanBedrooms = bedrooms === "" || bedrooms == null ? null : Number(bedrooms);
     if (
       cleanBedrooms !== null &&
@@ -126,6 +153,9 @@ export async function POST(req: Request) {
         phone: cleanPhone,
         municipality: cleanMunicipality,
         colonia: cleanColonia,
+        property_address: cleanPropertyAddress,
+        property_latitude: cleanLatitude,
+        property_longitude: cleanLongitude,
         property_type: property_type as PropertyType,
         property_condition: property_condition as PropertyCondition,
         property_situations: cleanSituations,
@@ -159,6 +189,9 @@ export async function POST(req: Request) {
         phone: cleanPhone,
         municipality: cleanMunicipality,
         colonia: cleanColonia,
+        property_address: cleanPropertyAddress,
+        property_latitude: cleanLatitude,
+        property_longitude: cleanLongitude,
         property_type: property_type as string,
         property_condition: property_condition as string,
         property_situations: cleanSituations,

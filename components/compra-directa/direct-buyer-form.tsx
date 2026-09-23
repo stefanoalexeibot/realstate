@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Send, MessageCircle } from "lucide-react";
+import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Send, MessageCircle, MapPin } from "lucide-react";
 import {
   PROPERTY_TYPES,
   PROPERTY_CONDITIONS,
@@ -22,6 +22,9 @@ interface FormData {
   phone: string;
   municipality: string;
   colonia: string;
+  property_address: string;
+  property_latitude: number | null;
+  property_longitude: number | null;
   property_type: string;
   bedrooms: string;
   is_owner: boolean | null;
@@ -47,6 +50,9 @@ const INITIAL: FormData = {
   phone: "",
   municipality: "",
   colonia: "",
+  property_address: "",
+  property_latitude: null,
+  property_longitude: null,
   property_type: "",
   bedrooms: "",
   is_owner: null,
@@ -433,6 +439,44 @@ function Step1({
   colonias: { name: string; municipality: string }[];
   municipalities: string[];
 }) {
+  const [isRequestingLocation, setIsRequestingLocation] = useState(false);
+  const [locationMessage, setLocationMessage] = useState<string | null>(null);
+
+  const shareCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationMessage("Tu navegador no permite compartir ubicación. Puedes escribir la dirección.");
+      return;
+    }
+
+    setIsRequestingLocation(true);
+    setLocationMessage(null);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setData((prev) => ({
+          ...prev,
+          property_latitude: Number(coords.latitude.toFixed(6)),
+          property_longitude: Number(coords.longitude.toFixed(6)),
+        }));
+        setIsRequestingLocation(false);
+        setLocationMessage("Ubicación agregada. Cima recibirá un enlace al mapa cuando envíes la solicitud.");
+      },
+      () => {
+        setIsRequestingLocation(false);
+        setLocationMessage("No pudimos obtener tu ubicación. Puedes escribir la dirección manualmente.");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
+  const clearCurrentLocation = () => {
+    setData((prev) => ({
+      ...prev,
+      property_latitude: null,
+      property_longitude: null,
+    }));
+    setLocationMessage(null);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -440,7 +484,7 @@ function Step1({
           Cuéntanos sobre la propiedad
         </h3>
         <p className="text-sm text-cima-text-muted">
-          Municipio, colonia (opcional) y tipo de inmueble.
+          Municipio y tipo de inmueble. La dirección y ubicación son opcionales.
         </p>
       </div>
       <div>
@@ -482,6 +526,56 @@ function Step1({
           </select>
         </div>
       )}
+      <div>
+        <label htmlFor="db-property-address" className={labelClass()}>
+          Dirección de la propiedad <span className="normal-case text-cima-text-dim">(opcional)</span>
+        </label>
+        <input
+          id="db-property-address"
+          type="text"
+          autoComplete="street-address"
+          maxLength={240}
+          placeholder="Calle y número, edificio o referencias"
+          value={data.property_address}
+          onChange={(e) => setData((prev) => ({ ...prev, property_address: e.target.value }))}
+          className={fieldClass()}
+        />
+        <p className="mt-2 text-xs text-cima-text-dim">
+          Si estás en la propiedad, también puedes compartir tu ubicación actual. Tu navegador te pedirá permiso.
+        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={shareCurrentLocation}
+            disabled={isRequestingLocation || data.property_latitude !== null}
+            className="inline-flex items-center gap-2 rounded-lg border border-cima-border px-3 py-2 text-xs text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
+          >
+            <MapPin className="h-3.5 w-3.5" />
+            {isRequestingLocation
+              ? "Obteniendo ubicación…"
+              : data.property_latitude !== null
+                ? "Ubicación actual agregada"
+                : "Compartir mi ubicación actual"}
+          </button>
+          {data.property_latitude !== null && (
+            <button
+              type="button"
+              onClick={clearCurrentLocation}
+              className="text-xs text-cima-text-dim underline underline-offset-2 hover:text-cima-text"
+            >
+              Quitar ubicación
+            </button>
+          )}
+        </div>
+        {locationMessage && (
+          <p className="mt-2 text-xs text-cima-text-muted" role="status">
+            {locationMessage}
+          </p>
+        )}
+        <p className="mt-2 text-[11px] text-cima-text-dim">
+          Solo se comparte con Cima al enviar el formulario.
+        </p>
+      </div>
       <div>
         <label className={labelClass()}>Tipo de propiedad</label>
         <div className="grid grid-cols-2 gap-2">
@@ -786,6 +880,8 @@ function Step3({
             ["Teléfono", data.phone],
             ["Municipio", data.municipality],
             data.colonia ? ["Colonia", data.colonia] : null,
+            data.property_address.trim() ? ["Dirección", data.property_address.trim()] : null,
+            data.property_latitude !== null && data.property_longitude !== null ? ["Ubicación exacta", "Compartida; se enviará un enlace al mapa"] : null,
             ["Tipo", PROPERTY_TYPES.find((p) => p.value === data.property_type)?.label ?? data.property_type],
             data.bedrooms !== "" ? ["Recámaras", data.bedrooms === "0" ? "Estudio" : data.bedrooms] : null,
             ["Estado inmueble", PROPERTY_CONDITIONS.find((c) => c.value === data.property_condition)?.label ?? data.property_condition],

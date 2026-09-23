@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS re_direct_buyer_leads (
   -- Ubicación
   municipality         text          NOT NULL,
   colonia              text,
+  property_address     text,
+  property_latitude    double precision,
+  property_longitude   double precision,
 
   -- Propiedad
   property_type        text          NOT NULL,       -- casa | departamento | terreno | local_comercial | otro
@@ -47,7 +50,10 @@ ALTER TABLE re_direct_buyer_leads
     CHECK (bedrooms IS NULL OR bedrooms BETWEEN 0 AND 20),
   ADD COLUMN IF NOT EXISTS visit_requested boolean NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS preferred_visit_date date,
-  ADD COLUMN IF NOT EXISTS preferred_visit_time time;
+  ADD COLUMN IF NOT EXISTS preferred_visit_time time,
+  ADD COLUMN IF NOT EXISTS property_address text,
+  ADD COLUMN IF NOT EXISTS property_latitude double precision,
+  ADD COLUMN IF NOT EXISTS property_longitude double precision;
 
 -- Índices útiles para el equipo de Cima
 CREATE INDEX IF NOT EXISTS idx_direct_buyer_leads_status
