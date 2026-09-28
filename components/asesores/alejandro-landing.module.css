@@ -22,3 +22,29 @@
     scroll-behavior: auto !important;
   }
 }
+
+.page :is(a, button) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.page :is(a, button):active { transform: translateY(1px); }
+.page form :is(input, textarea, select) {
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+.page form :is(input, textarea, select):focus { background-color: #171d23; }
+.page nav a { transition: color 180ms ease, border-color 180ms ease; }
+.page details[open] > :not(summary) { animation: content-enter 220ms ease-out; }
+.contentChange { animation: content-enter 220ms ease-out; }
+.stickyEnter { animation: sticky-enter 220ms ease-out; }
+@keyframes content-enter {
+  from { opacity: .55; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sticky-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(html):has(.page) { scroll-behavior: auto !important; }
+  .page :is(a, button):active { transform: none; }
+}

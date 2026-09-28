@@ -34,6 +34,8 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
   const [context, setContext] = useState("");
   const [attempted, setAttempted] = useState(false);
   const contactRef = useRef<HTMLElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [contactVisible, setContactVisible] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -51,6 +53,48 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
       if (section) sectionObserver.observe(section);
     });
     return () => { formObserver.disconnect(); sectionObserver.disconnect(); };
+  }, []);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const animations = new Set<Animation>();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        if (preference.matches || !(entry.target instanceof HTMLElement)) return;
+        // Content remains visible without JavaScript or animation support.
+        const animation = entry.target.animate([
+          { opacity: 0.45, transform: "translateY(16px)" },
+          { opacity: 1, transform: "translateY(0)" },
+        ], { duration: 480, easing: "cubic-bezier(.22,1,.36,1)" });
+        animations.add(animation);
+        animation.onfinish = () => animations.delete(animation);
+      });
+    }, { threshold: 0.08 });
+    pageRef.current?.querySelectorAll("[data-reveal]").forEach((element) => observer.observe(element));
+    const cancelMotion = () => { if (preference.matches) { animations.forEach(animation => animation.cancel()); animations.clear(); } };
+    preference.addEventListener("change", cancelMotion);
+    let frame = 0;
+    const updateProgress = () => {
+      frame = 0;
+      const range = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = range > 0 ? Math.min(1, Math.max(0, window.scrollY / range)) : 0;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(updateProgress); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    const resizeObserver = new ResizeObserver(onScroll);
+    if (pageRef.current) resizeObserver.observe(pageRef.current);
+    updateProgress();
+    return () => {
+      observer.disconnect(); resizeObserver.disconnect();
+      animations.forEach(animation => animation.cancel());
+      preference.removeEventListener("change", cancelMotion);
+      window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   function whatsapp(message: string) {
@@ -78,7 +122,7 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
   }
 
   return (
-    <div className={`${styles.page} min-h-screen bg-[#0b0e12] text-[#f4f0e8] selection:bg-[#d5b87d] selection:text-[#101216] pb-24 md:pb-0`}>
+    <div ref={pageRef} className={`${styles.page} min-h-screen bg-[#0b0e12] text-[#f4f0e8] selection:bg-[#d5b87d] selection:text-[#101216] pb-24 md:pb-0`}>
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-[#d5b87d] focus:p-3 focus:text-black">Saltar al contenido</a>
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b0e12]/95 backdrop-blur-xl">
         <div className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
@@ -94,6 +138,7 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
         <nav aria-label="Secciones en celular" className="grid grid-cols-3 border-t border-white/10 text-xs md:hidden">
           {[["modalidades", "Modalidades"], ["comparar", "Comparar"], ["contacto", "Contactar"]].map(([id, label]) => <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined} className={`flex min-h-11 items-center justify-center border-b-2 transition-colors ${activeSection === id ? "border-[#d5b87d] text-[#d5b87d]" : "border-transparent text-[#b9b9b5]"}`}>{label}</a>)}
         </nav>
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-white/5"><div ref={progressRef} className="h-full origin-left bg-[#d5b87d]" style={{ transform: "scaleX(0)" }} /></div>
       </header>
 
       <main id="contenido">
@@ -106,14 +151,14 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
                 <span className="text-left"><span className="block text-sm font-medium">Alejandro Luna</span><span className="block text-xs text-[#d5b87d]">Conoce a tu asesor <ArrowUpRight size={12} className="inline" aria-hidden="true" /></span></span>
               </a>
               <p className="mb-6 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-[#d5b87d]"><span className="h-px w-8 bg-[#d5b87d]" />Asesoría personal · Nuevo León</p>
-              <h1 className="font-heading text-[2.4rem] font-bold leading-[1.08] tracking-[-0.045em] sm:text-6xl lg:text-[4.4rem]">Tu casa.<br />Tu siguiente paso.<br /><span className="font-serif font-normal italic tracking-[-0.035em] text-[#d5b87d]">Tu forma de vender.</span></h1>
+              <h1 data-reveal className="font-heading text-[2.4rem] font-bold leading-[1.08] tracking-[-0.045em] sm:text-6xl lg:text-[4.4rem]">Tu casa.<br />Tu siguiente paso.<br /><span className="font-serif font-normal italic tracking-[-0.035em] text-[#d5b87d]">Tu forma de vender.</span></h1>
               <p className="mt-7 max-w-lg text-base leading-relaxed text-[#b9b9b5] sm:text-lg">Soy <strong className="font-medium text-[#f4f0e8]">Alejandro Luna</strong>, de Cima Propiedades. Te ayudo a comparar la venta tradicional y la compra directa para elegir según tu casa, tus tiempos y tus prioridades.</p>
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center"><a href="#modalidades" className={goldButton}>Conocer mis opciones <ArrowDown size={17} aria-hidden="true" /></a><a href={directContact} className="inline-flex min-h-11 items-center justify-center gap-2 text-sm text-[#d5b87d]">Hablar con Alejandro <ArrowUpRight size={17} aria-hidden="true" /></a></div>
               <p className="mt-6 text-xs leading-relaxed text-[#a5a7a5]">Una conversación para empezar. Tú decides cómo avanzar.</p>
             </div>
             <div className="relative rounded-[1.75rem] bg-[#efe9dc] p-6 text-[#17201e] shadow-[0_25px_90px_rgba(0,0,0,0.25)] sm:p-8">
               <div className="mb-7 flex items-center justify-between border-b border-[#17201e]/15 pb-5"><span className="text-[10px] font-semibold uppercase tracking-[0.2em]">Empecemos por ti</span><Compass className="text-[#78613c]" size={24} aria-hidden="true" /></div>
-              <h2 className="font-serif text-3xl leading-tight sm:text-4xl">¿Qué buscas<br />al vender tu casa?</h2>
+              <h2 data-reveal className="font-serif text-3xl leading-tight sm:text-4xl">¿Qué buscas<br />al vender tu casa?</h2>
               <p className="mb-6 mt-3 text-sm leading-relaxed text-[#5b635e]">Elige una opción para conversar sobre ella.</p>
               <div className="space-y-3">{(Object.entries(choices) as [Modality, typeof choices[Modality]][]).map(([key, item], index) => <button key={key} type="button" onClick={() => choose(key)} className={`${styles.choice} group flex w-full items-center gap-3 rounded-xl border border-[#17201e]/15 bg-white/40 p-4 text-left transition-colors hover:border-[#78613c] hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#78613c]`}><span className="text-xs text-[#78613c]">0{index + 1}</span><span className="flex-1 text-sm font-semibold">{item.short}</span><ArrowUpRight size={18} className="text-[#78613c]" aria-hidden="true" /></button>)}</div>
               <div className="mt-6 flex items-center gap-2 text-xs text-[#5b635e]"><ShieldCheck size={16} aria-hidden="true" />Sin compromiso de venta</div>
@@ -126,16 +171,16 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
         <section id="modalidades" className="scroll-mt-36 md:scroll-mt-24 px-5 py-16 sm:px-8 lg:py-24">
           <div className="mx-auto max-w-6xl">
             <p className="text-xs uppercase tracking-[0.2em] text-[#d5b87d]">Dos caminos, una decisión tuya</p>
-            <div className="mb-10 mt-4 flex flex-col justify-between gap-5 md:flex-row md:items-end"><h2 className="max-w-xl font-heading text-3xl font-semibold tracking-tight sm:text-4xl">Una estrategia que empiece<br className="hidden sm:block" /> por lo que tú necesitas.</h2><p className="max-w-sm text-sm leading-relaxed text-[#b9b9b5]">El estado de tu casa, el tiempo disponible y el precio esperado nos ayudan a elegir el camino.</p></div>
+            <div className="mb-10 mt-4 flex flex-col justify-between gap-5 md:flex-row md:items-end"><h2 data-reveal className="max-w-xl font-heading text-3xl font-semibold tracking-tight sm:text-4xl">Una estrategia que empiece<br className="hidden sm:block" /> por lo que tú necesitas.</h2><p className="max-w-sm text-sm leading-relaxed text-[#b9b9b5]">El estado de tu casa, el tiempo disponible y el precio esperado nos ayudan a elegir el camino.</p></div>
             <div className="grid gap-5 md:grid-cols-2">
-              <article className={`${styles.modalityCard} flex flex-col rounded-3xl border border-white/15 bg-[#11161c] p-6 sm:p-9`}>
+              <article data-reveal className={`${styles.modalityCard} flex flex-col rounded-3xl border border-white/15 bg-[#11161c] p-6 sm:p-9`}>
                 <div className="mb-8 flex items-center justify-between"><Megaphone size={28} className="text-[#d5b87d]" aria-hidden="true" /><span className="font-mono text-xs text-[#a5a7a5]">01 / COMERCIALIZACIÓN</span></div>
                 <h3 className="font-serif text-4xl">Venta tradicional</h3><p className="mb-5 mt-2 text-sm text-[#d5b87d]">Te acompaño a encontrar un comprador.</p>
                 <p className="text-sm leading-relaxed text-[#b9b9b5]">Para quien quiere ofrecer su propiedad al mercado y puede dedicar tiempo a la promoción, las visitas y la negociación.</p>
                 <ul className="my-7 space-y-3 text-sm text-[#e0dfd9]">{["Análisis de la propiedad y estrategia de precio", "Plan de promoción y atención a interesados", "Coordinación de visitas y negociación", "Acompañamiento durante el proceso de venta"].map(text=><li key={text} className="flex gap-3"><Check size={17} className="mt-0.5 shrink-0 text-[#d5b87d]" aria-hidden="true" />{text}</li>)}</ul>
                 <p className="mb-7 border-t border-white/10 pt-5 text-xs leading-relaxed text-[#a5a7a5]">El precio final y los tiempos dependen del mercado. Te explico la comisión y el servicio antes de contratar.</p><button type="button" onClick={()=>choose("tradicional")} className={`${goldButton} mt-auto`}>Quiero vender con asesoría <ArrowRight size={17} aria-hidden="true" /></button>
               </article>
-              <article className={`${styles.modalityCard} flex flex-col rounded-3xl border border-[#d5b87d]/35 bg-[linear-gradient(145deg,#23231e,#12171b)] p-6 sm:p-9`}>
+              <article data-reveal className={`${styles.modalityCard} flex flex-col rounded-3xl border border-[#d5b87d]/35 bg-[linear-gradient(145deg,#23231e,#12171b)] p-6 sm:p-9`}>
                 <div className="mb-8 flex items-center justify-between"><House size={28} className="text-[#d5b87d]" aria-hidden="true" /><span className="font-mono text-xs text-[#d5b87d]">02 / TE COMPRAMOS</span></div>
                 <h3 className="font-serif text-4xl">Compra directa</h3><p className="mb-5 mt-2 text-sm text-[#d5b87d]">Revisamos si Cima puede comprar tu casa.</p>
                 <p className="text-sm leading-relaxed text-[#b9b9b5]">Para quien quiere explorar una propuesta directa, incluso si la casa necesita reparaciones, tiene adeudos o está desocupada.</p>
@@ -148,14 +193,14 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
         </section>
 
         <section id="comparar" className="scroll-mt-36 md:scroll-mt-24 bg-[#efe9dc] px-5 py-16 text-[#17201e] sm:px-8 lg:py-20">
-          <div className="mx-auto max-w-6xl"><p className="text-xs uppercase tracking-[0.2em] text-[#78613c]">Compara con calma</p><h2 className="mb-9 mt-4 font-serif text-4xl sm:text-5xl">Lo que cambia en cada opción.</h2>
+          <div className="mx-auto max-w-6xl"><p className="text-xs uppercase tracking-[0.2em] text-[#78613c]">Compara con calma</p><h2 data-reveal className="mb-9 mt-4 font-serif text-4xl sm:text-5xl">Lo que cambia en cada opción.</h2>
             <div className="hidden overflow-hidden rounded-2xl border border-[#17201e]/15 md:block"><table className="w-full text-left text-sm"><caption className="sr-only">Comparación de venta tradicional y compra directa</caption><thead className="bg-[#17201e]/5"><tr><th scope="col" className="p-5">Qué considerar</th><th scope="col" className="p-5">Venta tradicional</th><th scope="col" className="p-5">Compra directa</th></tr></thead><tbody>{comparison.map(row=><tr key={row[0]} className="border-t border-[#17201e]/15"><th scope="row" className="p-5 font-medium">{row[0]}</th><td className="max-w-xs p-5 leading-relaxed text-[#4f5953]">{row[1]}</td><td className="max-w-xs p-5 leading-relaxed text-[#4f5953]">{row[2]}</td></tr>)}</tbody></table></div>
             <div className="md:hidden">
               <div className="mb-5 grid grid-cols-2 rounded-xl border border-[#17201e]/20 p-1" role="group" aria-label="Modalidad para comparar">
                 {(["tradicional", "directa"] as const).map((mode) => <button key={mode} type="button" aria-pressed={compareMode === mode} onClick={() => setCompareMode(mode)} className={`min-h-12 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${compareMode === mode ? "bg-[#17201e] text-[#efe9dc] shadow-sm" : "text-[#4f5953]"}`}>{choices[mode].label}</button>)}
               </div>
               <dl className="divide-y divide-[#17201e]/15 rounded-2xl border border-[#17201e]/15 px-5" aria-live="polite">
-                {comparison.map((row) => <div key={row[0]} className="py-5"><dt className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#78613c]">{row[0]}</dt><dd className="text-sm leading-relaxed text-[#4f5953]">{row[compareMode === "tradicional" ? 1 : 2]}</dd></div>)}
+                {comparison.map((row) => <div key={row[0]} className="py-5"><dt className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#78613c]">{row[0]}</dt><dd key={compareMode} className={`${styles.contentChange} text-sm leading-relaxed text-[#4f5953]`}>{row[compareMode === "tradicional" ? 1 : 2]}</dd></div>)}
               </dl>
               <button type="button" onClick={() => choose(compareMode)} className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#17201e]/30 px-4 py-3 text-sm font-semibold">Consultar {choices[compareMode].label.toLowerCase()} <ArrowRight size={16} aria-hidden="true" /></button>
             </div>
@@ -166,13 +211,13 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
         <section id="sobre-mi" className="scroll-mt-36 md:scroll-mt-24 px-5 py-16 sm:px-8 lg:py-24">
           <div className="mx-auto max-w-6xl">
             <div className="mb-14 grid items-center gap-9 md:grid-cols-[0.8fr_1fr] lg:gap-16">
-              <figure className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-[#d5b87d]/25 bg-[#171a1d]">
+              <figure data-reveal className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-[#d5b87d]/25 bg-[#171a1d]">
                 <Image src="/asesores/alejandro-luna.png" alt="Alejandro Luna, asesor de Cima Propiedades" width={1086} height={1448} sizes="(max-width: 767px) calc(100vw - 40px), 448px" className="aspect-[3/4] w-full object-cover" />
                 <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-7 pb-7 pt-20"><span className="block font-serif text-3xl text-white">Alejandro Luna</span><span className="mt-2 block text-xs uppercase tracking-[0.18em] text-[#e4cc9a]">Asesor · Cima Propiedades</span></figcaption>
               </figure>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-[#d5b87d]">Conoce a tu asesor</p>
-                <h2 className="mt-4 font-heading text-3xl font-semibold leading-tight sm:text-4xl">Soy Alejandro Luna.<br /><span className="font-serif font-normal italic text-[#d5b87d]">Hablemos de lo que sigue para ti.</span></h2>
+                <h2 data-reveal className="mt-4 font-heading text-3xl font-semibold leading-tight sm:text-4xl">Soy Alejandro Luna.<br /><span className="font-serif font-normal italic text-[#d5b87d]">Hablemos de lo que sigue para ti.</span></h2>
                 <p className="mt-6 text-base leading-relaxed text-[#b9b9b5]">Tengo 25 años y soy asesor de Cima Propiedades en Nuevo León. He cerrado alrededor de 30 propiedades. Esa experiencia me ha enseñado que detrás de cada operación hay una historia y una persona que necesita respuestas claras.</p>
                 <p className="mt-4 text-base leading-relaxed text-[#b9b9b5]">Mi forma de trabajar empieza por escucharte: conocer tu propiedad, entender tus tiempos y saber qué necesitas resolver. Te acompaño a comparar la venta tradicional y la compra directa, explicándote las opciones y las condiciones antes de que decidas.</p>
                 <div className="mt-7 grid grid-cols-2 gap-4 rounded-2xl border border-[#d5b87d]/25 bg-[#d5b87d]/5 p-5" aria-label="Experiencia de Alejandro Luna">
@@ -187,9 +232,9 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
           </div>
         </section>
 
-        <section className="border-y border-white/10 bg-[#11161c] px-5 py-10 sm:px-8"><div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2"><div><p className="mb-3 flex items-center gap-2 text-sm text-[#d5b87d]"><MapPin size={17} aria-hidden="true" />Nuevo León</p><h2 className="font-serif text-3xl">Tu ubicación también importa.</h2><p className="mt-3 max-w-md text-sm leading-relaxed text-[#b9b9b5]">Para venta tradicional, cuéntame el municipio y la zona. Para compra directa, estamos enfocándonos en:</p></div><div className="flex flex-col justify-center"><div className="flex flex-wrap gap-2">{CAMPAIGN_MUNICIPALITIES.map(name=><span key={name} className="rounded-full border border-white/15 px-4 py-2 text-sm">{name}</span>)}</div><p className="mt-4 text-xs leading-relaxed text-[#a5a7a5]">Si la casa está cerca, comparte su ubicación para revisar si podemos atenderla.</p></div></div></section>
+        <section className="border-y border-white/10 bg-[#11161c] px-5 py-10 sm:px-8"><div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2"><div><p className="mb-3 flex items-center gap-2 text-sm text-[#d5b87d]"><MapPin size={17} aria-hidden="true" />Nuevo León</p><h2 data-reveal className="font-serif text-3xl">Tu ubicación también importa.</h2><p className="mt-3 max-w-md text-sm leading-relaxed text-[#b9b9b5]">Para venta tradicional, cuéntame el municipio y la zona. Para compra directa, estamos enfocándonos en:</p></div><div className="flex flex-col justify-center"><div className="flex flex-wrap gap-2">{CAMPAIGN_MUNICIPALITIES.map(name=><span key={name} className="rounded-full border border-white/15 px-4 py-2 text-sm">{name}</span>)}</div><p className="mt-4 text-xs leading-relaxed text-[#a5a7a5]">Si la casa está cerca, comparte su ubicación para revisar si podemos atenderla.</p></div></div></section>
 
-        <section id="contacto" ref={contactRef} className="scroll-mt-36 md:scroll-mt-24 px-5 py-16 sm:px-8 lg:py-24"><div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1fr] lg:gap-20"><div><p className="text-xs uppercase tracking-[0.2em] text-[#d5b87d]">Hablemos de tu casa</p><h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">El siguiente paso<br />es una conversación.</h2><p className="mt-5 max-w-md text-base leading-relaxed text-[#b9b9b5]">Cuéntame lo básico y seguimos por WhatsApp. No necesitas tener todos los documentos ni saber qué modalidad elegir.</p><div className="mt-8 flex items-center gap-4"><Image src="/asesores/alejandro-luna.png" alt="Alejandro Luna" width={56} height={56} sizes="56px" className="h-14 w-14 rounded-full border border-[#d5b87d]/40 object-cover object-[50%_30%]" /><div><p className="font-medium">Alejandro Luna</p><p className="mt-1 text-sm text-[#a5a7a5]">Asesor · Cima Propiedades</p></div></div><a href={directContact} className="mt-7 inline-flex items-center gap-3 text-lg text-[#d5b87d]"><MessageCircle size={20} aria-hidden="true" />812 198 0008</a><p className="mt-3 text-xs text-[#a5a7a5]">También puedes escribirme directamente.</p></div>
+        <section id="contacto" ref={contactRef} className="scroll-mt-36 md:scroll-mt-24 px-5 py-16 sm:px-8 lg:py-24"><div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1fr] lg:gap-20"><div><p className="text-xs uppercase tracking-[0.2em] text-[#d5b87d]">Hablemos de tu casa</p><h2 data-reveal className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">El siguiente paso<br />es una conversación.</h2><p className="mt-5 max-w-md text-base leading-relaxed text-[#b9b9b5]">Cuéntame lo básico y seguimos por WhatsApp. No necesitas tener todos los documentos ni saber qué modalidad elegir.</p><div className="mt-8 flex items-center gap-4"><Image src="/asesores/alejandro-luna.png" alt="Alejandro Luna" width={56} height={56} sizes="56px" className="h-14 w-14 rounded-full border border-[#d5b87d]/40 object-cover object-[50%_30%]" /><div><p className="font-medium">Alejandro Luna</p><p className="mt-1 text-sm text-[#a5a7a5]">Asesor · Cima Propiedades</p></div></div><a href={directContact} className="mt-7 inline-flex items-center gap-3 text-lg text-[#d5b87d]"><MessageCircle size={20} aria-hidden="true" />812 198 0008</a><p className="mt-3 text-xs text-[#a5a7a5]">También puedes escribirme directamente.</p></div>
           <form ref={formRef} tabIndex={-1} aria-label="Consulta personal con Alejandro" onSubmit={submit} className="scroll-mt-36 md:scroll-mt-24 rounded-3xl border border-white/15 bg-[#11161c] p-6 sm:p-8">
             <div className="mb-6 border-b border-white/10 pb-5">
               <span className="text-[10px] uppercase tracking-[0.18em] text-[#d5b87d]">Tu consulta personal</span>
@@ -200,7 +245,7 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
               </div>
             </div>
             <label htmlFor="al-modality" className="block text-sm">Me interesa<select id="al-modality" className={field} value={modality} onChange={event=>setModality(event.target.value as Modality)}>{(Object.entries(choices) as [Modality, typeof choices[Modality]][]).map(([key,value])=><option key={key} value={key}>{value.label}</option>)}</select></label>
-            <p className="mt-3 text-xs leading-relaxed text-[#b9b9b5]" aria-live="polite">{choices[modality].description}</p>
+            <p key={modality} className={`${styles.contentChange} mt-3 text-xs leading-relaxed text-[#b9b9b5]`} aria-live="polite">{choices[modality].description}</p>
             <label htmlFor="al-municipality" className="mt-5 block text-sm">Municipio o zona de la propiedad <span className="text-[#d5b87d]">*</span><input id="al-municipality" className={field} required pattern=".*\S.*" maxLength={120} list="al-zones" placeholder="Ej. García, Nuevo León" value={municipality} onChange={event=>setMunicipality(event.target.value)} /><datalist id="al-zones">{CAMPAIGN_MUNICIPALITIES.map(value=><option key={value} value={value} />)}<option value="Monterrey" /><option value="Guadalupe" /><option value="Apodaca" /></datalist></label>
             <label htmlFor="al-timeline" className="mt-5 block text-sm">¿Cuándo te gustaría vender? <span className="text-[#d5b87d]">*</span><select id="al-timeline" className={field} required value={timeline} onChange={event=>setTimeline(event.target.value)}><option value="">Selecciona una opción</option>{["Lo antes posible","En 1 a 3 meses","Más adelante","Estoy explorando opciones"].map(value=><option key={value}>{value}</option>)}</select></label>
             <details className="mt-5 rounded-xl border border-white/10 px-4 py-3">
@@ -224,10 +269,10 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
             <details id="datos-personales" className="mt-5 scroll-mt-36 md:scroll-mt-24 border-t border-white/10 pt-4 text-xs text-[#a5a7a5]"><summary className="cursor-pointer">Cómo se comparten tus datos</summary><p className="mt-3 leading-relaxed">Al continuar, lo que escribiste se incluye en un enlace a WhatsApp. Alejandro recibe el mensaje cuando lo envías allí y puede responderte por ese medio. No incluyas números de crédito, documentos ni datos bancarios.</p>{process.env.NEXT_PUBLIC_PRIVACY_URL && <a href={process.env.NEXT_PUBLIC_PRIVACY_URL} className="mt-3 inline-block underline">Aviso de privacidad</a>}</details>
           </form></div></section>
 
-        <section id="preguntas" className="scroll-mt-36 md:scroll-mt-24 border-t border-white/10 px-5 py-16 sm:px-8"><div className="mx-auto max-w-3xl"><p className="text-xs uppercase tracking-[0.2em] text-[#d5b87d]">Antes de decidir</p><h2 className="mb-8 mt-4 font-heading text-3xl font-semibold">Respuestas claras.</h2><div className="divide-y divide-white/10">{faq.map(([question,answer])=><details key={question} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium [&::-webkit-details-marker]:hidden">{question}<ChevronDown size={17} className="shrink-0 text-[#d5b87d] transition-transform group-open:rotate-180" aria-hidden="true" /></summary><p className="mt-4 pr-6 text-sm leading-relaxed text-[#b9b9b5]">{answer}</p></details>)}</div></div></section>
+        <section id="preguntas" className="scroll-mt-36 md:scroll-mt-24 border-t border-white/10 px-5 py-16 sm:px-8"><div className="mx-auto max-w-3xl"><p className="text-xs uppercase tracking-[0.2em] text-[#d5b87d]">Antes de decidir</p><h2 data-reveal className="mb-8 mt-4 font-heading text-3xl font-semibold">Respuestas claras.</h2><div className="divide-y divide-white/10">{faq.map(([question,answer])=><details key={question} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium [&::-webkit-details-marker]:hidden">{question}<ChevronDown size={17} className="shrink-0 text-[#d5b87d] transition-transform group-open:rotate-180" aria-hidden="true" /></summary><p className="mt-4 pr-6 text-sm leading-relaxed text-[#b9b9b5]">{answer}</p></details>)}</div></div></section>
       </main>
       <footer className="border-t border-white/10 px-5 py-8 sm:px-8"><div className="mx-auto flex max-w-6xl flex-col justify-between gap-5 text-xs text-[#a5a7a5] md:flex-row"><p><span className="font-medium text-[#f4f0e8]">Alejandro Luna</span> · Cima Propiedades · Nuevo León</p><div className="flex flex-wrap gap-5"><Link href="/" className="hover:text-white">Sitio general de Cima <ArrowUpRight size={12} className="inline" aria-hidden="true" /></Link><a href="#datos-personales" className="hover:text-white">Cómo se comparten tus datos</a></div><p>© {new Date().getFullYear()} Cima Propiedades</p></div></footer>
-      {!contactVisible && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/15 bg-[#0b0e12]/95 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-lg md:hidden"><a href="#contacto" className={`${goldButton} w-full text-sm`}>Hablemos de tu casa <MessageCircle size={17} aria-hidden="true" /></a></div>}
+      {!contactVisible && <div className={`${styles.stickyEnter} fixed inset-x-0 bottom-0 z-40 border-t border-white/15 bg-[#0b0e12]/95 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-lg md:hidden`}><a href="#contacto" className={`${goldButton} w-full text-sm`}>Hablemos de tu casa <MessageCircle size={17} aria-hidden="true" /></a></div>}
     </div>
   );
 }
