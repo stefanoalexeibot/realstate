@@ -86,10 +86,13 @@ export const SALE_TIMELINES = [
 export type SaleTimeline = (typeof SALE_TIMELINES)[number]["value"];
 
 // ── Municipios cubiertos ───────────────────────────────────────────────────
-// TODO: Cima debe confirmar cuáles municipios acepta actualmente.
+// Municipios prioritarios de la campaña de compra directa.
 // Agrega o quita municipios de esta lista para controlar la cobertura.
 // Los municipios fuera de esta lista generarán status "out_of_coverage".
+export const CAMPAIGN_MUNICIPALITIES = ["Cadereyta Jiménez", "García", "Salinas Victoria", "Juárez"] as const;
+
 export const COVERED_MUNICIPALITIES: string[] = [
+  ...CAMPAIGN_MUNICIPALITIES,
   "Monterrey",
   "San Pedro Garza García",
   "San Nicolás de los Garza",
@@ -97,10 +100,7 @@ export const COVERED_MUNICIPALITIES: string[] = [
   "Apodaca",
   "General Escobedo",
   "Santa Catarina",
-  "García",
-  "Juárez",
   "Santiago",
-  // TODO: ¿Incluir municipios más lejanos como Cadereyta o Pesquería?
 ];
 
 // ── Tipos de propiedad que Cima acepta directamente ────────────────────────

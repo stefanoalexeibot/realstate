@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import DirectBuyerForm from "./direct-buyer-form";
+import QuickBuyerForm from "./quick-buyer-form";
+import { CAMPAIGN_MUNICIPALITIES } from "@/lib/buyer-config";
+import { buyerWhatsAppUrl } from "@/lib/buyer-whatsapp";
 
 // ── Fade-up utility ────────────────────────────────────────────────────────
 function FadeUp({
@@ -38,6 +41,7 @@ interface Props {
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
+  utmContent?: string | null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -47,8 +51,10 @@ export default function CompraDirectaLanding({
   utmSource,
   utmMedium,
   utmCampaign,
+  utmContent,
 }: Props) {
   const formRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
   const [visitRequestIntent, setVisitRequestIntent] = useState(false);
 
   const scrollToForm = () => {
@@ -57,13 +63,13 @@ export default function CompraDirectaLanding({
 
   const requestVisitAndScroll = () => {
     setVisitRequestIntent(true);
-    scrollToForm();
+    requestAnimationFrame(() => detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
-  const waFallback = `https://wa.me/${process.env.NEXT_PUBLIC_CIMA_WA ?? "528121980008"}?text=${encodeURIComponent("Hola Cima, quiero saber si compran mi propiedad directamente.")}`;
+  const waFallback = buyerWhatsAppUrl("Hola Cima, quiero saber si compran mi casa. Está en el municipio de: ", { utmSource, utmMedium, utmCampaign, utmContent });
 
   return (
-    <div className="min-h-screen bg-cima-bg text-cima-text">
+    <div className="min-h-screen bg-cima-bg text-cima-text pb-24 sm:pb-0">
       {/* ── Navbar ────────────────────────────────────────────────────────── */}
       <CompraNav scrollToForm={scrollToForm} waFallback={waFallback} />
 
@@ -76,6 +82,51 @@ export default function CompraDirectaLanding({
       {/* ── Trust bar ─────────────────────────────────────────────────────── */}
       <TrustBar />
 
+      <section aria-label="Zonas de compra" className="px-4 py-8 text-center">
+        <p className="text-sm text-cima-text-muted mb-4">Compra directa en Nuevo León</p>
+        <div className="flex flex-wrap justify-center gap-2">
+          {CAMPAIGN_MUNICIPALITIES.map((municipality) => <span key={municipality} className="rounded-full border border-cima-gold/30 bg-cima-gold/10 px-4 py-2 text-sm text-cima-gold">{municipality}</span>)}
+        </div>
+        <p className="mt-4 text-xs text-cima-text-muted">¿Está cerca de estas zonas? Comparte el municipio y revisamos la ubicación contigo.</p>
+      </section>
+
+      {/* ── Formulario ────────────────────────────────────────────────────── */}
+      <section
+        id="formulario"
+        ref={formRef}
+        className="scroll-mt-20 py-14 px-4 bg-gradient-to-b from-cima-surface/30 to-cima-bg"
+      >
+        <div className="mx-auto max-w-xl">
+          <FadeUp className="text-center mb-10">
+            <p className="text-xs font-mono text-cima-gold uppercase tracking-widest mb-2">
+              Empecemos por tu casa
+            </p>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-cima-text mb-3">
+              Cuéntanos qué necesitas resolver
+            </h2>
+            <p className="text-cima-text-muted">
+              Comparte la zona, la situación y cuándo te gustaría vender.
+              Continuamos la conversación por WhatsApp, sin pedir documentos aquí.
+            </p>
+          </FadeUp>
+          <FadeUp delay={0.1}>
+            <QuickBuyerForm utmSource={utmSource} utmMedium={utmMedium} utmCampaign={utmCampaign} utmContent={utmContent} />
+            <details ref={detailsRef} open={visitRequestIntent || undefined} className="scroll-mt-20 mt-8 rounded-2xl border border-cima-border p-5">
+              <summary className="cursor-pointer text-sm text-cima-gold">¿Prefieres agregar dirección o solicitar una visita? (opcional)</summary>
+              <div className="mt-6">
+            <DirectBuyerForm
+              utmSource={utmSource}
+              utmMedium={utmMedium}
+              utmCampaign={utmCampaign}
+              visitRequestIntent={visitRequestIntent}
+              utmContent={utmContent}
+            />
+              </div>
+            </details>
+          </FadeUp>
+        </div>
+      </section>
+
       {/* ── Cómo funciona ─────────────────────────────────────────────────── */}
       <HowItWorksSection scrollToForm={scrollToForm} />
 
@@ -87,36 +138,6 @@ export default function CompraDirectaLanding({
 
       {/* ── FAQ ──────────────────────────────────────────────────────────── */}
       <FaqSection />
-
-      {/* ── Formulario ────────────────────────────────────────────────────── */}
-      <section
-        id="formulario"
-        ref={formRef}
-        className="py-20 px-4 bg-gradient-to-b from-cima-surface/30 to-cima-bg"
-      >
-        <div className="mx-auto max-w-xl">
-          <FadeUp className="text-center mb-10">
-            <p className="text-xs font-mono text-cima-gold uppercase tracking-widest mb-2">
-              4 pasos breves
-            </p>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-cima-text mb-3">
-              Revisa si tu propiedad aplica
-            </h2>
-            <p className="text-cima-text-muted">
-              Completa el formulario en menos de 3 minutos. No pedimos datos
-              financieros ni documentos.
-            </p>
-          </FadeUp>
-          <FadeUp delay={0.1}>
-            <DirectBuyerForm
-              utmSource={utmSource}
-              utmMedium={utmMedium}
-              utmCampaign={utmCampaign}
-              visitRequestIntent={visitRequestIntent}
-            />
-          </FadeUp>
-        </div>
-      </section>
 
       {/* ── Footer mínimo ─────────────────────────────────────────────────── */}
       <CompraFooter />
@@ -163,7 +184,7 @@ function CompraNav({
             onClick={scrollToForm}
             className="rounded-lg bg-cima-gold px-4 py-1.5 text-xs font-semibold text-cima-bg hover:bg-cima-gold-light transition-all"
           >
-            Solicitar oferta
+            Revisar mi casa
           </button>
         </div>
       </div>
@@ -182,7 +203,7 @@ function HeroSection({
   requestVisit: () => void;
 }) {
   return (
-    <section className="relative pt-28 pb-20 px-4 overflow-hidden">
+    <section className="relative pt-24 pb-12 px-4 overflow-hidden">
       {/* Background mesh */}
       <div className="absolute inset-0 hero-mesh pointer-events-none" />
       <div className="absolute inset-0 dot-grid opacity-40 pointer-events-none" />
@@ -201,18 +222,22 @@ function HeroSection({
 
         <FadeUp delay={0.08}>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold text-cima-text leading-tight mb-5">
-            ¿Necesitas vender tu casa{" "}
-            <span className="text-cima-gold">aunque tenga adeudos o reparaciones?</span>
+            Compramos casas{" "}
+            <span className="text-cima-gold">en Nuevo León.</span>
           </h1>
         </FadeUp>
 
         <FadeUp delay={0.15}>
           <p className="text-lg text-cima-text-muted max-w-xl mx-auto mb-8 leading-relaxed">
-            En Cima revisamos propiedades en Monterrey que necesitan arreglos o
-            tienen adeudos pendientes. Cuéntanos qué está pasando y, si aplica,
-            te presentamos una oferta de compra directa sin compromiso.
+            ¿Tiene adeudos, necesita reparaciones o ya no la utilizas?
+            En Cima revisamos tu caso y, si la compra es viable,
+            te presentamos una propuesta que tú decides si aceptas.
           </p>
         </FadeUp>
+
+        <p className="mx-auto mb-6 max-w-xl text-sm leading-relaxed text-cima-gold">
+          Cadereyta Jiménez · García · Salinas Victoria · Juárez
+        </p>
 
         <FadeUp delay={0.22}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -221,7 +246,7 @@ function HeroSection({
               id="hero-cta-primary"
               className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-cima-gold px-7 py-3.5 text-base font-semibold text-cima-bg hover:bg-cima-gold-light transition-all active:scale-95 shadow-[0_0_32px_rgba(200,169,110,0.25)]"
             >
-              Revisar si mi propiedad aplica
+              Quiero que revisen mi casa
             </button>
             <button
               onClick={requestVisit}
@@ -234,13 +259,13 @@ function HeroSection({
         </FadeUp>
 
         <FadeUp delay={0.3}>
-          <p className="mt-5 text-xs text-cima-text-dim">
-            Sin compromiso · Sin visitas sorpresa · Cima confirma la visita por WhatsApp
+          <p className="mt-5 text-xs text-cima-text-muted">
+            Sin compromiso · Sin documentos para empezar · Atención por WhatsApp
           </p>
         </FadeUp>
 
         <FadeUp delay={0.38} className="mt-10">
-          <ChevronDown className="mx-auto h-5 w-5 text-cima-text-dim animate-bounce" />
+          <ChevronDown className="mx-auto h-5 w-5 text-cima-text-muted animate-bounce" />
         </FadeUp>
       </div>
     </section>
@@ -253,7 +278,7 @@ function HeroSection({
 function TrustBar() {
   const items = [
     { icon: ShieldCheck, text: "Comprador directo" },
-    { icon: Home, text: "AMM de Monterrey" },
+    { icon: Home, text: "Casas en su estado actual" },
     { icon: FileCheck, text: "Proceso documentado" },
     { icon: MessageCircle, text: "Sin spam" },
   ];
@@ -282,13 +307,13 @@ const STEPS_HOW = [
     num: "01",
     icon: FileCheck,
     title: "Comparte tu propiedad",
-    desc: "Llena el formulario breve con los datos básicos de tu inmueble. Sin documentos ni información financiera en esta etapa.",
+    desc: "Dinos el municipio, la situación de la casa y cuándo quieres vender. Abre WhatsApp y envíanos tu mensaje.",
   },
   {
     num: "02",
     icon: ShieldCheck,
-    title: "Cima revisa y prepara una oferta",
-    desc: "Si lo prefieres, solicita una visita y propone día y hora. Cima confirma la disponibilidad por WhatsApp.",
+    title: "Revisamos tu caso contigo",
+    desc: "Conversamos sobre la propiedad y, si hace falta, acordamos una visita. Si la compra es viable, te explicamos nuestra propuesta.",
   },
   {
     num: "03",
@@ -442,7 +467,7 @@ function WhatWeReviewSection({ scrollToForm }: { scrollToForm: () => void }) {
         </div>
 
         <FadeUp delay={0.35} className="mt-8 text-center">
-          <p className="text-sm text-cima-text-dim mb-4">
+          <p className="text-sm text-cima-text-muted mb-4">
             ¿Tu caso no está en la lista? Igualmente puedes solicitar una revisión.
           </p>
           <button
@@ -450,7 +475,7 @@ function WhatWeReviewSection({ scrollToForm }: { scrollToForm: () => void }) {
             id="review-cta"
             className="inline-flex items-center gap-2 rounded-xl bg-cima-gold text-cima-bg font-semibold text-sm px-6 py-3 hover:bg-cima-gold-light transition-all active:scale-95"
           >
-            Solicitar oferta directa
+            Revisar mi casa directa
           </button>
         </FadeUp>
       </div>
@@ -507,7 +532,7 @@ function OfferBasisSection({ scrollToForm }: { scrollToForm: () => void }) {
           ))}
         </div>
         <FadeUp delay={0.25} className="mt-8 text-center">
-          <p className="text-sm text-cima-text-dim mb-4">
+          <p className="text-sm text-cima-text-muted mb-4">
             Solicitar revisión no te obliga a aceptar una oferta.
           </p>
           <button
@@ -526,6 +551,14 @@ function OfferBasisSection({ scrollToForm }: { scrollToForm: () => void }) {
 // FAQ
 // ─────────────────────────────────────────────────────────────────────────────
 const FAQS = [
+  {
+    q: "¿En qué zonas están comprando casas?",
+    a: "Nuestra campaña se enfoca en Cadereyta Jiménez, García, Salinas Victoria y Juárez, Nuevo León. Si tu casa está en una zona cercana, dinos el municipio y la colonia para revisar la ubicación.",
+  },
+  {
+    q: "¿Necesito arreglar la casa antes de contactar?",
+    a: "No necesitas hacer reparaciones para solicitar una revisión. Evaluamos el estado actual y lo consideramos en la propuesta, si la compra es viable.",
+  },
   {
     q: "¿Cómo se determina el precio de la oferta?",
     a: "Consideramos el valor de propiedades similares, el estado del inmueble, los saldos pendientes y los costos de la operación. La propuesta puede diferir del precio de venta en mercado abierto; te explicamos los factores para que decidas con claridad.",
@@ -597,15 +630,15 @@ function FaqSection() {
 function CompraFooter() {
   return (
     <footer className="border-t border-cima-border/50 py-8 px-4">
-      <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cima-text-dim">
+      <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cima-text-muted">
         <div className="flex items-center gap-2">
           <Building2 className="h-4 w-4 text-cima-gold" />
-          <span>Cima Propiedades · Monterrey, NL</span>
+          <span>Cima Propiedades · Nuevo León</span>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/legal/privacidad" className="hover:text-cima-text transition-colors">
-            Aviso de Privacidad
-          </Link>
+          <a href={process.env.NEXT_PUBLIC_PRIVACY_URL || "#datos"} className="hover:text-cima-text transition-colors">
+            {process.env.NEXT_PUBLIC_PRIVACY_URL ? "Aviso de privacidad" : "Cómo se comparten tus datos"}
+          </a>
           <Link href="/" className="hover:text-cima-text transition-colors">
             Inicio
           </Link>
@@ -621,13 +654,13 @@ function CompraFooter() {
 // ─────────────────────────────────────────────────────────────────────────────
 function MobileStickyCta({ scrollToForm }: { scrollToForm: () => void }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden border-t border-cima-border bg-cima-bg/95 backdrop-blur-md px-4 py-3 safe-area-inset-bottom">
+    <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden border-t border-cima-border bg-cima-bg/95 backdrop-blur-md px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <button
         onClick={scrollToForm}
         id="mobile-sticky-cta"
         className="w-full flex items-center justify-center gap-2 rounded-xl bg-cima-gold text-cima-bg font-semibold text-sm py-3.5 active:scale-[0.98] transition-all"
       >
-        Solicitar oferta directa
+        Quiero que revisen mi casa
       </button>
     </div>
   );

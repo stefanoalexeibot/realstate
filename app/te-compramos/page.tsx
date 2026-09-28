@@ -3,25 +3,26 @@ import CompraDirectaLanding from "@/components/compra-directa/compra-directa-lan
 
 // ── SEO Metadata ───────────────────────────────────────────────────────────
 export const metadata: Metadata = {
-  title: "Cima te compra tu casa directamente | Monterrey",
+  title: "Compramos casas en Nuevo León | Cima",
   description:
-    "¿Quieres vender tu propiedad en Monterrey sin intermediarios? Cima Propiedades te hace una oferta directa. Revisamos hipotecas, reparaciones y documentación. Sin publicación, sin comisiones.",
+    "Compra directa de casas en Cadereyta Jiménez, García, Salinas Victoria y Juárez, Nuevo León. Revisamos casas con adeudos o reparaciones. Cuéntanos tu caso por WhatsApp.",
   alternates: {
-    canonical: "/te-compramos",
+    canonical: "https://www.cimapropiedades.com/te-compramos",
   },
   openGraph: {
     title: "Cima te compra tu casa directamente — sin intermediarios",
     description:
-      "Vende tu propiedad directamente a Cima Propiedades en Monterrey. Sin publicación, sin visitas de desconocidos. Solicita revisión gratis.",
+      "¿Tu casa necesita reparaciones o tiene adeudos? Revisamos tu caso en Cadereyta Jiménez, García, Salinas Victoria y Juárez, Nuevo León.",
+    url: "https://www.cimapropiedades.com/te-compramos",
     type: "website",
     locale: "es_MX",
     siteName: "Cima Propiedades",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cima te compra tu casa directamente | Monterrey",
+    title: "Compramos casas en Nuevo León | Cima",
     description:
-      "Cima Propiedades compra directamente en el AMM. Sin intermediarios ni comisiones de venta.",
+      "Compra directa en Cadereyta Jiménez, García, Salinas Victoria y Juárez, Nuevo León. Solicita una revisión por WhatsApp.",
   },
   robots: {
     index: true,
@@ -36,6 +37,7 @@ interface PageProps {
     utm_source?: string;
     utm_medium?: string;
     utm_campaign?: string;
+    utm_content?: string;
     [key: string]: string | undefined;
   };
 }
@@ -46,6 +48,7 @@ export default function TeCompramosPage({ searchParams }: PageProps) {
       utmSource={searchParams.utm_source ?? null}
       utmMedium={searchParams.utm_medium ?? null}
       utmCampaign={searchParams.utm_campaign ?? null}
+      utmContent={searchParams.utm_content ?? null}
     />
   );
 }

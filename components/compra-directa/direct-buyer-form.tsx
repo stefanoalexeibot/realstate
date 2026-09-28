@@ -4,18 +4,17 @@ import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Send, MapPin } from "lucide-react";
 import {
+  CAMPAIGN_MUNICIPALITIES,
   PROPERTY_TYPES,
   PROPERTY_CONDITIONS,
   PROPERTY_SITUATIONS,
   SALE_TIMELINES,
 } from "@/lib/buyer-config";
+import { buyerWhatsAppUrl } from "@/lib/buyer-whatsapp";
 import { COLONIAS_MTY } from "@/lib/colonias-mty";
 
 // ── Municipios únicos ──────────────────────────────────────────────────────
-const MUNICIPALITIES = Array.from(
-  new Set(COLONIAS_MTY.map((c) => c.municipality))
-).sort((a, b) => a.localeCompare(b, "es"));
-const WHATSAPP_NUMBER = "528121980008";
+const MUNICIPALITIES = [...CAMPAIGN_MUNICIPALITIES, ...Array.from(new Set(COLONIAS_MTY.map((c) => c.municipality))).filter((m) => !CAMPAIGN_MUNICIPALITIES.some((target) => target === m)).sort((a, b) => a.localeCompare(b, "es"))];
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
 interface FormData {
@@ -79,7 +78,7 @@ function formatDateForMessage(value: string) {
 
 function buildWhatsAppUrl(
   data: FormData,
-  attribution: { utmSource?: string | null; utmMedium?: string | null; utmCampaign?: string | null }
+  attribution: { utmSource?: string | null; utmMedium?: string | null; utmCampaign?: string | null; utmContent?: string | null }
 ) {
   const propertyType =
     PROPERTY_TYPES.find((option) => option.value === data.property_type)?.label ??
@@ -119,14 +118,11 @@ function buildWhatsAppUrl(
     data.visit_requested
       ? `Visita solicitada: ${formatDateForMessage(data.preferred_visit_date)} a las ${data.preferred_visit_time} (horario sujeto a confirmación)`
       : "Visita: No solicitada",
-    attribution.utmSource ? `Origen: ${attribution.utmSource}` : null,
-    attribution.utmMedium ? `Medio: ${attribution.utmMedium}` : null,
-    attribution.utmCampaign ? `Campaña: ${attribution.utmCampaign}` : null,
   ]
     .filter((line): line is string => line !== null)
     .join("\n");
 
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return buyerWhatsAppUrl(message, attribution);
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -147,6 +143,7 @@ interface Props {
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
+  utmContent?: string | null;
   visitRequestIntent?: boolean;
 }
 
@@ -154,6 +151,7 @@ export default function DirectBuyerForm({
   utmSource,
   utmMedium,
   utmCampaign,
+  utmContent,
   visitRequestIntent = false,
 }: Props) {
   const [step, setStep] = useState(0);
@@ -252,7 +250,7 @@ export default function DirectBuyerForm({
   const submit = () => {
     if (!validate(3)) return;
     window.location.assign(
-      buildWhatsAppUrl(data, { utmSource, utmMedium, utmCampaign })
+      buildWhatsAppUrl(data, { utmSource, utmMedium, utmCampaign, utmContent })
     );
   };
 
@@ -339,13 +337,13 @@ export default function DirectBuyerForm({
             onClick={submit}
             className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-cima-gold text-cima-bg font-semibold text-sm py-3 px-6 hover:bg-cima-gold-light transition-all active:scale-95"
           >
-            <Send className="h-4 w-4" /> Enviar solicitud
+            <Send className="h-4 w-4" /> Continuar en WhatsApp
           </button>
         )}
       </div>
 
       <p className="mt-4 text-center text-xs text-cima-text-dim">
-        Al tocar “Enviar solicitud”, se abrirá WhatsApp con tu mensaje y tus datos listos. Para enviarlo a Cima, confirma con el botón Enviar de WhatsApp.
+        Al tocar “Continuar en WhatsApp”, se abrirá WhatsApp con tu mensaje y tus datos listos. Para enviarlo a Cima, confirma con el botón Enviar de WhatsApp.
       </p>
     </div>
   );
@@ -494,24 +492,13 @@ function Step1({
           <p className="mt-1 text-xs text-red-400">{errors.municipality}</p>
         )}
       </div>
-      {colonias.length > 0 && (
-        <div>
-          <label className={labelClass()}>Colonia / Fraccionamiento (opcional)</label>
-          <select
-            id="db-colonia"
-            value={data.colonia}
-            onChange={(e) => setData((p) => ({ ...p, colonia: e.target.value }))}
-            className={fieldClass()}
-          >
-            <option value="">Selecciona una colonia…</option>
-            {colonias.map((c) => (
-              <option key={c.name} value={c.name}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      <div>
+        <label htmlFor="db-colonia" className={labelClass()}>Colonia / Fraccionamiento (opcional)</label>
+        <input id="db-colonia" list="db-colonias" maxLength={100} value={data.colonia}
+          onChange={(e) => setData((p) => ({ ...p, colonia: e.target.value }))}
+          placeholder="Escribe tu colonia" className={fieldClass()} />
+        <datalist id="db-colonias">{colonias.map((c) => <option key={c.name} value={c.name} />)}</datalist>
+      </div>
       <div>
         <label htmlFor="db-property-address" className={labelClass()}>
           Dirección de la propiedad <span className="normal-case text-cima-text-dim">(opcional)</span>
@@ -845,7 +832,7 @@ function Step3({
   errors: Partial<Record<keyof FormData, string>>;
 }) {
   const privacyUrl =
-    process.env.NEXT_PUBLIC_PRIVACY_URL ?? "/legal/privacidad";
+    process.env.NEXT_PUBLIC_PRIVACY_URL || "#datos";
 
   return (
     <div className="space-y-5">
@@ -897,7 +884,6 @@ function Step3({
             className="sr-only"
           />
           <div
-            onClick={() => setData((p) => ({ ...p, consent: !p.consent }))}
             className={`h-5 w-5 rounded border-2 flex items-center justify-center transition-all ${
               data.consent
                 ? "border-cima-gold bg-cima-gold"
@@ -920,7 +906,7 @@ function Step3({
             rel="noopener noreferrer"
             className="text-cima-gold underline underline-offset-2"
           >
-            Aviso de Privacidad
+            {process.env.NEXT_PUBLIC_PRIVACY_URL ? "Aviso de Privacidad" : "detalle de cómo se comparten tus datos"}
           </a>
           .
         </p>
