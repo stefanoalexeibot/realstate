@@ -1,0 +1,24 @@
+.page :is(a, button, summary, select, input, textarea):focus-visible {
+  outline: 2px solid #d5b87d;
+  outline-offset: 5px;
+}
+.page :is(input, textarea, select) { color-scheme: dark; }
+.page summary { min-height: 32px; }
+.choice, .modalityCard {
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .choice:hover { transform: translateX(3px); }
+  .modalityCard:hover {
+    transform: translateY(-4px);
+    border-color: rgba(213, 184, 125, .55);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .16);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page *, .page *::before, .page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
