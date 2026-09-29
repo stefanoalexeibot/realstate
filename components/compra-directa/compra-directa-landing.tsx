@@ -1,13 +1,15 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Building2, Clock, FileCheck, Home, MessageCircle,
   Phone, ShieldCheck, ChevronDown, Wrench, CreditCard, FileWarning,
   Scale, Banknote
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import styles from "./compra-directa-landing.module.css";
 import DirectBuyerForm from "./direct-buyer-form";
 import QuickBuyerForm from "./quick-buyer-form";
 import { CAMPAIGN_MUNICIPALITIES } from "@/lib/buyer-config";
@@ -23,17 +25,26 @@ function FadeUp({
   delay?: number;
   className?: string;
 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let animation: Animation | undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      if (!preference.matches) animation = element.animate([
+        { opacity: 0.5, transform: "translateY(14px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ], { duration: 450, delay: Math.min(delay * 1000, 100), easing: "cubic-bezier(.22,1,.36,1)" });
+    }, { threshold: 0.05 });
+    observer.observe(element);
+    const stop = () => { if (preference.matches) animation?.cancel(); };
+    preference.addEventListener("change", stop);
+    return () => { observer.disconnect(); animation?.cancel(); preference.removeEventListener("change", stop); };
+  }, [delay]);
+  return <div ref={ref} className={className}>{children}</div>;
 }
 
 // ── Props ──────────────────────────────────────────────────────────────────
@@ -56,20 +67,28 @@ export default function CompraDirectaLanding({
   const formRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [visitRequestIntent, setVisitRequestIntent] = useState(false);
+  const [contactVisible, setContactVisible] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setContactVisible(entry.isIntersecting));
+    const form = formRef.current?.querySelector("form");
+    if (form) observer.observe(form);
+    return () => observer.disconnect();
+  }, []);
+  const scrollBehavior = (): ScrollBehavior => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 
   const scrollToForm = () => {
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    formRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   };
 
   const requestVisitAndScroll = () => {
     setVisitRequestIntent(true);
-    requestAnimationFrame(() => detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    requestAnimationFrame(() => detailsRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: "start" }));
   };
 
   const waFallback = buyerWhatsAppUrl("Hola Cima, quiero saber si compran mi casa. Está en el municipio de: ", { utmSource, utmMedium, utmCampaign, utmContent });
 
   return (
-    <div className="min-h-screen bg-cima-bg text-cima-text pb-24 sm:pb-0">
+    <div className={`${styles.page} min-h-screen bg-cima-bg text-cima-text pb-24 sm:pb-0`}>
       {/* ── Navbar ────────────────────────────────────────────────────────── */}
       <CompraNav scrollToForm={scrollToForm} waFallback={waFallback} />
 
@@ -136,6 +155,8 @@ export default function CompraDirectaLanding({
       {/* ── Cómo preparamos la oferta ─────────────────────────────────────── */}
       <OfferBasisSection scrollToForm={scrollToForm} />
 
+      <AdvisorSection scrollToForm={scrollToForm} />
+
       {/* ── FAQ ──────────────────────────────────────────────────────────── */}
       <FaqSection />
 
@@ -143,7 +164,7 @@ export default function CompraDirectaLanding({
       <CompraFooter />
 
       {/* ── Sticky mobile CTA ─────────────────────────────────────────────── */}
-      <MobileStickyCta scrollToForm={scrollToForm} />
+      {!contactVisible && <MobileStickyCta scrollToForm={scrollToForm} />}
     </div>
   );
 }
@@ -159,7 +180,7 @@ function CompraNav({
   waFallback: string;
 }) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-cima-border/40 backdrop-blur-md bg-cima-bg/92">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-cima-border/40 backdrop-blur-md bg-cima-bg/95">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="h-7 w-7 rounded-lg bg-cima-gold/10 border border-cima-gold/30 flex items-center justify-center">
@@ -203,18 +224,14 @@ function HeroSection({
   requestVisit: () => void;
 }) {
   return (
-    <section className="relative pt-24 pb-12 px-4 overflow-hidden">
-      {/* Background mesh */}
-      <div className="absolute inset-0 hero-mesh pointer-events-none" />
-      <div className="absolute inset-0 dot-grid opacity-40 pointer-events-none" />
-
-      {/* Orbs */}
-      <div className="absolute top-1/4 left-10 w-72 h-72 rounded-full bg-cima-gold/6 blur-3xl orb-float pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-56 h-56 rounded-full bg-cima-gold/4 blur-3xl orb-float-rev pointer-events-none" />
-
+    <section className={`${styles.hero} relative isolate pt-28 pb-16 px-4 overflow-hidden sm:pt-32 sm:pb-24`}>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <Image src="/compra-directa/casa-nuevo-leon-v1.png" alt="" fill priority sizes="100vw" quality={70} className="object-cover object-[65%_center]" />
+        <div className={styles.heroShade} />
+      </div>
       <div className="relative mx-auto max-w-3xl text-center">
         <FadeUp>
-          <span className="inline-flex items-center gap-2 rounded-full border border-cima-gold/25 bg-cima-gold/8 px-4 py-1.5 text-xs font-mono text-cima-gold uppercase tracking-wider mb-6">
+          <span className="inline-flex items-center gap-2 rounded-full border border-cima-gold/25 bg-cima-bg/70 px-4 py-1.5 text-xs font-mono text-cima-gold uppercase tracking-wider mb-6">
             <ShieldCheck className="h-3.5 w-3.5" />
             Cima Propiedades · Comprador directo
           </span>
@@ -228,7 +245,7 @@ function HeroSection({
         </FadeUp>
 
         <FadeUp delay={0.15}>
-          <p className="text-lg text-cima-text-muted max-w-xl mx-auto mb-8 leading-relaxed">
+          <p className="text-lg text-[#d4d1ca] max-w-xl mx-auto mb-8 leading-relaxed">
             ¿Tiene adeudos, necesita reparaciones o ya no la utilizas?
             En Cima revisamos tu caso y, si la compra es viable,
             te presentamos una propuesta que tú decides si aceptas.
@@ -251,7 +268,7 @@ function HeroSection({
             <button
               onClick={requestVisit}
               id="hero-cta-secondary"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-cima-border px-7 py-3.5 text-sm text-cima-text-muted hover:border-cima-gold/40 hover:text-cima-text transition-all"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-cima-bg/60 px-7 py-3.5 text-sm text-cima-text hover:border-cima-gold/40 hover:text-cima-text transition-all"
             >
               Solicitar visita presencial
             </button>
@@ -264,9 +281,13 @@ function HeroSection({
           </p>
         </FadeUp>
 
-        <FadeUp delay={0.38} className="mt-10">
-          <ChevronDown className="mx-auto h-5 w-5 text-cima-text-muted animate-bounce" />
+        <FadeUp delay={0.3} className="mt-8">
+          <a href="#conoce-a-tu-asesor" className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-[#090a0d]/65 py-2 pl-2 pr-5 text-left transition-colors hover:border-cima-gold/60">
+            <Image src="/asesores/alejandro-luna.png" alt="" width={44} height={44} sizes="44px" className="h-11 w-11 rounded-full object-cover object-[50%_30%]" />
+            <span><span className="block text-sm font-medium text-white">Alejandro Luna</span><span className="block text-xs text-cima-gold">Conoce a tu asesor →</span></span>
+          </a>
         </FadeUp>
+        <p className="mt-6 text-[10px] text-white/65">Imagen residencial ilustrativa</p>
       </div>
     </section>
   );
@@ -547,6 +568,37 @@ function OfferBasisSection({ scrollToForm }: { scrollToForm: () => void }) {
   );
 }
 
+function AdvisorSection({ scrollToForm }: { scrollToForm: () => void }) {
+  return (
+    <section id="conoce-a-tu-asesor" className="relative isolate overflow-hidden scroll-mt-20 px-5 py-16 sm:px-8 lg:py-24">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <Image src="/asesores/interior-asesor-v1.png" alt="" fill sizes="100vw" quality={65} className="object-cover" />
+        <div className={styles.advisorShade} />
+      </div>
+      <div className="mx-auto grid max-w-5xl items-center gap-9 md:grid-cols-[0.8fr_1fr] lg:gap-14">
+        <FadeUp>
+          <figure className="relative mx-auto max-w-sm overflow-hidden rounded-3xl border border-cima-gold/30 bg-cima-card">
+            <Image src="/compra-directa/alejandro-exterior-v1.png" alt="Alejandro Luna, asesor de Cima Propiedades" width={1122} height={1402} sizes="(max-width: 767px) calc(100vw - 40px), 384px" className="h-auto w-full" />
+            <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent px-6 pb-6 pt-20"><span className="block font-serif text-3xl text-white">Alejandro Luna</span><span className="mt-2 block text-xs uppercase tracking-widest text-cima-gold-light">Cima Propiedades · Nuevo León</span></figcaption>
+          </figure>
+        </FadeUp>
+        <FadeUp delay={0.1}>
+          <p className="text-xs uppercase tracking-[0.2em] text-cima-gold">Conoce a tu asesor</p>
+          <h2 className="mt-4 font-heading text-3xl font-bold leading-tight sm:text-4xl">Tu casa tiene una historia.<br /><span className="font-serif font-normal italic text-cima-gold">Quiero conocer la tuya.</span></h2>
+          <p className="mt-6 text-base leading-relaxed text-[#d4d1ca]">Soy Alejandro Luna, tengo 25 años y soy asesor de Cima Propiedades. He cerrado alrededor de 30 propiedades. Mi trabajo empieza por escucharte y entender qué necesitas resolver.</p>
+          <p className="mt-4 text-sm leading-relaxed text-[#d4d1ca]">Si tu casa tiene adeudos, necesita reparaciones o ya no la utilizas, podemos revisar su situación. Te explico los pasos y las condiciones de una posible compra para que decidas con claridad.</p>
+          <div className="my-7 grid grid-cols-2 gap-4 rounded-2xl border border-cima-gold/25 bg-cima-bg/75 p-5">
+            <div><p className="font-serif text-4xl text-cima-gold" aria-label="Alrededor de 30">≈30</p><p className="mt-2 text-xs text-cima-text">Propiedades cerradas</p><p className="mt-1 text-[11px] text-[#bcbab5]">A lo largo de mi trayectoria</p></div>
+            <div className="border-l border-cima-gold/20 pl-4"><p className="font-serif text-4xl text-cima-gold">1 a 1</p><p className="mt-2 text-xs text-cima-text">Atención personal</p><p className="mt-1 text-[11px] text-[#bcbab5]">Conversamos sobre tu caso</p></div>
+          </div>
+          <button type="button" onClick={scrollToForm} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-cima-gold px-6 py-3 text-sm font-semibold text-cima-bg hover:bg-cima-gold-light">Cuéntame sobre tu casa <MessageCircle size={17} aria-hidden="true" /></button>
+          <p className="mt-4 text-xs leading-relaxed text-[#bcbab5]">Una revisión no te obliga a vender ni garantiza una oferta.</p>
+        </FadeUp>
+      </div>
+    </section>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // FAQ
 // ─────────────────────────────────────────────────────────────────────────────
@@ -574,6 +626,7 @@ const FAQS = [
 ];
 
 function FaqSection() {
+  const reducedMotion = useReducedMotion();
   const [open, setOpen] = useState<number | null>(null);
 
   return (
@@ -608,7 +661,7 @@ function FaqSection() {
                 <motion.div
                   animate={{ height: open === i ? "auto" : 0 }}
                   initial={false}
-                  transition={{ duration: 0.22, ease: "easeInOut" }}
+                  transition={{ duration: reducedMotion ? 0 : 0.22, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
                   <p className="px-5 pb-4 text-sm text-cima-text-muted leading-relaxed">

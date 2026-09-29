@@ -1,0 +1,20 @@
+.hero { background-color: #090a0d; }
+.page :is(button, a, input, select, summary):focus-visible { outline: 2px solid #c8a96e; outline-offset: 4px; }
+.page :is(button, a) { touch-action: manipulation; }
+.page input, .page select { color-scheme: dark; }
+.heroShade {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(9,10,13,.86), rgba(9,10,13,.64) 50%, rgba(9,10,13,.48)), linear-gradient(0deg, #090a0d, transparent 40%);
+}
+.advisorShade {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(9,10,13,.6), rgba(9,10,13,.9) 65%), linear-gradient(0deg, #090a0d, transparent 30%, transparent 80%, #090a0d);
+}
+@media (max-width: 767px) {
+  .heroShade { background: linear-gradient(0deg, #090a0d, rgba(9,10,13,.76) 45%, rgba(9,10,13,.7)); }
+  .advisorShade { background: linear-gradient(0deg, #090a0d, rgba(9,10,13,.88) 55%, rgba(9,10,13,.65)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(html):has(.page) { scroll-behavior: auto !important; }
+  .page *, .page *::before, .page *::after { animation: none !important; transition: none !important; }
+}
