@@ -48,3 +48,31 @@
   :global(html):has(.page) { scroll-behavior: auto !important; }
   .page :is(a, button):active { transform: none; }
 }
+
+/* Static imagery: no parallax, scroll filters or persistent animation layers. */
+.architectureHero { isolation: isolate; }
+.architectureBackdrop { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.architectureImage { object-fit: cover; object-position: 66% center; }
+.architectureShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(11,14,18,.97) 0%, rgba(11,14,18,.88) 34%, rgba(11,14,18,.3) 80%), linear-gradient(0deg, #0b0e12 0%, transparent 30%, rgba(11,14,18,.15) 100%);
+}
+@media (max-width: 767px) {
+  .architectureBackdrop { bottom: auto; height: 680px; }
+  .architectureImage { object-position: 68% center; }
+  .architectureShade {
+    background: linear-gradient(0deg, #0b0e12 0%, rgba(11,14,18,.78) 45%, rgba(11,14,18,.65) 100%);
+  }
+}
+
+.advisorShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(11,14,18,.55), rgba(11,14,18,.87) 60%), linear-gradient(0deg, #0b0e12, transparent 25%, transparent 80%, #0b0e12);
+}
+@media (max-width: 767px) {
+  .advisorShade {
+    background: linear-gradient(0deg, #0b0e12, rgba(11,14,18,.87) 45%, rgba(11,14,18,.6) 85%, #0b0e12);
+  }
+}

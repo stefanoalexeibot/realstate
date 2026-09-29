@@ -142,7 +142,11 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
       </header>
 
       <main id="contenido">
-        <section className="relative overflow-hidden border-b border-white/10 px-5 py-10 sm:px-8 lg:py-24">
+        <section className={`${styles.architectureHero} relative overflow-hidden border-b border-white/10 px-5 py-10 sm:px-8 lg:py-24`}>
+          <div aria-hidden="true" className={styles.architectureBackdrop}>
+            <Image src="/asesores/casa-nuevo-leon-v1.png" alt="" fill priority sizes="100vw" quality={70} className={styles.architectureImage} />
+            <div className={styles.architectureShade} />
+          </div>
           <div aria-hidden="true" className="pointer-events-none absolute -right-32 -top-32 h-[650px] w-[650px] rounded-full bg-[radial-gradient(ellipse,rgba(213,184,125,0.10),transparent_65%)]" />
           <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
             <div>
@@ -156,7 +160,7 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center"><a href="#modalidades" className={goldButton}>Conocer mis opciones <ArrowDown size={17} aria-hidden="true" /></a><a href={directContact} className="inline-flex min-h-11 items-center justify-center gap-2 text-sm text-[#d5b87d]">Hablar con Alejandro <ArrowUpRight size={17} aria-hidden="true" /></a></div>
               <p className="mt-6 text-xs leading-relaxed text-[#a5a7a5]">Una conversación para empezar. Tú decides cómo avanzar.</p>
             </div>
-            <div className="relative rounded-[1.75rem] bg-[#efe9dc] p-6 text-[#17201e] shadow-[0_25px_90px_rgba(0,0,0,0.25)] sm:p-8">
+            <div className="relative rounded-[1.75rem] border border-white/40 bg-[#efe9dc]/95 p-6 text-[#17201e] shadow-[0_25px_90px_rgba(0,0,0,0.25)] sm:p-8">
               <div className="mb-7 flex items-center justify-between border-b border-[#17201e]/15 pb-5"><span className="text-[10px] font-semibold uppercase tracking-[0.2em]">Empecemos por ti</span><Compass className="text-[#78613c]" size={24} aria-hidden="true" /></div>
               <h2 data-reveal className="font-serif text-3xl leading-tight sm:text-4xl">¿Qué buscas<br />al vender tu casa?</h2>
               <p className="mb-6 mt-3 text-sm leading-relaxed text-[#5b635e]">Elige una opción para conversar sobre ella.</p>
@@ -192,6 +196,19 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
           </div>
         </section>
 
+        <section aria-label="Tu siguiente etapa" className="px-5 pb-16 sm:px-8 lg:pb-24">
+          <div className="relative mx-auto min-h-[240px] max-w-6xl overflow-hidden rounded-3xl border border-[#d5b87d]/25 sm:min-h-[280px]">
+            <Image src="/asesores/casa-nuevo-leon-v1.png" alt="" fill sizes="(max-width: 1200px) 100vw, 1152px" quality={65} className="object-cover object-[70%_60%]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0b0e12]/95 via-[#0b0e12]/70 to-[#0b0e12]/15" />
+            <div className="relative max-w-lg px-6 py-10 sm:px-10 sm:py-12">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#e4cc9a]">Un nuevo comienzo</p>
+              <h2 data-reveal className="mt-4 font-serif text-3xl leading-tight text-white sm:text-4xl">Cada casa tiene una historia.<br /><span className="italic text-[#e4cc9a]">Hablemos de la tuya.</span></h2>
+              <a href="#contacto" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-white underline decoration-[#d5b87d]/60 underline-offset-8">Conversemos sobre tu casa <ArrowUpRight size={16} aria-hidden="true" /></a>
+            </div>
+            <span className="absolute bottom-3 right-4 rounded bg-black/55 px-2 py-1 text-[10px] text-white/80">Imagen ilustrativa</span>
+          </div>
+        </section>
+
         <section id="comparar" className="scroll-mt-36 md:scroll-mt-24 bg-[#efe9dc] px-5 py-16 text-[#17201e] sm:px-8 lg:py-20">
           <div className="mx-auto max-w-6xl"><p className="text-xs uppercase tracking-[0.2em] text-[#78613c]">Compara con calma</p><h2 data-reveal className="mb-9 mt-4 font-serif text-4xl sm:text-5xl">Lo que cambia en cada opción.</h2>
             <div className="hidden overflow-hidden rounded-2xl border border-[#17201e]/15 md:block"><table className="w-full text-left text-sm"><caption className="sr-only">Comparación de venta tradicional y compra directa</caption><thead className="bg-[#17201e]/5"><tr><th scope="col" className="p-5">Qué considerar</th><th scope="col" className="p-5">Venta tradicional</th><th scope="col" className="p-5">Compra directa</th></tr></thead><tbody>{comparison.map(row=><tr key={row[0]} className="border-t border-[#17201e]/15"><th scope="row" className="p-5 font-medium">{row[0]}</th><td className="max-w-xs p-5 leading-relaxed text-[#4f5953]">{row[1]}</td><td className="max-w-xs p-5 leading-relaxed text-[#4f5953]">{row[2]}</td></tr>)}</tbody></table></div>
@@ -208,7 +225,11 @@ export default function AlejandroLanding({ attribution }: { attribution: BuyerAt
           </div>
         </section>
 
-        <section id="sobre-mi" className="scroll-mt-36 md:scroll-mt-24 px-5 py-16 sm:px-8 lg:py-24">
+        <section id="sobre-mi" className={`${styles.advisorScene} relative isolate overflow-hidden scroll-mt-36 md:scroll-mt-24 px-5 py-16 sm:px-8 lg:py-24`}>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+            <Image src="/asesores/interior-asesor-v1.png" alt="" fill sizes="100vw" quality={65} className="object-cover object-center" />
+            <div className={styles.advisorShade} />
+          </div>
           <div className="mx-auto max-w-6xl">
             <div className="mb-14 grid items-center gap-9 md:grid-cols-[0.8fr_1fr] lg:gap-16">
               <figure data-reveal className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-[#d5b87d]/25 bg-[#171a1d]">
